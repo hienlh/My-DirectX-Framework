@@ -1,4 +1,4 @@
-#include "CDirect3D.h"
+#include "Direct3D.h"
 
 CDirect3D* CDirect3D::m_instance = nullptr;
 
@@ -11,7 +11,7 @@ bool CDirect3D::Init(HWND hWnd, bool fullscreen)
 		m_d3d = Direct3DCreate9(D3D_SDK_VERSION);
 		if (!m_d3d)
 		{
-			MessageBox(hWnd, "[Error] Direct3DCreate9 failed", "Error", MB_OK);
+			OutputDebugString("[Error] Direct3DCreate9 failed\n");
 			break;
 		}
 
@@ -42,18 +42,37 @@ bool CDirect3D::Init(HWND hWnd, bool fullscreen)
 	
 		if (!m_d3ddev)
 		{
-			MessageBox(hWnd, "[Error] CreateDevice failed", "Error", MB_OK);
+			OutputDebugString("[Error] CreateDevice failed\n");
 			break;
 		}
 
 		// clear the back buffer to black
-		m_d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+		m_d3ddev->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 		// create pointer to the back buffer
 		m_d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_backbuffer);
-		
+		if (!m_backbuffer)
+		{
+			OutputDebugString("[ERROR] GetBackBuffer failed\n");
+			break;
+		}
+
+		// Initialize sprite helper from Direct3DX helper library
+		D3DXCreateSprite(m_d3ddev, &m_spriteHandler);
+		if (!m_spriteHandler)
+		{
+			OutputDebugString("[ERROR] D3DXCreateSprite failed\n");
+			break;
+		}
+
 		result = true;
 	} while (false);
 
-	return true;
+	return result;
+}
+
+void CDirect3D::Draw(float x, float y, LPDIRECT3DTEXTURE9 texture) const
+{
+	D3DXVECTOR3 position(x, y, 0);
+	m_spriteHandler->Draw(texture, nullptr, nullptr, &position, D3DCOLOR_XRGB(255, 255, 255));
 }

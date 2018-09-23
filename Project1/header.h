@@ -14,8 +14,8 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define FILE_NAME "..\Resources\tank.png"
-#define FULL_SCREEN FALSE
+#define TANK_PATH "E:\\workspace\\My-DirectX-Framework\\Resources\\tank.png"
+#define FULL_SCREEN false
 
 #define FRAME_RATE 30
 
