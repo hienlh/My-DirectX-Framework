@@ -1,5 +1,5 @@
 #pragma once
-#include "header.h"
+#include "Header.h"
 #include "Direct3D.h"
 
 class CGameObject 
@@ -19,8 +19,9 @@ public:
 		m_texture->Release();
 	}
 
+public:
 	bool Set_Texture(LPDIRECT3DDEVICE9 d3ddv, LPCSTR texturePath);
-	void SetPosition(float x, float y);
+	void Set_Position(float x, float y);
 
-	void Render(CDirect3D *pDirect3D) const;
+	void Render(CDirect3D *pDirect3D);
 };

@@ -43,13 +43,13 @@ bool CGameObject::Set_Texture(LPDIRECT3DDEVICE9 d3ddv, LPCSTR texturePath)
 	return result;
 }
 
-void CGameObject::SetPosition(float x, float y)
+void CGameObject::Set_Position(float x, float y)
 {
 	m_x = x;
 	m_y = y;
 }
 
-void CGameObject::Render(CDirect3D *pDirect3D) const
+void CGameObject::Render(CDirect3D *pDirect3D)
 {
 	pDirect3D->Draw(m_x, m_y, m_texture);
 }

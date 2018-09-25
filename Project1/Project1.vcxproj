@@ -120,16 +120,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Direct3D.cpp" />
-    <ClCompile Include="GameManager.cpp" />
-    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Direct3DCore.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Singleton.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Direct3D.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="header.h" />
+    <ClInclude Include="Direct3DCore.h" />
+    <ClInclude Include="Header.h" />
+    <ClInclude Include="Singleton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

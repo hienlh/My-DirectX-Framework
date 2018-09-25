@@ -1,5 +1,5 @@
 #pragma once
-#include "header.h"
+#include "Header.h"
 #include "Direct3D.h"
 #include "GameObject.h"
 
@@ -41,15 +41,18 @@ public:
 		SAFE_DELETE(m_instance);
 	}
 
+private:
+	bool InitWindow(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight);
+	void LoadResources();
+
 public:
 	bool Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight);
-	void LoadResources();
-	bool Render() const;
+	bool Render();
 	void Run();
 
-	MSG Get_Message() const { return m_message; }
-	HWND Get_WindowHandle() const { return m_hWnd; }
-	CDirect3D* Get_Direct3D() const { return m_pDirect3D; }
+	MSG Get_Message() { return m_message; }
+	HWND Get_WindowHandle()  { return m_hWnd; }
+	CDirect3D* Get_Direct3D() { return m_pDirect3D; }
 
 	bool CreatePlayer();
 };

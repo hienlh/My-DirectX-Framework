@@ -1,6 +1,5 @@
-#include "header.h"
-
-#include "GameManager.h"
+#include "Header.h"
+#include "Direct3DCore.h"
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -19,25 +18,27 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	CGameManager *pGame = nullptr;
-	do 
+	WPARAM returnValue = 0;
+	do
 	{
-		pGame = CGameManager::GetInstance();
+		//Framework::Direct3DCore::Direct3DCore::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, false);
+
+		/*	CGameManager *pGame = CGameManager::GetInstance();
+	
+			bool result = pGame->Init(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT);
+			if (!result)
+			{
+				OutputDebugString("[Error] CGameManager::Init failed\n");
+				break;
+			}
+	
+			pGame->Run();
 		
-		bool result = pGame->Init(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT);
-		if (!result)
-		{
-			OutputDebugString("[Error] CGame::Init failed\n");
-			break;
-		}
-		pGame->LoadResources();
-
-		pGame->Run();
-
-	} while (false);
-
-	WPARAM returnValue = pGame->Get_Message().wParam;
-	pGame->Release();
+			returnValue = pGame->Get_Message().wParam;
+			pGame->Release();
+	*/
+	}
+	while (false);
 
 	return returnValue;
 }

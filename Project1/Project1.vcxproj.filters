@@ -13,32 +13,32 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{bdafef22-81ae-4032-93a6-c35aaf4f0639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Direct3DCore">
+      <UniqueIdentifier>{e808ad6a-c9fc-49fc-8607-278fc06327ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Direct3D.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Direct3DCore.cpp">
+      <Filter>Framework\Direct3DCore</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameManager.cpp">
+    <ClCompile Include="Singleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header.h">
+    <ClInclude Include="Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Direct3DCore.h">
+      <Filter>Framework\Direct3DCore</Filter>
     </ClInclude>
-    <ClInclude Include="Direct3D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameManager.h">
+    <ClInclude Include="Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

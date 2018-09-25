@@ -2,7 +2,7 @@
 
 CGameManager* CGameManager::m_instance = nullptr;
 
-bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight)
+bool CGameManager::InitWindow(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight)
 {
 	bool result = false;
 	do
@@ -61,7 +61,7 @@ bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int 
 		bool initResult = m_pDirect3D->Init(m_hWnd, FULL_SCREEN);
 		if (!initResult)
 		{
-			OutputDebugString("[Error] CDirect3D::Init failed\n");
+			OutputDebugString("[Error] CDirect3DCore::Init failed\n");
 			break;
 		}
 
@@ -77,7 +77,15 @@ void CGameManager::LoadResources()
 	CreatePlayer();
 }
 
-bool CGameManager::Render() const
+bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight)
+{
+	bool result = InitWindow(hInstance, nShowCmd, screenWidth, screenHeight);
+	LoadResources();
+	
+	return result;
+}
+
+bool CGameManager::Render()
 {
 	bool result = false;
 	do
@@ -104,10 +112,11 @@ bool CGameManager::Render() const
 			// Clear back buffer with black color
 			d3ddev->ColorFill(backbuffer, nullptr, D3DCOLOR_XRGB(0, 0, 0));
 
-			m_pDirect3D->Get_SpriteHandler()->Begin(D3DXSPRITE_ALPHABLEND);
+			LPD3DXSPRITE spriteHandler = m_pDirect3D->Get_SpriteHandler();
+			
+			spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 			m_pPlayer->Render(m_pDirect3D);
-			m_pDirect3D->Get_SpriteHandler()->End();
-
+			spriteHandler->End();
 
 			// stop rendering
 			d3ddev->EndScene();
@@ -126,7 +135,7 @@ bool CGameManager::Render() const
 void CGameManager::Run()
 {
 	DWORD frameStart = GetTickCount();
-	const DWORD tickPerFrame = 1000 / FRAME_RATE;
+	DWORD tickPerFrame = 1000 / FRAME_RATE;
 
 	bool done = false;
 	while (!done)
@@ -169,7 +178,7 @@ bool CGameManager::CreatePlayer()
 {
 	m_pPlayer = new CGameObject();
 	m_pPlayer->Set_Texture(m_pDirect3D->Get_Direct3DDevice(), TANK_PATH);
-	m_pPlayer->SetPosition(10.0f, 130.0f);
+	m_pPlayer->Set_Position(10.0f, 130.0f);
 
 	return true;
 }
