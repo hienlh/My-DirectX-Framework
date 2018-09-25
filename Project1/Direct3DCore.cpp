@@ -4,7 +4,7 @@ using namespace Framework::Direct3DCore;
 
 
 // Internal Direct3D Core Class
-class CDirect3DCore_Internal final : public Direct3DCore
+class CDirect3DCore_Internal final : public IDirect3DCore
 {
 	// Properties
 private:
@@ -50,7 +50,7 @@ public:
 
 	// Override methods
 public:
-	bool Instantiate(HINSTANCE hInstance, int nShowCmd,
+	bool Init(HINSTANCE hInstance, int nShowCmd,
 	                 int screenWidth, int screenHeight,
 	                 bool fullscreen) override
 	{
@@ -76,10 +76,37 @@ public:
 		return result;
 	}
 
-	bool Destroy() override
+	void Destroy() override
 	{
 		SAFE_DELETE(__instance);
-		return true;
+	}
+
+	bool Render() override
+	{
+		bool result = false;
+		do
+		{
+			// Start rendering
+			if (m_d3ddev->BeginScene())
+			{
+				// Clear back buffer with black color
+				m_d3ddev->ColorFill(m_backbuffer, nullptr, D3DCOLOR_XRGB(0, 0, 0));
+
+				m_spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
+				//m_pPlayer->Render(m_pDirect3D);
+				m_spriteHandler->End();
+
+				// stop rendering
+				m_d3ddev->EndScene();
+			}
+
+			// display back buffer content to the screen
+			m_d3ddev->Present(nullptr, nullptr, nullptr, nullptr);
+
+			result = true;
+		} while (false);
+
+		return result;
 	}
 
 	// Internal methods
@@ -223,14 +250,9 @@ private:
 };
 
 // Direct3D Core Initialization
-Direct3DCore* Direct3DCore::__instance = nullptr;
+IDirect3DCore* IDirect3DCore::__instance = nullptr;
 
-Direct3DCore::~Direct3DCore()
-{
-	SAFE_DELETE(__instance);
-}
-
-Direct3DCore* Direct3DCore::GetInstance()
+IDirect3DCore* IDirect3DCore::GetInstance()
 {
 	SAFE_ALLOC(__instance, CDirect3DCore_Internal);
 	return __instance;

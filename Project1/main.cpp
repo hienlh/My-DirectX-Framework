@@ -1,5 +1,5 @@
 #include "Header.h"
-#include "Direct3DCore.h"
+#include "GameManager.h"
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -21,22 +21,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	WPARAM returnValue = 0;
 	do
 	{
-		//Framework::Direct3DCore::Direct3DCore::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, false);
+		auto *pGameManager = Framework::GameManager::IGameManager::GetInstance();
+		pGameManager->Init(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 
-		/*	CGameManager *pGame = CGameManager::GetInstance();
-	
-			bool result = pGame->Init(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT);
-			if (!result)
-			{
-				OutputDebugString("[Error] CGameManager::Init failed\n");
-				break;
-			}
-	
-			pGame->Run();
-		
-			returnValue = pGame->Get_Message().wParam;
-			pGame->Release();
-	*/
+		pGameManager->Run();
+
+		pGameManager->Destroy();
 	}
 	while (false);
 

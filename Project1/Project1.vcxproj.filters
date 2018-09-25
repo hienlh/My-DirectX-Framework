@@ -19,27 +19,30 @@
     <Filter Include="Framework\Direct3DCore">
       <UniqueIdentifier>{e808ad6a-c9fc-49fc-8607-278fc06327ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\GameManager">
+      <UniqueIdentifier>{df9d4f26-f71f-4963-9265-75842a918f7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Framework\GameManager</Filter>
+    </ClCompile>
     <ClCompile Include="Direct3DCore.cpp">
       <Filter>Framework\Direct3DCore</Filter>
-    </ClCompile>
-    <ClCompile Include="Singleton.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Framework\GameManager</Filter>
+    </ClInclude>
     <ClInclude Include="Direct3DCore.h">
       <Filter>Framework\Direct3DCore</Filter>
-    </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,24 +6,24 @@ namespace Framework
 	namespace Direct3DCore
 	{
 		// Direct3D Core Interface
-		class Direct3DCore
+		class IDirect3DCore
 		{
-			friend class Direct3DCore_Internal;
 		protected:
-			static Direct3DCore* __instance;
+			static IDirect3DCore* __instance;
 		
-		protected:
-			Direct3DCore() {};
-			virtual ~Direct3DCore();
+		public:
+			IDirect3DCore() {};
+			virtual ~IDirect3DCore() {};
 
 		public:
-			static Direct3DCore* GetInstance();
+			static IDirect3DCore* GetInstance();
 
-			virtual bool Instantiate(HINSTANCE hInstance, int nShowCmd,
+			virtual bool Init(HINSTANCE hInstance, int nShowCmd,
 			                         int screenWidth, int screenHeight,
 			                         bool fullscreen) = 0;
 
-			virtual bool Destroy() = 0;
+			virtual void Destroy() = 0;
+			virtual bool Render() = 0;
 		};
 	}
 }

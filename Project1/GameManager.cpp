@@ -1,184 +1,113 @@
 #include "GameManager.h"
+#include "Direct3DCore.h"
 
-CGameManager* CGameManager::m_instance = nullptr;
+using namespace Framework::GameManager;
 
-bool CGameManager::InitWindow(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight)
+// Internal Game Manager Class
+class CGameManager_Internal final : public IGameManager
 {
-	bool result = false;
-	do
+	// Properties
+private:
+	Framework::Direct3DCore::IDirect3DCore* m_pDirect3DCore;
+	MSG m_message;
+
+	// Cons/Des
+public:
+	CGameManager_Internal()
 	{
-		// create window class structure
-		WNDCLASSEX wc;
-		wc.cbSize = sizeof(WNDCLASSEX);
-
-		wc.style = CS_HREDRAW | CS_VREDRAW;
-		wc.hInstance = hInstance;
-		wc.lpfnWndProc = static_cast<WNDPROC>(WinProc);
-		wc.cbClsExtra = 0;
-		wc.cbWndExtra = 0;
-		wc.hIcon = nullptr;
-		wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-		wc.lpszMenuName = nullptr;
-		wc.lpszClassName = APP_TITLE;
-		wc.hIconSm = nullptr;
-
-		// register window class
-		ATOM registerResult = RegisterClassEx(&wc);
-		if (!registerResult)
-		{
-			OutputDebugString("[Error] RegisterClassEx failed\n");
-			break;
-		}
-
-		// create window
-		DWORD dwWindowStyle = (m_fullscreen == TRUE
-			                       ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP
-			                       : WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
-		m_hWnd = CreateWindow(
-			APP_TITLE, APP_TITLE,         // window class | title bar
-			dwWindowStyle,                // window style
-			CW_USEDEFAULT, CW_USEDEFAULT, // x, y position of window
-			SCREEN_WIDTH, SCREEN_HEIGHT,  // width, height of the window
-			NULL, NULL,                   // parent window | menu
-			hInstance,                    // application instance
-			NULL                          // window parameters
-		);
-
-		if (!m_hWnd)
-		{
-			OutputDebugString("[Error] CreateWindow failed\n");
-			break;
-		}
-
-		// show window
-		ShowWindow(m_hWnd, nShowCmd);
-		UpdateWindow(m_hWnd);
-
-		// init Direct3D
-		m_pDirect3D = CDirect3D::GetInstance();
-
-		bool initResult = m_pDirect3D->Init(m_hWnd, FULL_SCREEN);
-		if (!initResult)
-		{
-			OutputDebugString("[Error] CDirect3DCore::Init failed\n");
-			break;
-		}
-
-		result = true;
+		m_pDirect3DCore = nullptr;
+		m_message = {};
 	}
-	while (false);
 
-	return result;
-}
-
-void CGameManager::LoadResources()
-{
-	CreatePlayer();
-}
-
-bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight)
-{
-	bool result = InitWindow(hInstance, nShowCmd, screenWidth, screenHeight);
-	LoadResources();
-	
-	return result;
-}
-
-bool CGameManager::Render()
-{
-	bool result = false;
-	do
+	~CGameManager_Internal()
 	{
-		LPDIRECT3DDEVICE9 d3ddev = m_pDirect3D->Get_Direct3DDevice();
-		// make sure the Direct3D device is valid
-		if (!d3ddev)
-		{
-			OutputDebugString("[Error] GetDirect3DDevice failed\n");
-			break;
-		}
-
-		LPDIRECT3DSURFACE9 backbuffer = m_pDirect3D->Get_BackBuffer();
-		// make sure the back buffer is valid
-		if (!backbuffer)
-		{
-			OutputDebugString("[Error] GetBackBuffer failed\n");
-			break;
-		}
-
-		// Start rendering
-		if (d3ddev->BeginScene())
-		{
-			// Clear back buffer with black color
-			d3ddev->ColorFill(backbuffer, nullptr, D3DCOLOR_XRGB(0, 0, 0));
-
-			LPD3DXSPRITE spriteHandler = m_pDirect3D->Get_SpriteHandler();
-			
-			spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
-			m_pPlayer->Render(m_pDirect3D);
-			spriteHandler->End();
-
-			// stop rendering
-			d3ddev->EndScene();
-		}
-
-		// display back buffer content to the screen
-		d3ddev->Present(nullptr, nullptr, nullptr, nullptr);
-
-		result = true;
+		m_pDirect3DCore->Destroy();
 	}
-	while (false);
 
-	return result;
-}
+	// Getters
+public:
+	MSG Get_Message() { return m_message; }
 
-void CGameManager::Run()
-{
-	DWORD frameStart = GetTickCount();
-	DWORD tickPerFrame = 1000 / FRAME_RATE;
-
-	bool done = false;
-	while (!done)
+	// Override methods
+public:
+	bool Init(HINSTANCE hInstance, int nShowCmd,
+	          int screenWidth, int screenHeight,
+	          bool fullscreen) override
 	{
-		if (PeekMessage(&m_message, nullptr, 0, 0, PM_REMOVE))
+		bool result = false;
+		do
 		{
-			// check for escape key (to exit program)
-			if (m_message.message == WM_QUIT)
-				done = true;
-
-			// translate message and send back to WinProc
-			TranslateMessage(&m_message);
-			DispatchMessage(&m_message);
-		}
-
-		DWORD now = GetTickCount();
-
-		// dt: the time between (beginning of last frame) and now
-		// this frame: the frame we are about to render
-		DWORD dt = now - frameStart;
-
-		if (dt >= tickPerFrame)
-		{
-			frameStart = now;
-
-			// process game loop
-			bool renderResult = Render();
-			if (!renderResult)
+			// Init Direct3DCore
+			m_pDirect3DCore = Framework::Direct3DCore::IDirect3DCore::GetInstance();
+			if (m_pDirect3DCore->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
 			{
-				OutputDebugString("[Error] CGame::Render failed\n");
+				OutputDebugStringA("[Error] m_pDirect3DCore::Init failed\n");
 				break;
 			}
-		}
-		else
-			Sleep(tickPerFrame - dt);
+	
+			result = true;
+		} while (false);
+
+		return true;
 	}
-}
 
-bool CGameManager::CreatePlayer()
+	void Destroy() override
+	{
+	}
+
+	bool Run() override
+	{
+		DWORD frameStart = GetTickCount();
+		DWORD tickPerFrame = 1000 / FRAME_RATE;
+
+		bool done = false;
+		while (!done)
+		{
+			if (PeekMessageA(&m_message, nullptr, 0, 0, PM_REMOVE))
+			{
+				// check for escape key (to exit program)
+				if (m_message.message == WM_QUIT)
+					done = true;
+
+				// translate message and send back to WinProc
+				TranslateMessage(&m_message);
+				DispatchMessageA(&m_message);
+			}
+
+			DWORD now = GetTickCount();
+
+			// dt: the time between (beginning of last frame) and now
+			// this frame: the frame we are about to render
+			DWORD dt = now - frameStart;
+
+			if (dt >= tickPerFrame)
+			{
+				frameStart = now;
+
+				// process game loop
+				bool renderResult = m_pDirect3DCore->Render();
+				if (!renderResult)
+				{
+					OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
+					break;
+				}
+			}
+			else
+				Sleep(tickPerFrame - dt);
+		}
+
+		return true;
+	}
+
+	// Internal methods
+private:
+};
+
+// Game Manager Initialization
+IGameManager* IGameManager::__instance = nullptr;
+
+IGameManager* IGameManager::GetInstance()
 {
-	m_pPlayer = new CGameObject();
-	m_pPlayer->Set_Texture(m_pDirect3D->Get_Direct3DDevice(), TANK_PATH);
-	m_pPlayer->Set_Position(10.0f, 130.0f);
-
-	return true;
+	SAFE_ALLOC(__instance, CGameManager_Internal);
+	return __instance;
 }
