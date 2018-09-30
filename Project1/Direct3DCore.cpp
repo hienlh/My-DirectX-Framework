@@ -24,6 +24,8 @@ private:
 
 	// Getters / Setters
 public:
+	static CDirect3DCore_Internal* GetInstance();
+
 	LPDIRECT3D9 Get_Direct3D() override { return this->m_d3d; }
 	LPDIRECT3DDEVICE9 Get_Direct3DDevice() override { return this->m_d3ddev; }
 	LPDIRECT3DSURFACE9 Get_BackBuffer() override { return this->m_backbuffer; }
@@ -64,6 +66,7 @@ public:
 		D3DXVECTOR3 position(x, y, 0);
 		m_spriteHandler->Draw(texture, nullptr, nullptr, &position, D3DCOLOR_XRGB(255, 255, 255));
 	}
+	LPDIRECT3DTEXTURE9 CreateTexture(LPCSTR texturePath) override;
 
 	// Internal methods
 private:
@@ -161,6 +164,54 @@ public:
 
 CDirect3DCore_Internal* CDirect3DCore_Internal::__instance = nullptr;
 
+CDirect3DCore_Internal* CDirect3DCore_Internal::GetInstance()
+{
+	return __instance;
+}
+
+LPDIRECT3DTEXTURE9 CDirect3DCore_Internal::CreateTexture(LPCSTR texturePath)
+{
+
+	LPDIRECT3DTEXTURE9 m_texture=nullptr;
+	do
+	{
+		D3DXIMAGE_INFO info;
+		HRESULT hr = D3DXGetImageInfoFromFile(texturePath, &info);
+		if (hr != S_OK)
+		{
+			OutputDebugString("[ERROR] D3DXGetImageInfoFromFile failed\n");
+			break;
+		}
+
+		hr = D3DXCreateTextureFromFileEx(
+			m_d3ddev,       // Pointer to Direct3D device object
+			texturePath, // Path to the image to load
+			info.Width,  // Texture width
+			info.Height, // Texture height
+			1,
+			D3DUSAGE_DYNAMIC,
+			D3DFMT_UNKNOWN,
+			D3DPOOL_DEFAULT,
+			D3DX_DEFAULT,
+			D3DX_DEFAULT,
+			D3DCOLOR_XRGB(255, 255, 255), // Transparent color
+			&info,
+			nullptr,
+			&m_texture // Created texture pointer
+			
+		);
+		
+
+		if (hr != S_OK)
+		{
+			OutputDebugString("[ERROR] CreateTextureFromFile failed\n");
+			break;
+		}
+	} while (false);
+
+	return m_texture;
+}
+
 CDirect3DCore_Internal* CDirect3DCore_Internal::Instantiate(HWND hWnd, bool fullscreen)
 {
 	if (!__instance)
@@ -193,4 +244,9 @@ IDirect3DCore * IDirect3DCore::Instantiate(HWND hWnd, bool fullscreen)
 void IDirect3DCore::Release()
 {
 	CDirect3DCore_Internal::Release();
+}
+
+IDirect3DCore * Framework::Base::IDirect3DCore::GetInstance()
+{
+	return CDirect3DCore_Internal::GetInstance();
 }

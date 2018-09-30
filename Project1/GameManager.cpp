@@ -102,6 +102,9 @@ public:
 					OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
 					break;
 				}
+				LPCSTR path = "mario.png";
+				LPDIRECT3DTEXTURE9 texture9 = m_pDirect3DCore->CreateTexture(path);
+				m_pDirect3DCore->Draw(1, 1, texture9);
 			}
 			else
 				Sleep(tickPerFrame - dt);
