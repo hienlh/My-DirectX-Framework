@@ -13,22 +13,14 @@ private:
 
 	// Properties
 private:
-	Framework::Base::IWindow* m_pWindow;
-	Framework::Base::IDirect3DCore* m_pDirect3DCore;
+	Framework::Base::IWindow* m_pWindow = nullptr;
+	Framework::Base::IDirect3DCore* m_pDirect3DCore = nullptr;
 
 	// Cons/Des
 public:
-	CGameManager_Internal()
-	{
-		m_pDirect3DCore = nullptr;
-		m_pWindow = nullptr;
-	}
-
-	~CGameManager_Internal()
-	{
-		Framework::Base::IDirect3DCore::Release();
-	}
-
+	CGameManager_Internal() = default;
+	~CGameManager_Internal() = default;
+	
 	// Getters / Setters
 public:
 
@@ -40,7 +32,9 @@ public:
 		do
 		{
 			// Init Window
-			m_pWindow = Framework::Base::IWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
+			Framework::Base::IWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
+			m_pWindow = Framework::Base::IWindow::GetInstance();
+			
 			if (!m_pWindow)
 			{
 				OutputDebugStringA("[Error] IWindow::Instantiate failed\n");
@@ -49,7 +43,9 @@ public:
 			HWND hWnd = m_pWindow->Get_WindowHandle();
 
 			// Init Direct3DCore
-			m_pDirect3DCore = Framework::Base::IDirect3DCore::Instantiate(hWnd, fullscreen);
+			Framework::Base::IDirect3DCore::Instantiate(hWnd, fullscreen);
+			m_pDirect3DCore = Framework::Base::IDirect3DCore::GetInstance();
+
 			if (!m_pDirect3DCore)
 			{
 				OutputDebugStringA("[Error] IDirect3DCore::Instantiate failed\n");
@@ -62,9 +58,18 @@ public:
 		return true;
 	}
 
-	static CGameManager_Internal* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
-	static void Destroy();
+	void Destroy()
+	{
+		Framework::Base::IWindow::Release();
+		Framework::Base::IDirect3DCore::Release();
+	}
 
+	// Static methods
+public:
+	static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+	static void Release();
+	static CGameManager_Internal* GetInstance();
+	
 	bool Run() override
 	{
 		DWORD frameStart = GetTickCount();
@@ -109,14 +114,14 @@ public:
 
 		return true;
 	}
-
-	// Internal methods
-private:
 };
+
 
 CGameManager_Internal* CGameManager_Internal::__instance = nullptr;
 
-CGameManager_Internal * CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+// Game Manager Class Implementation
+
+void CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	if (!__instance)
 	{
@@ -125,21 +130,31 @@ CGameManager_Internal * CGameManager_Internal::Instantiate(HINSTANCE hInstance, 
 		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
 			SAFE_DELETE(__instance);
 	}
-
-	return __instance;
 }
 
-void CGameManager_Internal::Destroy()
+void CGameManager_Internal::Release()
 {
 	SAFE_DELETE(__instance);
 }
 
-IGameManager* IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+CGameManager_Internal* CGameManager_Internal::GetInstance()
+{
+	return __instance;
+}
+
+// Game Manager Interface Implementation
+
+void IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	return CGameManager_Internal::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
 }
 
-void Framework::GameManager::IGameManager::Destroy()
+void Framework::GameManager::IGameManager::Release()
 {
-	CGameManager_Internal::Destroy();
+	CGameManager_Internal::Release();
+}
+
+IGameManager* IGameManager::GetInstance()
+{
+	return CGameManager_Internal::GetInstance();
 }

@@ -19,13 +19,14 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	auto* pGameManager = Framework::GameManager::IGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
+	Framework::GameManager::IGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
+	auto* pGameManager = Framework::GameManager::IGameManager::GetInstance();
 	do
 	{
 		pGameManager->Run();
 
 	} while (false);
-	pGameManager->Destroy();
+	Framework::GameManager::IGameManager::Release();
 
 	return 0;
 }

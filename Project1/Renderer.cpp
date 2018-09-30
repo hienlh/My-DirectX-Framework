@@ -53,17 +53,17 @@ void CRenderer::Destroy()
 
 CRenderer* CRenderer::Instantiate(LPDIRECT3DDEVICE9 d3ddev, LPCSTR texturePath)
 {
-	CRenderer* pRenderer = nullptr;
-	SAFE_ALLOC(pRenderer, CRenderer);
+	CRenderer* instance = nullptr;
+	SAFE_ALLOC(instance, CRenderer);
 
-	if (!pRenderer->Init(d3ddev, texturePath))
-		SAFE_DELETE(pRenderer);
+	if (!instance->Init(d3ddev, texturePath))
+		SAFE_DELETE(instance);
 
-	return pRenderer;
+	return instance;
 }
 
-void CRenderer::Release(CRenderer* pObject)
+void CRenderer::Release(CRenderer* &instance)
 {
-	pObject->Destroy();
-	SAFE_DELETE(pObject);
+	instance->Destroy();
+	SAFE_DELETE(instance);
 }

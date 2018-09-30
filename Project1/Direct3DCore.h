@@ -11,7 +11,7 @@ namespace Framework
 			// Cons / Des
 		public:
 			IDirect3DCore() = default;
-			~IDirect3DCore() = default;
+			virtual ~IDirect3DCore() = default;
 
 			// Getter / Setters
 		public:
@@ -27,8 +27,9 @@ namespace Framework
 
 			// Pattern
 		public:
-			static IDirect3DCore* Instantiate(HWND HWnd, bool fullscreen);
+			static void Instantiate(HWND HWnd, bool fullscreen);
 			static void Release();
+			static IDirect3DCore* GetInstance();
 		};
 	}
 }

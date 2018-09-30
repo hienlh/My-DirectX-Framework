@@ -2,54 +2,47 @@
 #include <functional>
 #include <unordered_map>
 #include "Renderer.h"
+#include "GameObject.h"
 
 using namespace Framework::Component;
 
-// Create new instance
-CComponent* CComponent::Instantiate(const SBuilder &builder)
+void Framework::Object::CComponent::Update()
 {
-	CComponent* pComponent = nullptr;
-	
+}
+
+// Create new instance
+Framework::Object::CComponent* Framework::Object::CComponent::Instantiate(const SBuilder &builder)
+{
 	// Use map instead of switch case
-	std::unordered_map<EComponentType, std::function<void()>> callback = {
+	std::unordered_map<EBuilderType, std::function<CComponent*()>> callback = {
 		{
-			EComponentType::UNKNOWN,
+			EBuilderType::RENDERER,
 			[&]()
 			{
-				pComponent = nullptr;
-			}
-		},
-		{
-			EComponentType::RENDERER,
-			[&]()
-			{
-				pComponent = CRenderer::Instantiate(builder.m_data.rendererBuilder.d3ddev,
-				                                    builder.m_data.rendererBuilder.texturePath);
-				pComponent->m_componentType = EComponentType::RENDERER;
+				return CRenderer::Instantiate(builder.m_data.rendererBuilder.d3ddev,
+															  builder.m_data.rendererBuilder.texturePath);
 			}
 		}
 	};
 
 	// Invoke the command corresponding to the builder
-	callback[builder.m_componentType]();
-
-	return pComponent;
+	return callback[builder.m_componentType]();
 }
 
 // Release instance
-void Framework::Component::CComponent::Release(CComponent * pObject)
+void Framework::Object::CComponent::Release(CComponent * &instance)
 {
 	// Use map instead of switch case
-	std::unordered_map<EComponentType, std::function<void()>> callback = {
+	std::unordered_map<EBuilderType, std::function<void()>> callback = {
 		{
-			EComponentType::RENDERER,
+			EBuilderType::RENDERER,
 			[&]()
 			{
-				CRenderer::Release(reinterpret_cast<CRenderer*>(pObject));
+				CRenderer::Release(reinterpret_cast<CRenderer*&>(instance));
 			}
 		}
 	};
 
 	// Invoke the command corresponding to the builder
-	callback[pObject->m_componentType]();
+	callback[instance->m_builderType]();
 }

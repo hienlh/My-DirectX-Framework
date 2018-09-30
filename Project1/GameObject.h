@@ -1,13 +1,14 @@
 #pragma once
 #include "Component.h"
 #include "Renderer.h"
+#include "Object.h"
 
 namespace Framework
 {
 	namespace Object
 	{
 		// Game Object Class
-		class CGameObject
+		class CGameObject : public CObject
 		{
 			// Properties
 		private:
@@ -20,23 +21,22 @@ namespace Framework
 
 			// Public methods
 		public:
-			bool AddComponent(Component::EComponentType componentType, Component::UBuilderData data);
-			bool RemoveComponent(Component::EComponentType componentType);
+			bool AddComponent(EBuilderType componentType, Object::UBuilderData data);
+			bool RemoveComponent(EBuilderType componentType);
 			
 			// Internal methods
 		private:
 			bool Init();
 			void Destroy();
 
+			// Override methods
+		public:
+			virtual void Update() override;
+
 			// Static methods
 		public:
-			static CGameObject* Instantiate();
-			static void Release(CGameObject * pObject);
-		};
-
-		class CMario : public CGameObject
-		{
-			
+			static CGameObject* Instantiate(const Object::SBuilder &builder);
+			static void Release(CGameObject* &instance);
 		};
 	}
 }
