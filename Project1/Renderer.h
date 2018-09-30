@@ -24,7 +24,7 @@ namespace Framework
 
 			// Static methods
 		public:
-			static CRenderer* Instantiate(LPDIRECT3DDEVICE9 d3ddev, LPCSTR texturePath);
+			static CRenderer* Instantiate(LPCSTR texturePath);
 			static void Release(CRenderer* pObject);
 		};
 	}

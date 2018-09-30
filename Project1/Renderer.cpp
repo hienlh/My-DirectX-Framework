@@ -17,7 +17,7 @@ void CRenderer::Destroy()
 		m_texture->Release();	
 }
 
-CRenderer* CRenderer::Instantiate(LPDIRECT3DDEVICE9 d3ddev, LPCSTR texturePath)
+CRenderer* CRenderer::Instantiate(LPCSTR texturePath)
 {
 	CRenderer* pRenderer = nullptr;
 	SAFE_ALLOC(pRenderer, CRenderer);

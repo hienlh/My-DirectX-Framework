@@ -23,8 +23,7 @@ CComponent* CComponent::Instantiate(const SBuilder &builder)
 			EComponentType::RENDERER,
 			[&]()
 			{
-				pComponent = CRenderer::Instantiate(builder.m_data.rendererBuilder.d3ddev,
-				                                    builder.m_data.rendererBuilder.texturePath);
+				pComponent = CRenderer::Instantiate(builder.m_data.rendererBuilder.texturePath);
 				pComponent->m_componentType = EComponentType::RENDERER;
 			}
 		}
