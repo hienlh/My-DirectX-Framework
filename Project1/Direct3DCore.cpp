@@ -45,6 +45,9 @@ public:
 				m_d3ddev->ColorFill(m_backbuffer, nullptr, D3DCOLOR_XRGB(0, 0, 0));
 
 				m_spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
+				LPCSTR path = "mario.png";
+				LPDIRECT3DTEXTURE9 texture9 = CreateTexture(path);
+				Draw(1, 1, texture9);+
 				//m_pPlayer->Render(m_pDirect3D);
 				m_spriteHandler->End();
 
