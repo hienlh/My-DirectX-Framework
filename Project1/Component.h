@@ -3,6 +3,7 @@
 #include <d3dx9.h>
 
 #include "Macros.h"
+#include "Header.h"
 
 namespace Framework
 {
@@ -19,16 +20,15 @@ namespace Framework
 		// Initialize parameters for Render Component
 		struct SRendererBuilder
 		{
-			LPDIRECT3DDEVICE9 d3ddev = nullptr;
 			LPCSTR texturePath = nullptr;
 		};
 
-		// Initialize parameters for Transform Component
+		// Initialize parameters for CTransform Component
 		struct STransformBuilder
 		{
-			D3DXVECTOR3 position = VECTOR3_ZERO;
-			D3DXVECTOR3 rotation = VECTOR3_ZERO;
-			D3DXVECTOR3 scale = VECTOR3_ZERO;
+			Vector3 position = VECTOR3_ZERO;
+			Vector3 rotation = VECTOR3_ZERO;
+			Vector3 scale = VECTOR3_ZERO;
 		};
 
 		union UBuilderData

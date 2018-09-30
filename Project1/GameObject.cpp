@@ -2,11 +2,12 @@
 #include <unordered_map>
 #include "Renderer.h"
 #include <functional>
+#include "GameManager.h"
 
 using namespace Framework::Object;
 
 bool CGameObject::AddComponent(Framework::Component::EComponentType componentType,
-                               Framework::Component::UBuilderData data)
+	Framework::Component::UBuilderData data)
 {
 	bool result = false;
 	// Use map instead of switch case
@@ -20,6 +21,18 @@ bool CGameObject::AddComponent(Framework::Component::EComponentType componentTyp
 					Component::SBuilder builder(componentType, data);
 					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(Component::CComponent::Instantiate(
 						builder));
+					result = true;
+				}
+			}
+		},
+		{
+			Component::EComponentType::TRANSFORM,
+			[&]()
+			{
+				if (!m_tranformComponent)
+				{
+					Component::SBuilder builder(componentType, data);
+					m_tranformComponent = reinterpret_cast<Component::CTransform*>(Component::CComponent::Instantiate(builder));
 					result = true;
 				}
 			}
@@ -71,6 +84,7 @@ CGameObject* CGameObject::Instantiate()
 {
 	CGameObject* pGameObject = nullptr;
 	SAFE_ALLOC(pGameObject, CGameObject);
+	GameManager::IGameManager::AddGameObject(pGameObject);
 
 	return pGameObject;
 }
@@ -81,8 +95,20 @@ void CGameObject::Release(CGameObject* pObject)
 	SAFE_DELETE(pObject);
 }
 
-//
-//void CGameObject::Render(CDirect3D *pDirect3D)
-//{
-//	pDirect3D->Draw(m_x, m_y, m_texture);
-//}
+void CGameObject::Update()
+{
+	if (m_rendererComponent)
+	{
+		m_rendererComponent->Update(m_tranformComponent->position);
+	}
+
+	if (m_tranformComponent)
+	{
+		m_tranformComponent->Update();
+	}
+}
+
+void CGameObject::Render()
+{
+	m_rendererComponent->Update(m_tranformComponent->position);
+}

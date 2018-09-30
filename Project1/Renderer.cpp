@@ -6,15 +6,14 @@ using namespace Framework::Component;
 
 bool CRenderer::Init(LPCSTR texturePath)
 {
-	bool result = false;
-	Base::IDirect3DCore::GetInstance()->CreateTexture(texturePath) != nullptr ? result =  true : result = false;
-	return result;
+	m_texture = Base::IDirect3DCore::GetInstance()->CreateTexture(texturePath);
+	return m_texture == nullptr ? false : true;
 }
 
 void CRenderer::Destroy()
 {
 	if (m_texture)
-		m_texture->Release();	
+		m_texture->Release();
 }
 
 CRenderer* CRenderer::Instantiate(LPCSTR texturePath)
@@ -32,4 +31,9 @@ void CRenderer::Release(CRenderer* pObject)
 {
 	pObject->Destroy();
 	SAFE_DELETE(pObject);
+}
+
+void CRenderer::Update(Vector3 position)
+{
+	Base::IDirect3DCore::GetInstance()->Draw(position.x, position.y, m_texture);
 }

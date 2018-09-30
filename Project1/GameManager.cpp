@@ -11,6 +11,8 @@ class CGameManager_Internal final : public IGameManager
 private:
 	static CGameManager_Internal* __instance;
 
+	static std::vector<Framework::Object::CGameObject*> lis_game_objects;
+
 	// Properties
 private:
 	Framework::Base::IWindow* m_pWindow;
@@ -55,7 +57,7 @@ public:
 				OutputDebugStringA("[Error] IDirect3DCore::Instantiate failed\n");
 				break;
 			}
-	
+
 			result = true;
 		} while (false);
 
@@ -64,12 +66,13 @@ public:
 
 	static CGameManager_Internal* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
 	static void Destroy();
+	static void AddGameObject(Framework::Object::CGameObject*);
 
 	bool Run() override
 	{
 		DWORD frameStart = GetTickCount();
 		DWORD tickPerFrame = 1000 / FRAME_RATE;
-		
+
 		MSG message = {};
 		bool done = false;
 		while (!done)
@@ -95,14 +98,30 @@ public:
 			{
 				frameStart = now;
 
+				for (auto lis_game_object : lis_game_objects)
+				{
+					lis_game_object->Update();
+					auto x = lis_game_object->GetTranform()->position.x;
+					auto y = lis_game_object->GetTranform()->position.y;
+					if (y <= 0 && x <= SCREEN_WIDTH / 2)
+						lis_game_object->GetTranform()->position.x += dt / 10;
+					else if (y < SCREEN_HEIGHT / 2 && x >= SCREEN_WIDTH / 2)
+					{
+						lis_game_object->GetTranform()->position.y += dt / 10;
+					}
+					else if (x > 0 && y >= SCREEN_HEIGHT / 2)
+						lis_game_object->GetTranform()->position.x -= dt / 10;
+					else
+						lis_game_object->GetTranform()->position.y -= dt / 10;
+				}
+
 				// process game loop
-				bool renderResult = m_pDirect3DCore->Render();
+				bool renderResult = m_pDirect3DCore->Render(lis_game_objects);
 				if (!renderResult)
 				{
 					OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
 					break;
 				}
-				
 			}
 			else
 				Sleep(tickPerFrame - dt);
@@ -117,12 +136,14 @@ private:
 
 CGameManager_Internal* CGameManager_Internal::__instance = nullptr;
 
+std::vector<Framework::Object::CGameObject*> CGameManager_Internal::lis_game_objects;
+
 CGameManager_Internal * CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	if (!__instance)
 	{
 		SAFE_ALLOC(__instance, CGameManager_Internal);
-	
+
 		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
 			SAFE_DELETE(__instance);
 	}
@@ -135,6 +156,11 @@ void CGameManager_Internal::Destroy()
 	SAFE_DELETE(__instance);
 }
 
+void CGameManager_Internal::AddGameObject(Framework::Object::CGameObject* game_object)
+{
+	lis_game_objects.push_back(game_object);
+}
+
 IGameManager* IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	return CGameManager_Internal::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
@@ -143,4 +169,9 @@ IGameManager* IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int s
 void Framework::GameManager::IGameManager::Destroy()
 {
 	CGameManager_Internal::Destroy();
+}
+
+void Framework::GameManager::IGameManager::AddGameObject(Object::CGameObject* game_object)
+{
+	CGameManager_Internal::AddGameObject(game_object);
 }

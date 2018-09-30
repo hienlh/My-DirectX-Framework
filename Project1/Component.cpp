@@ -2,6 +2,7 @@
 #include <functional>
 #include <unordered_map>
 #include "Renderer.h"
+#include "Transform.h"
 
 using namespace Framework::Component;
 
@@ -9,7 +10,7 @@ using namespace Framework::Component;
 CComponent* CComponent::Instantiate(const SBuilder &builder)
 {
 	CComponent* pComponent = nullptr;
-	
+
 	// Use map instead of switch case
 	std::unordered_map<EComponentType, std::function<void()>> callback = {
 		{
@@ -25,6 +26,16 @@ CComponent* CComponent::Instantiate(const SBuilder &builder)
 			{
 				pComponent = CRenderer::Instantiate(builder.m_data.rendererBuilder.texturePath);
 				pComponent->m_componentType = EComponentType::RENDERER;
+			}
+		},
+		{
+			EComponentType::TRANSFORM,
+			[&]()
+			{
+				pComponent = CTransform::Instantiate(builder.m_data.transformBuilder.position,
+													 builder.m_data.transformBuilder.rotation,
+													 builder.m_data.transformBuilder.scale);
+				pComponent->m_componentType = EComponentType::TRANSFORM;
 			}
 		}
 	};

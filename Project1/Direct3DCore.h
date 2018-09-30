@@ -1,5 +1,6 @@
 #pragma once
 #include "Header.h"
+#include "GameObject.h"
 
 namespace Framework
 {
@@ -7,7 +8,7 @@ namespace Framework
 	{
 		// Direct3D Core Interface
 		class IDirect3DCore
-		{		
+		{
 			// Cons / Des
 		public:
 			IDirect3DCore() = default;
@@ -21,7 +22,7 @@ namespace Framework
 
 			// Abstract methods
 		public:
-			virtual bool Render() = 0;
+			virtual bool Render(std::vector<Framework::Object::CGameObject*> list_game_objects) = 0;
 			virtual void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture) = 0;
 			virtual LPDIRECT3DTEXTURE9 CreateTexture(LPCSTR texturePath) = 0;
 

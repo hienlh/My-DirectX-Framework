@@ -10,7 +10,7 @@ namespace Framework
 		{
 			// Properties
 		private:
-			LPDIRECT3DTEXTURE9 m_texture = nullptr;
+			Texture m_texture = nullptr;
 
 			// Cons / Des
 		public:
@@ -26,6 +26,8 @@ namespace Framework
 		public:
 			static CRenderer* Instantiate(LPCSTR texturePath);
 			static void Release(CRenderer* pObject);
+
+			void Update(Vector3 position);
 		};
 	}
 }

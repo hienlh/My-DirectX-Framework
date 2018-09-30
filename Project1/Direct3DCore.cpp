@@ -1,5 +1,6 @@
 #include "Direct3DCore.h"
 #include "Macros.h"
+#include "GameObject.h"
 
 using namespace Framework::Base;
 
@@ -19,7 +20,7 @@ private:
 	// Cons / Des
 private:
 	CDirect3DCore_Internal() = default;
-	
+
 	~CDirect3DCore_Internal() = default;
 
 	// Getters / Setters
@@ -33,7 +34,7 @@ public:
 
 	// Override methods
 public:
-	bool Render() override
+	bool Render(std::vector<Framework::Object::CGameObject*> list_game_objects) override
 	{
 		bool result = false;
 		do
@@ -46,11 +47,11 @@ public:
 
 				m_spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 
-				LPCSTR path = "mario.png";
-				LPDIRECT3DTEXTURE9 texture9 = CreateTexture(path);
-				Draw(1, 1, texture9);
-				
-					//m_pPlayer->Render(m_pDirect3D);
+				for (auto list_game_object : list_game_objects)
+				{
+					list_game_object->Render();
+				}
+
 				m_spriteHandler->End();
 
 				// stop rendering
@@ -61,8 +62,7 @@ public:
 			m_d3ddev->Present(nullptr, nullptr, nullptr, nullptr);
 
 			result = true;
-		}
-		while (false);
+		} while (false);
 
 		return result;
 	}
@@ -107,11 +107,11 @@ private:
 
 			// create Direct3D device
 			m_d3d->CreateDevice(D3DADAPTER_DEFAULT,
-			                    D3DDEVTYPE_HAL,
-			                    hWind,
-			                    D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-			                    &d3dpp,
-			                    &m_d3ddev);
+				D3DDEVTYPE_HAL,
+				hWind,
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+				&d3dpp,
+				&m_d3ddev);
 
 			if (!m_d3ddev)
 			{
@@ -139,8 +139,7 @@ private:
 			}
 
 			result = true;
-		}
-		while (false);
+		} while (false);
 
 		return result;
 	}
@@ -177,7 +176,7 @@ CDirect3DCore_Internal* CDirect3DCore_Internal::GetInstance()
 LPDIRECT3DTEXTURE9 CDirect3DCore_Internal::CreateTexture(LPCSTR texturePath)
 {
 
-	LPDIRECT3DTEXTURE9 m_texture=nullptr;
+	LPDIRECT3DTEXTURE9 m_texture = nullptr;
 	do
 	{
 		D3DXIMAGE_INFO info;
@@ -203,9 +202,9 @@ LPDIRECT3DTEXTURE9 CDirect3DCore_Internal::CreateTexture(LPCSTR texturePath)
 			&info,
 			nullptr,
 			&m_texture // Created texture pointer
-			
+
 		);
-		
+
 
 		if (hr != S_OK)
 		{

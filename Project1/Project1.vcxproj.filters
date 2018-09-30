@@ -54,6 +54,9 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -78,6 +81,9 @@
       <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
   </ItemGroup>
