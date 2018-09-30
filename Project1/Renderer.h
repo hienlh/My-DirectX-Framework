@@ -19,7 +19,7 @@ namespace Framework
 
 			// Internal methods
 		private:
-			bool Init(LPDIRECT3DDEVICE9 d3ddev, LPCSTR texturePath);
+			bool Init(LPCSTR texturePath);
 			void Destroy();
 
 			// Static methods
