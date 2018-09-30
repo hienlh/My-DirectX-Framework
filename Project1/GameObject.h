@@ -1,27 +1,42 @@
 #pragma once
-#include "Header.h"
-#include "Direct3D.h"
+#include "Component.h"
+#include "Renderer.h"
 
-class CGameObject 
+namespace Framework
 {
-protected:
-	float m_x, m_y;
-	LPDIRECT3DTEXTURE9 m_texture;
-
-public:
-	CGameObject()
+	namespace Object
 	{
-		m_x = m_y = 0;
-		m_texture = nullptr;
-	}
-	~CGameObject()
-	{
-		m_texture->Release();
-	}
+		// Game Object Class
+		class CGameObject
+		{
+			// Properties
+		private:
+			Component::CRenderer* m_rendererComponent = nullptr;
 
-public:
-	bool Set_Texture(LPDIRECT3DDEVICE9 d3ddv, LPCSTR texturePath);
-	void Set_Position(float x, float y);
+			// Cons / Des
+		public:
+			CGameObject() = default;
+			~CGameObject() = default;
 
-	void Render(CDirect3D *pDirect3D);
-};
+			// Public methods
+		public:
+			bool AddComponent(Component::EComponentType componentType, Component::UBuilderData data);
+			bool RemoveComponent(Component::EComponentType componentType);
+			
+			// Internal methods
+		private:
+			bool Init();
+			void Destroy();
+
+			// Static methods
+		public:
+			static CGameObject* Instantiate();
+			static void Release(CGameObject * pObject);
+		};
+
+		class CMario : public CGameObject
+		{
+			
+		};
+	}
+}

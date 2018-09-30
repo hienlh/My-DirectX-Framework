@@ -1,55 +1,88 @@
 #include "GameObject.h"
+#include <unordered_map>
+#include "Renderer.h"
+#include <functional>
 
-bool CGameObject::Set_Texture(LPDIRECT3DDEVICE9 d3ddv, LPCSTR texturePath)
+using namespace Framework::Object;
+
+bool CGameObject::AddComponent(Framework::Component::EComponentType componentType,
+                               Framework::Component::UBuilderData data)
 {
 	bool result = false;
-	do
-	{
-		D3DXIMAGE_INFO info;
-		HRESULT hr = D3DXGetImageInfoFromFile(texturePath, &info);
-		if (hr != S_OK)
+	// Use map instead of switch case
+	std::unordered_map<Component::EComponentType, std::function<void()>> callback = {
 		{
-			OutputDebugString("[ERROR] D3DXGetImageInfoFromFile failed\n");
-			break;
+			Component::EComponentType::RENDERER,
+			[&]()
+			{
+				if (!m_rendererComponent)
+				{
+					Component::SBuilder builder(componentType, data);
+					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(Component::CComponent::Instantiate(
+						builder));
+					result = true;
+				}
+			}
 		}
+	};
 
-		hr = D3DXCreateTextureFromFileEx(
-			d3ddv,       // Pointer to Direct3D device object
-			texturePath, // Path to the image to load
-			info.Width,  // Texture width
-			info.Height, // Texture height
-			1,
-			D3DUSAGE_DYNAMIC,
-			D3DFMT_UNKNOWN,
-			D3DPOOL_DEFAULT,
-			D3DX_DEFAULT,
-			D3DX_DEFAULT,
-			D3DCOLOR_XRGB(255, 255, 255), // Transparent color
-			&info,
-			nullptr,
-			&m_texture // Created texture pointer
-		);
-
-		if (hr != S_OK)
-		{
-			OutputDebugString("[ERROR] CreateTextureFromFile failed\n");
-			break;
-		}
-
-		result = true;
-	}
-	while (false);
+	// Invoke the command corresponding to the builder
+	callback[componentType]();
 
 	return result;
 }
 
-void CGameObject::Set_Position(float x, float y)
+bool CGameObject::RemoveComponent(Framework::Component::EComponentType componentType)
 {
-	m_x = x;
-	m_y = y;
+	bool result = false;
+	// Use map instead of switch case
+	std::unordered_map<Component::EComponentType, std::function<void()>> callback = {
+		{
+			Component::EComponentType::RENDERER,
+			[&]()
+			{
+				if (!m_rendererComponent)
+				{
+					Component::CRenderer::Release(m_rendererComponent);
+				}
+			}
+		}
+	};
+
+	// Invoke the command corresponding to the builder
+	callback[componentType]();
+
+	return result;
 }
 
-void CGameObject::Render(CDirect3D *pDirect3D)
+bool CGameObject::Init()
 {
-	pDirect3D->Draw(m_x, m_y, m_texture);
+	m_rendererComponent = nullptr;
+	return true;
 }
+
+void CGameObject::Destroy()
+{
+	if (m_rendererComponent)
+		Component::CRenderer::Release(m_rendererComponent);
+}
+
+CGameObject* CGameObject::Instantiate()
+{
+	CGameObject* pGameObject = nullptr;
+	SAFE_ALLOC(pGameObject, CGameObject);
+
+	return pGameObject;
+}
+
+void CGameObject::Release(CGameObject* pObject)
+{
+	pObject->Destroy();
+	SAFE_DELETE(pObject);
+}
+
+//
+//void CGameObject::Render(CDirect3D *pDirect3D)
+//{
+//	pDirect3D->Draw(m_x, m_y, m_texture);
+//}

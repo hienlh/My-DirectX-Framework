@@ -1,86 +1,36 @@
 #include "Direct3DCore.h"
+#include "Macros.h"
 
-using namespace Framework::Direct3DCore;
-
+using namespace Framework::Base;
 
 // Internal Direct3D Core Class
 class CDirect3DCore_Internal final : public IDirect3DCore
 {
+private:
+	static CDirect3DCore_Internal* __instance;
+
 	// Properties
 private:
-	HWND m_hWnd;
+	LPDIRECT3D9 m_d3d = nullptr;
+	LPDIRECT3DDEVICE9 m_d3ddev = nullptr;
+	LPDIRECT3DSURFACE9 m_backbuffer = nullptr;
+	LPD3DXSPRITE m_spriteHandler = nullptr;
 
-	LPDIRECT3D9 m_d3d;
-	LPDIRECT3DDEVICE9 m_d3ddev;
-	LPDIRECT3DSURFACE9 m_backbuffer;
-	LPD3DXSPRITE m_spriteHandler;
+	// Cons / Des
+private:
+	CDirect3DCore_Internal() = default;
+	
+	~CDirect3DCore_Internal() = default;
 
-	// Cons/Des
+	// Getters / Setters
 public:
-	CDirect3DCore_Internal()
-	{
-		m_hWnd = {};
-		m_d3d = nullptr;
-		m_d3ddev = nullptr;
-		m_backbuffer = nullptr;
-		m_spriteHandler = nullptr;
-	}
-
-	~CDirect3DCore_Internal()
-	{
-		if (m_d3d)
-			m_d3d->Release();
-
-		if (m_d3ddev)
-			m_d3ddev->Release();
-
-		if (m_backbuffer)
-			m_backbuffer->Release();
-
-		if (m_spriteHandler)
-			m_spriteHandler->Release();
-	}
-
-	// Getters
-public:
-	LPDIRECT3D9 Get_Direct3D() const { return this->m_d3d; }
-	LPDIRECT3DDEVICE9 Get_Direct3DDevice() const { return this->m_d3ddev; }
-	LPDIRECT3DSURFACE9 Get_BackBuffer() const { return this->m_backbuffer; }
-	LPD3DXSPRITE Get_SpriteHandler() const { return m_spriteHandler; }
+	LPDIRECT3D9 Get_Direct3D() override { return this->m_d3d; }
+	LPDIRECT3DDEVICE9 Get_Direct3DDevice() override { return this->m_d3ddev; }
+	LPDIRECT3DSURFACE9 Get_BackBuffer() override { return this->m_backbuffer; }
+	LPD3DXSPRITE Get_SpriteHandler() override { return m_spriteHandler; }
 
 	// Override methods
 public:
-	bool Init(HINSTANCE hInstance, int nShowCmd,
-	                 int screenWidth, int screenHeight,
-	                 bool fullscreen) override
-	{
-		bool result = false;
-		do
-		{
-			if (!WindowInit(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
-			{
-				OutputDebugStringA("[ERROR] WindowInit failed\n");
-				break;
-			}
-
-			if (!Direct3DInit(fullscreen))
-			{
-				OutputDebugStringA("[ERROR] Direct3DInit failed\n");
-				break;
-			}
-
-			result = true;
-		}
-		while (false);
-
-		return result;
-	}
-
-	void Destroy() override
-	{
-		SAFE_DELETE(__instance);
-	}
-
 	bool Render() override
 	{
 		bool result = false;
@@ -104,75 +54,20 @@ public:
 			m_d3ddev->Present(nullptr, nullptr, nullptr, nullptr);
 
 			result = true;
-		} while (false);
-
-		return result;
-	}
-
-	// Internal methods
-private:
-	bool WindowInit(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
-	{
-		bool result = false;
-		do
-		{
-			// create window class structure
-			WNDCLASSEX wc;
-			wc.cbSize = sizeof(WNDCLASSEX);
-
-			wc.style = CS_HREDRAW | CS_VREDRAW;
-			wc.hInstance = hInstance;
-			wc.lpfnWndProc = static_cast<WNDPROC>(WinProc);
-			wc.cbClsExtra = 0;
-			wc.cbWndExtra = 0;
-			wc.hIcon = nullptr;
-			wc.hCursor = LoadCursorA(nullptr, IDC_ARROW);
-			wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-			wc.lpszMenuName = nullptr;
-			wc.lpszClassName = APP_TITLE;
-			wc.hIconSm = nullptr;
-
-			// register window class
-			ATOM registerResult = RegisterClassExA(&wc);
-			if (!registerResult)
-			{
-				OutputDebugStringA("[Error] RegisterClassExA failed\n");
-				break;
-			}
-
-			// create window
-			DWORD dwWindowStyle = (fullscreen
-				                       ? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP
-				                       : WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
-
-			m_hWnd = CreateWindowA(
-				APP_TITLE, APP_TITLE,         // window class | title bar
-				dwWindowStyle,                // window style
-				CW_USEDEFAULT, CW_USEDEFAULT, // x, y position of window
-				screenWidth, screenHeight,    // width, height of the window
-				NULL, NULL,                   // parent window | menu
-				hInstance,                    // application instance
-				NULL                          // window parameters
-			);
-
-			if (!m_hWnd)
-			{
-				OutputDebugStringA("[Error] CreateWindowA failed\n");
-				break;
-			}
-
-			// show window
-			ShowWindow(m_hWnd, nShowCmd);
-			UpdateWindow(m_hWnd);
-
-			result = true;
 		}
 		while (false);
 
 		return result;
 	}
+	void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture)
+	{
+		D3DXVECTOR3 position(x, y, 0);
+		m_spriteHandler->Draw(texture, nullptr, nullptr, &position, D3DCOLOR_XRGB(255, 255, 255));
+	}
 
-	bool Direct3DInit(bool fullscreen)
+	// Internal methods
+private:
+	bool Init(HWND hWind, bool fullscreen)
 	{
 		bool result = false;
 		do
@@ -196,23 +91,23 @@ private:
 			d3dpp.BackBufferCount = 1;
 
 			RECT rect;
-			GetClientRect(m_hWnd, &rect); // retrieve Window width & height 
+			GetClientRect(hWind, &rect); // retrieve Window width & height 
 
 			d3dpp.BackBufferWidth = rect.right + 1;
 			d3dpp.BackBufferHeight = rect.bottom + 1;
-			d3dpp.hDeviceWindow = m_hWnd;
+			d3dpp.hDeviceWindow = hWind;
 
 			// create Direct3D device
 			m_d3d->CreateDevice(D3DADAPTER_DEFAULT,
 			                    D3DDEVTYPE_HAL,
-			                    m_hWnd,
+			                    hWind,
 			                    D3DCREATE_SOFTWARE_VERTEXPROCESSING,
 			                    &d3dpp,
 			                    &m_d3ddev);
 
 			if (!m_d3ddev)
 			{
-				OutputDebugStringA("[Error] CreateDevice failed\n");
+				OutputDebugString("[Error] CreateDevice failed\n");
 				break;
 			}
 
@@ -223,7 +118,7 @@ private:
 			m_d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_backbuffer);
 			if (!m_backbuffer)
 			{
-				OutputDebugStringA("[ERROR] GetBackBuffer failed\n");
+				OutputDebugString("[ERROR] GetBackBuffer failed\n");
 				break;
 			}
 
@@ -231,7 +126,7 @@ private:
 			D3DXCreateSprite(m_d3ddev, &m_spriteHandler);
 			if (!m_spriteHandler)
 			{
-				OutputDebugStringA("[ERROR] D3DXCreateSprite failed\n");
+				OutputDebugString("[ERROR] D3DXCreateSprite failed\n");
 				break;
 			}
 
@@ -241,19 +136,61 @@ private:
 
 		return result;
 	}
-
-	void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture)
+	void Destroy()
 	{
-		D3DXVECTOR3 position(x, y, 0);
-		m_spriteHandler->Draw(texture, nullptr, nullptr, &position, D3DCOLOR_XRGB(255, 255, 255));
+		if (m_d3d)
+			m_d3d->Release();
+
+		if (m_d3ddev)
+			m_d3ddev->Release();
+
+		if (m_backbuffer)
+			m_backbuffer->Release();
+
+		if (m_spriteHandler)
+			m_spriteHandler->Release();
 	}
+
+	// Static methods
+public:
+	static CDirect3DCore_Internal* Instantiate(HWND hWnd, bool fullscreen);
+	static void Release();
 };
 
-// Direct3D Core Initialization
-IDirect3DCore* IDirect3DCore::__instance = nullptr;
+// Direct Core Internal implementation
 
-IDirect3DCore* IDirect3DCore::GetInstance()
+CDirect3DCore_Internal* CDirect3DCore_Internal::__instance = nullptr;
+
+CDirect3DCore_Internal* CDirect3DCore_Internal::Instantiate(HWND hWnd, bool fullscreen)
 {
-	SAFE_ALLOC(__instance, CDirect3DCore_Internal);
+	if (!__instance)
+	{
+		SAFE_ALLOC(__instance, CDirect3DCore_Internal);
+
+		if (!__instance->Init(hWnd, fullscreen))
+		{
+			OutputDebugString("[Error] IDirect3DCore::Init failed\n");
+			SAFE_DELETE(__instance);
+		}
+	}
+
 	return __instance;
+}
+
+void CDirect3DCore_Internal::Release()
+{
+	__instance->Destroy();
+	SAFE_DELETE(__instance);
+}
+
+// Direct Core implementation
+
+IDirect3DCore * IDirect3DCore::Instantiate(HWND hWnd, bool fullscreen)
+{
+	return CDirect3DCore_Internal::Instantiate(hWnd, fullscreen);
+}
+
+void IDirect3DCore::Release()
+{
+	CDirect3DCore_Internal::Release();
 }

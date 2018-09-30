@@ -8,21 +8,17 @@ namespace Framework
 		// Game Manager Interface
 		class IGameManager
 		{
-		protected:
-			static IGameManager* __instance;
-
+			// Getters / Setters
 		public:
-			IGameManager() {};
-			virtual ~IGameManager() {};
-
+			
+			// Abstract methods
 		public:
-			static IGameManager* GetInstance();
-
-			virtual bool Init(HINSTANCE hInstance, int nShowCmd,
-			                  int screenWidth, int screenHeight,
-			                  bool fullscreen) = 0;
-			virtual void Destroy() = 0;
 			virtual bool Run() = 0;
+			
+			// Instantiate method
+		public:
+			static IGameManager* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+			static void Destroy();
 		};
 	}
 }

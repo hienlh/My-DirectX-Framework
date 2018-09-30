@@ -1,3 +1,4 @@
+#include "Macros.h"
 #include "Header.h"
 #include "GameManager.h"
 
@@ -18,17 +19,13 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	WPARAM returnValue = 0;
+	auto* pGameManager = Framework::GameManager::IGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 	do
 	{
-		auto *pGameManager = Framework::GameManager::IGameManager::GetInstance();
-		pGameManager->Init(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
-
 		pGameManager->Run();
 
-		pGameManager->Destroy();
-	}
-	while (false);
+	} while (false);
+	pGameManager->Destroy();
 
-	return returnValue;
+	return 0;
 }
