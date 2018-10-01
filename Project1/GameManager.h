@@ -1,5 +1,6 @@
 #pragma once
 #include "Header.h"
+#include "GameObject.h"
 
 namespace Framework
 {
@@ -10,16 +11,18 @@ namespace Framework
 		{
 			// Getters / Setters
 		public:
-			
+
 			// Abstract methods
 		public:
 			virtual bool Run() = 0;
-			
+
 			// Instantiate method
 		public:
 			static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
 			static void Release();
 			static IGameManager* GetInstance();
+
+			static void AddGameObject(Object::CGameObject*);
 		};
 	}
 }

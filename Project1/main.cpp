@@ -1,6 +1,7 @@
 #include "Macros.h"
 #include "Header.h"
 #include "GameManager.h"
+#include "GameObject.h"
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -23,6 +24,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	auto* pGameManager = Framework::GameManager::IGameManager::GetInstance();
 	do
 	{
+		auto* mario = Framework::Object::CGameObject::Instantiate();
+		mario->AddComponent(Framework::Component::EComponentType::RENDERER, { "mario.png" });
+
+		Framework::Component::UBuilderData builder = { 0 };
+		builder.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
+		mario->AddComponent(Framework::Component::EComponentType::TRANSFORM, builder);
 		pGameManager->Run();
 
 	} while (false);

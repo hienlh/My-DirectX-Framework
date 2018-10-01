@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "Renderer.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 using namespace Framework::Component;
 
@@ -21,6 +22,16 @@ Framework::Object::CComponent* Framework::Object::CComponent::Instantiate(const 
 			{
 				return CRenderer::Instantiate(builder.m_data.rendererBuilder.d3ddev,
 															  builder.m_data.rendererBuilder.texturePath);
+			}
+		},
+		{
+			EComponentType::TRANSFORM,
+			[&]()
+			{
+				pComponent = CTransform::Instantiate(builder.m_data.transformBuilder.position,
+													 builder.m_data.transformBuilder.rotation,
+													 builder.m_data.transformBuilder.scale);
+				pComponent->m_componentType = EComponentType::TRANSFORM;
 			}
 		}
 	};

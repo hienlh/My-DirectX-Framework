@@ -11,7 +11,7 @@
 #define TANK_PATH "E:\\workspace\\My-DirectX-Framework\\Resources\\tank.png"
 #define FULL_SCREEN false
 
-#define FRAME_RATE 30
+#define FRAME_RATE 60
 
 #define SAFE_DELETE(p) if (p) { delete p; p = nullptr; }
 #define SAFE_ALLOC(p, object_type) if (!p) { p = new object_type(); }

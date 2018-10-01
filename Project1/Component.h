@@ -3,6 +3,7 @@
 #include <d3dx9.h>
 
 #include "Macros.h"
+#include "Header.h"
 #include "Object.h"
 
 namespace Framework

@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Renderer.h"
 #include "Object.h"
+#include "Transform.h"
 
 namespace Framework
 {
@@ -13,6 +14,7 @@ namespace Framework
 			// Properties
 		private:
 			Component::CRenderer* m_rendererComponent = nullptr;
+			Component::CTransform* m_tranformComponent = nullptr;
 
 			// Cons / Des
 		public:
@@ -21,9 +23,10 @@ namespace Framework
 
 			// Public methods
 		public:
-			bool AddComponent(EBuilderType componentType, Object::UBuilderData data);
-			bool RemoveComponent(EBuilderType componentType);
-			
+			bool AddComponent(Component::EComponentType componentType, Component::UBuilderData data);
+			Component::CTransform* GetTranform() { return m_tranformComponent; }
+			bool RemoveComponent(Component::EComponentType componentType);
+
 			// Internal methods
 		private:
 			bool Init();
@@ -37,6 +40,9 @@ namespace Framework
 		public:
 			static CGameObject* Instantiate(const Object::SBuilder &builder);
 			static void Release(CGameObject* &instance);
+
+			void Update();
+			void Render();
 		};
 	}
 }

@@ -10,7 +10,7 @@ namespace Framework
 		{
 			// Properties
 		private:
-			LPDIRECT3DTEXTURE9 m_texture = nullptr;
+			Texture m_texture = nullptr;
 
 			// Cons / Des
 		public:
@@ -19,13 +19,15 @@ namespace Framework
 
 			// Internal methods
 		private:
-			bool Init(LPDIRECT3DDEVICE9 d3ddev, LPCSTR texturePath);
+			bool Init(LPCSTR texturePath);
 			void Destroy();
 
 			// Static methods
 		public:
-			static CRenderer* Instantiate(LPDIRECT3DDEVICE9 d3ddev, LPCSTR texturePath);
+			static CRenderer* Instantiate(LPCSTR texturePath);
 			static void Release(CRenderer* &pObject);
+
+			void Update(Vector3 position);
 		};
 	}
 }
