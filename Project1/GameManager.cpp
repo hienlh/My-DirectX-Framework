@@ -141,7 +141,7 @@ CGameManager_Internal* CGameManager_Internal::__instance = nullptr;
 
 std::vector<Framework::Object::CGameObject*> CGameManager_Internal::lis_game_objects;
 
-CGameManager_Internal * CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+void CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	if (!__instance)
 	{
@@ -157,26 +157,31 @@ void CGameManager_Internal::Release()
 	SAFE_DELETE(__instance);
 }
 
+CGameManager_Internal* CGameManager_Internal::GetInstance()
+{
+	return __instance;
+}
+
 void CGameManager_Internal::AddGameObject(Framework::Object::CGameObject* game_object)
 {
 	lis_game_objects.push_back(game_object);
-}
-
-IGameManager* IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
-{
-	return __instance;
 }
 
 // Game Manager Interface Implementation
 
 void IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
-	return CGameManager_Internal::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
+	CGameManager_Internal::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
 }
 
 void Framework::GameManager::IGameManager::Release()
 {
-	CGameManager_Internal::Destroy();
+	CGameManager_Internal::Release();
+}
+
+IGameManager * Framework::GameManager::IGameManager::GetInstance()
+{
+	return CGameManager_Internal::GetInstance();
 }
 
 void Framework::GameManager::IGameManager::AddGameObject(Object::CGameObject* game_object)

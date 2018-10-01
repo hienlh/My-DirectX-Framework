@@ -9,7 +9,7 @@ using namespace Framework::Object;
 bool CGameObject::AddComponent(EBuilderType componentType,
                                UBuilderData data)
 {
-	SBuilder builder(componentType, data);
+	SBuilder builder = { componentType, data };
 
 	// Use map instead of switch case
 	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
@@ -27,15 +27,16 @@ bool CGameObject::AddComponent(EBuilderType componentType,
 			}
 		},
 		{
-			Component::EComponentType::TRANSFORM,
+			Object::EBuilderType::TRANSFORM,
 			[&]()
 			{
 				if (!m_tranformComponent)
 				{
-					Component::SBuilder builder(componentType, data);
-					m_tranformComponent = reinterpret_cast<Component::CTransform*>(Component::CComponent::Instantiate(builder));
-					result = true;
+					m_tranformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
+					return true;
 				}
+				else
+					return false;
 			}
 		}
 	};
@@ -79,12 +80,7 @@ void CGameObject::Destroy()
 		Component::CRenderer::Release(m_rendererComponent);
 }
 
-void CGameObject::Update()
-{
-	GameManager::IGameManager::AddGameObject(pGameObject);
-}
-
-CGameObject* CGameObject::Instantiate(const SBuilder& builder)
+CGameObject* CGameObject::Instantiate(SBuilder builder)
 {
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);

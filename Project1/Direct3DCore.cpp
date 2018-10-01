@@ -20,13 +20,10 @@ private:
 	// Cons / Des
 private:
 	CDirect3DCore_Internal() = default;
-
 	~CDirect3DCore_Internal() = default;
 
 	// Getters / Setters
 public:
-	static CDirect3DCore_Internal* GetInstance();
-
 	LPDIRECT3D9 Get_Direct3D() override { return this->m_d3d; }
 	LPDIRECT3DDEVICE9 Get_Direct3DDevice() override { return this->m_d3ddev; }
 	LPDIRECT3DSURFACE9 Get_BackBuffer() override { return this->m_backbuffer; }
@@ -162,6 +159,7 @@ private:
 public:
 	static void Instantiate(HWND hWnd, bool fullscreen);
 	static void Release();
+
 	static CDirect3DCore_Internal* GetInstance();
 };
 
@@ -217,7 +215,7 @@ LPDIRECT3DTEXTURE9 CDirect3DCore_Internal::CreateTexture(LPCSTR texturePath)
 	return m_texture;
 }
 
-CDirect3DCore_Internal* CDirect3DCore_Internal::Instantiate(HWND hWnd, bool fullscreen)
+void CDirect3DCore_Internal::Instantiate(HWND hWnd, bool fullscreen)
 {
 	if (!__instance)
 	{
@@ -235,11 +233,6 @@ void CDirect3DCore_Internal::Release()
 {
 	__instance->Destroy();
 	SAFE_DELETE(__instance);
-}
-
-CDirect3DCore_Internal* CDirect3DCore_Internal::GetInstance()
-{
-	return __instance;
 }
 
 // Direct Core implementation

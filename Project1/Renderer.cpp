@@ -21,8 +21,8 @@ CRenderer* CRenderer::Instantiate(LPCSTR texturePath)
 	CRenderer* instance = nullptr;
 	SAFE_ALLOC(instance, CRenderer);
 
-	if (!pRenderer->Init(texturePath))
-		SAFE_DELETE(pRenderer);
+	if (!instance->Init(texturePath))
+		SAFE_DELETE(instance);
 
 	return instance;
 }

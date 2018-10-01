@@ -48,7 +48,7 @@ namespace Framework
 			EBuilderType m_componentType = EBuilderType::UNKNOWN;
 			UBuilderData m_data;
 
-			SBuilder(EBuilderType componentType, UBuilderData data) : m_componentType(componentType), m_data(data) {}
+			//SBuilder(EBuilderType componentType, UBuilderData data) : m_componentType(componentType), m_data(data) {}
 		};
 
 		// Object class

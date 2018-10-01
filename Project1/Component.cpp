@@ -20,18 +20,17 @@ Framework::Object::CComponent* Framework::Object::CComponent::Instantiate(const 
 			EBuilderType::RENDERER,
 			[&]()
 			{
-				return CRenderer::Instantiate(builder.m_data.rendererBuilder.d3ddev,
-															  builder.m_data.rendererBuilder.texturePath);
+				return CRenderer::Instantiate(builder.m_data.rendererBuilder.texturePath);
 			}
 		},
 		{
-			EComponentType::TRANSFORM,
+			EBuilderType::TRANSFORM,
 			[&]()
 			{
-				pComponent = CTransform::Instantiate(builder.m_data.transformBuilder.position,
+				return CTransform::Instantiate(builder.m_data.transformBuilder.position,
 													 builder.m_data.transformBuilder.rotation,
 													 builder.m_data.transformBuilder.scale);
-				pComponent->m_componentType = EComponentType::TRANSFORM;
+				
 			}
 		}
 	};

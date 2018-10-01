@@ -23,9 +23,9 @@ namespace Framework
 
 			// Public methods
 		public:
-			bool AddComponent(Component::EComponentType componentType, Component::UBuilderData data);
+			bool AddComponent(Object::EBuilderType componentType, UBuilderData data);
 			Component::CTransform* GetTranform() { return m_tranformComponent; }
-			bool RemoveComponent(Component::EComponentType componentType);
+			bool RemoveComponent(Object::EBuilderType componentType);
 
 			// Internal methods
 		private:
@@ -38,10 +38,9 @@ namespace Framework
 
 			// Static methods
 		public:
-			static CGameObject* Instantiate(const Object::SBuilder &builder);
+			static CGameObject* Instantiate(Object::SBuilder builder);
 			static void Release(CGameObject* &instance);
 
-			void Update();
 			void Render();
 		};
 	}
