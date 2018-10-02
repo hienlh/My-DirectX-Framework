@@ -85,6 +85,8 @@ CGameObject* CGameObject::Instantiate(SBuilder builder)
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);
 
+	GameManager::IGameManager::AddGameObject(instance);
+
 	if (!instance->Init())
 		SAFE_DELETE(instance);
 
