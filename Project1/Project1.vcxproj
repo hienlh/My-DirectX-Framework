@@ -135,6 +135,7 @@
     <ClCompile Include="Direct3DCore.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="Macros.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Window.h" />

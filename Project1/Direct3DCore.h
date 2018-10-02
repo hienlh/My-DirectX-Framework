@@ -12,7 +12,8 @@ namespace Framework
 			// Cons / Des
 		public:
 			IDirect3DCore() = default;
-			~IDirect3DCore() = default;
+			virtual ~IDirect3DCore() = default;
+			
 			// Getter / Setters
 		public:
 			virtual LPDIRECT3D9 Get_Direct3D() = 0;
@@ -26,9 +27,9 @@ namespace Framework
 			virtual void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture) = 0;
 			virtual LPDIRECT3DTEXTURE9 CreateTexture(LPCSTR texturePath) = 0;
 
-			// Pattern
+			// Static methods
 		public:
-			static IDirect3DCore* Instantiate(HWND HWnd, bool fullscreen);
+			static void Instantiate(HWND HWnd, bool fullscreen);
 			static void Release();
 
 			static IDirect3DCore* GetInstance();

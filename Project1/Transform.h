@@ -5,7 +5,7 @@ namespace Framework
 {
 	namespace Component
 	{
-		class CTransform : public CComponent
+		class CTransform : public Object::CComponent
 		{
 		public:
 			Vector3 position;

@@ -6,7 +6,7 @@ namespace Framework
 {
 	namespace Component
 	{
-		class CRenderer final : public CComponent
+		class CRenderer final : public Object::CComponent
 		{
 			// Properties
 		private:
@@ -25,7 +25,7 @@ namespace Framework
 			// Static methods
 		public:
 			static CRenderer* Instantiate(LPCSTR texturePath);
-			static void Release(CRenderer* pObject);
+			static void Release(CRenderer* &pObject);
 
 			void Update(Vector3 position);
 		};

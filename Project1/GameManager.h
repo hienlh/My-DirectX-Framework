@@ -18,9 +18,9 @@ namespace Framework
 
 			// Instantiate method
 		public:
-			static IGameManager* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight,
-				bool fullscreen);
-			static void Destroy();
+			static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+			static void Release();
+			static IGameManager* GetInstance();
 
 			static void AddGameObject(Object::CGameObject*);
 		};

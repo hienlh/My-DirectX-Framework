@@ -6,66 +6,66 @@
 
 using namespace Framework::Object;
 
-bool CGameObject::AddComponent(Framework::Component::EComponentType componentType,
-	Framework::Component::UBuilderData data)
+bool CGameObject::AddComponent(EBuilderType componentType,
+                               UBuilderData data)
 {
-	bool result = false;
+	SBuilder builder = { componentType, data };
+
 	// Use map instead of switch case
-	std::unordered_map<Component::EComponentType, std::function<void()>> callback = {
+	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
 		{
-			Component::EComponentType::RENDERER,
+			EBuilderType::RENDERER,
 			[&]()
 			{
 				if (!m_rendererComponent)
 				{
-					Component::SBuilder builder(componentType, data);
-					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(Component::CComponent::Instantiate(
-						builder));
-					result = true;
+					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
+					return true;
 				}
+				else
+					return false;
 			}
 		},
 		{
-			Component::EComponentType::TRANSFORM,
+			Object::EBuilderType::TRANSFORM,
 			[&]()
 			{
 				if (!m_tranformComponent)
 				{
-					Component::SBuilder builder(componentType, data);
-					m_tranformComponent = reinterpret_cast<Component::CTransform*>(Component::CComponent::Instantiate(builder));
-					result = true;
+					m_tranformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
+					return true;
 				}
+				else
+					return false;
 			}
 		}
 	};
 
 	// Invoke the command corresponding to the builder
-	callback[componentType]();
-
-	return result;
+	return callback[componentType]();
 }
 
-bool CGameObject::RemoveComponent(Framework::Component::EComponentType componentType)
+bool CGameObject::RemoveComponent(EBuilderType componentType)
 {
-	bool result = false;
 	// Use map instead of switch case
-	std::unordered_map<Component::EComponentType, std::function<void()>> callback = {
+	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
 		{
-			Component::EComponentType::RENDERER,
+			EBuilderType::RENDERER,
 			[&]()
 			{
-				if (!m_rendererComponent)
+				if (m_rendererComponent)
 				{
-					Component::CRenderer::Release(m_rendererComponent);
+					CComponent::Release(reinterpret_cast<CComponent*&>(m_rendererComponent));
+					return true;
 				}
+				else
+					return false;
 			}
 		}
 	};
 
 	// Invoke the command corresponding to the builder
-	callback[componentType]();
-
-	return result;
+	return callback[componentType]();
 }
 
 bool CGameObject::Init()
@@ -80,21 +80,22 @@ void CGameObject::Destroy()
 		Component::CRenderer::Release(m_rendererComponent);
 }
 
-CGameObject* CGameObject::Instantiate()
+CGameObject* CGameObject::Instantiate(SBuilder builder)
 {
-	CGameObject* pGameObject = nullptr;
-	SAFE_ALLOC(pGameObject, CGameObject);
-	GameManager::IGameManager::AddGameObject(pGameObject);
+	CGameObject* instance = nullptr;
+	SAFE_ALLOC(instance, CGameObject);
 
-	return pGameObject;
+	if (!instance->Init())
+		SAFE_DELETE(instance);
+
+	return instance;
 }
 
-void CGameObject::Release(CGameObject* pObject)
+void CGameObject::Release(CGameObject*& instance)
 {
-	pObject->Destroy();
-	SAFE_DELETE(pObject);
+	instance->Destroy();
+	SAFE_DELETE(instance);
 }
-
 void CGameObject::Update()
 {
 	if (m_rendererComponent)

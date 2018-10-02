@@ -2,6 +2,7 @@
 #include "Header.h"
 #include "GameManager.h"
 #include "GameObject.h"
+#include "Direct3DCore.h"
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -20,19 +21,23 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	auto* pGameManager = Framework::GameManager::IGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
+	Framework::GameManager::IGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
+	auto* pGameManager = Framework::GameManager::IGameManager::GetInstance();
 	do
 	{
-		auto* mario = Framework::Object::CGameObject::Instantiate();
-		mario->AddComponent(Framework::Component::EComponentType::RENDERER, { "mario.png" });
+		Framework::Object::UBuilderData builderData = {{}};
+		auto* mario = Framework::Object::CGameObject::Instantiate({Framework::Object::EBuilderType::GAMEOBJECT,  builderData});
 
-		Framework::Component::UBuilderData builder = { 0 };
-		builder.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
-		mario->AddComponent(Framework::Component::EComponentType::TRANSFORM, builder);
+		builderData.rendererBuilder = { Framework::Base::IDirect3DCore::GetInstance()->Get_Direct3DDevice(), "mario.png" };
+		mario->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
+
+		builderData.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
+		mario->AddComponent(Framework::Object::EBuilderType::TRANSFORM, builderData);
+		
 		pGameManager->Run();
 
 	} while (false);
-	pGameManager->Destroy();
+	Framework::GameManager::IGameManager::Release();
 
 	return 0;
 }

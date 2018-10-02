@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Renderer.h"
+#include "Object.h"
 #include "Transform.h"
 
 namespace Framework
@@ -8,7 +9,7 @@ namespace Framework
 	namespace Object
 	{
 		// Game Object Class
-		class CGameObject
+		class CGameObject : public CObject
 		{
 			// Properties
 		private:
@@ -22,27 +23,25 @@ namespace Framework
 
 			// Public methods
 		public:
-			bool AddComponent(Component::EComponentType componentType, Component::UBuilderData data);
+			bool AddComponent(Object::EBuilderType componentType, UBuilderData data);
 			Component::CTransform* GetTranform() { return m_tranformComponent; }
-			bool RemoveComponent(Component::EComponentType componentType);
+			bool RemoveComponent(Object::EBuilderType componentType);
 
 			// Internal methods
 		private:
 			bool Init();
 			void Destroy();
 
+			// Override methods
+		public:
+			virtual void Update() override;
+
 			// Static methods
 		public:
-			static CGameObject* Instantiate();
-			static void Release(CGameObject * pObject);
+			static CGameObject* Instantiate(Object::SBuilder builder);
+			static void Release(CGameObject* &instance);
 
-			void Update();
 			void Render();
-		};
-
-		class CMario : public CGameObject
-		{
-
 		};
 	}
 }

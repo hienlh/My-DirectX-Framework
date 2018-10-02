@@ -10,8 +10,8 @@ namespace Framework
 		{
 			// Cons / Des
 		protected:
-			IWindow() {};
-			virtual ~IWindow() {};
+			IWindow() = default;
+			virtual ~IWindow() = default;
 
 			// Getters / Setters
 		public:
@@ -19,8 +19,9 @@ namespace Framework
 
 			// Pattern
 		public:
-			static IWindow* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
-			static void Destroy();
+			static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+			static void Release();
+			static IWindow* GetInstance();
 		};
 	}
 }
