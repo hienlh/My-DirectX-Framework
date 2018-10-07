@@ -1,7 +1,7 @@
 #include "Direct3DCore.h"
 #include "Macros.h"
 #include "GameObject.h"
-
+#include "Window.h"
 using namespace Framework::Base;
 
 // Internal Direct3D Core Class
@@ -70,6 +70,9 @@ public:
 	}
 	LPDIRECT3DTEXTURE9 CreateTexture(LPCSTR texturePath) override;
 
+	LPDIRECTINPUT8 CreateDirect();
+	LPDIRECTINPUTDEVICE8 CreateKeyboard(LPDIRECTINPUT8 dinput);
+	LPDIRECTINPUTDEVICE8 CreateMouse(LPDIRECTINPUT8 dinput);
 	// Internal methods
 private:
 	bool Init(HWND hWind, bool fullscreen)
@@ -213,6 +216,71 @@ LPDIRECT3DTEXTURE9 CDirect3DCore_Internal::CreateTexture(LPCSTR texturePath)
 	} while (false);
 
 	return m_texture;
+}
+
+LPDIRECTINPUT8 CDirect3DCore_Internal::CreateDirect()
+{
+	LPDIRECTINPUT8 m_dinput = nullptr;
+	HRESULT result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)m_dinput, NULL);
+	if (result != DI_OK)
+		return nullptr;
+
+	return m_dinput;
+}
+
+LPDIRECTINPUTDEVICE8 CDirect3DCore_Internal::CreateKeyboard(LPDIRECTINPUT8 dinput)
+{
+	HWND hwnd = IWindow::GetInstance()->Get_WindowHandle();
+	LPDIRECTINPUTDEVICE8 dikeyboard = nullptr;
+
+	do
+	{
+		HRESULT result = dinput->CreateDevice(GUID_SysKeyboard, &dikeyboard, NULL);
+		if (result != DI_OK)
+			break;
+
+		result = dikeyboard->SetDataFormat(&c_dfDIKeyboard);
+		if (result != DI_OK)
+			break;
+
+		result = dikeyboard->SetCooperativeLevel(hwnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+		if (result != DI_OK)
+			break;
+
+		result = dikeyboard->Acquire();
+		if (result != DI_OK)
+			break;
+
+	} while (false);
+	
+	return dikeyboard;
+}
+
+LPDIRECTINPUTDEVICE8 CDirect3DCore_Internal::CreateMouse(LPDIRECTINPUT8 dinput)
+{
+	HWND hwnd = IWindow::GetInstance()->Get_WindowHandle();
+	LPDIRECTINPUTDEVICE8 dimouse = nullptr;
+	do
+	{
+		HRESULT result = dinput->CreateDevice(GUID_SysMouse, &dimouse, NULL);
+		if (result != DI_OK)
+			break;
+
+		result = dimouse->SetDataFormat(&c_dfDIMouse);
+		if (result != DI_OK)
+			break;
+
+		result = dimouse->SetCooperativeLevel(hwnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+		if (result != DI_OK)
+			break;
+
+		result = dimouse->Acquire();
+		if (result != DI_OK)
+			break;
+
+	} while (false);
+
+	return dimouse;
 }
 
 void CDirect3DCore_Internal::Instantiate(HWND hWnd, bool fullscreen)
