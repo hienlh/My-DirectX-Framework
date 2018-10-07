@@ -221,12 +221,13 @@ LPDIRECT3DTEXTURE9 CDirect3DCore_Internal::CreateTexture(LPCSTR texturePath)
 
 LPDIRECTINPUT8 CDirect3DCore_Internal::CreateDirect()
 {
-	LPDIRECTINPUT8 m_dinput = nullptr;
-	HRESULT result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)m_dinput, NULL);
+	LPDIRECTINPUT8 dinput = nullptr;
+	HRESULT result = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, reinterpret_cast<LPVOID*>(&dinput), nullptr);
+	
 	if (result != DI_OK)
-		return nullptr;
+		dinput = nullptr;
 
-	return m_dinput;
+	return dinput;
 }
 
 LPDIRECTINPUTDEVICE8 CDirect3DCore_Internal::CreateKeyboard(LPDIRECTINPUT8 dinput)

@@ -2,6 +2,8 @@
 #include "Macros.h"
 #include "Window.h"
 #include "Direct3DCore.h"
+#include "Input.h"
+#include <string>
 
 using namespace Framework::GameManager;
 
@@ -118,6 +120,16 @@ public:
 						lis_game_object->GetTranform()->position.x -= dt / 10;
 					else
 						lis_game_object->GetTranform()->position.y -= dt / 10;
+				}
+
+				Framework::Base::CInput::GetInstance()->PollKeyboard();
+				for (unsigned short x = 0; x <= 256; x++)
+				{
+					if (Framework::Base::CInput::GetInstance()->KeyDown(x))
+					{						
+						std::string s = std::to_string(x);
+						MessageBoxA(nullptr, s.c_str(), "[INFO]", MB_OK);
+					}
 				}
 
 				// process game loop

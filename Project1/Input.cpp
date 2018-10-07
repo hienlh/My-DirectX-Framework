@@ -10,6 +10,27 @@ bool CInput::Init()
 	return m_dikeyboard && m_dinput && m_dimouse;
 }
 
+void CInput::Release()
+{
+}
+
+void Framework::Base::CInput::Instantiate()
+{
+	if (!__instance)
+	{
+		SAFE_ALLOC(__instance, CInput);
+		if (!__instance->Init())
+		{
+			__instance->Release();
+			SAFE_DELETE(__instance);
+		}
+	}
+}
+
+void CInput::Destroy()
+{
+}
+
 void CInput::PollKeyboard()
 {
 	m_dikeyboard->GetDeviceState(sizeof(m_keys), reinterpret_cast<LPVOID>(m_keys));
@@ -64,9 +85,5 @@ CInput* CInput::__instance = nullptr;
 
 CInput* CInput::GetInstance()
 {
-	if (!__instance)
-	{
-		__instance = new CInput;
-	}
 	return __instance;
 }
