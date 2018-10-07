@@ -29,10 +29,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	do
 	{
 		Framework::Object::UBuilderData builderData = {{}};
-		Framework::Object::CGameObject* mario = Framework::Object::CGameObject::Instantiate(Vector3(0, 0, 0));
+		Framework::Object::CGameObject* mario = Framework::Object::CGameObject::Instantiate(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
 		builderData.rendererBuilder = { "mario.png" };
 		mario->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
+
+		mario->AddRigidbody(new CRigidbody(mario));
+		mario->GetRigidbody()->SetVelocity(Vector2(1, 1));
+
+		Framework::Object::UBuilderData builderData2 = {{}};
+		builderData2.rendererBuilder = { "Block.png" };
+		Framework::Object::CGameObject* mario2 = Framework::Object::CGameObject::Instantiate(Vector2(0, 0));
+		mario2->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData2);
+
+		mario2->AddRigidbody(new CRigidbody(mario2));
+		mario2->GetRigidbody()->SetVelocity(Vector2(0, 1));
+
+		Framework::Object::CGameObject* mario3 = Framework::Object::CGameObject::Instantiate(Vector2(SCREEN_WIDTH - 10, 0));
+		mario3->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData2);
+
+		mario3->AddRigidbody(new CRigidbody(mario3));
+		mario3->GetRigidbody()->SetVelocity(Vector2(0, 1));
 
 		/*builderData.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
 		mario->AddComponent(Framework::Object::EBuilderType::TRANSFORM, builderData);*/
@@ -41,6 +58,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	} while (false);
 	Framework::GameManager::IGameManager::Release();
+	Framework::Base::IDirect3DCore::Release();
 
 	return 0;
 }

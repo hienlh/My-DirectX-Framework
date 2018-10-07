@@ -14,7 +14,7 @@ private:
 	// Properties
 private:
 	Framework::Base::IWindow* m_pWindow = nullptr;
-	Framework::Base::IDirect3DCore* m_pDirect3DCore = nullptr;
+	CScene* m_currentScene = nullptr;
 
 	// Cons/Des
 public:
@@ -31,9 +31,7 @@ public:
 		bool result = false;
 		do
 		{
-			// Init Window
-			Framework::Base::IWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
-			m_pWindow = Framework::Base::IWindow::GetInstance();
+			m_pWindow = Framework::Base::IWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
 			
 			if (!m_pWindow)
 			{
@@ -44,9 +42,8 @@ public:
 
 			// Init Direct3DCore
 			Framework::Base::IDirect3DCore::Instantiate(hWnd, fullscreen);
-			m_pDirect3DCore = Framework::Base::IDirect3DCore::GetInstance();
 
-			if (!m_pDirect3DCore)
+			if (!Framework::Base::IDirect3DCore::GetInstance())
 			{
 				OutputDebugStringA("[Error] IDirect3DCore::Instantiate failed\n");
 				break;
@@ -60,16 +57,23 @@ public:
 
 	void Destroy()
 	{
-		Framework::Base::IWindow::Release();
-		Framework::Base::IDirect3DCore::Release();
+		SAFE_DELETE(m_pWindow);
+		CScene::Destroy(m_currentScene);
 	}
-	static void AddGameObject(Framework::Object::CGameObject*);
 
 	// Static methods
 public:
 	static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
 	static void Release();
 	static CGameManager_Internal* GetInstance();
+	void SetCurrentScene(CScene* scene)
+	{
+		m_currentScene = scene;
+	}
+	CScene* GetCurrentScene()
+	{
+		return m_currentScene;
+	}
 	
 	bool Run() override
 	{
@@ -101,11 +105,11 @@ public:
 			{
 				frameStart = now;
 
-				if(_currentScene)
-					_currentScene->Update(dt);
+				if(m_currentScene)
+					m_currentScene->Update(dt);
 
 				// process game loop
-				bool renderResult = m_pDirect3DCore->Render(_currentScene->GetListGameObject());
+				bool renderResult = Framework::Base::IDirect3DCore::GetInstance()->Render(m_currentScene->GetListGameObject());
 				if (!renderResult)
 				{
 					OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
@@ -127,7 +131,7 @@ void CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int s
 {
 	if (!__instance)
 	{
-		SAFE_ALLOC(__instance, CGameManager_Internal);
+		if (!__instance) { __instance = new CGameManager_Internal(); };
 
 		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
 			SAFE_DELETE(__instance);
@@ -136,6 +140,7 @@ void CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int s
 
 void CGameManager_Internal::Release()
 {
+	__instance->Destroy();
 	SAFE_DELETE(__instance);
 }
 
@@ -148,12 +153,13 @@ CGameManager_Internal* CGameManager_Internal::GetInstance()
 
 void IGameManager::SetCurrentScene(CScene* scene)
 {
-	_currentScene = scene;
+	CGameManager_Internal::GetInstance()->SetCurrentScene(scene);
 }
 
 CScene* IGameManager::GetCurrentScene()
 {
-	return _currentScene;
+	auto scene = CGameManager_Internal::GetInstance()->GetCurrentScene();
+	return scene;
 }
 
 void IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)

@@ -1,6 +1,7 @@
 #include "Direct3DCore.h"
 #include "Macros.h"
 #include "GameObject.h"
+#include "GameManager.h"
 
 using namespace Framework::Base;
 

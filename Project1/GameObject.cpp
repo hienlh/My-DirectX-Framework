@@ -20,6 +20,7 @@ bool CGameObject::AddComponent(EBuilderType componentType,
 				if (!m_rendererComponent)
 				{
 					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
+					m_rendererComponent->SetGameObject(this);
 					return true;
 				}
 				else
@@ -33,6 +34,19 @@ bool CGameObject::AddComponent(EBuilderType componentType,
 				if (!m_tranformComponent)
 				{
 					m_tranformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
+					return true;
+				}
+				else
+					return false;
+			}
+		},
+		{
+			Object::EBuilderType::RIGIDBODY,
+			[&]()
+			{
+				if (!m_rigidbodyComponent)
+				{
+					m_rigidbodyComponent = reinterpret_cast<CRigidbody*>(CComponent::Instantiate(builder));
 					return true;
 				}
 				else
@@ -96,7 +110,7 @@ CGameObject* CGameObject::Instantiate(SBuilder builder)
 	return instance;
 }
 
-CGameObject* CGameObject::Instantiate(Vector3 position)
+CGameObject* CGameObject::Instantiate(Vector2 position)
 {
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);
@@ -122,16 +136,21 @@ void CGameObject::Update(DWORD dt)
 {
 	if (m_rendererComponent)
 	{
-		m_rendererComponent->Update(m_tranformComponent->position);
+		m_rendererComponent->Update(dt);
 	}
 
 	if (m_tranformComponent)
 	{
 		m_tranformComponent->Update(dt);
 	}
+
+	if (m_rigidbodyComponent)
+	{
+		m_rigidbodyComponent->Update(dt);
+	}
 }
 
 void CGameObject::Render()
 {
-	m_rendererComponent->Update(m_tranformComponent->position);
+	m_rendererComponent->Render();
 }

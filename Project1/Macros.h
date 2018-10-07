@@ -17,3 +17,5 @@
 #define SAFE_ALLOC(p, object_type) if (!p) { p = new object_type(); }
 
 #define VECTOR3_ZERO { 0, 0, 0 }
+#define OVER_X 13
+#define OVER_Y 38

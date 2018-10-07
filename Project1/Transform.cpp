@@ -2,7 +2,7 @@
 
 using namespace Framework::Component;
 
-bool CTransform::Init(Vector3 position)
+bool CTransform::Init(Vector2 position)
 {
 	this->position = position;
 	this->rotation = Vector3(0, 0, 0);
@@ -10,7 +10,7 @@ bool CTransform::Init(Vector3 position)
 	return true;
 }
 
-bool Framework::Component::CTransform::Init(const Vector3 position, const Vector3 rotation, const Vector3 local_scale)
+bool Framework::Component::CTransform::Init(const Vector2 position, const Vector3 rotation, const Vector3 local_scale)
 {
 	this->position = position;
 	this->rotation = rotation;
@@ -23,7 +23,7 @@ void CTransform::Release()
 
 }
 
-CTransform* CTransform::Instantiate(const Vector3 position, const Vector3 rotation, const Vector3 local_scale)
+CTransform* CTransform::Instantiate(const Vector2 position, const Vector3 rotation, const Vector3 local_scale)
 {
 	CTransform* pTransform = nullptr;
 	SAFE_ALLOC(pTransform, CTransform);

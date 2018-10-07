@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Object.h"
 #include "Transform.h"
+#include "Rigidbody.h"
 
 namespace Framework
 {
@@ -15,6 +16,7 @@ namespace Framework
 		private:
 			Component::CRenderer* m_rendererComponent = nullptr;
 			Component::CTransform* m_tranformComponent = nullptr;
+			CRigidbody* m_rigidbodyComponent = nullptr;
 
 			// Cons / Des
 		public:
@@ -25,6 +27,8 @@ namespace Framework
 		public:
 			bool AddComponent(Object::EBuilderType componentType, UBuilderData data);
 			Component::CTransform* GetTranform() { return m_tranformComponent; }
+			CRigidbody* GetRigidbody() { return m_rigidbodyComponent; }
+			void AddRigidbody(CRigidbody* _rigidbody) { m_rigidbodyComponent = _rigidbody; }
 			bool RemoveComponent(Object::EBuilderType componentType);
 
 			// Internal methods
@@ -35,14 +39,13 @@ namespace Framework
 			// Override methods
 		public:
 			virtual void Update(DWORD dt) override;
+			void Render() override;
 
 			// Static methods
 		public:
 			static CGameObject* Instantiate(Object::SBuilder builder);
-			static CGameObject* Instantiate(Vector3 position);
+			static CGameObject* Instantiate(Vector2 position);
 			static void Release(CGameObject* &instance);
-
-			void Render();
 		};
 	}
 }

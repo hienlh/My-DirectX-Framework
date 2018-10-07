@@ -11,17 +11,18 @@ namespace Framework
 			// Cons / Des
 		protected:
 			IWindow() = default;
+
+		public:
 			virtual ~IWindow() = default;
 
 			// Getters / Setters
 		public:
+
 			virtual HWND Get_WindowHandle() = 0;
 
 			// Pattern
 		public:
-			static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
-			static void Release();
-			static IWindow* GetInstance();
+			static IWindow* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
 		};
 	}
 }
