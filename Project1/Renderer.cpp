@@ -1,4 +1,4 @@
-#include "Renderer.h"
+ #include "Renderer.h"
 #include "Macros.h"
 #include "Direct3DCore.h"
 

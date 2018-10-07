@@ -13,6 +13,7 @@ namespace Framework
 		// Component Class
 		class CComponent : public Object::CObject
 		{
+			
 			// Cons / Des
 		public:
 			CComponent() = default;

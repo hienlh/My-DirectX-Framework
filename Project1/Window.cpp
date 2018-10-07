@@ -32,19 +32,24 @@ private:
 		{
 			// create window class structure
 			WNDCLASSEX wc;
-			wc.cbSize = sizeof(WNDCLASSEX);
+			// wc.cbSize = sizeof(WNDCLASSEX);
+			// wc.style = CS_HREDRAW | CS_VREDRAW;
+			// wc.hInstance = hInstance;
+			// wc.lpfnWndProc = static_cast<WNDPROC>(WinProc);
+			// wc.cbClsExtra = 0;
+			// wc.cbWndExtra = 0;
+			// wc.hIcon = nullptr;
+			// wc.hCursor = LoadCursorA(nullptr, IDC_ARROW);
+			// wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+			// wc.lpszMenuName = nullptr;
+			// wc.lpszClassName = APP_TITLE;
+			// wc.hIconSm = nullptr;
 
-			wc.style = CS_HREDRAW | CS_VREDRAW;
-			wc.hInstance = hInstance;
-			wc.lpfnWndProc = static_cast<WNDPROC>(WinProc);
-			wc.cbClsExtra = 0;
-			wc.cbWndExtra = 0;
-			wc.hIcon = nullptr;
-			wc.hCursor = LoadCursorA(nullptr, IDC_ARROW);
-			wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-			wc.lpszMenuName = nullptr;
-			wc.lpszClassName = APP_TITLE;
-			wc.hIconSm = nullptr;
+			ZeroMemory(&wc, sizeof(wc));
+			wc.cbSize = sizeof(WNDCLASSEX);
+			wc.hInstance = hInstance; // bind with handle instance
+			wc.lpfnWndProc = reinterpret_cast<WNDPROC>(WinProc); // register windows procedure
+			wc.lpszClassName = APP_TITLE; // define class name
 
 			// register window class
 			ATOM registerResult = RegisterClassEx(&wc);
@@ -55,15 +60,13 @@ private:
 			}
 
 			// create window
-			DWORD dwWindowStyle = (fullscreen
-				? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP
-				: WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
+			DWORD dwWindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX; // TODO: full screen
 
 			m_hWnd = CreateWindow(
-				APP_TITLE, APP_TITLE,         // window class | title bar
+				wc.lpszClassName, APP_TITLE,         // window class | title bar
 				dwWindowStyle,                // window style
 				CW_USEDEFAULT, CW_USEDEFAULT, // x, y position of window
-				screenWidth, screenHeight,    // width, height of the window
+				screenWidth+OVER_X, screenHeight+OVER_Y,    // width, height of the window
 				NULL, NULL,                   // parent window | menu
 				hInstance,                    // application instance
 				NULL                          // window parameters

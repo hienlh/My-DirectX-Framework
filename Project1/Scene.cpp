@@ -1,5 +1,6 @@
 ﻿#include "Scene.h"
 #include "Direct3DCore.h"
+#include <string>
 
 bool CScene::Init()
 {
@@ -54,16 +55,28 @@ void CScene::Update(DWORD dt)
 
 		float x = gameOnject->GetTranform()->position.x;
 		float y = gameOnject->GetTranform()->position.y;
-		if (y <= 0 && x <= SCREEN_WIDTH / 2)
-			gameOnject->GetTranform()->position.x += dt / 10;
-		else if (y < SCREEN_HEIGHT / 2 && x >= SCREEN_WIDTH / 2)
+		float width = 14;
+		float heigth = 27;
+		if (x + width <= SCREEN_WIDTH)
 		{
-			gameOnject->GetTranform()->position.y += dt / 10;
+			gameOnject->GetTranform()->position.x +=  0;
+
+		}else gameOnject->GetTranform()->position.x = SCREEN_WIDTH;
+		if (y + heigth <= SCREEN_HEIGHT)
+		{
+			gameOnject->GetTranform()->position.y += 10;
+
 		}
-		else if (x > 0 && y >= SCREEN_HEIGHT / 2)
-			gameOnject->GetTranform()->position.x -= dt / 10;
-		else
-			gameOnject->GetTranform()->position.y -= dt / 10;
+		else gameOnject->GetTranform()->position.y = SCREEN_HEIGHT;
+
+		// else if (y < SCREEN_HEIGHT -heigth && x >= SCREEN_WIDTH -width )
+		// {
+		// 	gameOnject->GetTranform()->position.y += dt / 10;
+		// }
+		// else if (x > 0 && y >= SCREEN_HEIGHT -heigth)
+		// 	gameOnject->GetTranform()->position.x -= dt / 10;
+		// else
+		// 	gameOnject->GetTranform()->position.y -= dt / 10;
 	}
 }
 
