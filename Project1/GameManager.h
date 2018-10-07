@@ -19,6 +19,7 @@ namespace Framework
 		public:
 			void SetCurrentScene(CScene* scene);
 			CScene* GetCurrentScene();
+			Base::IWindow* GetWindow();
 
 			// Abstract methods
 		public:

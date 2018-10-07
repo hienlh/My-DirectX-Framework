@@ -2,6 +2,8 @@
 #include "Macros.h"
 #include "Window.h"
 #include "Direct3DCore.h"
+#include "Input.h"
+#include <string>
 
 using namespace Framework::GameManager;
 
@@ -23,6 +25,10 @@ public:
 	
 	// Getters / Setters
 public:
+	Framework::Base::IWindow* GetWindow()
+	{
+		return m_pWindow;
+	}
 
 	// Override methods
 public:
@@ -105,9 +111,14 @@ public:
 			{
 				frameStart = now;
 
+				auto input = Framework::Base::CInput::GetInstance();
+				if (input) {
+					input->PollKeyboard();
+					input->PollMouse();
+				}
+
 				if(m_currentScene)
 					m_currentScene->Update(dt);
-
 				// process game loop
 				bool renderResult = Framework::Base::IDirect3DCore::GetInstance()->Render(m_currentScene->GetListGameObject());
 				if (!renderResult)
@@ -160,6 +171,12 @@ CScene* IGameManager::GetCurrentScene()
 {
 	auto scene = CGameManager_Internal::GetInstance()->GetCurrentScene();
 	return scene;
+}
+
+Framework::Base::IWindow* IGameManager::GetWindow()
+{
+	const auto result = CGameManager_Internal::GetInstance()->GetWindow();
+	return result;
 }
 
 void IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)

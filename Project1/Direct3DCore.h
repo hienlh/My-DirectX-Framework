@@ -26,6 +26,9 @@ namespace Framework
 			virtual bool Render(std::vector<Framework::Object::CGameObject*> list_game_objects) = 0;
 			virtual void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture) = 0;
 			virtual LPDIRECT3DTEXTURE9 CreateTexture(LPCSTR texturePath) = 0;
+			virtual LPDIRECTINPUT8 CreateDirect() = 0;
+			virtual LPDIRECTINPUTDEVICE8 CreateKeyboard(LPDIRECTINPUT8 dinput) = 0;
+			virtual LPDIRECTINPUTDEVICE8 CreateMouse(LPDIRECTINPUT8 dinput) = 0;
 
 			// Static methods
 		public:

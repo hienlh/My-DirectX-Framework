@@ -66,6 +66,9 @@
     <ClCompile Include="Graphics.cpp">
       <Filter>Framework\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Framework\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -105,6 +108,9 @@
       <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Graphics.h">
+      <Filter>Framework\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
       <Filter>Framework\Base</Filter>
     </ClInclude>
   </ItemGroup>

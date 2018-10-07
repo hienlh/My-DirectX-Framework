@@ -1,5 +1,4 @@
 #pragma once
-#include "Component.h"
 #include "Renderer.h"
 #include "Object.h"
 #include "Transform.h"
@@ -15,26 +14,31 @@ namespace Framework
 			// Properties
 		private:
 			Component::CRenderer* m_rendererComponent = nullptr;
-			Component::CTransform* m_tranformComponent = nullptr;
+			Component::CTransform* m_transformComponent = nullptr;
 			CRigidbody* m_rigidbodyComponent = nullptr;
 
 			// Cons / Des
 		public:
 			CGameObject() = default;
 			~CGameObject() = default;
+			static bool leftBlockMoveDown;
+			static bool rightBlockMoveDown;
 
 			// Public methods
 		public:
-			bool AddComponent(Object::EBuilderType componentType, UBuilderData data);
-			Component::CTransform* GetTranform() { return m_tranformComponent; }
-			CRigidbody* GetRigidbody() { return m_rigidbodyComponent; }
+			bool AddComponent(SBuilder builder);
+			bool RemoveComponent(EObjectType type);
+
+			// Getters / Setters
+		public:
+			Component::CTransform* GetTranform() const { return m_transformComponent; }
+			CRigidbody* GetRigidbody() const { return m_rigidbodyComponent; }
 			void AddRigidbody(CRigidbody* _rigidbody) { m_rigidbodyComponent = _rigidbody; }
-			bool RemoveComponent(Object::EBuilderType componentType);
 
 			// Internal methods
 		private:
 			bool Init();
-			void Destroy();
+			void Release();
 
 			// Override methods
 		public:
@@ -43,9 +47,9 @@ namespace Framework
 
 			// Static methods
 		public:
-			static CGameObject* Instantiate(Object::SBuilder builder);
+			static CGameObject* Instantiate();
 			static CGameObject* Instantiate(Vector2 position);
-			static void Release(CGameObject* &instance);
+			static void Destroy(CGameObject* &instance);
 		};
 	}
 }

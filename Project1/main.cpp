@@ -28,28 +28,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	do
 	{
-		Framework::Object::UBuilderData builderData = {{}};
+		Framework::Object::UObjectData data = { {} };
 		Framework::Object::CGameObject* mario = Framework::Object::CGameObject::Instantiate(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
-		builderData.rendererBuilder = { "mario.png" };
-		mario->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
+		data.renderData = { "mario.png" };
+		mario->AddComponent({ Framework::Object::EObjectType::RENDERER, data });
 
 		mario->AddRigidbody(new CRigidbody(mario));
 		mario->GetRigidbody()->SetVelocity(Vector2(1, 1));
 
-		Framework::Object::UBuilderData builderData2 = {{}};
-		builderData2.rendererBuilder = { "Block.png" };
-		Framework::Object::CGameObject* mario2 = Framework::Object::CGameObject::Instantiate(Vector2(0, 0));
-		mario2->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData2);
+		Framework::Object::UObjectData data2 = { {} };
+		data2.renderData = { "Block.png" };
+		Framework::Object::CGameObject* leftblock = Framework::Object::CGameObject::Instantiate(Vector2(0, 0));
+		leftblock->AddComponent({ Framework::Object::EObjectType::RENDERER, data2 });
 
-		mario2->AddRigidbody(new CRigidbody(mario2));
-		mario2->GetRigidbody()->SetVelocity(Vector2(0, 1));
+		leftblock->AddRigidbody(new CRigidbody(leftblock));
+		leftblock->GetRigidbody()->SetVelocity(Vector2(0, 0));
 
-		Framework::Object::CGameObject* mario3 = Framework::Object::CGameObject::Instantiate(Vector2(SCREEN_WIDTH - 10, 0));
-		mario3->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData2);
+		Framework::Object::CGameObject* rightblock = Framework::Object::CGameObject::Instantiate(Vector2(SCREEN_WIDTH - 10, 0));
+		rightblock->AddComponent({ Framework::Object::EObjectType::RENDERER, data2 });
 
-		mario3->AddRigidbody(new CRigidbody(mario3));
-		mario3->GetRigidbody()->SetVelocity(Vector2(0, 1));
+		rightblock->AddRigidbody(new CRigidbody(rightblock));
+		rightblock->GetRigidbody()->SetVelocity(Vector2(0, 0));
+
 
 		/*builderData.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
 		mario->AddComponent(Framework::Object::EBuilderType::TRANSFORM, builderData);*/

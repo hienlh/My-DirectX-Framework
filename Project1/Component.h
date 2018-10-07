@@ -1,9 +1,4 @@
 #pragma once
-#include <d3d9.h>
-#include <d3dx9.h>
-
-#include "Macros.h"
-#include "Header.h"
 #include "Object.h"
 
 namespace Framework
@@ -35,8 +30,8 @@ namespace Framework
 
 			// Static methods
 		public:
-			static CComponent* Instantiate(const Object::SBuilder &builder);
-			static void Release(CComponent* &instance);
+			static CComponent* Instantiate(SBuilder builder);
+			static void Destroy(CComponent* &instance);
 		};
 	}
 }

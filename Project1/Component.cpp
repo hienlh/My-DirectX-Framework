@@ -1,58 +1,28 @@
 #include "Component.h"
-#include <functional>
-#include <unordered_map>
 #include "Renderer.h"
-#include "GameObject.h"
 #include "Transform.h"
 
 using namespace Framework::Component;
 
-void Framework::Object::CComponent::Update(DWORD dt)
-{
-}
+
+Framework::Object::CGameObject* _gameObject = nullptr;
 
 // Create new instance
-Framework::Object::CComponent* Framework::Object::CComponent::Instantiate(const SBuilder &builder)
+Framework::Object::CComponent* Framework::Object::CComponent::Instantiate(SBuilder builder)
 {
-	// Use map instead of switch case
-	std::unordered_map<EBuilderType, std::function<CComponent*()>> callback = {
-		{
-			EBuilderType::RENDERER,
-			[&]()
-			{
-				return CRenderer::Instantiate(builder.m_data.rendererBuilder.texturePath);
-			}
-		},
-		{
-			EBuilderType::TRANSFORM,
-			[&]()
-			{
-				return CTransform::Instantiate(builder.m_data.transformBuilder.position,
-													 builder.m_data.transformBuilder.rotation,
-													 builder.m_data.transformBuilder.scale);
-				
-			}
-		}
-	};
-
-	// Invoke the command corresponding to the builder
-	return callback[builder.m_componentType]();
+	if (builder.builderType == EObjectType::RENDERER)
+		return CRenderer::Instantiate(builder.builderData);
+	else if (builder.builderType == EObjectType::TRANSFORM)
+		return CTransform::Instantiate(builder.builderData);
+	else
+		return nullptr;
 }
 
 // Release instance
-void Framework::Object::CComponent::Release(CComponent * &instance)
+void Framework::Object::CComponent::Destroy(CComponent * &instance)
 {
-	// Use map instead of switch case
-	std::unordered_map<EBuilderType, std::function<void()>> callback = {
-		{
-			EBuilderType::RENDERER,
-			[&]()
-			{
-				CRenderer::Release(reinterpret_cast<CRenderer*&>(instance));
-			}
-		}
-	};
-
-	// Invoke the command corresponding to the builder
-	callback[instance->m_builderType]();
+	if (instance->m_type == EObjectType::RENDERER)
+		CRenderer::Destroy(reinterpret_cast<CRenderer*&>(instance));
+	else if (instance->m_type == EObjectType::TRANSFORM)
+		CTransform::Destroy(reinterpret_cast<CTransform*&>(instance));
 }

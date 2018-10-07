@@ -9,17 +9,19 @@ namespace Framework
 	namespace Object
 	{
 		// Enum for builder
-		enum EBuilderType
+		enum EObjectType
 		{
 			UNKNOWN = 0,
-			GAMEOBJECT = 1,
+			GAME_OBJECT = 1,
 			TRANSFORM = 2,
 			RENDERER = 3,
 			RIGIDBODY = 4
 		};
 
 		// Initialize parameters for Game Object
-		struct SGameObjectBuilder {};
+		struct SGameObjectBuilder
+		{
+		};
 
 		// Initialize parameters for Render Component
 		struct SRendererBuilder
@@ -36,32 +38,30 @@ namespace Framework
 		};
 
 		// Builder
-		union UBuilderData
+		union UObjectData
 		{
-			SGameObjectBuilder gameObjectBuilder;
-			SRendererBuilder rendererBuilder;
-			STransformBuilder transformBuilder;
+			SGameObjectBuilder gameObjectData;
+			SRendererBuilder renderData;
+			STransformBuilder transformData;
 		};
 
 		// Builder Struct
 		struct SBuilder
 		{
-			EBuilderType m_componentType = EBuilderType::UNKNOWN;
-			UBuilderData m_data;
-
-			//SBuilder(EBuilderType componentType, UBuilderData data) : m_componentType(componentType), m_data(data) {}
+			EObjectType builderType = EObjectType::UNKNOWN;
+			UObjectData builderData = { {} };
 		};
 
 		// Object class
 class CObject {
 			// Properties
 		protected:
-			EBuilderType m_builderType = EBuilderType::UNKNOWN;
+			EObjectType m_type = EObjectType::UNKNOWN;
 
 			// Cons / Des
 		public:
 			CObject() = default;
-			~CObject() = default;
+			virtual ~CObject() = default;
 
 			// Abstract Classes
 		public:
@@ -70,8 +70,8 @@ class CObject {
 
 			// Static methods
 		public:
-			static CObject* Instantiate(const SBuilder &builder);
-			static void Release(CObject* &instance);
+			static CObject* Instantiate(SBuilder builder);
+			static void Destroy(CObject* &instance);
 		};
 	}
 }

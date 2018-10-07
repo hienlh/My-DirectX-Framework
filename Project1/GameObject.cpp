@@ -6,99 +6,72 @@
 
 using namespace Framework::Object;
 
-bool CGameObject::AddComponent(EBuilderType componentType,
-                               UBuilderData data)
+
+//Temp for deadline
+bool CGameObject::leftBlockMoveDown = true;
+bool CGameObject::rightBlockMoveDown = true;
+
+bool CGameObject::AddComponent(SBuilder builder)
 {
-	SBuilder builder = { componentType, data };
-
-	// Use map instead of switch case
-	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
-		{
-			EBuilderType::RENDERER,
-			[&]()
-			{
-				if (!m_rendererComponent)
-				{
-					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
-					m_rendererComponent->SetGameObject(this);
-					return true;
-				}
-				else
-					return false;
-			}
-		},
-		{
-			Object::EBuilderType::TRANSFORM,
-			[&]()
-			{
-				if (!m_tranformComponent)
-				{
-					m_tranformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
-					return true;
-				}
-				else
-					return false;
-			}
-		},
-		{
-			Object::EBuilderType::RIGIDBODY,
-			[&]()
-			{
-				if (!m_rigidbodyComponent)
-				{
-					m_rigidbodyComponent = reinterpret_cast<CRigidbody*>(CComponent::Instantiate(builder));
-					return true;
-				}
-				else
-					return false;
-			}
-		}
-	};
-
-	// Invoke the command corresponding to the builder
-	return callback[componentType]();
+	bool result = false;
+	if (builder.builderType == EObjectType::RENDERER && !m_rendererComponent)
+	{
+		m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
+		if(m_rendererComponent)
+			m_rendererComponent->SetGameObject(this);
+		result = true;
+	}
+	if (builder.builderType == EObjectType::TRANSFORM && !m_transformComponent)
+	{
+		m_transformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
+		if (m_transformComponent)
+			m_transformComponent->SetGameObject(this);
+		result = true;
+	}
+	return result;
 }
 
-bool CGameObject::RemoveComponent(EBuilderType componentType)
+bool CGameObject::RemoveComponent(EObjectType type)
 {
-	// Use map instead of switch case
-	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
-		{
-			EBuilderType::RENDERER,
-			[&]()
-			{
-				if (m_rendererComponent)
-				{
-					CComponent::Release(reinterpret_cast<CComponent*&>(m_rendererComponent));
-					return true;
-				}
-				else
-					return false;
-			}
-		}
-	};
-
-	// Invoke the command corresponding to the builder
-	return callback[componentType]();
+	bool result = false;
+	if (type == EObjectType::RENDERER && m_rendererComponent)
+	{
+		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_rendererComponent));
+		result = true;
+	}
+	if (type == EObjectType::TRANSFORM && m_transformComponent)
+	{
+		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_transformComponent));
+		result = true;
+	}
+	return result;
 }
 
 bool CGameObject::Init()
 {
 	m_rendererComponent = nullptr;
+	m_transformComponent = nullptr;
+	m_rigidbodyComponent = nullptr;
+
 	return true;
 }
 
-void CGameObject::Destroy()
+void CGameObject::Release()
 {
 	if (m_rendererComponent)
-		Component::CRenderer::Release(m_rendererComponent);
+		Component::CRenderer::Destroy(m_rendererComponent);
+	if (m_transformComponent)
+		Component::CTransform::Destroy(m_transformComponent);
+	if (m_rigidbodyComponent)
+		SAFE_DELETE(m_rigidbodyComponent);
 }
 
-CGameObject* CGameObject::Instantiate(SBuilder builder)
+CGameObject* CGameObject::Instantiate()
 {
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);
 
+	instance->m_type = EObjectType::GAME_OBJECT;
 
 	if (!instance->Init())
 		SAFE_DELETE(instance);
@@ -119,7 +92,7 @@ CGameObject* CGameObject::Instantiate(Vector2 position)
 	if (!instance->Init())
 		SAFE_DELETE(instance);
 
-	instance->m_tranformComponent = Component::CTransform::Instantiate(position, Vector3(0, 0, 0), Vector3(1, 1, 1));
+	instance->m_transformComponent = Component::CTransform::Instantiate(position);
 	auto scene = GameManager::IGameManager::GetInstance()->GetCurrentScene();
 	if (scene)
 		scene->AddGameObject(instance);
@@ -127,9 +100,9 @@ CGameObject* CGameObject::Instantiate(Vector2 position)
 	return instance;
 }
 
-void CGameObject::Release(CGameObject*& instance)
+void CGameObject::Destroy(CGameObject*& instance)
 {
-	instance->Destroy();
+	instance->Release();
 	SAFE_DELETE(instance);
 }
 void CGameObject::Update(DWORD dt)
@@ -139,9 +112,9 @@ void CGameObject::Update(DWORD dt)
 		m_rendererComponent->Update(dt);
 	}
 
-	if (m_tranformComponent)
+	if (m_transformComponent)
 	{
-		m_tranformComponent->Update(dt);
+		m_transformComponent->Update(dt);
 	}
 
 	if (m_rigidbodyComponent)

@@ -58,7 +58,7 @@ private:
 			m_hWnd = CreateWindow(
 				APP_TITLE, APP_TITLE,         // window class | title bar
 				dwWindowStyle,                // window style
-				CW_USEDEFAULT, CW_USEDEFAULT, // x, y position of window
+				CW_USEDEFAULT, CW_USEDEFAULT, // x, y m_position of window
 				screenWidth+OVER_X, screenHeight+OVER_Y,    // width, height of the window
 				NULL, NULL,                   // parent window | menu
 				hInstance,                    // application instance
