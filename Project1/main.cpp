@@ -29,10 +29,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	do
 	{
 		Framework::Object::UBuilderData builderData = {{}};
-		Framework::Object::CGameObject* mario = Framework::Object::CGameObject::Instantiate(Vector3(0, 0, 0));
-
 		builderData.rendererBuilder = { "mario.png" };
+
+		Framework::Object::CGameObject* mario = Framework::Object::CGameObject::Instantiate(Vector3(0, 0, 0));
 		mario->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
+
+		Framework::Object::CGameObject* mario2 = Framework::Object::CGameObject::Instantiate(Vector3(0, 0, 0));
+		mario2->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
+
+		Framework::Object::CGameObject* mario3 = Framework::Object::CGameObject::Instantiate(Vector3(0, 0, 0));
+		mario3->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
+
+	
 
 		/*builderData.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
 		mario->AddComponent(Framework::Object::EBuilderType::TRANSFORM, builderData);*/

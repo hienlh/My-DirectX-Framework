@@ -48,24 +48,63 @@ bool CScene::Destroy(CScene* scene)
 
 void CScene::Update(DWORD dt)
 {
+	int count = 0;
 	for (auto gameOnject : _listGameObject)
 	{
 		gameOnject->Update(dt);
 
+		switch (count)
+		{
+		case 0: //mario
+			{
+			float x = gameOnject->GetTranform()->position.x;
+			float y = gameOnject->GetTranform()->position.y;
+			float width = 14;
+			float heigth = 27;
 
-		float x = gameOnject->GetTranform()->position.x;
-		float y = gameOnject->GetTranform()->position.y;
-		float width = 14;
-		float heigth = 27;
-		
-			gameOnject->GetTranform()->position.x +=  dt * 0.1;
+			gameOnject->GetTranform()->position.x += dt * 0.1;
 
-		gameOnject->GetTranform()->position.y += dt*0.1;
+			gameOnject->GetTranform()->position.y += dt * 0;
 
-		//Colission
-		if(x+width>=SCREEN_WIDTH) gameOnject->GetTranform()->position.x = SCREEN_WIDTH-width;
-		if(y+heigth>=SCREEN_HEIGHT) gameOnject->GetTranform()->position.y = SCREEN_HEIGHT- heigth;
+			//Colission
+			if (x + width >= SCREEN_WIDTH) gameOnject->GetTranform()->position.x = SCREEN_WIDTH - width;
+			if (y + heigth >= SCREEN_HEIGHT) gameOnject->GetTranform()->position.y = SCREEN_HEIGHT - heigth;
+			break;
+			}
+		case 1: //mario 2
+			{
+			float x = gameOnject->GetTranform()->position.x;
+			float y = gameOnject->GetTranform()->position.y;
+			float width = 14;
+			float heigth = 27;
 
+			gameOnject->GetTranform()->position.x += dt * 0.1;
+
+			gameOnject->GetTranform()->position.y += dt * 0.1;
+
+			//Colission
+			if (x + width >= SCREEN_WIDTH) gameOnject->GetTranform()->position.x = SCREEN_WIDTH - width;
+			if (y + heigth >= SCREEN_HEIGHT) gameOnject->GetTranform()->position.y = SCREEN_HEIGHT - heigth;
+			break;
+			}
+		case 2: //mario 3
+			{
+			float x = gameOnject->GetTranform()->position.x;
+			float y = gameOnject->GetTranform()->position.y;
+			float width = 14;
+			float heigth = 27;
+
+			gameOnject->GetTranform()->position.x += dt * 0;
+
+			gameOnject->GetTranform()->position.y += dt * 0.1;
+
+			//Colission
+			if (x + width >= SCREEN_WIDTH) gameOnject->GetTranform()->position.x = SCREEN_WIDTH - width;
+			if (y + heigth >= SCREEN_HEIGHT) gameOnject->GetTranform()->position.y = SCREEN_HEIGHT - heigth;
+			break;
+			}
+		}
+		count = count >= 3 ? 0 : count + 1;
 		// else if (y < SCREEN_HEIGHT -heigth && x >= SCREEN_WIDTH -width )
 		// {
 		// 	gameOnject->GetTranform()->position.y += dt / 10;
@@ -73,7 +112,7 @@ void CScene::Update(DWORD dt)
 		// else if (x > 0 && y >= SCREEN_HEIGHT -heigth)
 		// 	gameOnject->GetTranform()->position.x -= dt / 10;
 		// else
-		// 	gameOnject->GetTranform()->position.y -= dt / 10;
+		// 	gameOnject->GetTranform()->position.y -= dt / 10;                                                                                                                                                                 
 	}
 }
 
