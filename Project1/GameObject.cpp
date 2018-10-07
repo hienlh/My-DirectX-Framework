@@ -6,112 +6,88 @@
 
 using namespace Framework::Object;
 
-bool CGameObject::AddComponent(EBuilderType componentType,
-                               UBuilderData data)
+bool CGameObject::AddComponent(SBuilder builder)
 {
-	SBuilder builder = { componentType, data };
+	bool result = false;
 
-	// Use map instead of switch case
-	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
-		{
-			EBuilderType::RENDERER,
-			[&]()
-			{
-				if (!m_rendererComponent)
-				{
-					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
-					return true;
-				}
-				else
-					return false;
-			}
-		},
-		{
-			Object::EBuilderType::TRANSFORM,
-			[&]()
-			{
-				if (!m_tranformComponent)
-				{
-					m_tranformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
-					return true;
-				}
-				else
-					return false;
-			}
-		}
-	};
+	if (builder.builderType == EObjectType::RENDERER && !m_rendererComponent)
+	{
+		m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
+		result = true;
+	}
+	if (builder.builderType == EObjectType::TRANSFORM && !m_transformComponent)
+	{
+		m_transformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
+		result = true;
+	}
 
-	// Invoke the command corresponding to the builder
-	return callback[componentType]();
+	return result;
 }
 
-bool CGameObject::RemoveComponent(EBuilderType componentType)
+bool CGameObject::RemoveComponent(EObjectType type)
 {
-	// Use map instead of switch case
-	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
-		{
-			EBuilderType::RENDERER,
-			[&]()
-			{
-				if (m_rendererComponent)
-				{
-					CComponent::Release(reinterpret_cast<CComponent*&>(m_rendererComponent));
-					return true;
-				}
-				else
-					return false;
-			}
-		}
-	};
+	bool result = false;
 
-	// Invoke the command corresponding to the builder
-	return callback[componentType]();
+	if (type == EObjectType::RENDERER && m_rendererComponent)
+	{
+		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_rendererComponent));
+		result = true;
+	}
+	if (type == EObjectType::TRANSFORM && m_transformComponent)
+	{
+		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_transformComponent));
+		result = true;
+	}
+
+	return result;
 }
 
 bool CGameObject::Init()
 {
 	m_rendererComponent = nullptr;
+	m_transformComponent = nullptr;
+
 	return true;
 }
 
-void CGameObject::Destroy()
+void CGameObject::Release()
 {
 	if (m_rendererComponent)
-		Component::CRenderer::Release(m_rendererComponent);
+		Component::CRenderer::Destroy(m_rendererComponent);
+
+	if (m_transformComponent)
+		Component::CTransform::Destroy(m_transformComponent);
 }
 
-CGameObject* CGameObject::Instantiate(SBuilder builder)
+CGameObject* CGameObject::Instantiate()
 {
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);
 
-	GameManager::IGameManager::AddGameObject(instance);
+	instance->m_type = EObjectType::GAME_OBJECT;
 
 	if (!instance->Init())
 		SAFE_DELETE(instance);
-
+	
 	return instance;
+	//GameManager::IGameManager::AddGameObject(instance);		
 }
 
-void CGameObject::Release(CGameObject*& instance)
+void CGameObject::Destroy(CGameObject*& instance)
 {
-	instance->Destroy();
+	instance->Release();
 	SAFE_DELETE(instance);
 }
+
 void CGameObject::Update()
 {
 	if (m_rendererComponent)
 	{
-		m_rendererComponent->Update(m_tranformComponent->position);
+		//m_rendererComponent->Update(m_transformComponent->Get_Position());
 	}
 
-	if (m_tranformComponent)
+	if (m_transformComponent)
 	{
-		m_tranformComponent->Update();
+		//m_transformComponent->Update();
 	}
-}
-
-void CGameObject::Render()
-{
-	m_rendererComponent->Update(m_tranformComponent->position);
 }

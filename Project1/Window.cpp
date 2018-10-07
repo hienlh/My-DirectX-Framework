@@ -62,7 +62,7 @@ private:
 			m_hWnd = CreateWindow(
 				APP_TITLE, APP_TITLE,         // window class | title bar
 				dwWindowStyle,                // window style
-				CW_USEDEFAULT, CW_USEDEFAULT, // x, y position of window
+				CW_USEDEFAULT, CW_USEDEFAULT, // x, y m_position of window
 				screenWidth, screenHeight,    // width, height of the window
 				NULL, NULL,                   // parent window | menu
 				hInstance,                    // application instance
@@ -84,34 +84,38 @@ private:
 
 		return result;
 	}
-	void Destroy() {}
+	void Release()
+	{
+		DestroyWindow(m_hWnd);
+	}
 
 	// Static methods
 public:
 	static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
-	static void Release();
+	static void Destroy();
+	
 	static CWindow_Internal* GetInstance();
 };
 
-CWindow_Internal* CWindow_Internal::__instance = nullptr;
-
 // Window Class Implementation
+
+CWindow_Internal* CWindow_Internal::__instance = nullptr;
 
 void CWindow_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
-	if (!__instance)
-	{
-		SAFE_ALLOC(__instance, CWindow_Internal);
+	SAFE_ALLOC(__instance, CWindow_Internal);
 
-		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
-			SAFE_DELETE(__instance);
-	}
-} 
+	if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
+		SAFE_DELETE(__instance);
+}
 
-void CWindow_Internal::Release()
+void CWindow_Internal::Destroy()
 {
-	__instance->Destroy();
-	SAFE_DELETE(__instance);
+	if (__instance)
+	{
+		__instance->Release();
+		SAFE_DELETE(__instance);
+	}
 }
 
 CWindow_Internal* CWindow_Internal::GetInstance()
@@ -126,9 +130,9 @@ void IWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, in
 	CWindow_Internal::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
 }
 
-void IWindow::Release()
+void IWindow::Destroy()
 {
-	CWindow_Internal::Release();
+	CWindow_Internal::Destroy();
 }
 
 IWindow* IWindow::GetInstance()

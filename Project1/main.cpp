@@ -2,7 +2,6 @@
 #include "Header.h"
 #include "GameManager.h"
 #include "GameObject.h"
-#include "Direct3DCore.h"
 
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -25,19 +24,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	auto* pGameManager = Framework::GameManager::IGameManager::GetInstance();
 	do
 	{
-		Framework::Object::UBuilderData builderData = {{}};
-		auto* mario = Framework::Object::CGameObject::Instantiate({Framework::Object::EBuilderType::GAMEOBJECT,  builderData});
+		auto* mario = Framework::Object::CGameObject::Instantiate();
 
-		builderData.rendererBuilder = { Framework::Base::IDirect3DCore::GetInstance()->Get_Direct3DDevice(), "mario.png" };
-		mario->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
-
-		builderData.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
-		mario->AddComponent(Framework::Object::EBuilderType::TRANSFORM, builderData);
+		Framework::Object::UObjectData data = { {} };
+		data.renderData = { MARIO_PATH };
+		mario->AddComponent({Framework::Object::EObjectType::RENDERER, data});
+	
+		data.transformData = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
+		mario->AddComponent({ Framework::Object::EObjectType::TRANSFORM, data });
 		
 		pGameManager->Run();
 
 	} while (false);
-	Framework::GameManager::IGameManager::Release();
+	
+	Framework::GameManager::IGameManager::Destroy();
 
 	return 0;
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include "Component.h"
 #include "Renderer.h"
 #include "Object.h"
 #include "Transform.h"
@@ -13,8 +12,10 @@ namespace Framework
 		{
 			// Properties
 		private:
+			std::vector<CComponent*> m_components;
+
 			Component::CRenderer* m_rendererComponent = nullptr;
-			Component::CTransform* m_tranformComponent = nullptr;
+			Component::CTransform* m_transformComponent = nullptr;
 
 			// Cons / Des
 		public:
@@ -23,25 +24,24 @@ namespace Framework
 
 			// Public methods
 		public:
-			bool AddComponent(Object::EBuilderType componentType, UBuilderData data);
-			Component::CTransform* GetTranform() { return m_tranformComponent; }
-			bool RemoveComponent(Object::EBuilderType componentType);
+			bool AddComponent(SBuilder builder);
+			bool RemoveComponent(EObjectType type);
+
+			// Getters / Setters
+		public:
+			Component::CTransform* Get_Transform() { return m_transformComponent; }
+			
+			void Update();
 
 			// Internal methods
 		private:
 			bool Init();
-			void Destroy();
-
-			// Override methods
-		public:
-			virtual void Update() override;
+			void Release();
 
 			// Static methods
 		public:
-			static CGameObject* Instantiate(Object::SBuilder builder);
-			static void Release(CGameObject* &instance);
-
-			void Render();
+			static CGameObject* Instantiate();
+			static void Destroy(CGameObject* &instance);
 		};
 	}
 }

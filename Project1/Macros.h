@@ -8,7 +8,8 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define TANK_PATH "E:\\workspace\\My-DirectX-Framework\\Resources\\tank.png"
+#define TANK_PATH "..\\Resources\\tank.png"
+#define MARIO_PATH "..\\Resources\\mario.png"
 #define FULL_SCREEN false
 
 #define FRAME_RATE 60
@@ -17,3 +18,4 @@
 #define SAFE_ALLOC(p, object_type) if (!p) { p = new object_type(); }
 
 #define VECTOR3_ZERO { 0, 0, 0 }
+#define VECTOR3_ONE { 1, 1, 1 }

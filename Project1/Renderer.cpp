@@ -1,39 +1,48 @@
 #include "Renderer.h"
 #include "Macros.h"
-#include "Direct3DCore.h"
+#include "Graphic.h"
+#include "GameManager.h"
 
 using namespace Framework::Component;
 
-bool CRenderer::Init(LPCSTR texturePath)
-{
-	m_texture = Base::IDirect3DCore::GetInstance()->CreateTexture(texturePath);
-	return m_texture == nullptr ? false : true;
+bool CRenderer::Init(CString texturePath)
+{	
+	m_texture = GameManager::IGameManager::GetInstance()->Get_Direct3DCore()->CreateTexture(texturePath);
+	return m_texture != nullptr;
 }
 
-void CRenderer::Destroy()
+void CRenderer::Release()
 {
 	if (m_texture)
 		m_texture->Release();
 }
 
-CRenderer* CRenderer::Instantiate(LPCSTR texturePath)
+void CRenderer::Render()
+{
+	GameManager::IGameManager::GetInstance()->Get_Direct3DCore()->Draw(m_parentObject->Get_Transform()->Get_Position(), m_texture);
+}
+
+CRenderer* CRenderer::Instantiate(Framework::Object::UObjectData data)
 {
 	CRenderer* instance = nullptr;
 	SAFE_ALLOC(instance, CRenderer);
 
-	if (!instance->Init(texturePath))
-		SAFE_DELETE(instance);
+	instance->m_type = Object::EObjectType::RENDERER;
 
+	if (instance->Init(data.renderData.texturePath))
+	{
+		instance->Release();
+		SAFE_DELETE(instance);
+	}
+	
 	return instance;
 }
 
-void CRenderer::Release(CRenderer* &instance)
+void CRenderer::Destroy(CRenderer* &instance)
 {
-	instance->Destroy();
-	SAFE_DELETE(instance);
-}
-
-void CRenderer::Update(Vector3 position)
-{
-	Base::IDirect3DCore::GetInstance()->Draw(position.x, position.y, m_texture);
+	if (instance)
+	{
+		instance->Release();
+		SAFE_DELETE(instance);
+	}
 }

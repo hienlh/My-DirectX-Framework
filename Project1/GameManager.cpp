@@ -1,7 +1,7 @@
 #include "GameManager.h"
 #include "Macros.h"
 #include "Window.h"
-#include "Direct3DCore.h"
+#include "Graphic.h"
 
 using namespace Framework::GameManager;
 
@@ -11,23 +11,24 @@ class CGameManager_Internal final : public IGameManager
 private:
 	static CGameManager_Internal* __instance;
 
-	static std::vector<Framework::Object::CGameObject*> lis_game_objects;
-
 	// Properties
 private:
+	std::vector<Framework::Object::CGameObject*> m_gameObjects;
+
 	Framework::Base::IWindow* m_pWindow = nullptr;
-	Framework::Base::IDirect3DCore* m_pDirect3DCore = nullptr;
+	Framework::Base::IGraphic* m_pDirect3DCore = nullptr;
+
+	// Getters / Setters
+public:
+	virtual Framework::Base::IWindow* Get_Window() override { return m_pWindow; };
+	virtual Framework::Base::IGraphic* Get_Direct3DCore() override { return m_pDirect3DCore; };
 
 	// Cons/Des
 public:
 	CGameManager_Internal() = default;
-	~CGameManager_Internal() = default;
+	virtual ~CGameManager_Internal() = default;
 	
-	// Getters / Setters
-public:
-
-	// Override methods
-public:
+private:
 	bool Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 	{
 		bool result = false;
@@ -36,7 +37,7 @@ public:
 			// Init Window
 			Framework::Base::IWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
 			m_pWindow = Framework::Base::IWindow::GetInstance();
-			
+
 			if (!m_pWindow)
 			{
 				OutputDebugStringA("[Error] IWindow::Instantiate failed\n");
@@ -45,8 +46,8 @@ public:
 			HWND hWnd = m_pWindow->Get_WindowHandle();
 
 			// Init Direct3DCore
-			Framework::Base::IDirect3DCore::Instantiate(hWnd, fullscreen);
-			m_pDirect3DCore = Framework::Base::IDirect3DCore::GetInstance();
+			Framework::Base::IGraphic::Instantiate(hWnd, fullscreen);
+			m_pDirect3DCore = Framework::Base::IGraphic::GetInstance();
 
 			if (!m_pDirect3DCore)
 			{
@@ -57,28 +58,27 @@ public:
 			result = true;
 		} while (false);
 
-		return true;
+		return result;
 	}
 
-	void Destroy()
+	void Release()
 	{
-		Framework::Base::IWindow::Release();
-		Framework::Base::IDirect3DCore::Release();
+		Framework::Base::IWindow::Destroy();
+		Framework::Base::IGraphic::Destroy();
 	}
-	static void AddGameObject(Framework::Object::CGameObject*);
 
-	// Static methods
-public:
-	static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
-	static void Release();
-	static CGameManager_Internal* GetInstance();
-	
+	// Override methods
+private:
+	void AddGameObject(Framework::Object::CGameObject* pGameObject) override
+	{
+		m_gameObjects.push_back(pGameObject);
+	}
+
 	bool Run() override
 	{
 		DWORD frameStart = GetTickCount();
 		DWORD tickPerFrame = 1000 / FRAME_RATE;
 
-		MSG message = {};
 		bool done = false;
 		while (!done)
 		{
@@ -103,25 +103,25 @@ public:
 			{
 				frameStart = now;
 
-				for (auto lis_game_object : lis_game_objects)
+				/*for (auto lis_game_object : lis_game_objects)
 				{
 					lis_game_object->Update();
-					auto x = lis_game_object->GetTranform()->position.x;
-					auto y = lis_game_object->GetTranform()->position.y;
+					auto x = lis_game_object->Get_Transform()->m_position.x;
+					auto y = lis_game_object->Get_Transform()->m_position.y;
 					if (y <= 0 && x <= SCREEN_WIDTH / 2)
-						lis_game_object->GetTranform()->position.x += dt / 10;
+						lis_game_object->Get_Transform()->m_position.x += dt / 10;
 					else if (y < SCREEN_HEIGHT / 2 && x >= SCREEN_WIDTH / 2)
 					{
-						lis_game_object->GetTranform()->position.y += dt / 10;
+						lis_game_object->Get_Transform()->m_position.y += dt / 10;
 					}
 					else if (x > 0 && y >= SCREEN_HEIGHT / 2)
-						lis_game_object->GetTranform()->position.x -= dt / 10;
+						lis_game_object->Get_Transform()->m_position.x -= dt / 10;
 					else
-						lis_game_object->GetTranform()->position.y -= dt / 10;
+						lis_game_object->Get_Transform()->m_position.y -= dt / 10;
 				}
-
-				// process game loop
-				bool renderResult = m_pDirect3DCore->Render(lis_game_objects);
+*/
+// process game loop
+				bool renderResult = m_pDirect3DCore->Render(m_gameObjects);
 				if (!renderResult)
 				{
 					OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
@@ -134,12 +134,15 @@ public:
 
 		return true;
 	}
+
+	// Static methods
+public:
+	static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+	static void Destroy();
+	static CGameManager_Internal* GetInstance();
 };
 
-
 CGameManager_Internal* CGameManager_Internal::__instance = nullptr;
-
-std::vector<Framework::Object::CGameObject*> CGameManager_Internal::lis_game_objects;
 
 void CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
@@ -152,19 +155,18 @@ void CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int s
 	}
 }
 
-void CGameManager_Internal::Release()
+void CGameManager_Internal::Destroy()
 {
-	SAFE_DELETE(__instance);
+	if (__instance)
+	{
+		__instance->Release();
+		SAFE_DELETE(__instance);
+	}
 }
 
 CGameManager_Internal* CGameManager_Internal::GetInstance()
 {
 	return __instance;
-}
-
-void CGameManager_Internal::AddGameObject(Framework::Object::CGameObject* game_object)
-{
-	lis_game_objects.push_back(game_object);
 }
 
 // Game Manager Interface Implementation
@@ -174,17 +176,12 @@ void IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidt
 	CGameManager_Internal::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
 }
 
-void Framework::GameManager::IGameManager::Release()
+void Framework::GameManager::IGameManager::Destroy()
 {
-	CGameManager_Internal::Release();
+	CGameManager_Internal::Destroy();
 }
 
 IGameManager * Framework::GameManager::IGameManager::GetInstance()
 {
 	return CGameManager_Internal::GetInstance();
-}
-
-void Framework::GameManager::IGameManager::AddGameObject(Object::CGameObject* game_object)
-{
-	CGameManager_Internal::AddGameObject(game_object);
 }
