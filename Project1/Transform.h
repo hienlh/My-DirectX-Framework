@@ -8,8 +8,8 @@ namespace Framework
 		class CTransform : public Object::CComponent
 		{
 		public:
-			Vector3 position;
-			Vector3 localPosition;
+			Vector2 position;
+			Vector2 localPosition;
 			Vector3 rotation;
 			Vector3 localRotation;
 			Vector3 localScale;
@@ -19,15 +19,15 @@ namespace Framework
 			virtual ~CTransform() = default;
 
 		private:
-			bool Init(Vector3 position);
-			bool Init(Vector3 position, Vector3 rotation, Vector3 local_scale);
+			bool Init(Vector2 position);
+			bool Init(Vector2 position, Vector3 rotation, Vector3 local_scale);
 			void Release();
 
 		public:
-			static CTransform* Instantiate(Vector3 position, Vector3 rotation, Vector3 local_scale);
+			static CTransform* Instantiate(Vector2 position, Vector3 rotation, Vector3 local_scale);
 			static void Destroy(CTransform *OTranform);
 
-			void Update(DWORD dt);
+			void Update(DWORD dt) override;
 			void Render() override;
 		};
 	}

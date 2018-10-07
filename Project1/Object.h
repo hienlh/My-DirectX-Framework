@@ -2,6 +2,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include "Macros.h"
+#include "Header.h"
 
 namespace Framework
 {
@@ -13,7 +14,8 @@ namespace Framework
 			UNKNOWN = 0,
 			GAMEOBJECT = 1,
 			TRANSFORM = 2,
-			RENDERER = 3
+			RENDERER = 3,
+			RIGIDBODY = 4
 		};
 
 		// Initialize parameters for Game Object
@@ -28,9 +30,9 @@ namespace Framework
 		// Initialize parameters for Transform Component
 		struct STransformBuilder
 		{
-			D3DXVECTOR3 position = VECTOR3_ZERO;
-			D3DXVECTOR3 rotation = VECTOR3_ZERO;
-			D3DXVECTOR3 scale = VECTOR3_ZERO;
+			Vector2 position = Vector2(0, 0);
+			Vector3 rotation = VECTOR3_ZERO;
+			Vector3 scale = VECTOR3_ZERO;
 		};
 
 		// Builder
@@ -51,8 +53,7 @@ namespace Framework
 		};
 
 		// Object class
-		class CObject
-		{
+class CObject {
 			// Properties
 		protected:
 			EBuilderType m_builderType = EBuilderType::UNKNOWN;

@@ -1,4 +1,4 @@
- #include "Renderer.h"
+#include "Renderer.h"
 #include "Macros.h"
 #include "Direct3DCore.h"
 
@@ -33,11 +33,14 @@ void CRenderer::Release(CRenderer* &instance)
 	SAFE_DELETE(instance);
 }
 
-void CRenderer::Update(Vector3 position)
+void CRenderer::Update(DWORD dt)
 {
-	Base::IDirect3DCore::GetInstance()->Draw(position.x, position.y, m_texture);
+
+	Base::IDirect3DCore::GetInstance()->Draw(0,0, m_texture);
 }
 
 void CRenderer::Render()
 {
+	auto transform = _gameObject->GetTranform();
+	Base::IDirect3DCore::GetInstance()->Draw(transform->position.x, transform->position.y, m_texture);
 }

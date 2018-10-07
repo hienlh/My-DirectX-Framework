@@ -63,6 +63,9 @@
     <ClCompile Include="Rigidbody.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Framework\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="Rigidbody.h">
       <Filter>Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Framework\Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ namespace Framework
 			static CRenderer* Instantiate(LPCSTR texturePath);
 			static void Release(CRenderer* &pObject);
 
-			void Update(Vector3 position);
+			void Update(DWORD dt) override;
 			void Render() override;
 		};
 	}
