@@ -2,15 +2,6 @@
 #include "Direct3DCore.h"
 using namespace Framework::Base;
 
-CInput::CInput()
-{
-}
-
-
-CInput::~CInput()
-{
-}
-
 bool CInput::Init()
 {
 	m_dinput = IDirect3DCore::GetInstance()->CreateDirect();
@@ -33,7 +24,7 @@ void CInput::KillKeyboard()
 {
 	if (m_dikeyboard != nullptr)
 	{
-		m_dikeyboard->Unacquire;
+		m_dikeyboard->Unacquire();
 		m_dikeyboard->Release();
 		m_dikeyboard = nullptr;
 	}
@@ -57,4 +48,25 @@ int CInput::Mouse_X()
 int CInput::Mouse_Y()
 {
 	return m_mouseState.lY;
+}
+
+void CInput::KillMouse()
+{
+	if (m_dimouse != nullptr)
+	{
+		m_dimouse->Unacquire();
+		m_dimouse->Release();
+		m_dimouse = nullptr;
+	}
+}
+
+CInput* CInput::__instance = nullptr;
+
+CInput* CInput::GetInstance()
+{
+	if (!__instance)
+	{
+		__instance = new CInput;
+	}
+	return __instance;
 }

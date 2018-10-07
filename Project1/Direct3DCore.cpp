@@ -2,6 +2,7 @@
 #include "Macros.h"
 #include "GameObject.h"
 #include "Window.h"
+#pragma comment(lib, "dxguid.lib")
 using namespace Framework::Base;
 
 // Internal Direct3D Core Class

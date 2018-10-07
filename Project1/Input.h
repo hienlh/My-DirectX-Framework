@@ -8,12 +8,15 @@ namespace Framework
 		class CInput
 		{
 		private:
+			static CInput* __instance;
+
 			char m_keys[256];
 			LPDIRECTINPUT8 m_dinput;
 			LPDIRECTINPUTDEVICE8 m_dimouse;
 			LPDIRECTINPUTDEVICE8 m_dikeyboard;
 			DIMOUSESTATE m_mouseState;
 		public:
+			static CInput* GetInstance();
 			CInput() = default;
 			~CInput() = default;
 			bool Init();
