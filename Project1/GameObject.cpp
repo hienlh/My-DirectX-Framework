@@ -85,8 +85,30 @@ CGameObject* CGameObject::Instantiate(SBuilder builder)
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);
 
+
 	if (!instance->Init())
 		SAFE_DELETE(instance);
+
+	auto scene = GameManager::IGameManager::GetInstance()->GetCurrentScene();
+	if (scene)
+		scene->AddGameObject(instance);
+
+	return instance;
+}
+
+CGameObject* CGameObject::Instantiate(Vector3 position)
+{
+	CGameObject* instance = nullptr;
+	SAFE_ALLOC(instance, CGameObject);
+
+
+	if (!instance->Init())
+		SAFE_DELETE(instance);
+
+	instance->m_tranformComponent = Component::CTransform::Instantiate(position, Vector3(0, 0, 0), Vector3(1, 1, 1));
+	auto scene = GameManager::IGameManager::GetInstance()->GetCurrentScene();
+	if (scene)
+		scene->AddGameObject(instance);
 
 	return instance;
 }
@@ -96,7 +118,7 @@ void CGameObject::Release(CGameObject*& instance)
 	instance->Destroy();
 	SAFE_DELETE(instance);
 }
-void CGameObject::Update()
+void CGameObject::Update(DWORD dt)
 {
 	if (m_rendererComponent)
 	{
@@ -105,7 +127,7 @@ void CGameObject::Update()
 
 	if (m_tranformComponent)
 	{
-		m_tranformComponent->Update();
+		m_tranformComponent->Update(dt);
 	}
 }
 

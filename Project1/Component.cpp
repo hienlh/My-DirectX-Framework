@@ -7,7 +7,7 @@
 
 using namespace Framework::Component;
 
-void Framework::Object::CComponent::Update()
+void Framework::Object::CComponent::Update(DWORD dt)
 {
 }
 

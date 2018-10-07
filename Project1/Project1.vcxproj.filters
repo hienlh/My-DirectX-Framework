@@ -33,9 +33,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameManager.cpp">
       <Filter>Framework\GameManager</Filter>
     </ClCompile>
@@ -55,6 +52,15 @@
       <Filter>Framework\Component</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
   </ItemGroup>
@@ -84,6 +90,15 @@
       <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rigidbody.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
   </ItemGroup>

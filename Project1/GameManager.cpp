@@ -11,8 +11,6 @@ class CGameManager_Internal final : public IGameManager
 private:
 	static CGameManager_Internal* __instance;
 
-	static std::vector<Framework::Object::CGameObject*> lis_game_objects;
-
 	// Properties
 private:
 	Framework::Base::IWindow* m_pWindow = nullptr;
@@ -103,25 +101,11 @@ public:
 			{
 				frameStart = now;
 
-				for (auto lis_game_object : lis_game_objects)
-				{
-					lis_game_object->Update();
-					auto x = lis_game_object->GetTranform()->position.x;
-					auto y = lis_game_object->GetTranform()->position.y;
-					if (y <= 0 && x <= SCREEN_WIDTH / 2)
-						lis_game_object->GetTranform()->position.x += dt / 10;
-					else if (y < SCREEN_HEIGHT / 2 && x >= SCREEN_WIDTH / 2)
-					{
-						lis_game_object->GetTranform()->position.y += dt / 10;
-					}
-					else if (x > 0 && y >= SCREEN_HEIGHT / 2)
-						lis_game_object->GetTranform()->position.x -= dt / 10;
-					else
-						lis_game_object->GetTranform()->position.y -= dt / 10;
-				}
+				if(_currentScene)
+					_currentScene->Update(dt);
 
 				// process game loop
-				bool renderResult = m_pDirect3DCore->Render(lis_game_objects);
+				bool renderResult = m_pDirect3DCore->Render(_currentScene->GetListGameObject());
 				if (!renderResult)
 				{
 					OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
@@ -138,8 +122,6 @@ public:
 
 
 CGameManager_Internal* CGameManager_Internal::__instance = nullptr;
-
-std::vector<Framework::Object::CGameObject*> CGameManager_Internal::lis_game_objects;
 
 void CGameManager_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
@@ -162,12 +144,17 @@ CGameManager_Internal* CGameManager_Internal::GetInstance()
 	return __instance;
 }
 
-void CGameManager_Internal::AddGameObject(Framework::Object::CGameObject* game_object)
+// Game Manager Interface Implementation
+
+void IGameManager::SetCurrentScene(CScene* scene)
 {
-	lis_game_objects.push_back(game_object);
+	_currentScene = scene;
 }
 
-// Game Manager Interface Implementation
+CScene* IGameManager::GetCurrentScene()
+{
+	return _currentScene;
+}
 
 void IGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
@@ -182,9 +169,4 @@ void Framework::GameManager::IGameManager::Release()
 IGameManager * Framework::GameManager::IGameManager::GetInstance()
 {
 	return CGameManager_Internal::GetInstance();
-}
-
-void Framework::GameManager::IGameManager::AddGameObject(Object::CGameObject* game_object)
-{
-	CGameManager_Internal::AddGameObject(game_object);
 }

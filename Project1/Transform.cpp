@@ -39,7 +39,11 @@ void Framework::Component::CTransform::Destroy(CTransform *OTranform)
 	SAFE_DELETE(OTranform);
 }
 
-void CTransform::Update()
+void CTransform::Update(DWORD dt)
 {
 
+}
+
+void CTransform::Render()
+{
 }

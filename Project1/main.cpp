@@ -23,16 +23,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
 	Framework::GameManager::IGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 	auto* pGameManager = Framework::GameManager::IGameManager::GetInstance();
+	auto scene = CScene::Instantiate();
+	pGameManager->SetCurrentScene(scene);
+
 	do
 	{
 		Framework::Object::UBuilderData builderData = {{}};
-		auto* mario = Framework::Object::CGameObject::Instantiate({Framework::Object::EBuilderType::GAMEOBJECT,  builderData});
+		Framework::Object::CGameObject* mario = Framework::Object::CGameObject::Instantiate(Vector3(0, 0, 0));
 
-		builderData.rendererBuilder = { Framework::Base::IDirect3DCore::GetInstance()->Get_Direct3DDevice(), "mario.png" };
+		builderData.rendererBuilder = { "mario.png" };
 		mario->AddComponent(Framework::Object::EBuilderType::RENDERER, builderData);
 
-		builderData.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
-		mario->AddComponent(Framework::Object::EBuilderType::TRANSFORM, builderData);
+		/*builderData.transformBuilder = { VECTOR3_ZERO, VECTOR3_ZERO, VECTOR3_ZERO };
+		mario->AddComponent(Framework::Object::EBuilderType::TRANSFORM, builderData);*/
 		
 		pGameManager->Run();
 

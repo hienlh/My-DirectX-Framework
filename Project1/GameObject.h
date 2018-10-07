@@ -34,11 +34,12 @@ namespace Framework
 
 			// Override methods
 		public:
-			virtual void Update() override;
+			virtual void Update(DWORD dt) override;
 
 			// Static methods
 		public:
 			static CGameObject* Instantiate(Object::SBuilder builder);
+			static CGameObject* Instantiate(Vector3 position);
 			static void Release(CGameObject* &instance);
 
 			void Render();

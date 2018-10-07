@@ -12,7 +12,7 @@ CObject* CObject::Instantiate(const SBuilder& builder)
 	if (builder.m_componentType == EBuilderType::GAMEOBJECT)
 		instance = CGameObject::Instantiate(builder);
 	else if (builder.m_componentType == EBuilderType::RENDERER || builder.m_componentType == EBuilderType::TRANSFORM)
-		instance == CComponent::Instantiate(builder);
+		instance = CComponent::Instantiate(builder);
 
 	if (instance)
 		instance->m_builderType = builder.m_componentType;

@@ -27,7 +27,8 @@ namespace Framework
 			static CTransform* Instantiate(Vector3 position, Vector3 rotation, Vector3 local_scale);
 			static void Destroy(CTransform *OTranform);
 
-			void Update();
+			void Update(DWORD dt);
+			void Render() override;
 		};
 	}
 }

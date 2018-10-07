@@ -37,3 +37,7 @@ void CRenderer::Update(Vector3 position)
 {
 	Base::IDirect3DCore::GetInstance()->Draw(position.x, position.y, m_texture);
 }
+
+void CRenderer::Render()
+{
+}

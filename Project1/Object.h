@@ -22,7 +22,6 @@ namespace Framework
 		// Initialize parameters for Render Component
 		struct SRendererBuilder
 		{
-			LPDIRECT3DDEVICE9 d3ddev = nullptr;
 			LPCSTR texturePath = nullptr;
 		};
 
@@ -65,7 +64,8 @@ namespace Framework
 
 			// Abstract Classes
 		public:
-			virtual void Update() = 0;
+			virtual void Update(DWORD dt) = 0;
+			virtual void Render() = 0;
 
 			// Static methods
 		public:

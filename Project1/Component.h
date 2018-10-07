@@ -20,7 +20,7 @@ namespace Framework
 
 			// Abstract Classes
 		public:
-			virtual void Update();
+			virtual void Update(DWORD dt);
 
 			// Static methods
 		public:

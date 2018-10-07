@@ -28,6 +28,7 @@ namespace Framework
 			static void Release(CRenderer* &pObject);
 
 			void Update(Vector3 position);
+			void Render() override;
 		};
 	}
 }
