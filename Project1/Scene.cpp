@@ -57,17 +57,14 @@ void CScene::Update(DWORD dt)
 		float y = gameOnject->GetTranform()->position.y;
 		float width = 14;
 		float heigth = 27;
-		if (x + width <= SCREEN_WIDTH)
-		{
-			gameOnject->GetTranform()->position.x +=  0;
+		
+			gameOnject->GetTranform()->position.x +=  dt * 0.1;
 
-		}else gameOnject->GetTranform()->position.x = SCREEN_WIDTH;
-		if (y + heigth <= SCREEN_HEIGHT)
-		{
-			gameOnject->GetTranform()->position.y += 10;
+		gameOnject->GetTranform()->position.y += dt*0.1;
 
-		}
-		else gameOnject->GetTranform()->position.y = SCREEN_HEIGHT;
+		//Colission
+		if(x+width>=SCREEN_WIDTH) gameOnject->GetTranform()->position.x = SCREEN_WIDTH-width;
+		if(y+heigth>=SCREEN_HEIGHT) gameOnject->GetTranform()->position.y = SCREEN_HEIGHT- heigth;
 
 		// else if (y < SCREEN_HEIGHT -heigth && x >= SCREEN_WIDTH -width )
 		// {

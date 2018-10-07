@@ -6,7 +6,7 @@
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) &0x8000)? 1 : 0)
 
 #define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 240
+#define SCREEN_HEIGHT 480
 
 #define TANK_PATH "E:\\workspace\\My-DirectX-Framework\\Resources\\tank.png"
 #define FULL_SCREEN false
@@ -18,5 +18,5 @@
 
 #define VECTOR3_ZERO { 0, 0, 0 }
 
-#define OVER_X 26
-#define OVER_Y 66
+#define OVER_X 13
+#define OVER_Y 38
