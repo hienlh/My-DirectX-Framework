@@ -223,7 +223,6 @@ LPDIRECTINPUT8 CDirect3DCore_Internal::CreateDirect()
 {
 	LPDIRECTINPUT8 dinput = nullptr;
 	HRESULT result = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, reinterpret_cast<LPVOID*>(&dinput), nullptr);
-
 	if (result != DI_OK)
 		dinput = nullptr;
 
@@ -254,7 +253,6 @@ LPDIRECTINPUTDEVICE8 CDirect3DCore_Internal::CreateKeyboard(LPDIRECTINPUT8 dinpu
 			break;
 
 	} while (false);
-
 	return dikeyboard;
 }
 

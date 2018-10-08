@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -31,6 +27,10 @@
     <Filter Include="Framework\Component">
       <UniqueIdentifier>{12ef78e8-8e7e-48b8-ac52-8d86b00109f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameManager.cpp">
@@ -44,9 +44,6 @@
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Framework\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Framework\Component</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Framework\Component</Filter>
@@ -88,9 +85,6 @@
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Framework\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Framework\Component</Filter>

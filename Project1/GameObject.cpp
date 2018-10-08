@@ -131,7 +131,6 @@ CGameObject* CGameObject::Instantiate(Vector2 position)
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);
 
-
 	if (!instance->Init())
 		SAFE_DELETE(instance);
 

@@ -1,4 +1,4 @@
-﻿#include "Input.h"
+#include "Input.h"
 #include "Direct3DCore.h"
 using namespace Framework::Base;
 
@@ -39,11 +39,6 @@ void CInput::PollKeyboard()
 int CInput::KeyDown(int key)
 {
 	return KEY_DOWN(key);
-}
-
-int CInput::KeyUp(int key)
-{
-	return KEY_UP(key);
 }
 
 void CInput::KillKeyboard()
