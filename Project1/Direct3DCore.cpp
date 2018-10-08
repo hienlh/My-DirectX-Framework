@@ -1,8 +1,9 @@
 #include "Direct3DCore.h"
 #include "Macros.h"
 #include "GameObject.h"
-#include "Window.h"
+#include "GameManager.h"
 #pragma comment(lib, "dxguid.lib")
+
 using namespace Framework::Base;
 
 // Internal Direct3D Core Class
@@ -70,10 +71,9 @@ public:
 		m_spriteHandler->Draw(texture, nullptr, nullptr, &position, D3DCOLOR_XRGB(255, 255, 255));
 	}
 	LPDIRECT3DTEXTURE9 CreateTexture(LPCSTR texturePath) override;
-
-	LPDIRECTINPUT8 CreateDirect();
-	LPDIRECTINPUTDEVICE8 CreateKeyboard(LPDIRECTINPUT8 dinput);
-	LPDIRECTINPUTDEVICE8 CreateMouse(LPDIRECTINPUT8 dinput);
+	LPDIRECTINPUT8 CreateDirect() override;
+	LPDIRECTINPUTDEVICE8 CreateKeyboard(LPDIRECTINPUT8 dinput) override;
+	LPDIRECTINPUTDEVICE8 CreateMouse(LPDIRECTINPUT8 dinput) override;
 	// Internal methods
 private:
 	bool Init(HWND hWind, bool fullscreen)
@@ -223,7 +223,6 @@ LPDIRECTINPUT8 CDirect3DCore_Internal::CreateDirect()
 {
 	LPDIRECTINPUT8 dinput = nullptr;
 	HRESULT result = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, reinterpret_cast<LPVOID*>(&dinput), nullptr);
-	
 	if (result != DI_OK)
 		dinput = nullptr;
 
@@ -232,7 +231,7 @@ LPDIRECTINPUT8 CDirect3DCore_Internal::CreateDirect()
 
 LPDIRECTINPUTDEVICE8 CDirect3DCore_Internal::CreateKeyboard(LPDIRECTINPUT8 dinput)
 {
-	HWND hwnd = IWindow::GetInstance()->Get_WindowHandle();
+	HWND hwnd = Framework::GameManager::IGameManager::GetInstance()->GetWindow()->Get_WindowHandle();
 	LPDIRECTINPUTDEVICE8 dikeyboard = nullptr;
 
 	do
@@ -254,13 +253,12 @@ LPDIRECTINPUTDEVICE8 CDirect3DCore_Internal::CreateKeyboard(LPDIRECTINPUT8 dinpu
 			break;
 
 	} while (false);
-	
 	return dikeyboard;
 }
 
 LPDIRECTINPUTDEVICE8 CDirect3DCore_Internal::CreateMouse(LPDIRECTINPUT8 dinput)
 {
-	HWND hwnd = IWindow::GetInstance()->Get_WindowHandle();
+	HWND hwnd = Framework::GameManager::IGameManager::GetInstance()->GetWindow()->Get_WindowHandle();
 	LPDIRECTINPUTDEVICE8 dimouse = nullptr;
 	do
 	{

@@ -2,75 +2,76 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include "Macros.h"
+#include "Header.h"
 
 namespace Framework
 {
 	namespace Object
 	{
 		// Enum for builder
-		enum EBuilderType
+		enum EObjectType
 		{
 			UNKNOWN = 0,
-			GAMEOBJECT = 1,
+			GAME_OBJECT = 1,
 			TRANSFORM = 2,
-			RENDERER = 3
+			RENDERER = 3,
+			RIGIDBODY = 4
 		};
 
 		// Initialize parameters for Game Object
-		struct SGameObjectBuilder {};
+		struct SGameObjectBuilder
+		{
+		};
 
 		// Initialize parameters for Render Component
 		struct SRendererBuilder
 		{
-			LPDIRECT3DDEVICE9 d3ddev = nullptr;
 			LPCSTR texturePath = nullptr;
 		};
 
 		// Initialize parameters for Transform Component
 		struct STransformBuilder
 		{
-			D3DXVECTOR3 position = VECTOR3_ZERO;
-			D3DXVECTOR3 rotation = VECTOR3_ZERO;
-			D3DXVECTOR3 scale = VECTOR3_ZERO;
+			Vector2 position = Vector2(0, 0);
+			Vector3 rotation = VECTOR3_ZERO;
+			Vector3 scale = VECTOR3_ZERO;
 		};
 
 		// Builder
-		union UBuilderData
+		union UObjectData
 		{
-			SGameObjectBuilder gameObjectBuilder;
-			SRendererBuilder rendererBuilder;
-			STransformBuilder transformBuilder;
+			SGameObjectBuilder gameObjectData;
+			SRendererBuilder renderData;
+			STransformBuilder transformData;
 		};
 
 		// Builder Struct
 		struct SBuilder
 		{
-			EBuilderType m_componentType = EBuilderType::UNKNOWN;
-			UBuilderData m_data;
-
-			//SBuilder(EBuilderType componentType, UBuilderData data) : m_componentType(componentType), m_data(data) {}
+			EObjectType builderType = EObjectType::UNKNOWN;
+			UObjectData builderData = { {} };
 		};
 
 		// Object class
-		class CObject
-		{
+class CObject {
 			// Properties
 		protected:
-			EBuilderType m_builderType = EBuilderType::UNKNOWN;
+			EObjectType m_type = EObjectType::UNKNOWN;
 
 			// Cons / Des
 		public:
 			CObject() = default;
-			~CObject() = default;
+			virtual ~CObject() = default;
 
 			// Abstract Classes
 		public:
-			virtual void Update() = 0;
+			virtual void Update(DWORD dt) = 0;
+			virtual void Render() = 0;
 
 			// Static methods
 		public:
-			static CObject* Instantiate(const SBuilder &builder);
-			static void Release(CObject* &instance);
+			static CObject* Instantiate(SBuilder builder);
+			static void Destroy(CObject* &instance);
 		};
 	}
 }

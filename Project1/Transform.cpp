@@ -2,19 +2,11 @@
 
 using namespace Framework::Component;
 
-bool CTransform::Init(Vector3 position)
+bool Framework::Component::CTransform::Init(const Vector2 position, const Vector3 rotation, const Vector3 local_scale)
 {
-	this->position = position;
-	this->rotation = Vector3(0, 0, 0);
-	this->localScale = Vector3(1, 1, 1);
-	return true;
-}
-
-bool Framework::Component::CTransform::Init(const Vector3 position, const Vector3 rotation, const Vector3 local_scale)
-{
-	this->position = position;
-	this->rotation = rotation;
-	this->localScale = local_scale;
+	this->m_position = position;
+	this->m_rotation = rotation;
+	this->m_localScale = local_scale;
 	return true;
 }
 
@@ -23,23 +15,49 @@ void CTransform::Release()
 
 }
 
-CTransform* CTransform::Instantiate(const Vector3 position, const Vector3 rotation, const Vector3 local_scale)
+CTransform* CTransform::Instantiate(Vector2 position)
 {
-	CTransform* pTransform = nullptr;
-	SAFE_ALLOC(pTransform, CTransform);
-	if (!pTransform->Init(position, rotation, local_scale))
-		SAFE_DELETE(pTransform);
+	CTransform* instance = nullptr;
+	SAFE_ALLOC(instance, CTransform);
+	instance->m_type = Object::EObjectType::TRANSFORM;
+	if (!instance->Init(position))
+	{
+		instance->Release();
+		SAFE_DELETE(instance);
+	}
 
-	return pTransform;
+	return instance;
 }
 
-void Framework::Component::CTransform::Destroy(CTransform *OTranform)
+CTransform* CTransform::Instantiate(Framework::Object::UObjectData data)
 {
-	OTranform->Release();
-	SAFE_DELETE(OTranform);
+	CTransform* instance = nullptr;
+	SAFE_ALLOC(instance, CTransform);
+	instance->m_type = Object::EObjectType::TRANSFORM;
+	if (instance->Init(data.transformData.position, data.transformData.rotation, data.transformData.scale))
+	{
+		instance->Release();
+		SAFE_DELETE(instance);
+	}
+
+	return instance;
 }
 
-void CTransform::Update()
+void Framework::Component::CTransform::Destroy(CTransform *instance)
+{
+	if (instance)
+	{
+		instance->Release();
+		SAFE_DELETE(instance);
+	}
+}
+
+void CTransform::Update(DWORD dt)
+{
+
+}
+
+void CTransform::Render()
 {
 
 }

@@ -6,7 +6,7 @@ bool CInput::Init()
 {
 	m_dinput = IDirect3DCore::GetInstance()->CreateDirect();
 	m_dikeyboard = IDirect3DCore::GetInstance()->CreateKeyboard(m_dinput);
-	m_dimouse = IDirect3DCore::GetInstance()->CreateKeyboard(m_dinput);
+	m_dimouse = IDirect3DCore::GetInstance()->CreateMouse(m_dinput);
 	return m_dikeyboard && m_dinput && m_dimouse;
 }
 

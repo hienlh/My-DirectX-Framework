@@ -10,16 +10,16 @@ namespace Framework
 		private:
 			static CInput* __instance;
 
-			char m_keys[256] = {0};
-			
+			char m_keys[256] = { 0 };
+
 			LPDIRECTINPUT8 m_dinput = nullptr;
 			LPDIRECTINPUTDEVICE8 m_dimouse = nullptr;
 			LPDIRECTINPUTDEVICE8 m_dikeyboard = nullptr;
-			
-			DIMOUSESTATE m_mouseState = {0};
+
+			DIMOUSESTATE m_mouseState = { 0 };
 
 		public:
-			static CInput* GetInstance();
+			static CInput* GetInstance(); 
 
 		public:
 			CInput() = default;
@@ -35,6 +35,7 @@ namespace Framework
 
 			void PollKeyboard();
 			int KeyDown(int key);
+			int KeyUp(int key);
 			void KillKeyboard();
 			void PollMouse();
 			int MouseButton(int button);

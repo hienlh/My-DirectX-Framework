@@ -13,7 +13,7 @@ namespace Framework
 		public:
 			IDirect3DCore() = default;
 			virtual ~IDirect3DCore() = default;
-			
+
 			// Getter / Setters
 		public:
 			virtual LPDIRECT3D9 Get_Direct3D() = 0;

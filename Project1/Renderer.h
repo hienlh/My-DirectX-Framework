@@ -4,6 +4,10 @@
 
 namespace Framework
 {
+	namespace Object {
+		class CGameObject;
+	}
+
 	namespace Component
 	{
 		class CRenderer final : public Object::CComponent
@@ -11,6 +15,7 @@ namespace Framework
 			// Properties
 		private:
 			Texture m_texture = nullptr;
+			Object::CGameObject* m_parentObject = nullptr;
 
 			// Cons / Des
 		public:
@@ -20,14 +25,17 @@ namespace Framework
 			// Internal methods
 		private:
 			bool Init(LPCSTR texturePath);
-			void Destroy();
+			void Release();
 
 			// Static methods
 		public:
-			static CRenderer* Instantiate(LPCSTR texturePath);
-			static void Release(CRenderer* &pObject);
+			static CRenderer* Instantiate(Object::UObjectData data);
+			static void Destroy(CRenderer* &instance);
 
-			void Update(Vector3 position);
+			//Override method
+		public:
+			void Update(DWORD dt) override;
+			void Render() override;
 		};
 	}
 }

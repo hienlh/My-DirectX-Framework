@@ -6,10 +6,6 @@
 
 using namespace Framework::Object;
 
-bool CGameObject::AddComponent(EBuilderType componentType,
-                               UBuilderData data)
-{
-	SBuilder builder = { componentType, data };
 
 	// Use map instead of switch case
 	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
@@ -20,6 +16,7 @@ bool CGameObject::AddComponent(EBuilderType componentType,
 				if (!m_rendererComponent)
 				{
 					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
+					m_rendererComponent->SetGameObject(this);
 					return true;
 				}
 				else
@@ -38,24 +35,14 @@ bool CGameObject::AddComponent(EBuilderType componentType,
 				else
 					return false;
 			}
-		}
-	};
-
-	// Invoke the command corresponding to the builder
-	return callback[componentType]();
-}
-
-bool CGameObject::RemoveComponent(EBuilderType componentType)
-{
-	// Use map instead of switch case
-	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
+		},
 		{
-			EBuilderType::RENDERER,
+			Object::EBuilderType::RIGIDBODY,
 			[&]()
 			{
-				if (m_rendererComponent)
+				if (!m_rigidbodyComponent)
 				{
-					CComponent::Release(reinterpret_cast<CComponent*&>(m_rendererComponent));
+					m_rigidbodyComponent = reinterpret_cast<CRigidbody*>(CComponent::Instantiate(builder));
 					return true;
 				}
 				else
@@ -63,55 +50,122 @@ bool CGameObject::RemoveComponent(EBuilderType componentType)
 			}
 		}
 	};
+//Temp for deadline
+bool CGameObject::leftBlockMoveDown = true;
+bool CGameObject::rightBlockMoveDown = true;
 
-	// Invoke the command corresponding to the builder
-	return callback[componentType]();
+bool CGameObject::AddComponent(SBuilder builder)
+{
+	bool result = false;
+	if (builder.builderType == EObjectType::RENDERER && !m_rendererComponent)
+	{
+		m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
+		if(m_rendererComponent)
+			m_rendererComponent->SetGameObject(this);
+		result = true;
+	}
+	if (builder.builderType == EObjectType::TRANSFORM && !m_transformComponent)
+	{
+		m_transformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
+		if (m_transformComponent)
+			m_transformComponent->SetGameObject(this);
+		result = true;
+	}
+	return result;
+}
+
+bool CGameObject::RemoveComponent(EObjectType type)
+{
+	bool result = false;
+	if (type == EObjectType::RENDERER && m_rendererComponent)
+	{
+		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_rendererComponent));
+		result = true;
+	}
+	if (type == EObjectType::TRANSFORM && m_transformComponent)
+	{
+		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_transformComponent));
+		result = true;
+	}
+	return result;
 }
 
 bool CGameObject::Init()
 {
 	m_rendererComponent = nullptr;
+	m_transformComponent = nullptr;
+	m_rigidbodyComponent = nullptr;
+
 	return true;
 }
 
-void CGameObject::Destroy()
+void CGameObject::Release()
 {
 	if (m_rendererComponent)
-		Component::CRenderer::Release(m_rendererComponent);
+		Component::CRenderer::Destroy(m_rendererComponent);
+	if (m_transformComponent)
+		Component::CTransform::Destroy(m_transformComponent);
+	if (m_rigidbodyComponent)
+		SAFE_DELETE(m_rigidbodyComponent);
 }
 
-CGameObject* CGameObject::Instantiate(SBuilder builder)
+CGameObject* CGameObject::Instantiate()
 {
 	CGameObject* instance = nullptr;
 	SAFE_ALLOC(instance, CGameObject);
 
-	GameManager::IGameManager::AddGameObject(instance);
+	instance->m_type = EObjectType::GAME_OBJECT;
 
 	if (!instance->Init())
 		SAFE_DELETE(instance);
 
+	auto scene = GameManager::IGameManager::GetInstance()->GetCurrentScene();
+	if (scene)
+		scene->AddGameObject(instance);
+
 	return instance;
 }
 
-void CGameObject::Release(CGameObject*& instance)
+CGameObject* CGameObject::Instantiate(Vector2 position)
 {
-	instance->Destroy();
+	CGameObject* instance = nullptr;
+	SAFE_ALLOC(instance, CGameObject);
+
+	if (!instance->Init())
+		SAFE_DELETE(instance);
+
+	instance->m_transformComponent = Component::CTransform::Instantiate(position);
+	auto scene = GameManager::IGameManager::GetInstance()->GetCurrentScene();
+	if (scene)
+		scene->AddGameObject(instance);
+
+	return instance;
+}
+
+void CGameObject::Destroy(CGameObject*& instance)
+{
+	instance->Release();
 	SAFE_DELETE(instance);
 }
-void CGameObject::Update()
+void CGameObject::Update(DWORD dt)
 {
 	if (m_rendererComponent)
 	{
-		m_rendererComponent->Update(m_tranformComponent->position);
+		m_rendererComponent->Update(dt);
 	}
 
-	if (m_tranformComponent)
+	if (m_transformComponent)
 	{
-		m_tranformComponent->Update();
+		m_transformComponent->Update(dt);
+	}
+
+	if (m_rigidbodyComponent)
+	{
+		m_rigidbodyComponent->Update(dt);
 	}
 }
 
 void CGameObject::Render()
 {
-	m_rendererComponent->Update(m_tranformComponent->position);
+	m_rendererComponent->Render();
 }
