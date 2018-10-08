@@ -16,6 +16,7 @@ namespace Framework
 			Component::CRenderer* m_rendererComponent = nullptr;
 			Component::CTransform* m_transformComponent = nullptr;
 			CRigidbody* m_rigidbodyComponent = nullptr;
+			CRigidbody* m_rigidbodyComponent = nullptr;
 
 			// Cons / Des
 		public:
@@ -47,9 +48,9 @@ namespace Framework
 
 			// Static methods
 		public:
-			static CGameObject* Instantiate();
+			static CGameObject* Instantiate(Object::SBuilder builder);
 			static CGameObject* Instantiate(Vector2 position);
-			static void Destroy(CGameObject* &instance);
+			static void Release(CGameObject* &instance);
 		};
 	}
 }

@@ -197,6 +197,30 @@ void CScene::Update(DWORD dt)
 				rightBlock->GetRigidbody()->SetVelocity(Vector2(0, 0));
 		}
 	}
+
+	//va cham voi block phai
+	if(mario_x + mario_width>=rblock_x && (mario_y + mario_heigth >= rblock_y && mario_y <= rblock_y + rblock_heigth))
+	{
+		auto velocity = mario->GetRigidbody()->GetVelocity();
+		mario->GetRigidbody()->SetVelocity(Vector2(-velocity.x, velocity.y));
+	}
+
+	//va cham voi thanh duoi
+	if (mario_y + mario_heigth>= SCREEN_HEIGHT)
+	{
+		auto velocity = mario->GetRigidbody()->GetVelocity();
+		mario->GetRigidbody()->SetVelocity(Vector2(velocity.x, -velocity.y));
+	}
+
+	//va cham voi thanh tren
+	if (mario_y <= 0)
+	{
+		auto velocity = mario->GetRigidbody()->GetVelocity();
+		mario->GetRigidbody()->SetVelocity(Vector2(velocity.x, -velocity.y));
+	}
+
+
+
 }
 
 void CScene::Render()

@@ -7,6 +7,49 @@
 using namespace Framework::Object;
 
 
+	// Use map instead of switch case
+	std::unordered_map<EBuilderType, std::function<bool()>> callback = {
+		{
+			EBuilderType::RENDERER,
+			[&]()
+			{
+				if (!m_rendererComponent)
+				{
+					m_rendererComponent = reinterpret_cast<Component::CRenderer*>(CComponent::Instantiate(builder));
+					m_rendererComponent->SetGameObject(this);
+					return true;
+				}
+				else
+					return false;
+			}
+		},
+		{
+			Object::EBuilderType::TRANSFORM,
+			[&]()
+			{
+				if (!m_tranformComponent)
+				{
+					m_tranformComponent = reinterpret_cast<Component::CTransform*>(CComponent::Instantiate(builder));
+					return true;
+				}
+				else
+					return false;
+			}
+		},
+		{
+			Object::EBuilderType::RIGIDBODY,
+			[&]()
+			{
+				if (!m_rigidbodyComponent)
+				{
+					m_rigidbodyComponent = reinterpret_cast<CRigidbody*>(CComponent::Instantiate(builder));
+					return true;
+				}
+				else
+					return false;
+			}
+		}
+	};
 //Temp for deadline
 bool CGameObject::leftBlockMoveDown = true;
 bool CGameObject::rightBlockMoveDown = true;
