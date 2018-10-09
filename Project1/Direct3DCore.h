@@ -1,6 +1,7 @@
 #pragma once
 #include "Header.h"
 #include "GameObject.h"
+#include <vector>
 
 namespace Framework
 {

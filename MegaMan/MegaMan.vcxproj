@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)DirectX\Project1;$(SolutionDir)DirectX\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)DirectX\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

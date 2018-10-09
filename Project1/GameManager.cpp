@@ -1,5 +1,4 @@
 #include "GameManager.h"
-#include "Macros.h"
 #include "Window.h"
 #include "Direct3DCore.h"
 #include "Input.h"

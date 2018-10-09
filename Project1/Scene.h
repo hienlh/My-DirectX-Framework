@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Object.h"
 #include "GameObject.h"
+#include <vector>
 
 class CScene : public Framework::Object::CObject
 {

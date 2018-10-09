@@ -2,6 +2,7 @@
 #include "Macros.h"
 #include "GameObject.h"
 #include "GameManager.h"
+#include <vector>
 #pragma comment(lib, "dxguid.lib")
 
 using namespace Framework::Base;
