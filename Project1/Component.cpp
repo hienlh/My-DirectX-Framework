@@ -4,7 +4,6 @@
 
 using namespace Framework::Component;
 
-
 Framework::Object::CGameObject* _gameObject = nullptr;
 
 // Create new instance

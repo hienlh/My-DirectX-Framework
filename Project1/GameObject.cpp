@@ -33,6 +33,7 @@ bool CGameObject::AddComponent(SBuilder builder)
 bool CGameObject::RemoveComponent(EObjectType type)
 {
 	bool result = false;
+
 	if (type == EObjectType::RENDERER && m_rendererComponent)
 	{
 		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_rendererComponent));
@@ -43,6 +44,7 @@ bool CGameObject::RemoveComponent(EObjectType type)
 		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_transformComponent));
 		result = true;
 	}
+
 	return result;
 }
 
@@ -59,10 +61,9 @@ void CGameObject::Release()
 {
 	if (m_rendererComponent)
 		Component::CRenderer::Destroy(m_rendererComponent);
+
 	if (m_transformComponent)
 		Component::CTransform::Destroy(m_transformComponent);
-	if (m_rigidbodyComponent)
-		SAFE_DELETE(m_rigidbodyComponent);
 }
 
 CGameObject* CGameObject::Instantiate()
@@ -74,14 +75,16 @@ CGameObject* CGameObject::Instantiate()
 
 	if (!instance->Init())
 		SAFE_DELETE(instance);
-
+	
 	auto scene = GameManager::IGameManager::GetInstance()->GetCurrentScene();
 	if (scene)
 		scene->AddGameObject(instance);
 
 	return instance;
+	//GameManager::IGameManager::AddGameObject(instance);		
 }
 
+void CGameObject::Destroy(CGameObject*& instance)
 CGameObject* CGameObject::Instantiate(Vector2 position)
 {
 	CGameObject* instance = nullptr;

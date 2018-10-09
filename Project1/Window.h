@@ -22,7 +22,10 @@ namespace Framework
 
 			// Pattern
 		public:
-			static IWindow* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+			static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+			static void Destroy();
+
+			static IWindow* GetInstance();
 		};
 	}
 }

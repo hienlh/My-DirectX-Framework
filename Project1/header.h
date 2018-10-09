@@ -12,6 +12,9 @@
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 typedef D3DXVECTOR3 Vector3;
-typedef D3DXVECTOR2 Vector2;
-typedef LPDIRECT3DTEXTURE9 Texture;
-
+typedef IDirect3DTexture9 Texture;
+typedef LPCSTR CString;
+typedef IDirect3D9 Direct3D;
+typedef IDirect3DDevice9 Device;
+typedef IDirect3DSurface9 Surface;
+typedef ID3DXSprite Sprite;

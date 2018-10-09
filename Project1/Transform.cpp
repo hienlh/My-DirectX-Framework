@@ -2,7 +2,14 @@
 
 using namespace Framework::Component;
 
-bool Framework::Component::CTransform::Init(const Vector2 position, const Vector3 rotation, const Vector3 local_scale)
+//void CTransform::Update(Vector3 position, Vector3 rotation, Vector3 scale)
+//{
+//	m_position = position;
+//	m_rotation = rotation;
+//	m_scale = scale;
+//}
+
+bool CTransform::Init(Vector3 position, Vector3 rotation, Vector3 scale)
 {
 	this->m_position = position;
 	this->m_rotation = rotation;
@@ -10,9 +17,11 @@ bool Framework::Component::CTransform::Init(const Vector2 position, const Vector
 	return true;
 }
 
-void CTransform::Release()
-{
+	this->m_position = VECTOR3_ZERO;
+	this->m_rotation = VECTOR3_ZERO;
+	this->m_localScale = VECTOR3_ONE;
 
+	return true;
 }
 
 CTransform* CTransform::Instantiate(Vector2 position)
@@ -43,6 +52,15 @@ CTransform* CTransform::Instantiate(Framework::Object::UObjectData data)
 	return instance;
 }
 
+	if (instance->Init(data.transformData.position, data.transformData.rotation, data.transformData.scale))
+	{
+		instance->Release();
+		SAFE_DELETE(instance);
+	}
+	
+	return instance;
+}
+
 void Framework::Component::CTransform::Destroy(CTransform *instance)
 {
 	if (instance)
@@ -50,14 +68,4 @@ void Framework::Component::CTransform::Destroy(CTransform *instance)
 		instance->Release();
 		SAFE_DELETE(instance);
 	}
-}
-
-void CTransform::Update(DWORD dt)
-{
-
-}
-
-void CTransform::Render()
-{
-
 }

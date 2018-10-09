@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Macros.h"
-#include "Direct3DCore.h"
+#include "Graphic.h"
+#include "GameManager.h"
 #include "GameManager.h"
 
 using namespace Framework::Component;
@@ -17,13 +18,20 @@ void CRenderer::Release()
 		m_texture->Release();
 }
 
+void CRenderer::Render()
+CRenderer* CRenderer::Instantiate(Framework::Object::UObjectData data)
+{
+	GameManager::IGameManager::GetInstance()->Get_Direct3DCore()->Draw(m_parentObject->Get_Transform()->Get_Position(), m_texture);
+}
+
 CRenderer* CRenderer::Instantiate(Framework::Object::UObjectData data)
 {
 	CRenderer* instance = nullptr;
 	SAFE_ALLOC(instance, CRenderer);
 
 	instance->m_type = Object::EObjectType::RENDERER;
-	if (!instance->Init(data.renderData.texturePath))
+
+	if (instance->Init(data.renderData.texturePath))
 	{
 		instance->Release();
 		SAFE_DELETE(instance);

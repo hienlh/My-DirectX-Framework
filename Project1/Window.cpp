@@ -80,22 +80,38 @@ private:
 
 		return result;
 	}
+	void Release()
+	{
+		DestroyWindow(m_hWnd);
+	}
 
 	// Static methods
 public:
-	static IWindow* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+	static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+	static void Destroy();
+	
+	static CWindow_Internal* GetInstance();
 };
 
-IWindow* CWindow_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight,
-	bool fullscreen)
+// Window Class Implementation
+
+CWindow_Internal* CWindow_Internal::__instance = nullptr;
+
+void CWindow_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
-	CWindow_Internal* instance = nullptr;
-	SAFE_ALLOC(instance, CWindow_Internal);
+	SAFE_ALLOC(__instance, CWindow_Internal);
 
-	if (!instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
-		SAFE_DELETE(instance);
+	if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
+		SAFE_DELETE(__instance);
+}
 
-	return instance;
+void CWindow_Internal::Destroy()
+{
+	if (__instance)
+	{
+		__instance->Release();
+		SAFE_DELETE(__instance);
+	}
 }
 
 // Window Interface Implementation
@@ -103,4 +119,14 @@ IWindow* CWindow_Internal::Instantiate(HINSTANCE hInstance, int nShowCmd, int sc
 IWindow* IWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	return CWindow_Internal::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
+}
+
+void IWindow::Destroy()
+{
+	CWindow_Internal::Destroy();
+}
+
+IWindow* IWindow::GetInstance()
+{
+	return CWindow_Internal::GetInstance();
 }

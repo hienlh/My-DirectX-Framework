@@ -36,9 +36,6 @@
     <ClCompile Include="GameManager.cpp">
       <Filter>Framework\GameManager</Filter>
     </ClCompile>
-    <ClCompile Include="Direct3DCore.cpp">
-      <Filter>Framework\Base</Filter>
-    </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Framework\Base</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
   <ItemGroup>
     <ClInclude Include="GameManager.h">
       <Filter>Framework\GameManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Direct3DCore.h">
-      <Filter>Framework\Base</Filter>
     </ClInclude>
     <ClInclude Include="Header.h">
       <Filter>Framework\Header</Filter>

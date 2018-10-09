@@ -1,6 +1,13 @@
 #pragma once
 #include "Header.h"
+#include "Object.h"
 #include "Component.h"
+
+namespace Framework {
+	namespace Object {
+		class CGameObject;
+	}
+}
 
 namespace Framework
 {
@@ -14,7 +21,8 @@ namespace Framework
 		{
 			// Properties
 		private:
-			Texture m_texture = nullptr;
+			Texture* m_texture = nullptr;
+			Object::CGameObject* m_parentObject = nullptr;
 			Object::CGameObject* m_parentObject = nullptr;
 
 			// Cons / Des
@@ -24,8 +32,12 @@ namespace Framework
 
 			// Internal methods
 		private:
-			bool Init(LPCSTR texturePath);
+			bool Init(CString texturePath);
 			void Release();
+
+		public:
+			void Update() override {};
+			void Render();
 
 			// Static methods
 		public:

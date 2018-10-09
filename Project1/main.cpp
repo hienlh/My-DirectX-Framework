@@ -2,7 +2,6 @@
 #include "Header.h"
 #include "GameManager.h"
 #include "GameObject.h"
-#include "Direct3DCore.h"
 #include "Input.h"
 #include <iostream>
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -59,7 +58,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pGameManager->Run();
 		
 	} while (false);
-	Framework::GameManager::IGameManager::Release();
+	
+	Framework::GameManager::IGameManager::Destroy();
 	Framework::Base::IDirect3DCore::Release();
 
 	return 0;

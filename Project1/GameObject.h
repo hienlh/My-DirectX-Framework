@@ -13,6 +13,8 @@ namespace Framework
 		{
 			// Properties
 		private:
+			std::vector<CComponent*> m_components;
+
 			Component::CRenderer* m_rendererComponent = nullptr;
 			Component::CTransform* m_transformComponent = nullptr;
 			CRigidbody* m_rigidbodyComponent = nullptr;
