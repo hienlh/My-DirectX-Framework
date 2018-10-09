@@ -41,6 +41,11 @@ int CInput::KeyDown(int key)
 	return KEY_DOWN(key);
 }
 
+int CInput::KeyUp(int key)
+{
+	return KEY_UP(key);
+}
+
 void CInput::KillKeyboard()
 {
 	if (m_dikeyboard != nullptr)
