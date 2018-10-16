@@ -1,14 +1,12 @@
 ﻿#pragma once
 #include "Object.h"
 #include "GameObject.h"
-#include <vector>
 
-namespace Framework
-{
+namespace Framework {
 	class CScene : public CObject
 	{
 	private:
-		std::list<Framework::CGameObject*> m_gameObjectList;
+		std::vector<CGameObject*> _listGameObject;
 
 	public:
 		CScene() = default;
@@ -20,15 +18,15 @@ namespace Framework
 
 		// Getter/Setter
 	public:
-		//std::list<Framework::CGameObject*> GetGameObjectList();
+		std::vector<CGameObject*> GetListGameObject();
 
 	public:
 		static CScene* Instantiate();
 		static bool Destroy(CScene* scene);
 
-		void Update(DWORD dt);
-		void Render();
+		void Update(DWORD dt) override;
+		void Render() override;
 
-		void AddGameObject(Framework::CGameObject* gameObject);
+		void AddGameObject(CGameObject* gameObject);
 	};
 }

@@ -14,30 +14,68 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Framework">
-      <UniqueIdentifier>{9642d0e4-d036-49ad-a197-85d6bdfe26e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Framework\Header">
-      <UniqueIdentifier>{4ff42e2a-8c18-4b6d-a306-35a94dd43d6d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Framework\Base">
-      <UniqueIdentifier>{93451552-a035-4382-9e2d-4ff5ae7c222c}</UniqueIdentifier>
+      <UniqueIdentifier>{bdafef22-81ae-4032-93a6-c35aaf4f0639}</UniqueIdentifier>
     </Filter>
     <Filter Include="Framework\GameManager">
-      <UniqueIdentifier>{bd78a859-fcb9-42b8-a302-06a6cac35b2c}</UniqueIdentifier>
+      <UniqueIdentifier>{df9d4f26-f71f-4963-9265-75842a918f7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Framework\Component">
-      <UniqueIdentifier>{9ce2d15a-2b0b-45b0-a794-c439ebe1ab74}</UniqueIdentifier>
+    <Filter Include="Framework\Header">
+      <UniqueIdentifier>{cc9a81df-dff7-4d59-99a6-340b0237d2aa}</UniqueIdentifier>
     </Filter>
     <Filter Include="Framework\Object">
-      <UniqueIdentifier>{a5f43aa6-2cc2-4a4a-8a98-947dfe6255c4}</UniqueIdentifier>
+      <UniqueIdentifier>{965779f7-c56e-4cd0-94ad-db2f99fc3561}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Base">
+      <UniqueIdentifier>{e808ad6a-c9fc-49fc-8607-278fc06327ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Component">
+      <UniqueIdentifier>{12ef78e8-8e7e-48b8-ac52-8d86b00109f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Framework\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Framework\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Framework\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Framework\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Behavior.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Framework\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Framework\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic.cpp">
+      <Filter>Framework\Base</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameManager.h">
+      <Filter>Framework\GameManager</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Header.h">
+      <Filter>Framework\Header</Filter>
     </ClInclude>
     <ClInclude Include="Macros.h">
       <Filter>Framework\Header</Filter>
@@ -45,13 +83,10 @@
     <ClInclude Include="Window.h">
       <Filter>Framework\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic.h">
-      <Filter>Framework\Base</Filter>
+    <ClInclude Include="GameObject.h">
+      <Filter>Framework\Object</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Framework\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Rigidbody.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
@@ -60,61 +95,23 @@
     <ClInclude Include="Transform.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
-      <Filter>Framework\GameManager</Filter>
+    <ClInclude Include="Rigidbody.h">
+      <Filter>Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Framework\Object</Filter>
+    <ClInclude Include="Input.h">
+      <Filter>Framework\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Behavior.h">
+      <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Framework\Object</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Framework\GameManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Framework\Base</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Framework\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphic.cpp">
-      <Filter>Framework\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>Framework\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Framework\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Rigidbody.cpp">
-      <Filter>Framework\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Framework\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameManager.cpp">
-      <Filter>Framework\GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
       <Filter>Framework\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Framework\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Framework\GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Input.cpp">
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
       <Filter>Framework\Base</Filter>
-    </ClCompile>
+    </ClInclude>
   </ItemGroup>
 </Project>

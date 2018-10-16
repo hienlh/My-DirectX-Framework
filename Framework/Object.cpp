@@ -1,13 +1,7 @@
-﻿#include "stdafx.h"
-#include "Object.h"
+﻿#include "Object.h"
 #include "GameObject.h"
 
 using namespace Framework;
-
-void CObject::SetParentObject(CObject* pParent)
-{
-	m_parentObject = pParent;
-}
 
 CObject* CObject::Instantiate(SBuilder builder)
 {

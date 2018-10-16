@@ -2,20 +2,16 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
+
 #include <dinput.h>
 
 #include <Windows.h>
-
-//d3d9.lib; d3dx9.lib; dinput8.lib; XInput.lib; dxguid.lib;
+#include <vector>
 
 // Window event callback function
 LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 typedef D3DXVECTOR3 Vector3;
 typedef D3DXVECTOR2 Vector2;
-typedef IDirect3DTexture9 Texture;
-typedef LPCSTR CString;
-typedef IDirect3D9 Direct3D;
-typedef IDirect3DDevice9 Device;
-typedef IDirect3DSurface9 Surface;
-typedef ID3DXSprite Sprite;
+typedef LPDIRECT3DTEXTURE9 Texture;
+typedef LPTSTR String;

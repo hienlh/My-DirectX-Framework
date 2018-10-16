@@ -1,25 +1,26 @@
-#include "stdafx.h"
 #include "Component.h"
 #include "Renderer.h"
 #include "Transform.h"
+#include "GameObject.h"
 
 using namespace Framework;
 
-Framework::CGameObject* _gameObject = nullptr;
+
+CGameObject* _gameObject = nullptr;
 
 // Create new instance
-Framework::CComponent* Framework::CComponent::Instantiate(SBuilder builder)
+CComponent* CComponent::Instantiate(SBuilder builder)
 {
-	if (builder.builderType == EObjectType::RENDERER)
+	/*if (builder.builderType == EObjectType::RENDERER)
 		return CRenderer::Instantiate(builder.builderData);
 	else if (builder.builderType == EObjectType::TRANSFORM)
 		return CTransform::Instantiate(builder.builderData);
-	else
+	else*/
 		return nullptr;
 }
 
 // Release instance
-void Framework::CComponent::Destroy(CComponent * &instance)
+void CComponent::Destroy(CComponent * &instance)
 {
 	if (instance->m_type == EObjectType::RENDERER)
 		CRenderer::Destroy(reinterpret_cast<CRenderer*&>(instance));

@@ -1,24 +1,24 @@
-﻿#include "stdafx.h"
-#include "Rigidbody.h"
-
+﻿#include "Rigidbody.h"
 #include "GameObject.h"
 
 using namespace Framework;
 
-CRigidbody::CRigidbody(Framework::CGameObject * gameObject)
+CRigidbody::CRigidbody(CGameObject * gameObject)
 {
-	this->m_parentObject = gameObject;
+	this->_gameObject = gameObject;
 	this->_velocity = Vector2(0, 0);
 	this->_mass = 0;
 	this->_gravityScale = 1;
 	this->_isKinematic = false;
+
+
 }
 
 void CRigidbody::Update(DWORD dt)
 {
-	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTranform();
-	if (pTransform)
-		pTransform->m_position += _velocity * dt / 10;
+	auto tranform = _gameObject->GetTranform();
+	if(tranform)
+		tranform->m_position += _velocity * dt / 10;
 }
 
 void CRigidbody::Render()
