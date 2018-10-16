@@ -3,7 +3,6 @@
 #include "GameManager.h"
 #include "Window.h"
 #include "Graphic.h"
-#include "Scene.h"
 
 using namespace Framework;
 

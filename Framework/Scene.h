@@ -1,14 +1,13 @@
 ﻿#pragma once
 #include "Object.h"
 #include "GameObject.h"
-#include <vector>
 
 namespace Framework
 {
-	class CScene : public CObject
+	class CScene final : public CObject
 	{
 	private:
-		std::list<Framework::CGameObject*> m_gameObjectList;
+		std::list<Framework::CGameObject*> m_gameObjectList{};
 
 	public:
 		CScene() = default;

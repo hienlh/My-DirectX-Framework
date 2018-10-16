@@ -21,7 +21,7 @@ namespace Framework
 	// Initialize parameters for Render Component
 	struct SRendererBuilder
 	{
-		WString texturePath = nullptr;
+		CWString texturePath = nullptr;
 	};
 
 	// Initialize parameters for Transform Component

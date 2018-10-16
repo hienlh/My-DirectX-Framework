@@ -23,7 +23,7 @@ namespace Framework
 		CWindow* m_pWindow = nullptr;
 		CGraphic* m_pGraphic = nullptr;
 
-		std::list<CGameObject*> m_gameObjectList;
+		std::list<CGameObject*> m_gameObjectList{};
 		CScene* m_currentScene = nullptr;
 
 		// Internal methods

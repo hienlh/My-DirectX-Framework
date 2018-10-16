@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include "Renderer.h"
 #include <functional>
-#include "GameManager.h"
 
 using namespace Framework;
 

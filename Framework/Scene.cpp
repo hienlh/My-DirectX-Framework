@@ -1,8 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
 #include "GameManager.h"
-#include <string>
-#include "Input.h"
 
 using namespace Framework;
 
