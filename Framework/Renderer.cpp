@@ -26,7 +26,7 @@ CRenderer* CRenderer::Instantiate(Framework::UObjectData data)
 
 	instance->m_type = EObjectType::RENDERER;
 
-	if (instance->Init(data.renderData.texturePath))
+	if (!instance->Init(data.renderData.texturePath))
 	{
 		instance->Release();
 		SAFE_DELETE(instance);

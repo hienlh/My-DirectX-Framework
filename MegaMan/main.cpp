@@ -23,25 +23,25 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	Framework::CGameManager::Instantiate(hInstance, nShowCmd, 640, 480, FULL_SCREEN);
+	Framework::CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 	Framework::CGameManager* pGameManager = Framework::CGameManager::GetInstance();
 	
-	auto scene = Framework::CScene::Instantiate();
-	//pGameManager->SetCurrentScene(scene);
+	Framework::CScene* scene = Framework::CScene::Instantiate();
+	pGameManager->SetCurrentScene(scene);
 
 	do
 	{		
 		Framework::UObjectData data = { {} };
 		Framework::CGameObject* mario = Framework::CGameObject::Instantiate(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
-		data.renderData = { L"mario.png" };
+		data.renderData = { L"Resources\\mario.png" };
 		mario->AddComponent({ Framework::EObjectType::RENDERER, data });
 
 		mario->AddRigidbody(new CRigidbody(mario));
 		mario->GetRigidbody()->SetVelocity(Vector2(1, 1));
 
 		Framework::UObjectData data2 = { {} };
-		data2.renderData = { L"Block.png" };
+		data2.renderData = { L"Resources\\Block.png" };
 		Framework::CGameObject* leftblock = Framework::CGameObject::Instantiate(Vector2(0, 0));
 		leftblock->AddComponent({ Framework::EObjectType::RENDERER, data2 });
 

@@ -34,8 +34,8 @@ namespace Framework
 		
 		// Getters / Setters
 	public:
-		//void SetCurrentScene(CScene* scene);
-		//CScene* GetCurrentScene();
+		void SetCurrentScene(CScene* scene);
+		CScene* GetCurrentScene();
 		
 		// Public methods
 	public:

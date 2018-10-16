@@ -7,27 +7,16 @@
 using namespace Framework;
 
 CGameManager* CGameManager::__instance = nullptr;
-	//void SetCurrentScene(Framework::CScene* scene)
-	//{
-	//	m_currentScene = scene;
-	//}
-	//Framework::CScene* GetCurrentScene()
-	//{
-	//	return m_currentScene;
-	//}
+	
+void CGameManager::SetCurrentScene(CScene* scene)
+{
+	m_currentScene = scene;
+}
 
-// Game Manager Interface Implementation
-//
-//void IGameManager::SetCurrentScene(CScene* scene)
-//{
-//	CGameManager_Internal::GetInstance()->SetCurrentScene(scene);
-//}
-//
-//CScene* IGameManager::GetCurrentScene()
-//{
-//	auto scene = CGameManager_Internal::GetInstance()->GetCurrentScene();
-//	return scene;
-//}
+CScene* CGameManager::GetCurrentScene()
+{
+	return m_currentScene;
+}
 
 bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
