@@ -15,8 +15,8 @@ namespace Framework
 		
 		// Properties
 	private:
-		Byte m_prevKeys[256] = { 0 };
-		Byte m_keys[256] = { 0 };
+		BYTE m_prevKeys[256] = { 0 };
+		BYTE m_keys[256] = { 0 };
 		
 		MouseState m_mouseState = { 0 };
 
@@ -35,9 +35,9 @@ namespace Framework
 
 		// Public methods
 	public:
-		bool GetKeyDown(Byte key);
-		bool GetKeyUp(Byte key);
-		bool GetButtonDown(Byte button);
+		bool GetKeyDown(BYTE key);
+		bool GetKeyUp(BYTE key);
+		bool GetButtonDown(BYTE button);
 		
 		void Update();
 

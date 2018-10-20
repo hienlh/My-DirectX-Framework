@@ -10,7 +10,8 @@ namespace Framework
 		GAME_OBJECT = 1,
 		TRANSFORM = 2,
 		RENDERER = 3,
-		RIGIDBODY = 4
+		RIGIDBODY = 4,
+		ANIMATOR = 5
 	};
 
 	// Initialize parameters for Game Object
@@ -21,7 +22,7 @@ namespace Framework
 	// Initialize parameters for Render Component
 	struct SRendererBuilder
 	{
-		CWString texturePath = nullptr;
+		LPCWSTR texturePath = nullptr;
 	};
 
 	// Initialize parameters for Transform Component
@@ -32,19 +33,27 @@ namespace Framework
 		Vector2 scale = VECTOR2_ONE;
 	};
 
+	struct SAnimatorBuilder
+	{
+		LPCWSTR texturePath = nullptr;
+		DWORD countWidth = 0, countHeight = 0, count = 0;
+		DWORD delay = 0;
+	};
+
 	// Builder
 	union UObjectData
 	{
 		SGameObjectBuilder gameObjectData;
 		SRendererBuilder renderData;
 		STransformBuilder transformData;
+		SAnimatorBuilder animatorBuilder;
 	};
 
 	// Builder Struct
 	struct SBuilder
 	{
-		EObjectType builderType = EObjectType::UNKNOWN;
-		UObjectData builderData = { {} };
+		EObjectType type = EObjectType::UNKNOWN;
+		UObjectData data = { {} };
 	};
 
 	// Object class

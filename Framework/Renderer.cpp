@@ -6,17 +6,27 @@
 
 using namespace Framework;
 
-bool CRenderer::Init(CWString texturePath)
+bool CRenderer::Init(LPCWSTR texturePath)
 {
-	m_texture = 
-		CGraphic::GetInstance()->CreateTexture(texturePath);
-	return m_texture != nullptr;
+	m_pTexture = CGraphic::GetInstance()->CreateTexture(texturePath, m_textureWidth, m_textureHeight);
+	return m_pTexture != nullptr;
 }
 
 void CRenderer::Release()
 {
-	if (m_texture)
-		m_texture->Release();
+	if (m_pTexture)
+		m_pTexture->Release();
+}
+
+void CRenderer::Update(DWORD dt)
+{
+	
+}
+
+void CRenderer::Render()
+{
+	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTranform();
+	CGraphic::GetInstance()->Draw(m_pTexture, pTransform->Get_Position());
 }
 
 CRenderer* CRenderer::Instantiate(Framework::UObjectData data)
@@ -42,15 +52,4 @@ void CRenderer::Destroy(CRenderer* &instance)
 		instance->Release();
 		SAFE_DELETE(instance);
 	}
-}
-
-void CRenderer::Update(DWORD dt)
-{
-	CGraphic::GetInstance()->Draw(VECTOR3_ZERO, m_texture);
-}
-
-void CRenderer::Render()
-{
-	CTransform* transform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTranform();
-	CGraphic::GetInstance()->Draw({ transform->m_position.x, transform->m_position.y,0 }, m_texture);
 }

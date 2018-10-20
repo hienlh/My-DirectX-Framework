@@ -14,16 +14,17 @@ namespace Framework
 	{
 		// Properties
 	private:
-		Texture* m_texture = nullptr;
+		Texture* m_pTexture = nullptr;
+		DWORD m_textureWidth = 0, m_textureHeight = 0;
 		
 		// Cons / Des
-	public:
+	private:
 		CRenderer() = default;
 		virtual ~CRenderer() = default;
 
 		// Internal methods
 	private:
-		bool Init(CWString texturePath);
+		bool Init(LPCWSTR texturePath);
 		void Release();
 
 	public:
@@ -35,7 +36,7 @@ namespace Framework
 		static CRenderer* Instantiate(UObjectData data);
 		static void Destroy(CRenderer* &instance);
 
-		//Override method
+		// Override method
 	public:
 
 	};

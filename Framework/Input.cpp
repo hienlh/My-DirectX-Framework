@@ -127,17 +127,17 @@ void CInput::Destroy()
 	}
 }
 
-bool CInput::GetKeyDown(Byte key)
+bool CInput::GetKeyDown(BYTE key)
 {
 	return KEY_DOWN(key);
 }
 
-bool CInput::GetKeyUp(Byte key)
+bool CInput::GetKeyUp(BYTE key)
 {
 	return KEY_UP(key);
 }
 
-bool CInput::GetButtonDown(Byte button)
+bool CInput::GetButtonDown(BYTE button)
 {
 	return BUTTON_DOWN(m_mouseState, button);
 }

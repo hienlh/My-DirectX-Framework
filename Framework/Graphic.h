@@ -36,9 +36,9 @@ namespace Framework
 		// Public methods
 	public:
 		bool Render(const std::list<CGameObject*> &gameObjectList);
-		void Draw(Vector3 position, Texture* texture);
+		void Draw(Texture* texture, Vector2 position, Rect* pSourceRect = nullptr);
 		
-		Texture* CreateTexture(CWString texturePath);
+		Texture* CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight);
 			
 		// Static methods
 	public:

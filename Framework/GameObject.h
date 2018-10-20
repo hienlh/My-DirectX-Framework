@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "Rigidbody.h"
 #include <vector>
+#include "Animator.h"
 
 namespace Framework
 {
@@ -13,16 +14,19 @@ namespace Framework
 	{
 		// Properties
 	private:
-		std::vector<CComponent*> m_components;
+		//std::vector<CComponent*> m_components;
 
 		CRenderer* m_rendererComponent = nullptr;
 		CTransform* m_transformComponent = nullptr;
 		CRigidbody* m_rigidbodyComponent = nullptr;
+		CAnimator* m_animatorComponent = nullptr;
 
 		// Cons / Des
-	public:
+	private:
 		CGameObject() = default;
 		~CGameObject() = default;
+
+	public:
 		static bool leftBlockMoveDown;
 		static bool rightBlockMoveDown;
 
@@ -49,8 +53,7 @@ namespace Framework
 
 		// Static methods
 	public:
-		static CGameObject* Instantiate();
-		static CGameObject* Instantiate(Vector2 position);
+		static CGameObject* Instantiate(Vector2 position = VECTOR2_ZERO);
 		static void Destroy(CGameObject* &instance);
 	};
 }

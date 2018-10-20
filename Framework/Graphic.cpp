@@ -86,21 +86,19 @@ bool CGraphic::Render(const std::list<CGameObject*> &gameObjectList)
 	do
 	{
 		// Start rendering
-		if (m_pDevice->BeginScene())
-		{
-			// Clear back buffer with black color
-			m_pDevice->ColorFill(m_pBackBuffer, nullptr, COLOR_BLACK);
+		m_pDevice->BeginScene();
+		// Clear back buffer with black color
+		m_pDevice->ColorFill(m_pBackBuffer, nullptr, COLOR_BLACK);
 
-			m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
+		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 
-			for (CGameObject* pGameObject : gameObjectList)
-				pGameObject->Render();
-			
-			m_pSpriteHandler->End();
+		for (CGameObject* pGameObject : gameObjectList)
+			pGameObject->Render();
 
-			// stop rendering
-			m_pDevice->EndScene();
-		}
+		m_pSpriteHandler->End();
+
+		// stop rendering
+		m_pDevice->EndScene();
 
 		// display back buffer content to the screen
 		m_pDevice->Present(nullptr, nullptr, nullptr, nullptr);
@@ -111,12 +109,13 @@ bool CGraphic::Render(const std::list<CGameObject*> &gameObjectList)
 	return result;
 }
 
-void CGraphic::Draw(Vector3 position, Texture* texture)
+void CGraphic::Draw(Texture* texture, Vector2 position, Rect* pSourceRect)
 {
-	m_pSpriteHandler->Draw(texture, nullptr, nullptr, &position, COLOR_WHITE);
+	Vector3 position3D = { position.x, position.y, 0 };
+	m_pSpriteHandler->Draw(texture, pSourceRect, nullptr, &position3D, COLOR_WHITE);
 }
 
-Texture* CGraphic::CreateTexture(CWString texturePath)
+Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight)
 {
 	Texture* m_texture = nullptr;
 	do
@@ -125,7 +124,10 @@ Texture* CGraphic::CreateTexture(CWString texturePath)
 		HRESULT hr = D3DXGetImageInfoFromFileW(texturePath, &info);
 		if (hr != S_OK)
 			break;
-		
+
+		textureWidth = info.Width;
+		textureHeight = info.Height;
+
 		hr = D3DXCreateTextureFromFileExW(
 			m_pDevice,       // Pointer to Direct3D device object
 			texturePath, // Path to the image to load

@@ -24,10 +24,10 @@ bool Framework::CScene::Release()
 	return result;
 }
 
-//std::list<Framework::CGameObject*> Framework::CScene::GetGameObjectList()
-//{
-//	return m_gameObjectList;
-//}
+const std::list<Framework::CGameObject*>& Framework::CScene::GetGameObjectList()
+{
+	return m_gameObjectList;
+}
 
 Framework::CScene* Framework::CScene::Instantiate()
 {
@@ -94,9 +94,9 @@ void Framework::CScene::Update(DWORD dt)
 	//	}
 	//	count = count >= 3 ? 0 : count + 1;
 	//}
-	for (auto gameOnject : m_gameObjectList)
+	for (CGameObject* pGameObject : m_gameObjectList)
 	{
-		gameOnject->Update(dt);
+		pGameObject->Update(dt);
 	}
 
 	/*auto mario = m_gameObjectList[0];

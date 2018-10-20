@@ -32,7 +32,12 @@ bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int 
 		m_pGraphic = CGraphic::GetInstance();
 		if (!m_pGraphic)
 			break;
-		
+
+		CInput::Instantiate();
+		m_pInput = CInput::GetInstance();
+		if (!m_pInput)
+			break;
+
 		result = true;
 	} while (false);
 
@@ -43,6 +48,7 @@ void CGameManager::Release()
 {
 	CWindow::Destroy();
 	CGraphic::Destroy();
+	CInput::Destroy();
 }
 
 bool CGameManager::Run()
@@ -74,6 +80,8 @@ bool CGameManager::Run()
 		{
 			frameStart = now;
 
+			m_currentScene->Update(dt);
+			m_currentScene->Render();
 			/*for (auto lis_game_object : lis_game_objects)
 			{
 				lis_game_object->Update();
@@ -92,9 +100,9 @@ bool CGameManager::Run()
 			}
 */
 // process game loop
-			bool renderResult = m_pGraphic->Render(m_gameObjectList);
+			/*bool renderResult = m_pGraphic->Render(m_gameObjectList);
 			if (!renderResult)
-				break;
+				break;*/
 		}
 		else
 			Sleep(tickPerFrame - dt);
@@ -104,10 +112,10 @@ bool CGameManager::Run()
 
 }
 
-void CGameManager::AddGameObject(CGameObject* pGameObject)
-{
-	m_gameObjectList.push_back(pGameObject);
-}
+//void CGameManager::AddGameObject(CGameObject* pGameObject)
+//{
+//	m_gameObjectList.push_back(pGameObject);
+//}
 
 void CGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {

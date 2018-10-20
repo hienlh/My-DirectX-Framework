@@ -19,7 +19,7 @@ namespace Framework
 
 		// Getter/Setter
 	public:
-		//std::list<Framework::CGameObject*> GetGameObjectList();
+		const std::list<Framework::CGameObject*>& GetGameObjectList();
 
 	public:
 		static CScene* Instantiate();

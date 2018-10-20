@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "Graphic.h"
 #include "Scene.h"
+#include "Input.h"
 
 namespace Framework
 {
@@ -22,8 +23,9 @@ namespace Framework
 	private:
 		CWindow* m_pWindow = nullptr;
 		CGraphic* m_pGraphic = nullptr;
+		CInput* m_pInput = nullptr;
 
-		std::list<CGameObject*> m_gameObjectList{};
+		//std::list<CGameObject*> m_gameObjectList{};
 		CScene* m_currentScene = nullptr;
 
 		// Internal methods
@@ -40,7 +42,7 @@ namespace Framework
 		// Public methods
 	public:
 		bool Run();
-		void AddGameObject(CGameObject* pGameObject);
+		//void AddGameObject(CGameObject* pGameObject);
 
 		// Instantiate method
 	public:

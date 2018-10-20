@@ -41,7 +41,7 @@ CTransform* CTransform::Instantiate(Framework::UObjectData data)
 	CTransform* instance = nullptr;
 	SAFE_ALLOC(instance, CTransform);
 	instance->m_type = EObjectType::TRANSFORM;
-	if (instance->Init(data.transformData.position, data.transformData.rotation, data.transformData.scale))
+	if (!instance->Init(data.transformData.position, data.transformData.rotation, data.transformData.scale))
 	{
 		instance->Release();
 		SAFE_DELETE(instance);

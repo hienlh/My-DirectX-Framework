@@ -72,6 +72,9 @@
     <ClInclude Include="Scene.h">
       <Filter>Framework\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -109,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Framework\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Framework\Component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
