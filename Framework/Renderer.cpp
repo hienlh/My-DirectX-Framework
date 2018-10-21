@@ -31,22 +31,6 @@ CRenderer* CRenderer::Instantiate()
 {
 	CRenderer* instance = nullptr;
 	SAFE_ALLOC(instance, CRenderer);
-	instance->m_type = EObjectType::RENDERER;
-
-	return instance;
-}
-
-CRenderer* CRenderer::Instantiate(UObjectData data)
-{
-	CRenderer* instance = nullptr;
-	SAFE_ALLOC(instance, CRenderer);
-
-	instance->m_type = EObjectType::RENDERER;
-	if (!instance->Init(data.renderData.texturePath))
-	{
-		instance->Release();
-		SAFE_DELETE(instance);
-	}
 
 	return instance;
 }
@@ -70,7 +54,7 @@ void CRenderer::Render()
 {
 	if (_gameObject == nullptr) return;
 
-	const auto transform = _gameObject->GetTranform();
+	const auto transform = _gameObject->GetComponent<CTransform>();
 	if (m_texture == nullptr || transform == nullptr) return;
 
 	//If dev don't set width height then draw with default width, height of image

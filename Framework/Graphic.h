@@ -13,9 +13,11 @@ namespace Framework
 		// Properties
 	private:
 		LPDIRECT3D9 m_d3d = nullptr;
-		LPDIRECT3DDEVICE9 m_d3ddev = nullptr;
 		LPDIRECT3DSURFACE9 m_backbuffer = nullptr;
 		LPD3DXSPRITE m_spriteHandler = nullptr;
+
+	public:
+		LPDIRECT3DDEVICE9 m_d3ddev = nullptr;
 
 		//Private method
 	private:
@@ -35,6 +37,8 @@ namespace Framework
 		LPDIRECT3DSURFACE9 Get_BackBuffer() const { return this->m_backbuffer; }
 		LPD3DXSPRITE Get_SpriteHandler() const { return m_spriteHandler; }
 		Vector2 GetImageSize(LPCSTR imagePath);
+
+		void SetTransform(Matrix &orthographicMatrix, Matrix &identityMatrix, Matrix &viewMatrix);
 
 		// Abstract methods
 	public:

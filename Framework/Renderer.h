@@ -39,7 +39,6 @@ namespace Framework
 		// Static methods
 	public:
 		static CRenderer* Instantiate();
-		static CRenderer* Instantiate(UObjectData data);
 		static void Destroy(CRenderer* &instance);
 
 		//Override method

@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)\Project1;$(SolutionDir)DirectX\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)DirectX\Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)DirectX\Lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -121,12 +121,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LeftBlockController.cpp" />
+    <ClCompile Include="BlockController.cpp" />
+    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MarioController.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LeftBlockController.h" />
+    <ClInclude Include="BlockController.h" />
+    <ClInclude Include="CameraController.h" />
     <ClInclude Include="MarioController.h" />
   </ItemGroup>
   <ItemGroup>

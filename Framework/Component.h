@@ -25,10 +25,5 @@ namespace Framework
 	public:
 		virtual void Update(DWORD dt) = 0;
 		virtual void Render() = 0;
-
-		// Static methods
-	public:
-		static CComponent* Instantiate(SBuilder builder);
-		static void Destroy(CComponent* &instance);
 	};
 }

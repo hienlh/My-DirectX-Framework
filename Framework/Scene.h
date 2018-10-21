@@ -7,6 +7,7 @@ namespace Framework {
 	{
 	private:
 		std::vector<CGameObject*> _listGameObject;
+		CGameObject *m_mainCamera;
 
 	public:
 		CScene() = default;
@@ -14,11 +15,13 @@ namespace Framework {
 
 	private:
 		bool Init();
+		bool InitMainCamera();
 		bool Release();
 
 		// Getter/Setter
 	public:
 		std::vector<CGameObject*> GetListGameObject();
+		CGameObject* GetMainCamera() { return m_mainCamera; }
 
 	public:
 		static CScene* Instantiate();

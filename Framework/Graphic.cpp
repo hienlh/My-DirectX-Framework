@@ -107,6 +107,13 @@ Vector2 CGraphic::GetImageSize(LPCSTR imagePath)
 	return Vector2(info.Width, info.Height);
 }
 
+void CGraphic::SetTransform(Matrix &orthographicMatrix, Matrix &identityMatrix, Matrix &viewMatrix)
+{
+	m_d3ddev->SetTransform(D3DTS_PROJECTION, &orthographicMatrix);
+	m_d3ddev->SetTransform(D3DTS_WORLD, &identityMatrix);
+	m_d3ddev->SetTransform(D3DTS_VIEW, &viewMatrix);
+}
+
 bool CGraphic::Render(std::vector<CGameObject*> list_game_objects)
 {
 	bool result = false;
@@ -118,7 +125,7 @@ bool CGraphic::Render(std::vector<CGameObject*> list_game_objects)
 			// Clear back buffer with black color
 			m_d3ddev->ColorFill(m_backbuffer, nullptr, D3DCOLOR_XRGB(0, 0, 0));
 
-			m_spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
+			m_spriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
 
 			for (auto list_game_object : list_game_objects)
 			{

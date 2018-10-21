@@ -26,22 +26,7 @@ CTransform* CTransform::Instantiate(Vector2 position)
 {
 	CTransform* instance = nullptr;
 	SAFE_ALLOC(instance, CTransform);
-	instance->m_type = EObjectType::TRANSFORM;
 	if (!instance->Init(position))
-	{
-		instance->Release();
-		SAFE_DELETE(instance);
-	}
-
-	return instance;
-}
-
-CTransform* CTransform::Instantiate(UObjectData data)
-{
-	CTransform* instance = nullptr;
-	SAFE_ALLOC(instance, CTransform);
-	instance->m_type = EObjectType::TRANSFORM;
-	if (instance->Init(data.transformData.position, data.transformData.rotation, data.transformData.scale))
 	{
 		instance->Release();
 		SAFE_DELETE(instance);

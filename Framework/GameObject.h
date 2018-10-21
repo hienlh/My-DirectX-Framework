@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "Rigidbody.h"
 #include "Behavior.h"
+#include "Camera.h"
 
 namespace Framework
 {
@@ -11,10 +12,7 @@ namespace Framework
 	{
 		// Properties
 	private:
-		CRenderer* m_rendererComponent = nullptr;
-		CTransform* m_transformComponent = nullptr;
-		CRigidbody* m_rigidbodyComponent = nullptr;
-		std::vector<CComponent*> m_extendComponents;
+		std::vector<CComponent*> m_Components;
 
 		// Cons / Des
 	public:
@@ -25,31 +23,46 @@ namespace Framework
 
 		// Public methods
 	public:
-		bool AddComponent(SBuilder builder);
-		bool AddComponent(EObjectType type);
-
-		template<class T> bool AddComponent()
+		template<class T> T* AddComponent()
 		{
-			T* a = new T(this);
-			if (reinterpret_cast<CComponent *> (&a)) {
-				m_extendComponents.push_back(a);
+			if (GetComponent<T>()) return nullptr;
+			T* tmp = new T(this);
+			if (reinterpret_cast<CComponent *> (&tmp)) {
+				m_Components.push_back(tmp);
+				return tmp;
 			}
-			return true;
+			return nullptr;
 		}
-		template <> bool AddComponent<CRenderer>() { m_rendererComponent = new CRenderer(this); return true; }
-		template <> bool AddComponent<CTransform>() { m_transformComponent = new CTransform(this); return true; }
-		template <> bool AddComponent<CRigidbody>() { m_rigidbodyComponent = new CRigidbody(this); return true; }
 
 		template<class Type>
-		Type* GetComponent();
+		Type* GetComponent()
+		{
+			for (CComponent* component : m_Components)
+			{
+				Type* tmp = dynamic_cast<Type *> (component);
+				if(tmp != nullptr)
+				{
+					return tmp;
+				}
+			}
+			return nullptr;
+		}
 
-		bool RemoveComponent(EObjectType type);
+		template<class T>
+		bool RemoveComponent()
+		{
+			for (CComponent* component : m_Components)
+			{
+				T* tmp = dynamic_cast<T *> (component);
+				if (tmp != nullptr)
+				{
+					SAFE_DELETE(tmp);
+				}
+			}
+		}
 
 		// Getters / Setters
 	public:
-		CTransform* GetTranform() const { return m_transformComponent; }
-		CRigidbody* GetRigidbody() const { return m_rigidbodyComponent; }
-		void AddRigidbody(CRigidbody* _rigidbody) { m_rigidbodyComponent = _rigidbody; }
 
 		// Internal methods
 	private:

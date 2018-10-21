@@ -37,7 +37,6 @@ namespace Framework
 
 	public:
 		static CTransform* Instantiate(Vector2 position = VECTOR2_ZERO);
-		static CTransform* Instantiate(UObjectData data);
 		static void Destroy(CTransform *OTranform);
 
 		// Override method

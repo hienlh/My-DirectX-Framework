@@ -5,11 +5,15 @@ using namespace Framework;
 
 class MarioController : public CComponent
 {
-private:
-	CGameObject* _gameObject = nullptr;
+	float width, height;
+	Vector2 pos;
 
 public:
-	MarioController(CGameObject *game_object) { _gameObject = game_object; }
+	CGameObject* leftBlock;
+	CGameObject* rightBlock;
+
+public:
+	MarioController(CGameObject *game_object);
 	~MarioController() = default;
 
 public:
