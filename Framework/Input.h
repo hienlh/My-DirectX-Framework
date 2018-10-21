@@ -1,15 +1,25 @@
-#pragma once
+﻿#pragma once
+#include "Header.h"
 
 namespace Framework
 {
 	class CInput final
 	{
-		// Used for singleton pattern
 	private:
 		static CInput* __instance;
 
-		// Cons / Des
-	private:
+		char m_keys[256] = { 0 };
+
+		LPDIRECTINPUT8 m_dinput = nullptr;
+		LPDIRECTINPUTDEVICE8 m_dimouse = nullptr;
+		LPDIRECTINPUTDEVICE8 m_dikeyboard = nullptr;
+
+		DIMOUSESTATE m_mouseState = { 0 };
+
+	public:
+		static CInput* GetInstance(); 
+
+	public:
 		CInput() = default;
 		~CInput() = default;
 		
@@ -20,20 +30,10 @@ namespace Framework
 		
 		MouseState m_mouseState = { 0 };
 
-		Input* m_pInput = nullptr;
-		InputDevice* m_pMouseDevice = nullptr;
-		InputDevice* m_pKeyboardDevice = nullptr;
-
-		// Internal methods
 	private:
 		bool Init();
 		void Release();
 
-		bool CreateInput();
-		bool CreateKeyBoardDevice();
-		bool CreateMouseDevice();
-
-		// Public methods
 	public:
 		bool GetKeyDown(BYTE key);
 		bool GetKeyUp(BYTE key);
@@ -45,6 +45,15 @@ namespace Framework
 	public:
 		static void Instantiate();
 		static void Destroy();
-		static CInput* GetInstance();
+
+		void PollKeyboard();
+		int KeyDown(int key);
+		int KeyUp(int key);
+		void KillKeyboard();
+		void PollMouse();
+		int MouseButton(int button);
+		int Mouse_X();
+		int Mouse_Y();
+		void KillMouse();
 	};
 }

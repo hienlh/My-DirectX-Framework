@@ -1,14 +1,13 @@
 #pragma once
 #include "Renderer.h"
-#include "Object.h"
 #include "Transform.h"
 #include "Rigidbody.h"
-#include <vector>
+#include "Behavior.h"
+#include "Camera.h"
 #include "Animator.h"
 
 namespace Framework
 {
-
 	// Game Object Class
 	class CGameObject : public CObject
 	{
@@ -32,14 +31,46 @@ namespace Framework
 
 		// Public methods
 	public:
-		bool AddComponent(SBuilder builder);
-		bool RemoveComponent(EObjectType type);
+		template<class T> T* AddComponent()
+		{
+			if (GetComponent<T>()) return nullptr;
+			T* tmp = new T(this);
+			if (reinterpret_cast<CComponent *> (&tmp)) {
+				m_Components.push_back(tmp);
+				return tmp;
+			}
+			return nullptr;
+		}
+
+		template<class Type>
+		Type* GetComponent()
+		{
+			for (CComponent* component : m_Components)
+			{
+				Type* tmp = dynamic_cast<Type *> (component);
+				if(tmp != nullptr)
+				{
+					return tmp;
+				}
+			}
+			return nullptr;
+		}
+
+		template<class T>
+		bool RemoveComponent()
+		{
+			for (CComponent* component : m_Components)
+			{
+				T* tmp = dynamic_cast<T *> (component);
+				if (tmp != nullptr)
+				{
+					SAFE_DELETE(tmp);
+				}
+			}
+		}
 
 		// Getters / Setters
 	public:
-		CTransform* GetTranform() const { return m_transformComponent; }
-		CRigidbody* GetRigidbody() const { return m_rigidbodyComponent; }
-		void AddRigidbody(CRigidbody* _rigidbody) { m_rigidbodyComponent = _rigidbody; }
 
 		// Internal methods
 	private:
@@ -48,8 +79,8 @@ namespace Framework
 
 		// Override methods
 	public:
-		virtual void Update(DWORD dt);
-		void Render();
+		void Update(DWORD dt) override;
+		void Render() override;
 
 		// Static methods
 	public:

@@ -1,17 +1,66 @@
-#include "stdafx.h"
 #include "GameObject.h"
-#include <unordered_map>
-#include "Renderer.h"
 #include <functional>
 #include "Scene.h"
 #include "GameManager.h"
 
 using namespace Framework;
 
-//Temp for deadline
-bool CGameObject::leftBlockMoveDown = true;
-bool CGameObject::rightBlockMoveDown = true;
+//template <class T>
+//bool CGameObject::AddComponent()
+//{
+//
+//	return false;
+//}
+//template <> bool CGameObject::AddComponent<CRenderer>()
+//{
+//	if (m_rendererComponent) return true;
+//
+//	m_rendererComponent = new CRenderer(this);
+//	return m_rendererComponent!=nullptr;
+//}
+//template <> bool CGameObject::AddComponent<CTransform>()
+//{
+//	if (m_transformComponent) return true;
+//
+//	m_transformComponent = new CTransform(this);
+//	return m_transformComponent != nullptr;
+//}
+//template <> bool CGameObject::AddComponent<CRigidbody>()
+//{
+//	if (m_rigidbodyComponent) return true;
+//
+//	m_rigidbodyComponent = new CRigidbody(this);
+//	return m_rigidbodyComponent != nullptr;
+//}
 
+//template <class Type>
+//Type* CGameObject::GetComponent()
+//{
+//	using std::is_same;
+//	if ( is_same<Type, CRenderer>::value) {
+//		return m_rigidbodyComponent;
+//	}
+//	if (is_same<Type, CTransform>::value){
+//		return m_transformComponent;
+//	}
+//	if (is_same<Type, CRigidbody>::value)
+//	{
+//		return m_rendererComponent;
+//	}
+//	return nullptr;
+//}
+//template <> CTransform* CGameObject::GetComponent<CTransform>()
+//{
+//	return m_transformComponent;
+//}
+//template <> CRenderer* CGameObject::GetComponent<CRenderer>()
+//{
+//	return m_rendererComponent;
+//}
+//template <> CRigidbody* CGameObject::GetComponent<CRigidbody>()
+//{
+//	return m_rigidbodyComponent;
+//}
 bool CGameObject::AddComponent(SBuilder builder)
 {
 	bool result = false;
@@ -40,40 +89,13 @@ bool CGameObject::AddComponent(SBuilder builder)
 	return result;
 }
 
-bool CGameObject::RemoveComponent(EObjectType type)
-{
-	bool result = false;
-
-	if (type == EObjectType::RENDERER && m_rendererComponent)
-	{
-		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_rendererComponent));
-		result = true;
-	}
-	if (type == EObjectType::TRANSFORM && m_transformComponent)
-	{
-		CComponent::Destroy(reinterpret_cast<CComponent*&>(m_transformComponent));
-		result = true;
-	}
-
-	return result;
-}
-
 bool CGameObject::Init()
 {
-	m_rendererComponent = nullptr;
-	m_transformComponent = nullptr;
-	m_rigidbodyComponent = nullptr;
-
 	return true;
 }
 
 void CGameObject::Release()
 {
-	if (m_rendererComponent)
-		CRenderer::Destroy(m_rendererComponent);
-
-	if (m_transformComponent)
-		CTransform::Destroy(m_transformComponent);
 }
 
 CGameObject* CGameObject::Instantiate(Vector2 position)
@@ -87,6 +109,12 @@ CGameObject* CGameObject::Instantiate(Vector2 position)
 		if (!instance->Init())
 			break;
 
+	if (!instance->Init())
+		SAFE_DELETE(instance);
+
+	auto scene = CGameManager::GetInstance()->GetCurrentScene();
+	if (scene)
+		scene->AddGameObject(instance);
 		Framework::UObjectData data = { {} };
 		data.transformData = { position, VECTOR2_ZERO, VECTOR2_ONE };
 		instance->AddComponent({ EObjectType::TRANSFORM, data });
@@ -107,7 +135,12 @@ CGameObject* CGameObject::Instantiate(Vector2 position)
 		if (instance)
 			instance->Release();
 		SAFE_DELETE(instance);
-	}
+
+	instance->AddComponent<CTransform>()->Set_Position(position);
+	auto scene = CGameManager::GetInstance()->GetCurrentScene();
+	if (scene)
+		scene->AddGameObject(instance);
+
 	return instance;
 }
 
@@ -118,8 +151,8 @@ void CGameObject::Destroy(CGameObject*& instance)
 }
 void CGameObject::Update(DWORD dt)
 {
-	if (m_rendererComponent)
-		m_rendererComponent->Update(dt);
+	for (auto component : m_Components)
+		component->Update(dt);
 	
 	if (m_transformComponent)
 		m_transformComponent->Update(dt);

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Renderer.h"
 #include "Macros.h"
 #include "Graphic.h"
@@ -12,7 +11,7 @@ bool CRenderer::Init(LPCWSTR texturePath)
 	return m_pTexture != nullptr;
 }
 
-void CRenderer::Release()
+void CRenderer::Release() const
 {
 	if (m_pTexture)
 		m_pTexture->Release();

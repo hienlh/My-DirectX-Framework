@@ -1,11 +1,22 @@
-#include "stdafx.h"
-
 #include "Window.h"
 #include "Macros.h"
 
 using namespace Framework;
 
-CWindow* CWindow::__instance = nullptr;
+LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT result = 0;
+	switch (message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		result = DefWindowProc(hWnd, message, wParam, lParam);
+	}
+
+	return result;
+}
 
 bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
@@ -14,8 +25,8 @@ bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int scree
 	do
 	{
 		// create window class structure
-		WNDCLASSEXW wc;
-		wc.cbSize = sizeof(WNDCLASSEXW);
+		WNDCLASSEX wc;
+		wc.cbSize = sizeof(WNDCLASSEX);
 
 		wc.style = CS_HREDRAW | CS_VREDRAW;
 		wc.hInstance = hInstance;
@@ -23,17 +34,17 @@ bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int scree
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
 		wc.hIcon = nullptr;
-		wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+		wc.hCursor = LoadCursorA(nullptr, IDC_ARROW);
 		wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
 		wc.lpszMenuName = nullptr;
 		wc.lpszClassName = APP_TITLE;
 		wc.hIconSm = nullptr;
 
 		// register window class
-		ATOM registerResult = RegisterClassExW(&wc);
+		ATOM registerResult = RegisterClassEx(&wc);
 		if (!registerResult)
 		{
-			//OutputDebugStringW("[Error] RegisterClassExA failed\n");
+			OutputDebugString("[Error] RegisterClassExA failed\n");
 			break;
 		}
 
@@ -42,7 +53,7 @@ bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int scree
 			? WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP
 			: WS_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
 
-		m_hWnd = CreateWindowW(
+		m_hWnd = CreateWindow(
 			APP_TITLE, APP_TITLE,         // window class | title bar
 			dwWindowStyle,                // window style
 			CW_USEDEFAULT, CW_USEDEFAULT, // x, y m_position of window
@@ -53,7 +64,10 @@ bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int scree
 		);
 
 		if (!m_hWnd)
+		{
+			OutputDebugStringA("[Error] CreateWindowA failed\n");
 			break;
+		}
 
 		// show window
 		ShowWindow(m_hWnd, nShowCmd);
@@ -65,35 +79,13 @@ bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int scree
 	return result;
 }
 
-void CWindow::Release()
+CWindow* CWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
-	DestroyWindow(m_hWnd);
-}
+	CWindow* instance = nullptr;
+	SAFE_ALLOC(instance, CWindow);
 
-void CWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
-{
-	if (!__instance)
-	{
-		SAFE_ALLOC(__instance, CWindow);
+	if (!instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
+		SAFE_DELETE(instance);
 
-		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
-		{
-			__instance->Release();
-			SAFE_DELETE(__instance);
-		}
-	}
-}
-
-void CWindow::Destroy()
-{
-	if (__instance)
-	{
-		__instance->Release();
-		SAFE_DELETE(__instance);
-	}
-}
-
-CWindow* CWindow::GetInstance()
-{
-	return __instance;
+	return instance;
 }
