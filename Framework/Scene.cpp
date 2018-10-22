@@ -84,7 +84,6 @@ void CScene::Update(DWORD dt)
 
 void CScene::Render()
 {
-	CGraphic::GetInstance()->Render(m_listGameObject);
 }
 
 void CScene::AddGameObject(CGameObject* gameObject)

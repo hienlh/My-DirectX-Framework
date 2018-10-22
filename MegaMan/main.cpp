@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		Background->AddComponent<CRenderer>()->SetTexture(String("Background.jpg"));
 
 		mario->AddComponent<CRenderer>()->SetTexture(String("mario.png"));
-		mario->AddComponent<CRigidbody>()->SetVelocity(Vector2(.1, 0));
+		mario->AddComponent<CRigidbody>()->SetVelocity(Vector2(.1, .1));
 		mario->AddComponent<CBoxCollider>();
 		mario->AddComponent<MarioController>()->leftBlock = leftblock;
 		mario->GetComponent<MarioController>()->rightBlock = rightblock;
@@ -54,7 +54,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		rightblock->AddComponent<BlockController>()->SetAllParameters(true, true);
 
 		//scene->GetMainCamera()->GetComponent<CameraController>()->m_target = mario;
-		scene->AddGameObjects(3, mario, leftblock, rightblock);
+		scene->AddGameObjects(4, mario, mario2, leftblock, rightblock);
 
 		pGameManager->Run();
 

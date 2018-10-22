@@ -27,7 +27,7 @@ typedef struct Bounds
 	~Bounds() = default;
 
 	Vector2 TopLeft() const { return Vector2(top, left); }
-	Vector2 Size() const { return Vector2(bottom - top, right - left); }
+	Vector2 Size() const { return Vector2(right - left, bottom - top); }
 
 	void GetBounds(float &t, float &l, float &r, float &b)
 	{

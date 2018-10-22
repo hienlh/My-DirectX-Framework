@@ -111,8 +111,8 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 	float ml, mt, mr, mb;		// moving object bbox
 	float t, nx, ny;
 
-	staticObject->GetComponent<CCollider>()->GetBounds().GetBounds(st, sl, sr, sb);
-	moveObject->GetComponent<CCollider>()->GetBounds().GetBounds(mt, ml, mr, mb);
+	staticObject->GetComponent<CCollider>()->GetBoundGlobal().GetBounds(st, sl, sr, sb);
+	moveObject->GetComponent<CCollider>()->GetBoundGlobal().GetBounds(mt, ml, mr, mb);
 
 	Vector2 mv = moveObject->GetComponent<CRigidbody>()->GetVelocity();
 	Vector2 sv = staticObject->GetComponent<CRigidbody>()->GetVelocity();
@@ -148,14 +148,14 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 		if (nx != 0) {
 			mv = Vector2(-mv.x, mv.y);
 			sv = Vector2(-sv.x, sv.y);
-			mTran->PlusPosition(Vector2(mv.x, 0) * dt * rt);
-			sTran->PlusPosition(Vector2(sv.x, 0) * dt * rt);
+			if (mEffect) mTran->PlusPosition(Vector2(mv.x, 0) * dt * rt);
+			if (sEffect) sTran->PlusPosition(Vector2(sv.x, 0) * dt * rt);
 		}
 		if (ny != 0) {
 			mv = Vector2(mv.x, -mv.y);
 			sv = Vector2(sv.x, -sv.y);
-			mTran->PlusPosition(Vector2(0, mv.y) * dt * rt);
-			sTran->PlusPosition(Vector2(0, sv.y) * dt * rt);
+			if (mEffect) mTran->PlusPosition(Vector2(0, mv.y) * dt * rt);
+			if (sEffect) sTran->PlusPosition(Vector2(0, sv.y) * dt * rt);
 		}
 
 		if (mEffect) {

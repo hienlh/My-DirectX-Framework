@@ -70,23 +70,13 @@ bool CGameManager::Run()
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
 		DWORD dt = now - frameStart;
+		//DWORD dt = 20;
 		CTime::GetInstance()->SetDeltaTime(dt);
 		CTime::GetInstance()->SetTime(CTime::GetInstance()->Time() + dt);
 
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
-
-			auto input = CInput::GetInstance();
-			if (input) {
-				input->PollKeyboard();
-				input->PollMouse();
-			}
-
-			if (m_currentScene)
-				m_currentScene->Update(dt);
-
-			CPhysic::GetInstance()->Update(dt);
 
 			// process game loop
 			bool renderResult = CGraphic::GetInstance()->Render(m_currentScene->GetListGameObject());
@@ -95,6 +85,17 @@ bool CGameManager::Run()
 				OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
 				break;
 			}
+
+			auto input = CInput::GetInstance();
+			if (input) {
+				input->PollKeyboard();
+				input->PollMouse();
+			}
+
+			CPhysic::GetInstance()->Update(dt);
+
+			if (m_currentScene)
+				m_currentScene->Update(dt);
 		}
 		else
 			Sleep(tickPerFrame - dt);

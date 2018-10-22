@@ -11,14 +11,12 @@ CBoxCollider::CBoxCollider(CGameObject* gameObject) : CCollider(gameObject)
 	{
 		_size = renderer->GetSize();
 	}
-	m_offset = Vector2(0, 0);
-	const Vector2 topLeft = transform->Get_Position() + m_offset;
-	m_bounds = Bounds(topLeft, _size);
+	m_Offset = Vector2(0, 0);
+	m_Bound = Bounds(Vector2(0, 0), _size);
 }
 
 void CBoxCollider::Update(DWORD dt)
 {
-	m_bounds = Bounds(_gameObject->GetComponent<CTransform>()->Get_Position() + m_offset, _size);
 }
 
 void CBoxCollider::Render()

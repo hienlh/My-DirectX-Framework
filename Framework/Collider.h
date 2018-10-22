@@ -8,10 +8,10 @@ class CCollider : public CComponent
 {
 	//Properties
 protected:
-	Vector2 m_offset;
-	Bounds m_bounds;
-	bool m_isTrigger;
-	bool m_usedByEffector;
+	Vector2 m_Offset;
+	Bounds m_Bound;
+	bool m_IsTrigger;
+	bool m_UsedByEffector;
 
 	//Cons / Des
 public:
@@ -20,8 +20,10 @@ public:
 
 	//Getter / Setter
 public:
-	Bounds GetBounds() const;
+	Bounds GetBoundGlobal() const;
 	bool GetUsedByEffector() const;
 
-	void SetUsedByEffector(bool usedByEffector) { m_usedByEffector = usedByEffector; }
+	void SetUsedByEffector(bool usedByEffector);
+	void SetBoundSize(Vector2 size);
+	void SetOffet(Vector2 offset);
 };
