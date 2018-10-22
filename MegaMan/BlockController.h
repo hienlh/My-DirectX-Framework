@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "../Framework/Component.h"
+#include "../Framework/MonoBehavior.h"
 
 using namespace Framework;
 
-class BlockController : public CComponent
+class BlockController : public CMonoBehavior
 {
 private:
 	bool m_isGoDown;

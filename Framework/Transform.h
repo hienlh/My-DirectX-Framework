@@ -31,6 +31,9 @@ namespace Framework
 		void Set_Rotation(Vector3 rotation) { m_rotation = rotation; }
 		void Set_Scale(Vector3 scale) { m_scale = scale; }
 
+		/// <summary>Like Position += Distance</summary> 
+		void PlusPosition(Vector2 distance) { m_position += distance; }
+
 	private:
 		bool Init(Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO, Vector3 local_scale = VECTOR3_ONE);
 		void Release();

@@ -1,12 +1,14 @@
 ﻿#pragma once
 #include "Object.h"
-#include "GameObject.h"
 
 namespace Framework {
+	class CGameObject;
+
 	class CScene : public CObject
 	{
 	private:
-		std::vector<CGameObject*> _listGameObject;
+		std::set<CGameObject*> m_listGameObject;
+		std::set<CGameObject*> m_listColliderObject;
 		CGameObject *m_mainCamera;
 
 	public:
@@ -20,8 +22,9 @@ namespace Framework {
 
 		// Getter/Setter
 	public:
-		std::vector<CGameObject*> GetListGameObject();
-		CGameObject* GetMainCamera() { return m_mainCamera; }
+		std::set<CGameObject*> GetListGameObject() const;
+		std::set<CGameObject*> GetListColliderObject() const;
+		CGameObject* GetMainCamera() const { return m_mainCamera; }
 
 	public:
 		static CScene* Instantiate();
@@ -31,5 +34,14 @@ namespace Framework {
 		void Render() override;
 
 		void AddGameObject(CGameObject* gameObject);
+		void AddGameObjects(int amount, CGameObject* gameObject, ...);
+
+		//Internal Method
+	private:
+		void AddColliderObject(CGameObject* gameObject);
+
+		//Friend
+	public:
+		friend class CGameObject;
 	};
 }

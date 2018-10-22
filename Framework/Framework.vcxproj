@@ -136,22 +136,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Behavior.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="MonoBehavior.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Physic.cpp" />
+    <ClCompile Include="PhysicObserver.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Behavior.h" />
+    <ClInclude Include="Bounds.h" />
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Graphic.h" />
@@ -159,10 +170,14 @@
     <ClInclude Include="Header.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Macros.h" />
+    <ClInclude Include="MonoBehavior.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Physic.h" />
+    <ClInclude Include="PhysicObserver.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

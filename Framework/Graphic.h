@@ -42,7 +42,7 @@ namespace Framework
 
 		// Abstract methods
 	public:
-		bool Render(std::vector<CGameObject*> list_game_objects);
+		bool Render(std::set<CGameObject*> list_game_objects);
 		void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture);
 		void Draw(float x, float y, float width, float height, LPDIRECT3DTEXTURE9 texture);
 

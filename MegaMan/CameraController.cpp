@@ -3,7 +3,7 @@
 
 using namespace Framework;
 
-CameraController::CameraController(CGameObject* game_object) : CComponent(game_object)
+CameraController::CameraController(CGameObject* game_object) : CMonoBehavior(game_object)
 {
 }
 

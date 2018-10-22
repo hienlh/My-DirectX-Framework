@@ -1,9 +1,10 @@
 #pragma once
 #include "Renderer.h"
 #include "Transform.h"
-#include "Rigidbody.h"
-#include "Behavior.h"
 #include "Camera.h"
+#include "Collider.h"
+#include "BoxCollider.h"
+#include "Scene.h"
 
 namespace Framework
 {
@@ -12,23 +13,32 @@ namespace Framework
 	{
 		// Properties
 	private:
-		std::vector<CComponent*> m_Components;
+		String m_Name = String("");
+		std::set<CComponent*> m_pComponents;
+		CScene *m_pScene = nullptr; //Point to the scene which contain this gameObject;
 
 		// Cons / Des
 	public:
 		CGameObject() = default;
 		~CGameObject() = default;
-		static bool leftBlockMoveDown;
-		static bool rightBlockMoveDown;
+
+		// Friends
+	public:
+		friend class CScene;
 
 		// Public methods
 	public:
+		/// <summary>Return nullptr if component added already</summary> 
 		template<class T> T* AddComponent()
 		{
-			if (GetComponent<T>()) return nullptr;
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
-				m_Components.push_back(tmp);
+				if (!m_pComponents.insert(tmp).second) return nullptr;
+
+				if (reinterpret_cast<CCollider *> (&tmp) && m_pScene)
+				{
+					m_pScene->AddColliderObject(this);
+				}
 				return tmp;
 			}
 			return nullptr;
@@ -37,7 +47,7 @@ namespace Framework
 		template<class Type>
 		Type* GetComponent()
 		{
-			for (CComponent* component : m_Components)
+			for (CComponent* component : m_pComponents)
 			{
 				Type* tmp = dynamic_cast<Type *> (component);
 				if(tmp != nullptr)
@@ -51,7 +61,7 @@ namespace Framework
 		template<class T>
 		bool RemoveComponent()
 		{
-			for (CComponent* component : m_Components)
+			for (CComponent* component : m_pComponents)
 			{
 				T* tmp = dynamic_cast<T *> (component);
 				if (tmp != nullptr)
@@ -59,10 +69,14 @@ namespace Framework
 					SAFE_DELETE(tmp);
 				}
 			}
+			return true;
 		}
 
 		// Getters / Setters
+	private:
+		void SetScene(CScene *scene) { m_pScene = scene; }
 	public:
+		String GetName() const { return m_Name; }
 
 		// Internal methods
 	private:
@@ -77,7 +91,7 @@ namespace Framework
 		// Static methods
 	public:
 		static CGameObject* Instantiate();
-		static CGameObject* Instantiate(Vector2 position);
+		static CGameObject* Instantiate(String name, Vector2 position);
 		static void Destroy(CGameObject* &instance);
 	};
 }

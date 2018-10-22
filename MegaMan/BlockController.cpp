@@ -1,8 +1,9 @@
 ﻿#include "BlockController.h"
 #include "../Framework/GameObject.h"
 #include "../Framework/Input.h"
+#include "../Framework/Rigidbody.h"
 
-BlockController::BlockController(CGameObject* game_object) : CComponent(game_object)
+BlockController::BlockController(CGameObject* game_object) : CMonoBehavior(game_object)
 {
 	m_isGoDown = true; 
 	m_isRight = false;
@@ -40,10 +41,10 @@ void BlockController::Move()
 		if (input->KeyDown(x))
 		{
 			if (x == 65 && !m_isRight)
-				rigidbody->SetVelocity(Vector2(0, 3) * (m_isGoDown ? 1 : -1));
+				rigidbody->SetVelocity(Vector2(0, .3) * (m_isGoDown ? 1 : -1));
 
 			if (x == 1 && m_isRight)
-				rigidbody->SetVelocity(Vector2(0, 3) *(m_isGoDown ? 1 : -1));
+				rigidbody->SetVelocity(Vector2(0, .3) *(m_isGoDown ? 1 : -1));
 		}
 		if (input->KeyUp(x))
 		{

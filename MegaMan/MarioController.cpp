@@ -2,11 +2,12 @@
 #include "../Framework/Renderer.h"
 #include "../Framework/GameObject.h"
 #include "../Framework/Transform.h"
-#include <string>
+#include "../Framework/Rigidbody.h"
+#include "../Framework/Input.h"
 
 using namespace Framework;
 
-MarioController::MarioController(CGameObject* game_object) : CComponent(game_object)
+MarioController::MarioController(CGameObject* game_object) : CMonoBehavior(game_object)
 {
 	width = _gameObject->GetComponent<CRenderer>()->GetWidth();
 	height = _gameObject->GetComponent<CRenderer>()->GetHeight();
@@ -27,20 +28,6 @@ void MarioController::Update(DWORD dt)
 	Vector2 rightPos = rightBlock->GetComponent<CTransform>()->Get_Position();
 	Vector2 rightSize = rightBlock->GetComponent<CRenderer>()->GetSize();
 
-	//va cham voi block trai
-	if (pos.x <= pos.x + leftSize.x && (pos.y + height >= leftPos.y && pos.y <= leftPos.y + leftSize.y))
-	{
-		auto velocity = rigidbody->GetVelocity();
-		rigidbody->SetVelocity(Vector2(-velocity.x, velocity.y));
-	}
-
-	//va cham voi block phai
-	if (pos.x + width >= rightPos.x && (pos.y + height >= rightPos.y && pos.y <= rightPos.y + rightSize.y))
-	{
-		auto velocity = rigidbody->GetVelocity();
-		rigidbody->SetVelocity(Vector2(-velocity.x, velocity.y));
-	}
-
 	//va cham voi thanh duoi
 	if (pos.y + height >= 480)
 	{
@@ -49,7 +36,7 @@ void MarioController::Update(DWORD dt)
 	}
 
 	//va cham voi thanh tren
-	if (pos.y <= 0)
+	if (pos.y < 0)
 	{
 		auto velocity = rigidbody->GetVelocity();
 		rigidbody->SetVelocity(Vector2(velocity.x, -velocity.y));
@@ -58,11 +45,32 @@ void MarioController::Update(DWORD dt)
 	//Out screen
 	if (pos.x + width <= 0 || pos.x >= SCREEN_WIDTH)
 	{
-		transform->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+		transform->Set_Position(Vector2(SCREEN_WIDTH / 2, rand() % 100 + 1));
+		rigidbody->SetVelocity(Vector2(.1, 0));
 	}
+
+	/*auto input = CInput::GetInstance();
+	for (unsigned short x = 0; x <= 256; x++)
+	{
+		if (input->KeyDown(x))
+		{
+			if (x == 66)
+				rigidbody->SetVelocity(Vector2(0.1, 0));
+		}
+		if (input->KeyUp(x))
+		{
+			if (x == 66)
+				rigidbody->SetVelocity(Vector2(0, 0));
+		}
+	}*/
 }
 
 void MarioController::Render()
 {
 
+}
+
+void MarioController::OnCollisionEnter(CCollision* collision)
+{
+	OutputDebugString(collision->GetCollider()->GetGameObject()->GetName());
 }

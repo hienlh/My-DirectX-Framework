@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "../Framework/Component.h"
+#include "../Framework/MonoBehavior.h"
 
 using namespace Framework;
 
-class CameraController : public CComponent
+class CameraController : public CMonoBehavior
 {
 	//Public Properties
 public:

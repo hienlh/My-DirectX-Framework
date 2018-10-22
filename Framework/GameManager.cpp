@@ -4,6 +4,8 @@
 #include "Graphic.h"
 #include "Input.h"
 #include <string>
+#include "Physic.h"
+#include "Time.h"
 
 using namespace Framework;
 
@@ -68,6 +70,8 @@ bool CGameManager::Run()
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
 		DWORD dt = now - frameStart;
+		CTime::GetInstance()->SetDeltaTime(dt);
+		CTime::GetInstance()->SetTime(CTime::GetInstance()->Time() + dt);
 
 		if (dt >= tickPerFrame)
 		{
@@ -81,6 +85,9 @@ bool CGameManager::Run()
 
 			if (m_currentScene)
 				m_currentScene->Update(dt);
+
+			CPhysic::GetInstance()->Update(dt);
+
 			// process game loop
 			bool renderResult = CGraphic::GetInstance()->Render(m_currentScene->GetListGameObject());
 			if (!renderResult)

@@ -114,7 +114,7 @@ void CGraphic::SetTransform(Matrix &orthographicMatrix, Matrix &identityMatrix, 
 	m_d3ddev->SetTransform(D3DTS_VIEW, &viewMatrix);
 }
 
-bool CGraphic::Render(std::vector<CGameObject*> list_game_objects)
+bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 {
 	bool result = false;
 	do

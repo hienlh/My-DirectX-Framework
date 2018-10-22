@@ -18,7 +18,7 @@ void CRigidbody::Update(DWORD dt)
 {
 	auto tranform = _gameObject->GetComponent<CTransform>();
 	if(tranform)
-		tranform->m_position += _velocity * dt / 10;
+		tranform->m_position += _velocity * dt;
 }
 
 void CRigidbody::Render()
