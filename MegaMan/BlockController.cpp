@@ -2,6 +2,7 @@
 #include "../Framework/GameObject.h"
 #include "../Framework/Input.h"
 #include "../Framework/Rigidbody.h"
+#include <string>
 
 BlockController::BlockController(CGameObject* game_object) : CMonoBehavior(game_object)
 {
@@ -36,23 +37,34 @@ void BlockController::Move()
 {
 	auto rigidbody = _gameObject->GetComponent<CRigidbody>();
 	auto input = CInput::GetInstance();
-	for (unsigned short x = 0; x <= 256; x++)
-	{
-		if (input->KeyDown(x))
-		{
-			if (x == 65 && !m_isRight)
-				rigidbody->SetVelocity(Vector2(0, .3) * (m_isGoDown ? 1 : -1));
 
-			if (x == 1 && m_isRight)
-				rigidbody->SetVelocity(Vector2(0, .3) *(m_isGoDown ? 1 : -1));
-		}
-		if (input->KeyUp(x))
-		{
-			if (x == 65 && !m_isRight)
-				rigidbody->SetVelocity(Vector2(0, 0));
+	for (short key = 0; key < 256; key++)
+		if (input->KeyDown(key))
+			;// MessageBoxW(nullptr, std::to_wstring(key).c_str(), L"", MB_OK);
 
-			if (x == 1 && m_isRight)
-				rigidbody->SetVelocity(Vector2(0, 0));
-		}
-	}
+	if (input->KeyDown(31) && !m_isRight)
+		rigidbody->SetVelocity(Vector2(0, 1));
+
+	if (input->KeyUp(31) && !m_isRight)
+		rigidbody->SetVelocity(Vector2(0, 0));
+
+	if (input->KeyDown(17) && !m_isRight)
+		rigidbody->SetVelocity(Vector2(0, -1));
+	
+	if (input->KeyUp(17) && !m_isRight)
+		rigidbody->SetVelocity(Vector2(0, 0));
+
+
+	if (input->ButtonDown(0) && m_isRight)
+		rigidbody->SetVelocity(Vector2(0, 1));
+	
+	if (input->ButtonUp(0) && m_isRight)
+		rigidbody->SetVelocity(Vector2(0, 0));
+
+	if (input->ButtonDown(1) && m_isRight)
+		rigidbody->SetVelocity(Vector2(0, -1));
+	
+	if (input->ButtonUp(1) && m_isRight)
+		rigidbody->SetVelocity(Vector2(0, 0));
+
 }

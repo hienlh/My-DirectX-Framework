@@ -9,6 +9,7 @@ bool CInput::Init()
 	m_dinput = CGraphic::GetInstance()->CreateDirect();
 	m_dikeyboard = CGraphic::GetInstance()->CreateKeyboard(m_dinput);
 	m_dimouse = CGraphic::GetInstance()->CreateMouse(m_dinput);
+	
 	return m_dikeyboard && m_dinput && m_dimouse;
 }
 
@@ -43,17 +44,18 @@ void CInput::Destroy()
 
 void CInput::PollKeyboard()
 {
+	std::copy(m_keys, m_keys + 256, m_prevKeys);
 	m_dikeyboard->GetDeviceState(sizeof(m_keys), reinterpret_cast<LPVOID>(m_keys));
 }
 
 int CInput::KeyDown(int key)
 {
-	return KEY_DOWN(key);
+	return KEY_DOWN(m_keys[key]) && !KEY_DOWN(m_prevKeys[key]);
 }
 
 int CInput::KeyUp(int key)
 {
-	return KEY_UP(key);
+	return !KEY_DOWN(m_keys[key]) && KEY_DOWN(m_prevKeys[key]);
 }
 
 void CInput::KillKeyboard()
@@ -68,12 +70,18 @@ void CInput::KillKeyboard()
 
 void CInput::PollMouse()
 {
-	m_dimouse->GetDeviceState(sizeof(m_mouseState), reinterpret_cast<LPVOID>(m_keys));
+	memcpy_s(&m_prevMouseState, sizeof(m_prevMouseState), &m_mouseState, sizeof(m_mouseState));
+	m_dimouse->GetDeviceState(sizeof(m_mouseState), reinterpret_cast<LPVOID>(&m_mouseState));
 }
 
-int CInput::MouseButton(int Button)
+int CInput::ButtonDown(int button)
 {
-	return BUTTON_DOWN(m_mouseState, Button);
+	return BUTTON_DOWN(m_mouseState, button) && !BUTTON_DOWN(m_prevMouseState, button);
+}
+
+int CInput::ButtonUp(int button)
+{
+	return !BUTTON_DOWN(m_mouseState, button) && BUTTON_DOWN(m_prevMouseState, button);
 }
 
 int CInput::Mouse_X()

@@ -70,8 +70,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)\Project1;$(SolutionDir)DirectX\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)DirectX\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Framework;$(SolutionDir)Framework\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Debug;$(SolutionDir)Framework\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)Framework;$(SolutionDir)Framework\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Debug;$(SolutionDir)Framework\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,12 +128,12 @@
     <ClCompile Include="BlockController.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MarioController.cpp" />
+    <ClCompile Include="BallController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlockController.h" />
     <ClInclude Include="CameraController.h" />
-    <ClInclude Include="MarioController.h" />
+    <ClInclude Include="BallController.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.vcxproj">

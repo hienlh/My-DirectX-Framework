@@ -4,7 +4,7 @@
 
 using namespace Framework;
 
-class MarioController : public CMonoBehavior
+class BallController : public CMonoBehavior
 {
 	float width, height;
 	Vector2 pos;
@@ -14,8 +14,8 @@ public:
 	CGameObject* rightBlock;
 
 public:
-	MarioController(CGameObject *game_object);
-	~MarioController() = default;
+	BallController(CGameObject *game_object);
+	~BallController() = default;
 
 public:
 	void Update(DWORD dt) override;

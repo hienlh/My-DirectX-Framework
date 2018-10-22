@@ -7,7 +7,7 @@
 #include "../Framework/Rigidbody.h"
 #include "../Framework/BoxCollider.h"
 #include "../Framework/Camera.h"
-#include "MarioController.h"
+#include "BallController.h"
 #include "BlockController.h"
 #include "CameraController.h"
 
@@ -24,37 +24,37 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	do
 	{
 		CGameObject* Background = CGameObject::Instantiate(String("Background"), Vector2(0, 0));
-		CGameObject* mario = CGameObject::Instantiate(String("Mario"), Vector2(SCREEN_WIDTH / 2, 0));
-		CGameObject* mario2 = CGameObject::Instantiate(String("Mario2"), Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 27));
-		CGameObject* leftblock = CGameObject::Instantiate(String("Left Block"), Vector2(50, 0));
-		CGameObject* rightblock = CGameObject::Instantiate(String("Right Block"), Vector2(SCREEN_WIDTH - 60, 0));
+		CGameObject* ball = CGameObject::Instantiate(String("Mario"), Vector2(SCREEN_WIDTH / 2, 0));
+		//CGameObject* mario2 = CGameObject::Instantiate(String("Mario2"), Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 27));
+		CGameObject* leftBlock = CGameObject::Instantiate(String("Left Block"), Vector2(50, 0));
+		CGameObject* rightBlock = CGameObject::Instantiate(String("Right Block"), Vector2(SCREEN_WIDTH - 60, 0));
 
 		Background->AddComponent<CRenderer>()->SetTexture(String("Background.jpg"));
 
-		mario->AddComponent<CRenderer>()->SetTexture(String("mario.png"));
-		mario->AddComponent<CRigidbody>()->SetVelocity(Vector2(.1, .1));
-		mario->AddComponent<CBoxCollider>();
-		mario->AddComponent<MarioController>()->leftBlock = leftblock;
-		mario->GetComponent<MarioController>()->rightBlock = rightblock;
+		ball->AddComponent<CRenderer>()->SetTexture(String("Resources\\ball.png"));
+		ball->AddComponent<CRigidbody>()->SetVelocity(Vector2(0.5, 0.5));
+		ball->AddComponent<CBoxCollider>();
+		ball->AddComponent<BallController>()->leftBlock = leftBlock;
+		ball->GetComponent<BallController>()->rightBlock = rightBlock;
 
-		mario2->AddComponent<CRenderer>()->SetTexture(String("mario.png"));
-		mario2->AddComponent<CRigidbody>()->SetVelocity(Vector2(.1, -.1));
+		/*mario2->AddComponent<CRenderer>()->SetTexture(String("mario.png"));
+		mario2->AddComponent<CRigidbody>()->SetVelocity(Vector2(1, -1));
 		mario2->AddComponent<CBoxCollider>();
-		mario2->AddComponent<MarioController>()->leftBlock = leftblock;
-		mario2->GetComponent<MarioController>()->rightBlock = rightblock;
+		mario2->AddComponent<BallController>()->leftBlock = leftblock;
+		mario2->GetComponent<BallController>()->rightBlock = rightblock;*/
 
-		leftblock->AddComponent<CRenderer>()->SetTexture(String("Block.png"));
-		leftblock->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
-		leftblock->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		leftblock->AddComponent<BlockController>()->SetAllParameters(true, false);
+		leftBlock->AddComponent<CRenderer>()->SetTexture(String("Resources\\Block.png"));
+		leftBlock->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+		leftBlock->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		leftBlock->AddComponent<BlockController>()->SetAllParameters(true, false);
 
-		rightblock->AddComponent<CRenderer>()->SetTexture(String("Block.png"));
-		rightblock->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
-		rightblock->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		rightblock->AddComponent<BlockController>()->SetAllParameters(true, true);
+		rightBlock->AddComponent<CRenderer>()->SetTexture(String("Block.png"));
+		rightBlock->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+		rightBlock->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		rightBlock->AddComponent<BlockController>()->SetAllParameters(true, true);
 
 		//scene->GetMainCamera()->GetComponent<CameraController>()->m_target = mario;
-		scene->AddGameObjects(4, mario, mario2, leftblock, rightblock);
+		scene->AddGameObjects(3, ball, leftBlock, rightBlock);
 
 		pGameManager->Run();
 

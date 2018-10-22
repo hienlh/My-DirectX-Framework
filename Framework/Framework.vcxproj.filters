@@ -37,9 +37,6 @@
     <Filter Include="Framework\Observers">
       <UniqueIdentifier>{45c9eb13-eaeb-4096-863e-d188fd958ba5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Framework\Base\Physics">
-      <UniqueIdentifier>{da4d24d0-0407-4a1f-ae96-d77b64d43ad2}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameManager.cpp">
@@ -87,9 +84,6 @@
     <ClCompile Include="BoxCollider.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Physic.cpp">
-      <Filter>Framework\Base\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="MonoBehavior.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
@@ -100,6 +94,9 @@
       <Filter>Framework\Object</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
+      <Filter>Framework\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Physic.cpp">
       <Filter>Framework\Base</Filter>
     </ClCompile>
   </ItemGroup>
@@ -158,9 +155,6 @@
     <ClInclude Include="BoxCollider.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Physic.h">
-      <Filter>Framework\Base\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="MonoBehavior.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
@@ -171,6 +165,9 @@
       <Filter>Framework\Object</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
+      <Filter>Framework\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Physic.h">
       <Filter>Framework\Base</Filter>
     </ClInclude>
   </ItemGroup>

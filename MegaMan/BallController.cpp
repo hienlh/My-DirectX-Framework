@@ -1,4 +1,4 @@
-#include "MarioController.h"
+#include "BallController.h"
 #include "../Framework/Renderer.h"
 #include "../Framework/GameObject.h"
 #include "../Framework/Transform.h"
@@ -7,14 +7,14 @@
 
 using namespace Framework;
 
-MarioController::MarioController(CGameObject* game_object) : CMonoBehavior(game_object)
+BallController::BallController(CGameObject* game_object) : CMonoBehavior(game_object)
 {
 	width = _gameObject->GetComponent<CRenderer>()->GetWidth();
 	height = _gameObject->GetComponent<CRenderer>()->GetHeight();
 	pos = _gameObject->GetComponent<CTransform>()->Get_Position();
 }
 
-void MarioController::Update(DWORD dt)
+void BallController::Update(DWORD dt)
 {
 	pos = _gameObject->GetComponent<CTransform>()->Get_Position();
 	if (pos.y + height >= SCREEN_HEIGHT) 
@@ -46,7 +46,7 @@ void MarioController::Update(DWORD dt)
 	if (pos.x + width <= 0 || pos.x >= SCREEN_WIDTH)
 	{
 		transform->Set_Position(Vector2(SCREEN_WIDTH / 2, rand() % 100 + 1));
-		rigidbody->SetVelocity(Vector2(.1, 0));
+		//rigidbody->SetVelocity(Vector2(.1, 0));
 	}
 
 	/*auto input = CInput::GetInstance();
@@ -65,12 +65,12 @@ void MarioController::Update(DWORD dt)
 	}*/
 }
 
-void MarioController::Render()
+void BallController::Render()
 {
 
 }
 
-void MarioController::OnCollisionEnter(CCollision* collision)
+void BallController::OnCollisionEnter(CCollision* collision)
 {
 	OutputDebugString(collision->GetCollider()->GetGameObject()->GetName());
 }
