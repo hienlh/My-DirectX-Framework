@@ -1,33 +1,36 @@
 #pragma once
-#include "Header.h"
 
 namespace Framework
 {
 	// Window Interface
 	class CWindow final
 	{
-		//Properties
+		// Used for singleton pattern
 	private:
-		HWND m_hWnd = nullptr;
+		static CWindow* __instance;
 
 		// Cons / Des
 	private:
 		CWindow() = default;
+		~CWindow() = default;
 
-	public:
-		virtual ~CWindow() = default;
-
-		//Private method
+		// Properties
 	private:
-		bool Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		HWND m_hWnd = nullptr;
 
 		// Getters / Setters
 	public:
+		HWND Get_WindowHandle() { return m_hWnd; };
 
-		HWND Get_WindowHandle() { return m_hWnd;  }
+		// Internal methods
+	private:
+		bool Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		void Release();
 
-		// Pattern
+		// Static methods
 	public:
-		static CWindow* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		static void Destroy();
+		static CWindow* GetInstance();
 	};
 }

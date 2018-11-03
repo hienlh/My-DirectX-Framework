@@ -53,7 +53,7 @@ void CAnimator::Update(DWORD dt)
 
 void Framework::CAnimator::Render()
 {
-	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTranform();
+	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTransform();
 	
 	Rect rect;
 	rect.left = (m_currentAnimation % m_animationCountWidth) * m_animationWidth;

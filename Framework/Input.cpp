@@ -1,32 +1,115 @@
-﻿#include "Input.h"
+#include "stdafx.h"
+
+#include "Input.h"
+#include "Macros.h"
 #include "Graphic.h"
+#include "Window.h"
+
 using namespace Framework;
 
 CInput* CInput::__instance = nullptr;
 
 bool CInput::Init()
 {
-	m_dinput = CGraphic::GetInstance()->CreateDirect();
-	m_dikeyboard = CGraphic::GetInstance()->CreateKeyboard(m_dinput);
-	m_dimouse = CGraphic::GetInstance()->CreateMouse(m_dinput);
-	return m_dikeyboard && m_dinput && m_dimouse;
+	bool result = false;
+	do
+	{
+		if (!CreateInput())
+			break;
+
+		if (!CreateKeyBoardDevice())
+			break;
+
+		if (!CreateMouseDevice())
+			break;
+
+		result = true;
+	} while (false);
+
+	return result;
 }
 
 void CInput::Release()
 {
-	if (m_dinput)
-		m_dinput->Release();
-	if (m_dikeyboard)
-		m_dikeyboard->Release();
-	if (m_dimouse)
-		m_dimouse->Release();
+	if (m_pKeyboardDevice)
+	{
+		m_pKeyboardDevice->Unacquire();
+		m_pKeyboardDevice->Release();
+		m_pKeyboardDevice = nullptr;
+	}
+
+	if (m_pMouseDevice)
+	{
+		m_pMouseDevice->Unacquire();
+		m_pMouseDevice->Release();
+		m_pMouseDevice = nullptr;
+	}
+
+	if (m_pInput)
+	{
+		m_pInput->Release();
+		m_pInput = nullptr;
+	}
 }
 
-void CInput::Instantiate()
+bool CInput::CreateInput()
+{
+	return (DirectInput8Create(GetModuleHandleW(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8W, reinterpret_cast<LPVOID*>(&m_pInput), nullptr) == DI_OK);	
+}
+
+bool CInput::CreateKeyBoardDevice()
+{
+	bool result = false;
+	do
+	{
+		if (m_pInput->CreateDevice(GUID_SysKeyboard, &m_pKeyboardDevice, nullptr) != DI_OK)
+			break;
+
+		if (m_pKeyboardDevice->SetDataFormat(&c_dfDIKeyboard) != DI_OK)
+			break;
+
+		if (m_pKeyboardDevice->SetCooperativeLevel(CWindow::GetInstance()->Get_WindowHandle(), DISCL_NONEXCLUSIVE | DISCL_FOREGROUND) != DI_OK)
+			break;
+
+		if (m_pKeyboardDevice->Acquire() != DI_OK)
+			break;
+
+		result = true;
+	} while (false);
+
+	return result;
+}
+
+bool CInput::CreateMouseDevice()
+{
+	bool result = false;
+	do
+	{
+		if (m_pInput->CreateDevice(GUID_SysMouse, &m_pMouseDevice, nullptr) != DI_OK)
+			break;
+
+		if (m_pMouseDevice->SetDataFormat(&c_dfDIMouse) != DI_OK)
+			break;
+
+		if (m_pMouseDevice->SetCooperativeLevel(CWindow::GetInstance()->Get_WindowHandle(), DISCL_NONEXCLUSIVE | DISCL_FOREGROUND) != DI_OK)
+			break;
+
+		result = m_pMouseDevice->Acquire();
+		if (result != DI_OK)
+			break;
+
+		result = true;
+	} while (false);
+
+	return result;
+}
+
+void Framework::CInput::Instantiate()
 {
 	if (!__instance)
 	{
 		SAFE_ALLOC(__instance, CInput);
+
 		if (!__instance->Init())
 		{
 			__instance->Release();
@@ -37,69 +120,35 @@ void CInput::Instantiate()
 
 void CInput::Destroy()
 {
-	__instance->Release();
-	SAFE_DELETE(__instance);
-}
-
-void CInput::PollKeyboard()
-{
-	m_dikeyboard->GetDeviceState(sizeof(m_keys), reinterpret_cast<LPVOID>(m_keys));
-}
-
-int CInput::KeyDown(int key)
-{
-	return KEY_DOWN(key);
-}
-
-int CInput::KeyUp(int key)
-{
-	return KEY_UP(key);
-}
-
-void CInput::KillKeyboard()
-{
-	if (m_dikeyboard != nullptr)
+	if (__instance)
 	{
-		m_dikeyboard->Unacquire();
-		m_dikeyboard->Release();
-		m_dikeyboard = nullptr;
+		__instance->Release();
+		SAFE_DELETE(__instance);
 	}
-}
-
-void CInput::PollMouse()
-{
-	m_dimouse->GetDeviceState(sizeof(m_mouseState), reinterpret_cast<LPVOID>(m_keys));
 }
 
 bool CInput::GetKeyDown(BYTE key)
 {
-	return BUTTON_DOWN(m_mouseState, Button);
+	return KEY_DOWN(key);
 }
 
 bool CInput::GetKeyUp(BYTE key)
 {
-	return m_mouseState.lX;
+	return KEY_UP(key);
 }
 
 bool CInput::GetButtonDown(BYTE button)
 {
-	return m_mouseState.lY;
+	return BUTTON_DOWN(m_mouseState, button);
 }
 
-void CInput::KillMouse()
+void CInput::Update()
 {
-	if (m_dimouse != nullptr)
-	{
-		m_dimouse->Unacquire();
-		m_dimouse->Release();
-		m_dimouse = nullptr;
-	}
+	m_pKeyboardDevice->GetDeviceState(sizeof(m_keys), reinterpret_cast<LPVOID>(m_keys));
+	m_pMouseDevice->GetDeviceState(sizeof(m_mouseState), reinterpret_cast<LPVOID>(&m_mouseState));
 }
 
 CInput* CInput::GetInstance()
 {
-	if(!__instance)
-		Instantiate();
-
 	return __instance;
 }

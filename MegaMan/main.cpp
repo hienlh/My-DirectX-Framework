@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Macros.h"
 #include "GameManager.h"
+#include "Animator.h"
 
 #include <Windows.h>
 #pragma comment(lib, "Framework.lib")
@@ -31,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Framework::CGameObject* pCat = Framework::CGameObject::Instantiate(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	
 	Framework::UObjectData data = { {} };
-	data.animatorBuilder = { L".\\Resources\\meow.jpg", 4, 2, 6, 1000 };
+	data.animatorBuilder = { L".\\Resources\\meow.jpg", 4, 2, 6, 100 };
 	pCat->AddComponent({ Framework::EObjectType::ANIMATOR, data });
 
 	do

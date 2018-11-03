@@ -1,6 +1,9 @@
-﻿#include "Camera.h"
+﻿#include "stdafx.h"
+#include "Camera.h"
 #include "GameObject.h"
 
+using namespace Framework;
+/*
 Framework::CCamera::CCamera(CGameObject* gameObject) : CComponent(gameObject)
 {
 	_width = SCREEN_WIDTH;
@@ -40,4 +43,4 @@ void Framework::CCamera::Update(DWORD dt)
 void Framework::CCamera::Render()
 {
 }
-
+*/

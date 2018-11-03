@@ -75,6 +75,12 @@
     <ClInclude Include="Animator.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Behavior.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +120,12 @@
       <Filter>Framework\Game</Filter>
     </ClCompile>
     <ClCompile Include="Animator.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Behavior.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
   </ItemGroup>

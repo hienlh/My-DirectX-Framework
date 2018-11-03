@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Renderer.h"
 #include "Macros.h"
 #include "Graphic.h"
@@ -11,7 +12,7 @@ bool CRenderer::Init(LPCWSTR texturePath)
 	return m_pTexture != nullptr;
 }
 
-void CRenderer::Release() const
+void CRenderer::Release()
 {
 	if (m_pTexture)
 		m_pTexture->Release();
@@ -24,7 +25,7 @@ void CRenderer::Update(DWORD dt)
 
 void CRenderer::Render()
 {
-	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTranform();
+	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTransform();
 	CGraphic::GetInstance()->Draw(m_pTexture, pTransform->Get_Position());
 }
 

@@ -1,19 +1,23 @@
 ﻿#include "BlockController.h"
-#include "../Framework/GameObject.h"
-#include "../Framework/Input.h"
+#include "Transform.h"
+#include "Renderer.h"
+#include "Rigidbody.h"
+#include "Input.h"
 
-BlockController::BlockController(CGameObject* game_object) : CComponent(game_object)
+using namespace Megaman;
+
+BlockController::BlockController(Framework::CGameObject* game_object) : CComponent(game_object)
 {
 	m_isGoDown = true; 
 	m_isRight = false;
-	m_pos = _gameObject->GetComponent<CTransform>()->Get_Position();
-	m_size = _gameObject->GetComponent<CRenderer>()->GetSize();
+	m_pos = _gameObject->GetComponent<Framework::CTransform>()->Get_Position();
+	m_size = _gameObject->GetComponent<Framework::CRenderer>()->GetSize();
 }
 
 void BlockController::Update(DWORD dt)
 {
-	m_pos = _gameObject->GetComponent<CTransform>()->Get_Position();
-	auto transform = _gameObject->GetComponent<CTransform>();
+	m_pos = _gameObject->GetComponent<Framework::CTransform>()->Get_Position();
+	auto transform = _gameObject->GetComponent<Framework::CTransform>();
 	if (m_pos.y + m_size.y >= SCREEN_HEIGHT) {
 		transform->Set_Position(Vector2(transform->Get_Position().x, SCREEN_HEIGHT - m_size.y));
 		SetIsGoDown(false);
@@ -34,7 +38,7 @@ void BlockController::Render()
 void BlockController::Move()
 {
 	auto rigidbody = _gameObject->GetComponent<CRigidbody>();
-	auto input = CInput::GetInstance();
+	auto input = Framework::CInput::GetInstance();
 	for (unsigned short x = 0; x <= 256; x++)
 	{
 		if (input->KeyDown(x))

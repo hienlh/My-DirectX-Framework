@@ -1,4 +1,5 @@
-﻿#include "Object.h"
+﻿#include "stdafx.h"
+#include "Object.h"
 #include "GameObject.h"
 
 using namespace Framework;

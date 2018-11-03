@@ -1,23 +1,24 @@
 #pragma once
-#include "../Framework/Component.h"
+#include "stdafx.h"
+#include "Component.h"
 
-using namespace Framework;
-
-class MarioController : public CComponent
+namespace Megaman
 {
-	float width, height;
-	Vector2 pos;
+	class MarioController : public Framework::CComponent
+	{
+		float width, height;
+		Vector2 pos;
 
-public:
-	CGameObject* leftBlock;
-	CGameObject* rightBlock;
+	public:
+		Framework::CGameObject* leftBlock;
+		Framework::CGameObject* rightBlock;
 
-public:
-	MarioController(CGameObject *game_object);
-	~MarioController() = default;
+	public:
+		MarioController(Framework::CGameObject *game_object);
+		~MarioController() = default;
 
-public:
-	void Update(DWORD dt) override;
-	void Render() override;
-};
-
+	public:
+		void Update(DWORD dt) override;
+		void Render() override;
+	};
+}

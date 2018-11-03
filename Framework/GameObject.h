@@ -1,9 +1,9 @@
 #pragma once
+#include "stdafx.h"
 #include "Renderer.h"
+#include "Object.h"
 #include "Transform.h"
 #include "Rigidbody.h"
-#include "Behavior.h"
-#include "Camera.h"
 #include "Animator.h"
 
 namespace Framework
@@ -17,9 +17,11 @@ namespace Framework
 
 		CRenderer* m_rendererComponent = nullptr;
 		CTransform* m_transformComponent = nullptr;
-		CRigidbody* m_rigidbodyComponent = nullptr;
+		CRigidbody* m_rigidBodyComponent = nullptr;
 		CAnimator* m_animatorComponent = nullptr;
 
+		std::list<CComponent*> m_components{};
+		
 		// Cons / Des
 	private:
 		CGameObject() = default;
@@ -31,12 +33,26 @@ namespace Framework
 
 		// Public methods
 	public:
-		template<class T> T* AddComponent()
+		bool AddComponent(SBuilder builder);
+		//bool RemoveComponent(EObjectType type);*/
+
+		// Getters / Setters
+	public:
+		CTransform* GetTransform() const { return m_transformComponent; }
+		CRigidbody* GetRigidBody() const { return m_rigidBodyComponent; }
+		void AddRigidbody(CRigidbody* pRigidbody) { m_rigidBodyComponent = pRigidbody; }
+
+	public:
+		/*template<class T> T* AddComponent()
 		{
-			if (GetComponent<T>()) return nullptr;
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
-				m_Components.push_back(tmp);
+				if (!m_components.insert(tmp).second) return nullptr;
+
+				if (reinterpret_cast<CCollider *> (&tmp) && m_pScene)
+				{
+					m_pScene->AddColliderObject(this);
+				}
 				return tmp;
 			}
 			return nullptr;
@@ -45,10 +61,10 @@ namespace Framework
 		template<class Type>
 		Type* GetComponent()
 		{
-			for (CComponent* component : m_Components)
+			for (CComponent* component : m_components)
 			{
 				Type* tmp = dynamic_cast<Type *> (component);
-				if(tmp != nullptr)
+				if (tmp != nullptr)
 				{
 					return tmp;
 				}
@@ -59,7 +75,7 @@ namespace Framework
 		template<class T>
 		bool RemoveComponent()
 		{
-			for (CComponent* component : m_Components)
+			for (CComponent* component : m_components)
 			{
 				T* tmp = dynamic_cast<T *> (component);
 				if (tmp != nullptr)
@@ -67,10 +83,8 @@ namespace Framework
 					SAFE_DELETE(tmp);
 				}
 			}
-		}
-
-		// Getters / Setters
-	public:
+			return true;
+		}*/
 
 		// Internal methods
 	private:
@@ -79,8 +93,8 @@ namespace Framework
 
 		// Override methods
 	public:
-		void Update(DWORD dt) override;
-		void Render() override;
+		virtual void Update(DWORD dt);
+		void Render();
 
 		// Static methods
 	public:
