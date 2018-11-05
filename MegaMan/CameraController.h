@@ -1,22 +1,33 @@
 ﻿#pragma once
+<<<<<<< HEAD
 #include "../Framework/Component.h"
 #include "../Framework/MonoBehavior.h"
 
 using namespace Framework;
 
 class CameraController : public CMonoBehavior
+=======
+#include "stdafx.h"
+#include "Component.h"
+
+namespace Megaman
+>>>>>>> origin/dev
 {
-	//Public Properties
-public:
-	CGameObject *m_target;
 
-public:
-	CameraController(CGameObject *game_object);
-	~CameraController() = default;
+	class CameraController : public Framework::CComponent
+	{
+		//Public Properties
+	public:
+		Framework::CGameObject *m_target;
 
-public:
-	void Update(DWORD dt) override;
-	void Render() override;
+	public:
+		CameraController(Framework::CGameObject *game_object);
+		~CameraController() = default;
 
-	void Following();
-};
+	public:
+		void Update(DWORD dt) override;
+		void Render() override;
+
+		void Following();
+	};
+}

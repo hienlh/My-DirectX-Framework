@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Renderer.h"
 #include "Macros.h"
 #include "Graphic.h"
@@ -5,32 +6,41 @@
 
 using namespace Framework;
 
-void CRenderer::SetTexture(LPTSTR texture_path)
+bool CRenderer::Init(LPCWSTR texturePath)
 {
-	Init(texture_path);
+	m_pTexture = CGraphic::GetInstance()->CreateTexture(texturePath, m_textureWidth, m_textureHeight);
+	return m_pTexture != nullptr;
 }
 
-bool CRenderer::Init(LPCSTR texturePath)
+void CRenderer::Release()
 {
-	m_texture = CGraphic::GetInstance()->CreateTexture(texturePath);
-
-	auto size = CGraphic::GetInstance()->GetImageSize(texturePath);
-	_width = size.x;
-	_height = size.y;
-
-	return m_texture != nullptr;
+	if (m_pTexture)
+		m_pTexture->Release();
 }
 
-void CRenderer::Release() const
+void CRenderer::Update(DWORD dt)
 {
-	if (m_texture)
-		m_texture->Release();
+	
 }
 
-CRenderer* CRenderer::Instantiate()
+void CRenderer::Render()
+{
+	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTransform();
+	CGraphic::GetInstance()->Draw(m_pTexture, pTransform->Get_Position());
+}
+
+CRenderer* CRenderer::Instantiate(Framework::UObjectData data)
 {
 	CRenderer* instance = nullptr;
 	SAFE_ALLOC(instance, CRenderer);
+
+	instance->m_type = EObjectType::RENDERER;
+
+	if (!instance->Init(data.renderData.texturePath))
+	{
+		instance->Release();
+		SAFE_DELETE(instance);
+	}
 
 	return instance;
 }
@@ -42,24 +52,4 @@ void CRenderer::Destroy(CRenderer* &instance)
 		instance->Release();
 		SAFE_DELETE(instance);
 	}
-}
-
-void CRenderer::Update(DWORD dt)
-{
-
-	CGraphic::GetInstance()->Draw(0,0, m_texture);
-}
-
-void CRenderer::Render()
-{
-	if (_gameObject == nullptr) return;
-
-	const auto transform = _gameObject->GetComponent<CTransform>();
-	if (m_texture == nullptr || transform == nullptr) return;
-
-	//If dev don't set width height then draw with default width, height of image
-	if(_width == -1 || _height == -1)
-		CGraphic::GetInstance()->Draw(transform->m_position.x, transform->m_position.y, m_texture);
-	else
-		CGraphic::GetInstance()->Draw(transform->m_position.x, transform->m_position.y, _width, _height, m_texture);
 }

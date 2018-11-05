@@ -1,10 +1,17 @@
 #pragma once
+#include "stdafx.h"
 #include "Renderer.h"
+#include "Object.h"
 #include "Transform.h"
+<<<<<<< HEAD
 #include "Camera.h"
 #include "Collider.h"
 #include "BoxCollider.h"
 #include "Scene.h"
+=======
+#include "Rigidbody.h"
+#include "Animator.h"
+>>>>>>> origin/dev
 
 namespace Framework
 {
@@ -13,15 +20,27 @@ namespace Framework
 	{
 		// Properties
 	private:
+<<<<<<< HEAD
 		String m_Name = String("");
 		std::set<CComponent*> m_pComponents;
 		CScene *m_pScene = nullptr; //Point to the scene which contain this gameObject;
+=======
+		//std::vector<CComponent*> m_components;
+>>>>>>> origin/dev
 
+		CRenderer* m_rendererComponent = nullptr;
+		CTransform* m_transformComponent = nullptr;
+		CRigidbody* m_rigidBodyComponent = nullptr;
+		CAnimator* m_animatorComponent = nullptr;
+
+		std::list<CComponent*> m_components{};
+		
 		// Cons / Des
-	public:
+	private:
 		CGameObject() = default;
 		~CGameObject() = default;
 
+<<<<<<< HEAD
 		// Friends
 	public:
 		friend class CScene;
@@ -34,6 +53,29 @@ namespace Framework
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
 				if (!m_pComponents.insert(tmp).second) return nullptr;
+=======
+	public:
+		static bool leftBlockMoveDown;
+		static bool rightBlockMoveDown;
+
+		// Public methods
+	public:
+		bool AddComponent(SBuilder builder);
+		//bool RemoveComponent(EObjectType type);*/
+
+		// Getters / Setters
+	public:
+		CTransform* GetTransform() const { return m_transformComponent; }
+		CRigidbody* GetRigidBody() const { return m_rigidBodyComponent; }
+		void AddRigidbody(CRigidbody* pRigidbody) { m_rigidBodyComponent = pRigidbody; }
+
+	public:
+		/*template<class T> T* AddComponent()
+		{
+			T* tmp = new T(this);
+			if (reinterpret_cast<CComponent *> (&tmp)) {
+				if (!m_components.insert(tmp).second) return nullptr;
+>>>>>>> origin/dev
 
 				if (reinterpret_cast<CCollider *> (&tmp) && m_pScene)
 				{
@@ -47,10 +89,14 @@ namespace Framework
 		template<class Type>
 		Type* GetComponent()
 		{
+<<<<<<< HEAD
 			for (CComponent* component : m_pComponents)
+=======
+			for (CComponent* component : m_components)
+>>>>>>> origin/dev
 			{
 				Type* tmp = dynamic_cast<Type *> (component);
-				if(tmp != nullptr)
+				if (tmp != nullptr)
 				{
 					return tmp;
 				}
@@ -61,7 +107,11 @@ namespace Framework
 		template<class T>
 		bool RemoveComponent()
 		{
+<<<<<<< HEAD
 			for (CComponent* component : m_pComponents)
+=======
+			for (CComponent* component : m_components)
+>>>>>>> origin/dev
 			{
 				T* tmp = dynamic_cast<T *> (component);
 				if (tmp != nullptr)
@@ -70,6 +120,7 @@ namespace Framework
 				}
 			}
 			return true;
+<<<<<<< HEAD
 		}
 
 		// Getters / Setters
@@ -77,6 +128,9 @@ namespace Framework
 		void SetScene(CScene *scene) { m_pScene = scene; }
 	public:
 		String GetName() const { return m_Name; }
+=======
+		}*/
+>>>>>>> origin/dev
 
 		// Internal methods
 	private:
@@ -85,13 +139,17 @@ namespace Framework
 
 		// Override methods
 	public:
-		void Update(DWORD dt) override;
-		void Render() override;
+		virtual void Update(DWORD dt);
+		void Render();
 
 		// Static methods
 	public:
+<<<<<<< HEAD
 		static CGameObject* Instantiate();
 		static CGameObject* Instantiate(String name, Vector2 position);
+=======
+		static CGameObject* Instantiate(Vector2 position = VECTOR2_ZERO);
+>>>>>>> origin/dev
 		static void Destroy(CGameObject* &instance);
 	};
 }

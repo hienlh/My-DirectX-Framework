@@ -18,10 +18,13 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{E5C9C27C-6289-4EC4-8DC0-5FD4D698732E}</ProjectGuid>
-    <RootNamespace>MegaMan</RootNamespace>
+    <ProjectGuid>{2343E0FE-FAEC-4796-8665-637F4DF1E9DC}</ProjectGuid>
+    <RootNamespace>Megaman</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -84,9 +87,6 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
-    <Link>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dinput8.lib;XInput.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -124,6 +124,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+<<<<<<< HEAD
   <ItemGroup>
     <ClCompile Include="BlockController.cpp" />
     <ClCompile Include="CameraController.cpp" />
@@ -140,6 +141,8 @@
       <Project>{0a5256d2-d5c3-4b2b-b260-7942c0bc3a0a}</Project>
     </ProjectReference>
   </ItemGroup>
+=======
+>>>>>>> origin/dev
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

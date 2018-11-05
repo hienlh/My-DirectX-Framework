@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-#include "Header.h"
-#include <DirectXMath.h>
+#include "stdafx.h"
 #include "Component.h"
 
-namespace Framework {
-
+namespace Framework
+{
+	/*
 	class CCamera : public CComponent
 	{
 		//Properties
@@ -35,5 +35,5 @@ namespace Framework {
 		void Update(DWORD dt) override;
 		void Render() override;
 	};
-
+	*/
 }

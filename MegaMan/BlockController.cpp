@@ -1,21 +1,32 @@
 ﻿#include "BlockController.h"
+<<<<<<< HEAD
 #include "../Framework/GameObject.h"
 #include "../Framework/Input.h"
 #include "../Framework/Rigidbody.h"
 #include <string>
 
 BlockController::BlockController(CGameObject* game_object) : CMonoBehavior(game_object)
+=======
+#include "Transform.h"
+#include "Renderer.h"
+#include "Rigidbody.h"
+#include "Input.h"
+
+using namespace Megaman;
+
+BlockController::BlockController(Framework::CGameObject* game_object) : CComponent(game_object)
+>>>>>>> origin/dev
 {
 	m_isGoDown = true; 
 	m_isRight = false;
-	m_pos = _gameObject->GetComponent<CTransform>()->Get_Position();
-	m_size = _gameObject->GetComponent<CRenderer>()->GetSize();
+	m_pos = _gameObject->GetComponent<Framework::CTransform>()->Get_Position();
+	m_size = _gameObject->GetComponent<Framework::CRenderer>()->GetSize();
 }
 
 void BlockController::Update(DWORD dt)
 {
-	m_pos = _gameObject->GetComponent<CTransform>()->Get_Position();
-	auto transform = _gameObject->GetComponent<CTransform>();
+	m_pos = _gameObject->GetComponent<Framework::CTransform>()->Get_Position();
+	auto transform = _gameObject->GetComponent<Framework::CTransform>();
 	if (m_pos.y + m_size.y >= SCREEN_HEIGHT) {
 		transform->Set_Position(Vector2(transform->Get_Position().x, SCREEN_HEIGHT - m_size.y));
 		SetIsGoDown(false);
@@ -36,6 +47,7 @@ void BlockController::Render()
 void BlockController::Move()
 {
 	auto rigidbody = _gameObject->GetComponent<CRigidbody>();
+<<<<<<< HEAD
 	auto input = CInput::GetInstance();
 
 	for (short key = 0; key < 256; key++)
@@ -67,4 +79,26 @@ void BlockController::Move()
 	if (input->ButtonUp(1) && m_isRight)
 		rigidbody->SetVelocity(Vector2(0, 0));
 
+=======
+	auto input = Framework::CInput::GetInstance();
+	for (unsigned short x = 0; x <= 256; x++)
+	{
+		if (input->KeyDown(x))
+		{
+			if (x == 65 && !m_isRight)
+				rigidbody->SetVelocity(Vector2(0, 3) * (m_isGoDown ? 1 : -1));
+
+			if (x == 1 && m_isRight)
+				rigidbody->SetVelocity(Vector2(0, 3) *(m_isGoDown ? 1 : -1));
+		}
+		if (input->KeyUp(x))
+		{
+			if (x == 65 && !m_isRight)
+				rigidbody->SetVelocity(Vector2(0, 0));
+
+			if (x == 1 && m_isRight)
+				rigidbody->SetVelocity(Vector2(0, 0));
+		}
+	}
+>>>>>>> origin/dev
 }
