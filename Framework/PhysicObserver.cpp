@@ -1,1 +1,2 @@
-﻿#include "PhysicObserver.h"
+﻿#include "stdafx.h"
+#include "PhysicObserver.h"

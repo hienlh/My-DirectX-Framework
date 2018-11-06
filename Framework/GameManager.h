@@ -22,10 +22,6 @@ namespace Framework
 		// Properties
 	private:
 		CWindow* m_pWindow = nullptr;
-		CGraphic* m_pGraphic = nullptr;
-		CInput* m_pInput = nullptr;
-
-		//std::list<CGameObject*> m_gameObjectList{};
 		CScene* m_currentScene = nullptr;
 
 		// Internal methods
@@ -33,16 +29,15 @@ namespace Framework
 		bool Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
 		void Release();
 
-		
 		// Getters / Setters
 	public:
-		void SetCurrentScene(CScene* scene);
-		CScene* GetCurrentScene();
+		void SetCurrentScene(CScene* scene) { m_currentScene = scene; }
+		CScene* GetCurrentScene() const { return m_currentScene; }
+		CWindow* GetWindow() const { return m_pWindow; }
 		
 		// Public methods
 	public:
 		bool Run();
-		//void AddGameObject(CGameObject* pGameObject);
 
 		// Instantiate method
 	public:

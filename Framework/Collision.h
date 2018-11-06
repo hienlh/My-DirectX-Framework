@@ -7,8 +7,8 @@ namespace Framework {
 	{
 		// Properties
 	private:
-		CCollider *m_collider = nullptr;
-		CCollider *m_otherCollider = nullptr;
+		CCollider *m_pCollider = nullptr;
+		CCollider *m_pOtherCollider = nullptr;
 
 		// Cons / Des
 	public:
@@ -18,8 +18,8 @@ namespace Framework {
 
 		//Getter / Setter
 	public:
-		CCollider *GetCollider() const { return m_collider; }
-		CCollider *GetOtherCollider() const { return m_otherCollider; }
+		CCollider *GetCollider() const { return m_pCollider; }
+		CCollider *GetOtherCollider() const { return m_pOtherCollider; }
 
 		Vector2 GetRelativeVelocity();
 	};

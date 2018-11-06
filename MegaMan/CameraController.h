@@ -1,33 +1,27 @@
 ﻿#pragma once
-<<<<<<< HEAD
-#include "../Framework/Component.h"
-#include "../Framework/MonoBehavior.h"
-
-using namespace Framework;
-
-class CameraController : public CMonoBehavior
-=======
 #include "stdafx.h"
-#include "Component.h"
+#include "MonoBehavier.h"
 
-namespace Megaman
->>>>>>> origin/dev
+class CameraController : public Framework::CMonoBehavior
 {
+	//Public Properties
+public:
+	Framework::CGameObject *m_target;
+private:
+	bool isFollow = false;
 
-	class CameraController : public Framework::CComponent
-	{
-		//Public Properties
-	public:
-		Framework::CGameObject *m_target;
+private:
+	CameraController() = default;
+public:
+	CameraController(Framework::CGameObject *game_object);
+	~CameraController() = default;
 
-	public:
-		CameraController(Framework::CGameObject *game_object);
-		~CameraController() = default;
+public:
+	void SetIsFollow(bool isFollow) { this->isFollow = isFollow; }
 
-	public:
-		void Update(DWORD dt) override;
-		void Render() override;
+public:
+	void Update(DWORD dt) override;
+	void Render() override;
 
-		void Following();
-	};
-}
+	void Following();
+};

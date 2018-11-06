@@ -1,24 +1,16 @@
 ﻿#pragma once
 #include "Object.h"
 
-<<<<<<< HEAD
-namespace Framework {
-	class CGameObject;
-
-	class CScene : public CObject
-	{
-	private:
-		std::set<CGameObject*> m_listGameObject;
-		std::set<CGameObject*> m_listColliderObject;
-		CGameObject *m_mainCamera;
-=======
 namespace Framework
 {
+	class CGameObject;
+
 	class CScene final : public CObject
 	{
 	private:
-		std::list<Framework::CGameObject*> m_gameObjectList{};
->>>>>>> origin/dev
+		std::set<CGameObject*> m_gameObjectList = {};
+		std::set<CGameObject*> m_colliderObjectList = {};
+		CGameObject *m_pMainCamera = nullptr;
 
 	public:
 		CScene() = default;
@@ -26,17 +18,14 @@ namespace Framework
 
 	private:
 		bool Init();
+		bool InitMainCamera();
 		bool Release();
 
 		// Getter/Setter
 	public:
-<<<<<<< HEAD
 		std::set<CGameObject*> GetListGameObject() const;
 		std::set<CGameObject*> GetListColliderObject() const;
-		CGameObject* GetMainCamera() const { return m_mainCamera; }
-=======
-		const std::list<Framework::CGameObject*>& GetGameObjectList();
->>>>>>> origin/dev
+		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 
 	public:
 		static CScene* Instantiate();
@@ -45,8 +34,7 @@ namespace Framework
 		void Update(DWORD dt);
 		void Render();
 
-<<<<<<< HEAD
-		void AddGameObject(CGameObject* gameObject);
+		void AddGameObject(Framework::CGameObject* gameObject);
 		void AddGameObjects(int amount, CGameObject* gameObject, ...);
 
 		//Internal Method
@@ -56,8 +44,5 @@ namespace Framework
 		//Friend
 	public:
 		friend class CGameObject;
-=======
-		void AddGameObject(Framework::CGameObject* gameObject);
->>>>>>> origin/dev
 	};
 }

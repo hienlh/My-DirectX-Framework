@@ -19,7 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BallController.cpp" />
+    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Framework.vcxproj">
+      <Project>{1b34d10c-8c54-4e23-ac8b-bf99c2ff8e35}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BallController.h" />
+    <ClInclude Include="CameraController.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -124,25 +135,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-<<<<<<< HEAD
-  <ItemGroup>
-    <ClCompile Include="BlockController.cpp" />
-    <ClCompile Include="CameraController.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="BallController.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BlockController.h" />
-    <ClInclude Include="CameraController.h" />
-    <ClInclude Include="BallController.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Framework\Framework.vcxproj">
-      <Project>{0a5256d2-d5c3-4b2b-b260-7942c0bc3a0a}</Project>
-    </ProjectReference>
-  </ItemGroup>
-=======
->>>>>>> origin/dev
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -6,6 +6,11 @@
 
 using namespace Framework;
 
+void CRenderer::SetTexture(LPCWSTR texture_path)
+{
+	Init(texture_path);
+}
+
 bool CRenderer::Init(LPCWSTR texturePath)
 {
 	m_pTexture = CGraphic::GetInstance()->CreateTexture(texturePath, m_textureWidth, m_textureHeight);
@@ -25,24 +30,16 @@ void CRenderer::Update(DWORD dt)
 
 void CRenderer::Render()
 {
-	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTransform();
-	CGraphic::GetInstance()->Draw(m_pTexture, pTransform->Get_Position());
-}
+	if (m_pGameObject == nullptr) return;
 
-CRenderer* CRenderer::Instantiate(Framework::UObjectData data)
-{
-	CRenderer* instance = nullptr;
-	SAFE_ALLOC(instance, CRenderer);
+	const auto transform = m_pGameObject->GetComponent<CTransform>();
+	if (m_pTexture == nullptr || transform == nullptr) return;
 
-	instance->m_type = EObjectType::RENDERER;
-
-	if (!instance->Init(data.renderData.texturePath))
-	{
-		instance->Release();
-		SAFE_DELETE(instance);
-	}
-
-	return instance;
+	//If dev don't set width height then draw with default width, height of image
+	if (m_textureWidth == -1 || m_textureHeight == -1)
+		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position());
+	else
+		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), new Rect(Vector2(0,0), Vector2(m_textureWidth, m_textureHeight)));
 }
 
 void CRenderer::Destroy(CRenderer* &instance)

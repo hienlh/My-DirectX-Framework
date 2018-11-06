@@ -1,9 +1,12 @@
-﻿#include "Physic.h"
+﻿#include "stdafx.h"
+#include "Physic.h"
 #include "Scene.h"
 #include "GameObject.h"
 #include "Rigidbody.h"
 #include "GameManager.h"
 #include <string>
+
+using namespace Framework;
 
 CPhysic* CPhysic::__instance = nullptr;
 
@@ -111,8 +114,8 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 	float ml, mt, mr, mb;		// moving object bbox
 	float t, nx, ny;
 
-	staticObject->GetComponent<CCollider>()->GetBoundGlobal().GetBounds(st, sl, sr, sb);
-	moveObject->GetComponent<CCollider>()->GetBoundGlobal().GetBounds(mt, ml, mr, mb);
+	staticObject->GetComponent<CCollider>()->GetBoundGlobal().GetBound(st, sl, sr, sb);
+	moveObject->GetComponent<CCollider>()->GetBoundGlobal().GetBound(mt, ml, mr, mb);
 
 	Vector2 mv = moveObject->GetComponent<CRigidbody>()->GetVelocity();
 	Vector2 sv = staticObject->GetComponent<CRigidbody>()->GetVelocity();

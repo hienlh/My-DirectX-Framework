@@ -1,29 +1,30 @@
 ﻿#pragma once
 #include "Component.h"
-#include "Bounds.h"
+#include "Bound.h"
 
-using namespace Framework;
+namespace Framework {
 
-class CCollider : public CComponent
-{
-	//Properties
-protected:
-	Vector2 m_Offset;
-	Bounds m_Bound;
-	bool m_IsTrigger;
-	bool m_UsedByEffector;
+	class CCollider : public CComponent
+	{
+		//Properties
+	protected:
+		Vector2 m_Offset;
+		Bound m_Bound;
+		bool m_IsTrigger;
+		bool m_UsedByEffector;
 
-	//Cons / Des
-public:
-	CCollider(CGameObject* gameObject);
-	virtual ~CCollider() = default;
+		//Cons / Des
+	public:
+		CCollider(CGameObject* gameObject);
+		virtual ~CCollider() = default;
 
-	//Getter / Setter
-public:
-	Bounds GetBoundGlobal() const;
-	bool GetUsedByEffector() const;
+		//Getter / Setter
+	public:
+		Bound GetBoundGlobal() const;
+		bool GetUsedByEffector() const;
 
-	void SetUsedByEffector(bool usedByEffector);
-	void SetBoundSize(Vector2 size);
-	void SetOffet(Vector2 offset);
-};
+		void SetUsedByEffector(bool usedByEffector);
+		/*void SetBoundSize(Vector2 size);*/
+		void SetOffset(Vector2 offset);
+	};
+}

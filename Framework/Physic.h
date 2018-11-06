@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Header.h"
 #include "PhysicObserver.h"
 
 namespace Framework {

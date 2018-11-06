@@ -4,6 +4,7 @@
 #include "Macros.h"
 #include "Graphic.h"
 #include "Window.h"
+#include "GameManager.h"
 
 using namespace Framework;
 
@@ -11,13 +12,6 @@ CInput* CInput::__instance = nullptr;
 
 bool CInput::Init()
 {
-<<<<<<< HEAD
-	m_dinput = CGraphic::GetInstance()->CreateDirect();
-	m_dikeyboard = CGraphic::GetInstance()->CreateKeyboard(m_dinput);
-	m_dimouse = CGraphic::GetInstance()->CreateMouse(m_dinput);
-	
-	return m_dikeyboard && m_dinput && m_dimouse;
-=======
 	bool result = false;
 	do
 	{
@@ -34,7 +28,6 @@ bool CInput::Init()
 	} while (false);
 
 	return result;
->>>>>>> origin/dev
 }
 
 void CInput::Release()
@@ -62,19 +55,11 @@ void CInput::Release()
 
 bool CInput::CreateInput()
 {
-<<<<<<< HEAD
-	std::copy(m_keys, m_keys + 256, m_prevKeys);
-	m_dikeyboard->GetDeviceState(sizeof(m_keys), reinterpret_cast<LPVOID>(m_keys));
-=======
 	return (DirectInput8Create(GetModuleHandleW(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8W, reinterpret_cast<LPVOID*>(&m_pInput), nullptr) == DI_OK);	
->>>>>>> origin/dev
 }
 
 bool CInput::CreateKeyBoardDevice()
 {
-<<<<<<< HEAD
-	return KEY_DOWN(m_keys[key]) && !KEY_DOWN(m_prevKeys[key]);
-=======
 	bool result = false;
 	do
 	{
@@ -84,7 +69,7 @@ bool CInput::CreateKeyBoardDevice()
 		if (m_pKeyboardDevice->SetDataFormat(&c_dfDIKeyboard) != DI_OK)
 			break;
 
-		if (m_pKeyboardDevice->SetCooperativeLevel(CWindow::GetInstance()->Get_WindowHandle(), DISCL_NONEXCLUSIVE | DISCL_FOREGROUND) != DI_OK)
+		if (m_pKeyboardDevice->SetCooperativeLevel(CGameManager::GetInstance()->GetWindow()->Get_WindowHandle(), DISCL_NONEXCLUSIVE | DISCL_FOREGROUND) != DI_OK)
 			break;
 
 		if (m_pKeyboardDevice->Acquire() != DI_OK)
@@ -94,14 +79,10 @@ bool CInput::CreateKeyBoardDevice()
 	} while (false);
 
 	return result;
->>>>>>> origin/dev
 }
 
 bool CInput::CreateMouseDevice()
 {
-<<<<<<< HEAD
-	return !KEY_DOWN(m_keys[key]) && KEY_DOWN(m_prevKeys[key]);
-=======
 	bool result = false;
 	do
 	{
@@ -111,7 +92,7 @@ bool CInput::CreateMouseDevice()
 		if (m_pMouseDevice->SetDataFormat(&c_dfDIMouse) != DI_OK)
 			break;
 
-		if (m_pMouseDevice->SetCooperativeLevel(CWindow::GetInstance()->Get_WindowHandle(), DISCL_NONEXCLUSIVE | DISCL_FOREGROUND) != DI_OK)
+		if (m_pMouseDevice->SetCooperativeLevel(CGameManager::GetInstance()->GetWindow()->Get_WindowHandle(), DISCL_NONEXCLUSIVE | DISCL_FOREGROUND) != DI_OK)
 			break;
 
 		result = m_pMouseDevice->Acquire();
@@ -122,7 +103,6 @@ bool CInput::CreateMouseDevice()
 	} while (false);
 
 	return result;
->>>>>>> origin/dev
 }
 
 void Framework::CInput::Instantiate()
@@ -141,20 +121,6 @@ void Framework::CInput::Instantiate()
 
 void CInput::Destroy()
 {
-<<<<<<< HEAD
-	memcpy_s(&m_prevMouseState, sizeof(m_prevMouseState), &m_mouseState, sizeof(m_mouseState));
-	m_dimouse->GetDeviceState(sizeof(m_mouseState), reinterpret_cast<LPVOID>(&m_mouseState));
-}
-
-int CInput::ButtonDown(int button)
-{
-	return BUTTON_DOWN(m_mouseState, button) && !BUTTON_DOWN(m_prevMouseState, button);
-}
-
-int CInput::ButtonUp(int button)
-{
-	return !BUTTON_DOWN(m_mouseState, button) && BUTTON_DOWN(m_prevMouseState, button);
-=======
 	if (__instance)
 	{
 		__instance->Release();
@@ -165,7 +131,6 @@ int CInput::ButtonUp(int button)
 bool CInput::GetKeyDown(BYTE key)
 {
 	return KEY_DOWN(key);
->>>>>>> origin/dev
 }
 
 bool CInput::GetKeyUp(BYTE key)

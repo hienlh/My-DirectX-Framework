@@ -5,7 +5,7 @@
 
 namespace Framework
 {
-	/*
+	
 	class CCamera : public CComponent
 	{
 		//Properties
@@ -35,5 +35,5 @@ namespace Framework
 		void Update(DWORD dt) override;
 		void Render() override;
 	};
-	*/
+	
 }

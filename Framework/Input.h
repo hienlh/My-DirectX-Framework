@@ -7,28 +7,9 @@ namespace Framework
 		// Used for singleton pattern
 	private:
 		static CInput* __instance;
-<<<<<<< HEAD
-		
-		char m_prevKeys[256] = { 0 };
-		char m_keys[256] = { 0 };
-		
-		DIMOUSESTATE m_mouseState = { 0 };
-		DIMOUSESTATE m_prevMouseState = { 0 };
-
-		LPDIRECTINPUT8 m_dinput = nullptr;
-		LPDIRECTINPUTDEVICE8 m_dimouse = nullptr;
-		LPDIRECTINPUTDEVICE8 m_dikeyboard = nullptr;
-
-		
-	public:
-		static CInput* GetInstance(); 
-
-	public:
-=======
 
 		// Cons / Des
 	private:
->>>>>>> origin/dev
 		CInput() = default;
 		~CInput() = default;
 		
@@ -64,20 +45,6 @@ namespace Framework
 	public:
 		static void Instantiate();
 		static void Destroy();
-<<<<<<< HEAD
-
-		void PollKeyboard();
-		int KeyDown(int key);
-		int KeyUp(int key);
-		void KillKeyboard();
-		void PollMouse();
-		int ButtonDown(int button);
-		int ButtonUp(int button);
-		int Mouse_X();
-		int Mouse_Y();
-		void KillMouse();
-=======
 		static CInput* GetInstance();
->>>>>>> origin/dev
 	};
 }

@@ -1,45 +1,36 @@
 #include "stdafx.h"
+
 #include "GameManager.h"
 #include "Window.h"
 #include "Graphic.h"
-#include "Input.h"
-#include <string>
 #include "Physic.h"
-#include "Time.h"
 
 using namespace Framework;
 
 CGameManager* CGameManager::__instance = nullptr;
-	
-void CGameManager::SetCurrentScene(CScene* scene)
-{
-	m_currentScene = scene;
-}
-
-CScene* CGameManager::GetCurrentScene()
-{
-	return m_currentScene;
-}
 
 bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	bool result = false;
 	do
 	{
-		CWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
-		m_pWindow = CWindow::GetInstance();
-		if (!m_pWindow)
-			break;
-		
-		CGraphic::Instantiate(m_pWindow->Get_WindowHandle(), fullscreen);
-		m_pGraphic = CGraphic::GetInstance();
-		if (!m_pGraphic)
-			break;
+		m_pWindow = CWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
 
-		CInput::Instantiate();
-		m_pInput = CInput::GetInstance();
-		if (!m_pInput)
+		if (!m_pWindow)
+		{
+			OutputDebugStringA("[Error] CWindow::Instantiate failed\n");
 			break;
+		}
+		HWND hWnd = m_pWindow->Get_WindowHandle();
+
+		// Init Direct3DCore
+		CGraphic::Instantiate(hWnd, fullscreen);
+
+		if (!CGraphic::GetInstance())
+		{
+			OutputDebugStringA("[Error] CGraphic::Instantiate failed\n");
+			break;
+		}
 
 		result = true;
 	} while (false);
@@ -49,9 +40,8 @@ bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int 
 
 void CGameManager::Release()
 {
-	CWindow::Destroy();
-	CGraphic::Destroy();
-	CInput::Destroy();
+	CWindow::Destroy(m_pWindow);
+	CScene::Destroy(m_currentScene);
 }
 
 bool CGameManager::Run()
@@ -78,15 +68,11 @@ bool CGameManager::Run()
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
 		DWORD dt = now - frameStart;
-		//DWORD dt = 20;
-		CTime::GetInstance()->SetDeltaTime(dt);
-		CTime::GetInstance()->SetTime(CTime::GetInstance()->Time() + dt);
 
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
 
-<<<<<<< HEAD
 			// process game loop
 			bool renderResult = CGraphic::GetInstance()->Render(m_currentScene->GetListGameObject());
 			if (!renderResult)
@@ -95,41 +81,11 @@ bool CGameManager::Run()
 				break;
 			}
 
-			auto input = CInput::GetInstance();
-			if (input) {
-				input->PollKeyboard();
-				input->PollMouse();
-			}
-
 			CPhysic::GetInstance()->Update(dt);
 
 			if (m_currentScene)
 				m_currentScene->Update(dt);
-=======
-			m_currentScene->Update(dt);
-			m_currentScene->Render();
-			/*for (auto lis_game_object : lis_game_objects)
-			{
-				lis_game_object->Update();
-				auto x = lis_game_object->Get_Transform()->m_position.x;
-				auto y = lis_game_object->Get_Transform()->m_position.y;
-				if (y <= 0 && x <= SCREEN_WIDTH / 2)
-					lis_game_object->Get_Transform()->m_position.x += dt / 10;
-				else if (y < SCREEN_HEIGHT / 2 && x >= SCREEN_WIDTH / 2)
-				{
-					lis_game_object->Get_Transform()->m_position.y += dt / 10;
-				}
-				else if (x > 0 && y >= SCREEN_HEIGHT / 2)
-					lis_game_object->Get_Transform()->m_position.x -= dt / 10;
-				else
-					lis_game_object->Get_Transform()->m_position.y -= dt / 10;
-			}
-*/
-// process game loop
-			/*bool renderResult = m_pGraphic->Render(m_gameObjectList);
-			if (!renderResult)
-				break;*/
->>>>>>> origin/dev
+			
 		}
 		else
 			Sleep(tickPerFrame - dt);
