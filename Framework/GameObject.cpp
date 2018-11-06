@@ -26,8 +26,10 @@ bool CGameObject::Init()
 
 void CGameObject::Release()
 {
-	for (CComponent* pComponent : m_pComponents)
-		SAFE_DELETE(pComponent);
+	for (auto pComponent : m_pComponents) {
+		SAFE_DELETE(pComponent.second);
+	}
+	m_pComponents.clear();
 }
 
 CGameObject* CGameObject::Instantiate()
@@ -91,11 +93,11 @@ void CGameObject::Destroy(CGameObject*& instance)
 void CGameObject::Update(DWORD dt)
 {
 	for (auto component : m_pComponents)
-		component->Update(dt);
+		component.second->Update(dt);
 }
 
 void CGameObject::Render()
 {
 	for (auto component : m_pComponents)
-		component->Render();
+		component.second->Render();
 }

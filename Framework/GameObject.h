@@ -14,7 +14,7 @@ namespace Framework
 		// Properties
 	private:
 		LPCWSTR m_Name = L"";
-		std::unordered_set<CComponent*> m_pComponents = {};
+		std::unordered_map<std::string, CComponent*> m_pComponents = {};
 		CScene *m_pScene = nullptr;
 		
 		// Cons / Des
@@ -34,7 +34,7 @@ namespace Framework
 			if(GetComponent<T>()) return nullptr;
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
-				if (!m_pComponents.insert(tmp).second) return nullptr;
+				if (!m_pComponents.insert({typeid(T).name(), tmp }).second) return nullptr;
 
 				if (reinterpret_cast<CCollider *> (&tmp) && m_pScene)
 				{
@@ -48,14 +48,10 @@ namespace Framework
 		template<class Type>
 		Type* GetComponent()
 		{
-			for (CComponent* component : m_pComponents)
-			{
-				Type* tmp = dynamic_cast<Type *> (component);
-				if (tmp != nullptr)
-				{
-					return tmp;
-				}
-			}
+			std::string key = typeid(Type).name();
+			auto it = m_pComponents.find(key);
+			if (it != m_pComponents.end()) return dynamic_cast<Type *> (it->second);
+
 			return nullptr;
 		}
 
