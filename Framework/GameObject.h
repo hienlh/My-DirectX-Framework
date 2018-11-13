@@ -31,7 +31,9 @@ namespace Framework
 		/// <summary>Return nullptr if component added already</summary> 
 		template<class T> T* AddComponent()
 		{
-			if(GetComponent<T>()) return nullptr;
+			//Ignore Added Component and Base Component
+			if(GetComponent<T>() || std::is_abstract<T>::value) return nullptr;
+			
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
 				if (!m_pComponents.insert({typeid(T).name(), tmp }).second) return nullptr;
@@ -48,9 +50,27 @@ namespace Framework
 		template<class Type>
 		Type* GetComponent()
 		{
+			//Case get Component from Base Component. Ex: CBoxCollider && CCollider
+			if(std::is_abstract<Type>::value)
+			{
+				for (auto component : m_pComponents)
+				{
+					Type* tmp = dynamic_cast<Type *> (component.second);
+					if (tmp != nullptr)
+					{
+						return tmp;
+					}
+				}
+				return nullptr;
+			}
+
+			//Case get Normal Component
 			std::string key = typeid(Type).name();
 			auto it = m_pComponents.find(key);
-			if (it != m_pComponents.end()) return dynamic_cast<Type *> (it->second);
+			if (it != m_pComponents.end())
+			{
+				return dynamic_cast<Type *> (it->second);
+			}
 
 			return nullptr;
 		}

@@ -11,7 +11,7 @@ void BallController::OnCollisionEnter(CCollision* collision)
 {
 	OutputDebugStringA("ab");
 	m_pGameObject->GetComponent<CRigidbody>()->SetVelocity(Vector2(0,.1));
-	m_pGameObject->GetScene()->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
+	//m_pGameObject->GetScene()->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
 }
 
 void BallController::Update(DWORD dt)

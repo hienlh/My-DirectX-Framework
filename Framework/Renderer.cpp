@@ -37,9 +37,9 @@ void CRenderer::Render()
 
 	//If dev don't set width height then draw with default width, height of image
 	if (m_textureWidth == -1 || m_textureHeight == -1)
-		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position());
+		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), nullptr, nullptr, transform->Get_Rotation().z);
 	else
-		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), new Rect(Vector2(0,0), Vector2(m_textureWidth, m_textureHeight)));
+		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), new Rect(Vector2(0,0), Vector2(m_textureWidth, m_textureHeight)), nullptr, transform->Get_Rotation().z);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)

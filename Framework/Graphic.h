@@ -38,7 +38,8 @@ namespace Framework
 		// Public methods
 	public:
 		bool Render(std::set<CGameObject*> list_game_objects);
-		void Draw(Texture* texture, Vector2 *position = nullptr, Rect* pSourceRect = nullptr, Vector2* offset = nullptr);
+		void Draw(Texture* texture, Vector2* position = nullptr, Rect* pSourceRect = nullptr, Vector2* offset = nullptr,
+		          float angle = 0);
 		
 		Texture* CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight);
 			

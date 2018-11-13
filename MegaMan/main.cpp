@@ -23,6 +23,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	do
 	{
+		/*CGameObject* pBackground = CGameObject::Instantiate(L"Background", Vector2(0, 0));
+		pBackground->AddComponent<CRenderer>()->SetTexture(L".\\Resources\\Background.jpg");*/
 
 		CGameObject* pCat = CGameObject::Instantiate(L"Cat", Vector2(0,0));
 		pCat->AddComponent<CAnimator>()->Set(L".\\Resources\\meow.jpg", 4, 2, 6, 100);
@@ -30,14 +32,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pCat->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pCat->GetComponent<CBoxCollider>()->SetSize(Vector2(pCat->GetComponent<CAnimator>()->GetAnimationWidth(), pCat->GetComponent<CAnimator>()->GetAnimationHeight()));
 
-		CGameObject*pBall = CGameObject::Instantiate(L"Ball", Vector2(SCREEN_WIDTH - 100, 0));
+		CGameObject*pBall = CGameObject::Instantiate(L"Ball", Vector2(SCREEN_WIDTH - 50, 50));
 		pBall->AddComponent<CRenderer>()->SetTexture(L".\\Resources\\ball.png");
 		pBall->AddComponent<CRigidbody>();
 		pBall->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pBall->AddComponent<BallController>();
 
 		pScene->AddGameObject(pCat);
-		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pBall;
+		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pCat;
+		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
 		pScene->AddGameObject(pBall);
 		pGameManager->Run();
 

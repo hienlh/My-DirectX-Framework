@@ -78,7 +78,7 @@ void CAnimator::Update(DWORD dt)
 	}
 }
 
-void Framework::CAnimator::Render()
+void CAnimator::Render()
 {
 	CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
 	
@@ -90,7 +90,7 @@ void Framework::CAnimator::Render()
 
 	Vector2 center = Vector2(rect.left + m_animationWidth / 2, rect.top + m_animationHeight / 2);
 
-	CGraphic::GetInstance()->Draw(m_pTexture, &pTransform->Get_Position(), &rect);
+	CGraphic::GetInstance()->Draw(m_pTexture, &pTransform->Get_Position(), &rect, nullptr, pTransform->Get_Rotation().z);
 }
 
 CAnimator* CAnimator::Instantiate()

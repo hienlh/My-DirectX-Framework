@@ -116,11 +116,17 @@ bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 	return result;
 }
 
-void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vector2* offset)
+void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vector2* offset, float angle)
 {
 	Vector3 *position3D = position ? new Vector3(position->x, position->y, 0) : nullptr;
 	Vector3 *offset3D = offset ? new Vector3(offset->x, offset->y, 0) : nullptr;
 	RECT* pRect = new RECT();
+
+	D3DXMATRIX oldMatrix;
+	m_pSpriteHandler->GetTransform(&oldMatrix);
+	D3DXMATRIX matRotate;
+	D3DXMatrixRotationZ(&matRotate, D3DXToRadian(angle));
+	m_pSpriteHandler->SetTransform(&matRotate);
 
 	if (pSourceRect) {
 		pRect->top = pSourceRect->top;
@@ -129,8 +135,8 @@ void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vect
 		pRect->bottom = pSourceRect->bottom;
 	}
 	m_pSpriteHandler->Draw(texture, pRect, offset3D, position3D, COLOR_WHITE);
-}
 
+}
 Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight)
 {
 	Texture* m_texture = nullptr;
