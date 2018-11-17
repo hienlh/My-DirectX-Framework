@@ -20,6 +20,7 @@ namespace Framework
 		Device* m_pDevice = nullptr;
 		Surface* m_pBackBuffer = nullptr;
 		Sprite* m_pSpriteHandler = nullptr;
+		IDirect3DVertexBuffer9* m_pVertexBuffer = nullptr;
 		
 		// Getter / Setters
 	public:
@@ -33,6 +34,7 @@ namespace Framework
 		// Internal methods
 	private:
 		bool Init(HWND hWind, bool fullscreen);
+		void Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices);
 		void Release();
 
 		// Public methods
@@ -40,6 +42,7 @@ namespace Framework
 		bool Render(std::set<CGameObject*> list_game_objects);
 		void Draw(Texture* texture, Vector2* position = nullptr, Rect* pSourceRect = nullptr, Vector2* offset = nullptr,
 		          float angle = 0);
+		void DrawRectangle(Rect rect, DWORD color = NULL);
 		
 		Texture* CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight);
 			

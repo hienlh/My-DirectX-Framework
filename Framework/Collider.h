@@ -12,6 +12,7 @@ namespace Framework {
 		Bound m_Bound;
 		bool m_IsTrigger;
 		bool m_UsedByEffector;
+		bool m_IsDebugging;
 
 		//Cons / Des
 	public:
@@ -22,9 +23,11 @@ namespace Framework {
 	public:
 		Bound GetBoundGlobal() const;
 		bool GetUsedByEffector() const;
+		bool GetIsDebugging() const;
 
 		void SetUsedByEffector(bool usedByEffector);
 		/*void SetBoundSize(Vector2 size);*/
 		void SetOffset(Vector2 offset);
+		void SetIsDebugging(bool isDebugging);
 	};
 }

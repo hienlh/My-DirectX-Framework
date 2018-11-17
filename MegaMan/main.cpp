@@ -27,9 +27,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pBackground->AddComponent<CRenderer>()->SetTexture(L".\\Resources\\Background.jpg");*/
 
 		CGameObject* pCat = CGameObject::Instantiate(L"Cat", Vector2(0,0));
-		pCat->AddComponent<CAnimator>()->Set(L".\\Resources\\meow.jpg", 4, 2, 6, 100);
+		pCat->GetComponent<CTransform>()->Set_Rotation(Vector3(0, 0, 0));
+		pCat->AddComponent<CAnimator>()->Set(L".\\Resources\\car.png", 3, 1, 3, 100);
 		pCat->AddComponent<CRigidbody>()->SetVelocity(Vector2(.1, 0));
 		pCat->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		pCat->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 		pCat->GetComponent<CBoxCollider>()->SetSize(Vector2(pCat->GetComponent<CAnimator>()->GetAnimationWidth(), pCat->GetComponent<CAnimator>()->GetAnimationHeight()));
 
 		CGameObject*pBall = CGameObject::Instantiate(L"Ball", Vector2(SCREEN_WIDTH - 50, 50));
@@ -37,11 +39,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pBall->AddComponent<CRigidbody>();
 		pBall->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pBall->AddComponent<BallController>();
+		pBall->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 
-		pScene->AddGameObject(pCat);
+		CGameObject* pLeftBlock = CGameObject::Instantiate(L"Left Block", VECTOR2_ZERO);
+		pLeftBlock->AddComponent<CRenderer>()->SetTexture(L".\\Resources\\Block.png");
+		pLeftBlock->AddComponent<CRigidbody>();
+		pLeftBlock->AddComponent<CBoxCollider>();
+		pLeftBlock->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+
+		CGameObject* pRightBlock = CGameObject::Instantiate(L"Left Block", Vector2(SCREEN_WIDTH - 10,0));
+		pRightBlock->AddComponent<CRenderer>()->SetTexture(L".\\Resources\\Block.png");
+		pRightBlock->AddComponent<CRigidbody>();
+		pRightBlock->AddComponent<CBoxCollider>();
+		pRightBlock->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+
 		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pCat;
-		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
-		pScene->AddGameObject(pBall);
+		//pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
 		pGameManager->Run();
 
 	} while (false);

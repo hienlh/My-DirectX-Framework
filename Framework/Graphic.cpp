@@ -72,6 +72,24 @@ bool CGraphic::Init(HWND hWind, bool fullscreen)
 	return result;
 }
 
+void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
+{
+	size_t size = vertices.size() * sizeof(CUSTOMVERTEX);
+
+	// create the vertex and store the pointer into v_buffer, which is created globally
+	m_pDevice->CreateVertexBuffer(size,
+		0,
+		CUSTOMFVF,
+		D3DPOOL_MANAGED,
+		&m_pVertexBuffer,
+		NULL);
+
+	VOID* pVoid;    // the void pointer
+	m_pVertexBuffer->Lock(0, 0, (void**)&pVoid, 0);    // lock the vertex buffer
+	memcpy(pVoid, vertices.data(), size);    // copy the vertices to the locked buffer
+	m_pVertexBuffer->Unlock();    // unlock the vertex buffer
+}
+
 void CGraphic::Release()
 {
 	if (m_pDirect3D)
@@ -137,6 +155,40 @@ void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vect
 	m_pSpriteHandler->Draw(texture, pRect, offset3D, position3D, COLOR_WHITE);
 
 }
+
+void CGraphic::DrawRectangle(Rect rect, DWORD color)
+{
+	// create some vertices using the CUSTOMVERTEX struct built earlier
+	std::vector<CUSTOMVERTEX> vertices;
+	if(color)	
+		vertices = {
+			{ rect.left, rect.top, 0.5f, 1.0f, color, },
+			{ rect.right, rect.top, 0.5f, 1.0f, color, },
+			{ rect.right, rect.bottom, 0.5f, 1.0f, color, },
+			{ rect.left, rect.bottom, 0.5f, 1.0f, color, },
+			{ rect.left, rect.top, 0.5f, 1.0f, color, },
+		};
+	else 
+		vertices = {
+			{ rect.left, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 0, 255), },
+			{ rect.right, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 255, 0), },
+			{ rect.right, rect.bottom, 0.5f, 1.0f, D3DCOLOR_XRGB(255, 255, 255), },
+			{ rect.left, rect.bottom, 0.5f, 1.0f, D3DCOLOR_XRGB(255, 0, 0), },
+			{ rect.left, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 0, 255), },
+		};
+
+	Init_VertexGraphic(vertices);
+
+	// select which vertex format we are using
+	m_pDevice->SetFVF(CUSTOMFVF);
+
+	// select the vertex buffer to display
+	m_pDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
+
+	// copy the vertex buffer to the back buffer
+	m_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, 4);
+}
+
 Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight)
 {
 	Texture* m_texture = nullptr;

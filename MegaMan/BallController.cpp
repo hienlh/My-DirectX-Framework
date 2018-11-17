@@ -1,6 +1,8 @@
 ﻿#include "BallController.h"
 #include "Rigidbody.h"
 #include "CameraController.h"
+#include "Graphic.h"
+#include "BoxCollider.h"
 
 BallController::BallController(CGameObject* gameObject) : CMonoBehavior(gameObject)
 {
