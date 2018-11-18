@@ -103,6 +103,9 @@ void CGraphic::Release()
 
 	if (m_pSpriteHandler)
 		m_pSpriteHandler->Release();
+
+	if (m_pVertexBuffer)
+		m_pVertexBuffer->Release();
 }
 
 bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
@@ -158,6 +161,7 @@ void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vect
 
 void CGraphic::DrawRectangle(Rect rect, DWORD color)
 {
+	// Refer: http://directxtutorial.com/Lesson.aspx?lessonid=9-4-4
 	// create some vertices using the CUSTOMVERTEX struct built earlier
 	std::vector<CUSTOMVERTEX> vertices;
 	if(color)	

@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		/*CGameObject* pBackground = CGameObject::Instantiate(L"Background", Vector2(0, 0));
 		pBackground->AddComponent<CRenderer>()->SetTexture(L".\\Resources\\Background.jpg");*/
 
-		CGameObject* pCat = CGameObject::Instantiate(L"Cat", Vector2(0,0));
+		CGameObject* pCat = CGameObject::Instantiate(L"Cat", Vector2(20,0));
 		pCat->GetComponent<CTransform>()->Set_Rotation(Vector3(0, 0, 0));
 		pCat->AddComponent<CAnimator>()->Set(L".\\Resources\\car.png", 3, 1, 3, 100);
 		pCat->AddComponent<CRigidbody>()->SetVelocity(Vector2(.1, 0));
@@ -34,7 +34,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pCat->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 		pCat->GetComponent<CBoxCollider>()->SetSize(Vector2(pCat->GetComponent<CAnimator>()->GetAnimationWidth(), pCat->GetComponent<CAnimator>()->GetAnimationHeight()));
 
-		CGameObject*pBall = CGameObject::Instantiate(L"Ball", Vector2(SCREEN_WIDTH - 50, 50));
+		CGameObject*pBall = CGameObject::Instantiate(L"Ball", Vector2(SCREEN_WIDTH - 70, 50));
 		pBall->AddComponent<CRenderer>()->SetTexture(L".\\Resources\\ball.png");
 		pBall->AddComponent<CRigidbody>();
 		pBall->AddComponent<CBoxCollider>()->SetUsedByEffector(false);

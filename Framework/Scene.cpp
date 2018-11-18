@@ -77,11 +77,6 @@ void CScene::Update(DWORD dt)
 	{
 		pGameObject->Update(dt);
 	}
-	
-	for (auto pGameObject : m_gameObjectList)
-	{
-		pGameObject->Update(dt);
-	}
 
 	m_pMainCamera->Update(dt);
 	CGraphic::GetInstance()->SetTransform(m_pMainCamera->GetComponent<CCamera>()->GetOrthographicMatrix(),

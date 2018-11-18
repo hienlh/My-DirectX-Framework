@@ -94,6 +94,16 @@ void CPhysic::Destroy()
 	SAFE_DELETE(__instance);
 }
 
+bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
+{
+	float left = other.left - object.right;
+	float top = other.bottom - object.top;
+	float right = other.right - object.left;
+	float bottom = other.top - object.bottom;
+
+	return !(left > 0 || right < 0 || top < 0 || bottom > 0);
+}
+
 void CPhysic::Update(DWORD dt)
 {
 	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetListColliderObject();
