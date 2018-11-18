@@ -28,6 +28,15 @@
     <Filter Include="Framework\Game">
       <UniqueIdentifier>{07e53e92-2c37-4501-9336-2955d9dd9adf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Struct">
+      <UniqueIdentifier>{a858fb07-dd33-498c-8888-13805dadec58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Physics">
+      <UniqueIdentifier>{5a9e6236-19ec-48e6-9272-8d8dda1501b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Observers">
+      <UniqueIdentifier>{d24fa052-0f51-483c-8fc0-3050089f8faa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -81,6 +90,27 @@
     <ClInclude Include="Camera.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Bound.h">
+      <Filter>Framework\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="Physic.h">
+      <Filter>Framework\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicObserver.h">
+      <Filter>Framework\Observers</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Framework\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="MonoBehavier.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -126,6 +156,24 @@
       <Filter>Framework\Component</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Physic.cpp">
+      <Filter>Framework\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicObserver.cpp">
+      <Filter>Framework\Observers</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Framework\Struct</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="MonoBehavier.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
   </ItemGroup>

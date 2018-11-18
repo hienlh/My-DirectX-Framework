@@ -7,7 +7,7 @@ using namespace Framework;
 
 CRigidbody::CRigidbody(Framework::CGameObject * gameObject)
 {
-	this->m_parentObject = gameObject;
+	this->m_pGameObject = gameObject;
 	this->_velocity = Vector2(0, 0);
 	this->_mass = 0;
 	this->_gravityScale = 1;
@@ -16,9 +16,9 @@ CRigidbody::CRigidbody(Framework::CGameObject * gameObject)
 
 void CRigidbody::Update(DWORD dt)
 {
-	CTransform* pTransform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTransform();
+	auto pTransform = m_pGameObject->GetComponent<CTransform>();
 	if (pTransform)
-		pTransform->m_position += _velocity * dt / 10;
+		pTransform->m_position += _velocity * dt;
 }
 
 void CRigidbody::Render()

@@ -19,7 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BallController.cpp" />
+    <ClCompile Include="RightBlockController.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="LeftBlockController.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Framework.vcxproj">
+      <Project>{1b34d10c-8c54-4e23-ac8b-bf99c2ff8e35}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BallController.h" />
+    <ClInclude Include="RightBlockController.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="LeftBlockController.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

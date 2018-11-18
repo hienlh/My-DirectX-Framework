@@ -3,7 +3,7 @@
 #include "GameObject.h"
 
 using namespace Framework;
-/*
+
 Framework::CCamera::CCamera(CGameObject* gameObject) : CComponent(gameObject)
 {
 	_width = SCREEN_WIDTH;
@@ -30,7 +30,7 @@ Framework::CCamera::~CCamera()
 
 void Framework::CCamera::Update(DWORD dt)
 {
-	auto pos = _gameObject->GetComponent<CTransform>()->Get_Position();
+	auto pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 
 	this->_viewMatrix = Matrix(
 		_scaleFactors.x * cos(_angle), _scaleFactors.x * sin(_angle), 0, 0,
@@ -43,4 +43,3 @@ void Framework::CCamera::Update(DWORD dt)
 void Framework::CCamera::Render()
 {
 }
-*/

@@ -10,8 +10,6 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define TANK_PATH L"..\\Resources\\tank.png"
-#define MARIO_PATH L"..\\Resources\\mario.png"
 #define FULL_SCREEN false
 
 #define FRAME_RATE 60

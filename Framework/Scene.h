@@ -1,13 +1,16 @@
 ﻿#pragma once
 #include "Object.h"
-#include "GameObject.h"
 
 namespace Framework
 {
+	class CGameObject;
+
 	class CScene final : public CObject
 	{
 	private:
-		std::list<Framework::CGameObject*> m_gameObjectList{};
+		std::set<CGameObject*> m_gameObjectList = {};
+		std::set<CGameObject*> m_colliderObjectList = {};
+		CGameObject *m_pMainCamera = nullptr;
 
 	public:
 		CScene() = default;
@@ -15,11 +18,14 @@ namespace Framework
 
 	private:
 		bool Init();
+		bool InitMainCamera();
 		bool Release();
 
 		// Getter/Setter
 	public:
-		const std::list<Framework::CGameObject*>& GetGameObjectList();
+		std::set<CGameObject*> GetListGameObject() const;
+		std::set<CGameObject*> GetListColliderObject() const;
+		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 
 	public:
 		static CScene* Instantiate();
@@ -29,5 +35,14 @@ namespace Framework
 		void Render();
 
 		void AddGameObject(Framework::CGameObject* gameObject);
+		void AddGameObjects(int amount, CGameObject* gameObject, ...);
+
+		//Internal Method
+	private:
+		void AddColliderObject(CGameObject* gameObject);
+
+		//Friend
+	public:
+		friend class CGameObject;
 	};
 }

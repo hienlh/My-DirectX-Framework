@@ -3,8 +3,8 @@
 #include "Renderer.h"
 #include "Object.h"
 #include "Transform.h"
-#include "Rigidbody.h"
-#include "Animator.h"
+#include "Scene.h"
+#include "Collider.h"
 
 namespace Framework
 {
@@ -13,41 +13,28 @@ namespace Framework
 	{
 		// Properties
 	private:
-		//std::vector<CComponent*> m_components;
-
-		CRenderer* m_rendererComponent = nullptr;
-		CTransform* m_transformComponent = nullptr;
-		CRigidbody* m_rigidBodyComponent = nullptr;
-		CAnimator* m_animatorComponent = nullptr;
-
-		std::list<CComponent*> m_components{};
+		LPCWSTR m_Name = L"";
+		std::unordered_map<std::string, CComponent*> m_pComponents = {};
+		CScene *m_pScene = nullptr;
 		
 		// Cons / Des
 	private:
 		CGameObject() = default;
 		~CGameObject() = default;
 
+		// Friends
 	public:
-		static bool leftBlockMoveDown;
-		static bool rightBlockMoveDown;
+		friend class CScene;
 
 		// Public methods
 	public:
-		bool AddComponent(SBuilder builder);
-		//bool RemoveComponent(EObjectType type);*/
-
-		// Getters / Setters
-	public:
-		CTransform* GetTransform() const { return m_transformComponent; }
-		CRigidbody* GetRigidBody() const { return m_rigidBodyComponent; }
-		void AddRigidbody(CRigidbody* pRigidbody) { m_rigidBodyComponent = pRigidbody; }
-
-	public:
-		/*template<class T> T* AddComponent()
+		/// <summary>Return nullptr if component added already</summary> 
+		template<class T> T* AddComponent()
 		{
+			if(GetComponent<T>()) return nullptr;
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
-				if (!m_components.insert(tmp).second) return nullptr;
+				if (!m_pComponents.insert({typeid(T).name(), tmp }).second) return nullptr;
 
 				if (reinterpret_cast<CCollider *> (&tmp) && m_pScene)
 				{
@@ -61,13 +48,26 @@ namespace Framework
 		template<class Type>
 		Type* GetComponent()
 		{
-			for (CComponent* component : m_components)
+			//Case get Component from Base Component. Ex: CBoxCollider && CCollider
+			if (std::is_abstract<Type>::value)
 			{
-				Type* tmp = dynamic_cast<Type *> (component);
-				if (tmp != nullptr)
+				for (auto component : m_pComponents)
 				{
-					return tmp;
+					Type* tmp = dynamic_cast<Type *> (component.second);
+					if (tmp != nullptr)
+					{
+						return tmp;
+					}
 				}
+				return nullptr;
+			}
+			//Case get Normal Component
+			std::string key = typeid(Type).name();
+			auto it = m_pComponents.find(key);
+			if (it != m_pComponents.end()) return dynamic_cast<Type *> (it->second);
+			if (it != m_pComponents.end())
+			{
+				return dynamic_cast<Type *> (it->second);
 			}
 			return nullptr;
 		}
@@ -75,7 +75,7 @@ namespace Framework
 		template<class T>
 		bool RemoveComponent()
 		{
-			for (CComponent* component : m_components)
+			for (CComponent* component : m_pComponents)
 			{
 				T* tmp = dynamic_cast<T *> (component);
 				if (tmp != nullptr)
@@ -84,7 +84,14 @@ namespace Framework
 				}
 			}
 			return true;
-		}*/
+		}
+
+		// Getters / Setters
+	private:
+		void SetScene(CScene *scene) { m_pScene = scene; }
+	public:
+		LPCWSTR GetName() const { return m_Name; }
+		CScene* GetScene() const { return m_pScene; }
 
 		// Internal methods
 	private:
@@ -98,7 +105,9 @@ namespace Framework
 
 		// Static methods
 	public:
-		static CGameObject* Instantiate(Vector2 position = VECTOR2_ZERO);
+		static CGameObject* Instantiate();
+		static CGameObject* Instantiate(LPCWSTR name, Vector2 position);
+		static CGameObject* Instantiate(Vector2 position);
 		static void Destroy(CGameObject* &instance);
 	};
 }

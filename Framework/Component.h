@@ -8,19 +8,19 @@ namespace Framework
 	// Component Class
 	class CComponent : public CObject
 	{
+	protected:
+		CGameObject* m_pGameObject = nullptr;
+
 		// Cons / Des
 	public:
 		CComponent() = default;
+		CComponent(CGameObject *game_object) { m_pGameObject = game_object; }
 		virtual ~CComponent() = default;
 
 		//Getter / Setter
 	public:
-		//CGameObject* GetGameObject() { return _gameObject; }
-		//void SetGameObject(CGameObject* gameobject) { m_gameObject = gameobject; }
+		CGameObject* GetGameObject() { return m_pGameObject; }
+		void SetGameObject(CGameObject* gameobject) { m_pGameObject = gameobject; }
 
-		// Static methods
-	public:
-		static CComponent* Instantiate(SBuilder builder);
-		static void Destroy(CComponent* &instance);
 	};
 }

@@ -15,11 +15,26 @@ namespace Framework
 		// Properties
 	private:
 		Texture* m_pTexture = nullptr;
-		DWORD m_textureWidth = 0, m_textureHeight = 0;
-		
+		DWORD m_textureWidth = -1, m_textureHeight = -1;
+
+		//Getter / Setter
+	public:
+		Texture* GetTexture() const { return m_pTexture; }
+		float GetWidth() const { return m_textureWidth; }
+		float GetHeight() const { return m_textureHeight; }
+		Vector2 GetSize() const { return Vector2(m_textureWidth, m_textureHeight); }
+
+		void SetTexture(LPCWSTR texture_path);
+		//void SetTexture(Texture texture) { m_texture = texture; } //Remove because only if u set texture by path, you can get size of image
+		void SetWidth(float width) { m_textureWidth = width; }
+		void SetHeight(float height) { m_textureHeight = height; }
+
 		// Cons / Des
-	private:
+	public:
 		CRenderer() = default;
+		CRenderer(CGameObject* game_object) : CComponent(game_object) {}
+		//CRenderer(Object::CGameObject* game_object, Texture texture) : CComponent(game_object) { m_texture = texture; } //Remove because only if u set texture by path, you can get size of image
+		CRenderer(CGameObject* game_object, LPCWSTR texture_path) : CComponent(game_object) { this->Init(texture_path); }
 		virtual ~CRenderer() = default;
 
 		// Internal methods
@@ -33,7 +48,7 @@ namespace Framework
 
 		// Static methods
 	public:
-		static CRenderer* Instantiate(UObjectData data);
+		static CRenderer* Instantiate();
 		static void Destroy(CRenderer* &instance);
 
 		// Override method

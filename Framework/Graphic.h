@@ -23,10 +23,12 @@ namespace Framework
 		
 		// Getter / Setters
 	public:
-		Direct3D* Get_Direct3D() { return this->m_pDirect3D; }
-		Device* Get_Device() { return this->m_pDevice; }
-		Surface* Get_BackBuffer() { return this->m_pBackBuffer; }
-		Sprite* Get_SpriteHandler() { return m_pSpriteHandler; }
+		Direct3D* Get_Direct3D() const { return this->m_pDirect3D; }
+		Device* Get_Device() const { return this->m_pDevice; }
+		Surface* Get_BackBuffer() const { return this->m_pBackBuffer; }
+		Sprite* Get_SpriteHandler() const { return m_pSpriteHandler; }
+
+		void SetTransform(Matrix &orthographicMatrix, Matrix &identityMatrix, Matrix &viewMatrix);
 
 		// Internal methods
 	private:
@@ -35,8 +37,8 @@ namespace Framework
 
 		// Public methods
 	public:
-		bool Render(const std::list<CGameObject*> &gameObjectList);
-		void Draw(Texture* texture, Vector2 position, Rect* pSourceRect = nullptr);
+		bool Render(std::set<CGameObject*> list_game_objects);
+		void Draw(Texture* texture, Vector2 *position = nullptr, Rect* pSourceRect = nullptr, Vector2* offset = nullptr);
 		
 		Texture* CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight);
 			

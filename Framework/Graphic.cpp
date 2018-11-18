@@ -8,6 +8,13 @@ using namespace Framework;
 
 CGraphic* CGraphic::__instance = nullptr;
 
+void CGraphic::SetTransform(Matrix& orthographicMatrix, Matrix& identityMatrix, Matrix& viewMatrix)
+{
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &orthographicMatrix);
+	m_pDevice->SetTransform(D3DTS_WORLD, &identityMatrix);
+	m_pDevice->SetTransform(D3DTS_VIEW, &viewMatrix);
+}
+
 bool CGraphic::Init(HWND hWind, bool fullscreen)
 {
 	bool result = false;
@@ -80,7 +87,7 @@ void CGraphic::Release()
 		m_pSpriteHandler->Release();
 }
 
-bool CGraphic::Render(const std::list<CGameObject*> &gameObjectList)
+bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 {
 	bool result = false;
 	do
@@ -90,9 +97,9 @@ bool CGraphic::Render(const std::list<CGameObject*> &gameObjectList)
 		// Clear back buffer with black color
 		m_pDevice->ColorFill(m_pBackBuffer, nullptr, COLOR_BLACK);
 
-		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
+		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
 
-		for (CGameObject* pGameObject : gameObjectList)
+		for (CGameObject* pGameObject : list_game_objects)
 			pGameObject->Render();
 
 		m_pSpriteHandler->End();
@@ -109,10 +116,19 @@ bool CGraphic::Render(const std::list<CGameObject*> &gameObjectList)
 	return result;
 }
 
-void CGraphic::Draw(Texture* texture, Vector2 position, Rect* pSourceRect)
+void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vector2* offset)
 {
-	Vector3 position3D = { position.x, position.y, 0 };
-	m_pSpriteHandler->Draw(texture, pSourceRect, nullptr, &position3D, COLOR_WHITE);
+	Vector3 *position3D = position ? new Vector3(position->x, position->y, 0) : nullptr;
+	Vector3 *offset3D = offset ? new Vector3(offset->x, offset->y, 0) : nullptr;
+	RECT* pRect = new RECT();
+
+	if (pSourceRect) {
+		pRect->top = pSourceRect->top;
+		pRect->left = pSourceRect->left;
+		pRect->right = pSourceRect->right;
+		pRect->bottom = pSourceRect->bottom;
+	}
+	m_pSpriteHandler->Draw(texture, pRect, offset3D, position3D, COLOR_WHITE);
 }
 
 Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight)
