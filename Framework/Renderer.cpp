@@ -3,24 +3,27 @@
 #include "Macros.h"
 #include "Graphic.h"
 #include "GameManager.h"
+#include "CTexture.h"
+#include "ResourceManager.h"
 
 using namespace Framework;
 
-void CRenderer::SetTexture(LPCWSTR texture_path)
+void CRenderer::SetTexture(LPCWSTR texture_name)
 {
-	Init(texture_path);
+	Init(texture_name);
 }
 
-bool CRenderer::Init(LPCWSTR texturePath)
+bool CRenderer::Init(LPCWSTR textureName)
 {
-	m_pTexture = CGraphic::GetInstance()->CreateTexture(texturePath, m_textureWidth, m_textureHeight);
+	m_pTexture = CResourceManager::GetInstance()->GetTexture(textureName);
+	m_textureWidth = m_pTexture->width;
+	m_textureHeight = m_pTexture->height;
 	return m_pTexture != nullptr;
 }
 
 void CRenderer::Release()
 {
-	if (m_pTexture)
-		m_pTexture->Release();
+	delete m_pTexture;
 }
 
 void CRenderer::Update(DWORD dt)
@@ -31,7 +34,6 @@ void CRenderer::Update(DWORD dt)
 void CRenderer::Render()
 {
 	if (m_pGameObject == nullptr) return;
-
 	const auto transform = m_pGameObject->GetComponent<CTransform>();
 	if (m_pTexture == nullptr || transform == nullptr) return;
 

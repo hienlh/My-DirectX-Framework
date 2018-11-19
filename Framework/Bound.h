@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 
 typedef struct Bound
 {
@@ -29,9 +28,15 @@ typedef struct Bound
 	Vector2 TopLeft() const { return Vector2(top, left); }
 	Vector2 Size() const { return Vector2(right - left, bottom - top); }
 
-	void GetBound(float &t, float &l, float &r, float &b)
+	void GetBound(float &t, float &l, float &r, float &b) const
 	{
 		t = top; l = left; r = right; b = bottom;
+	}
+
+	RECT ToRECT() const
+	{
+		const RECT rect = { left, top, right, bottom };
+		return rect;
 	}
 
 	Bound& operator= (const Bound &_bounds) = default;

@@ -111,6 +111,21 @@
     <ClInclude Include="MonoBehavier.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Framework\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="CTexture.h">
+      <Filter>Framework\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Framework\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Framework\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Framework\Struct</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -175,6 +190,15 @@
     </ClCompile>
     <ClCompile Include="MonoBehavier.cpp">
       <Filter>Framework\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Framework\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Framework\Struct</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Framework\Struct</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

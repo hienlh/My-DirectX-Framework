@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="BallController.cpp" />
     <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="GroundController.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +32,7 @@
   <ItemGroup>
     <ClInclude Include="BallController.h" />
     <ClInclude Include="CameraController.h" />
+    <ClInclude Include="GroundController.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

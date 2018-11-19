@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+class CTexture;
+
 namespace Framework
 {
 	class CGraphic final
@@ -44,7 +46,7 @@ namespace Framework
 		          float angle = 0);
 		void DrawRectangle(Rect rect, DWORD color = NULL);
 		
-		Texture* CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight);
+		Texture* CreateTexture(LPCWSTR texturePath);
 			
 		// Static methods
 	public:

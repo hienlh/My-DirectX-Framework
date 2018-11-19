@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "Object.h"
 #include "Component.h"
 
@@ -24,8 +25,8 @@ namespace Framework
 		float GetHeight() const { return m_textureHeight; }
 		Vector2 GetSize() const { return Vector2(m_textureWidth, m_textureHeight); }
 
-		void SetTexture(LPCWSTR texture_path);
-		//void SetTexture(Texture texture) { m_texture = texture; } //Remove because only if u set texture by path, you can get size of image
+		void SetTexture(LPCWSTR texture_name);
+		//void SetTexture(CTexture texture) { m_texture = texture; } //Remove because only if u set texture by path, you can get size of image
 		void SetWidth(float width) { m_textureWidth = width; }
 		void SetHeight(float height) { m_textureHeight = height; }
 
@@ -33,13 +34,13 @@ namespace Framework
 	public:
 		CRenderer() = default;
 		CRenderer(CGameObject* game_object) : CComponent(game_object) {}
-		//CRenderer(Object::CGameObject* game_object, Texture texture) : CComponent(game_object) { m_texture = texture; } //Remove because only if u set texture by path, you can get size of image
+		//CRenderer(Object::CGameObject* game_object, CTexture texture) : CComponent(game_object) { m_texture = texture; } //Remove because only if u set texture by path, you can get size of image
 		CRenderer(CGameObject* game_object, LPCWSTR texture_path) : CComponent(game_object) { this->Init(texture_path); }
 		virtual ~CRenderer() = default;
 
 		// Internal methods
 	private:
-		bool Init(LPCWSTR texturePath);
+		bool Init(LPCWSTR textureName);
 		void Release();
 
 	public:

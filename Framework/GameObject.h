@@ -13,7 +13,6 @@ namespace Framework
 	{
 		// Properties
 	private:
-		LPCWSTR m_Name = L"";
 		std::unordered_map<std::string, CComponent*> m_pComponents = {};
 		CScene *m_pScene = nullptr;
 		
@@ -25,6 +24,7 @@ namespace Framework
 		// Friends
 	public:
 		friend class CScene;
+		friend class CPhysic;
 
 		// Public methods
 	public:
@@ -93,7 +93,6 @@ namespace Framework
 	private:
 		void SetScene(CScene *scene) { m_pScene = scene; }
 	public:
-		LPCWSTR GetName() const { return m_Name; }
 		CScene* GetScene() const { return m_pScene; }
 
 		// Internal methods

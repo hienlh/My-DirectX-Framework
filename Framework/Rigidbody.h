@@ -20,6 +20,13 @@ namespace Framework {
 	public:
 		inline Vector2 GetVelocity() { return _velocity; }
 		void SetVelocity(Vector2 velocity) { _velocity = velocity; }
+		void SetVelocity(float x = std::numeric_limits<float>::infinity(), float y = std::numeric_limits<float>::infinity())
+		{
+			if (x != std::numeric_limits<float>::infinity()) _velocity.x = x;
+			if (y != std::numeric_limits<float>::infinity()) _velocity.y = y;
+		}
+		void AddVelocity(Vector2 velocity) { _velocity += velocity; }
+		void MinarVelocity(Vector2 velocity) { _velocity -= velocity; }
 		float GetGravityScale() { return _gravityScale; }
 		void SetGravityScale(float gravityScale) { _gravityScale = gravityScale; }
 		float GetMass() { return _mass; }
@@ -31,5 +38,9 @@ namespace Framework {
 	public:
 		void Update(DWORD dt) override;
 		void Render();
+		
+		//Friend
+	public:
+		friend class CPhysic;
 	};
 }

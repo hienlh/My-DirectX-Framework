@@ -67,13 +67,15 @@ bool CGameManager::Run()
 		// dt: the time between (beginning of last frame) and now
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
-		DWORD dt = now - frameStart;
+		//DWORD dt = now - frameStart;
+		DWORD dt = 20; // For Debug
 
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
 
 			// process game loop
+
 			bool renderResult = CGraphic::GetInstance()->Render(m_currentScene->GetListGameObject());
 			if (!renderResult)
 			{
@@ -81,11 +83,10 @@ bool CGameManager::Run()
 				break;
 			}
 
-			CPhysic::GetInstance()->Update(dt);
-
 			if (m_currentScene)
 				m_currentScene->Update(dt);
-			
+
+			CPhysic::GetInstance()->Update(dt);
 		}
 		else
 			Sleep(tickPerFrame - dt);

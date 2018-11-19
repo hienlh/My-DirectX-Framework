@@ -35,3 +35,5 @@
 // Flag
 #define OVER_X 13
 #define OVER_Y 38
+
+#define GRAVITY 0.01

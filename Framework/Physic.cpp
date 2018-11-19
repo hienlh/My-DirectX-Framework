@@ -106,7 +106,17 @@ bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
 
 void CPhysic::Update(DWORD dt)
 {
-	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetListColliderObject();
+
+	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetListGameObject();
+	for (CGameObject* const game_object : list)
+	{
+		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
+		{
+			rigid->_velocity.y += rigid->GetGravityScale() * GRAVITY;
+		}
+	}
+
+	 list = CGameManager::GetInstance()->GetCurrentScene()->GetListColliderObject();
 	for (auto i = list.begin(); i != list.end(); ++i)
 	{
 		for (auto j = i; j != list.end(); ++j)
@@ -140,43 +150,35 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 		t, nx, ny
 	);
 
-	if (t > 0 && t < 1) {
-		NotifyCollisionEnter(new CCollision(moveObject, staticObject));
+	if (t >= 0 && t < 1) {
+		if(t > 0) NotifyCollisionEnter(new CCollision(moveObject, staticObject));
 
 		const bool mEffect = moveObject->GetComponent<CCollider>()->GetUsedByEffector();
 		const bool sEffect = staticObject->GetComponent<CCollider>()->GetUsedByEffector();
 		CTransform *mTran = moveObject->GetComponent<CTransform>();
 		CTransform *sTran = staticObject->GetComponent<CTransform>();
 
-		if (mEffect) {
-			mTran->PlusPosition(mv * dt * t);
-		}
-		if (sEffect) {
-			sTran->PlusPosition(sv * dt * t);
-		}
+		mTran->PlusPosition(mv * dt * t);
+		sTran->PlusPosition(sv * dt * t);
 
 		float rt = 1 - t;
 
 		//deflect
 		if (nx != 0) {
-			mv = Vector2(-mv.x, mv.y);
-			sv = Vector2(-sv.x, sv.y);
+			mv = mEffect ? Vector2(-mv.x, mv.y) : Vector2(0, mv.y);
+			sv = sEffect ? Vector2(-sv.x, sv.y) : Vector2(0, sv.y);
 			if (mEffect) mTran->PlusPosition(Vector2(mv.x, 0) * dt * rt);
 			if (sEffect) sTran->PlusPosition(Vector2(sv.x, 0) * dt * rt);
 		}
 		if (ny != 0) {
-			mv = Vector2(mv.x, -mv.y);
-			sv = Vector2(sv.x, -sv.y);
+			mv = mEffect ? Vector2(mv.x, -mv.y) : Vector2(mv.x, 0);
+			sv = sEffect ? Vector2(sv.x, -sv.y) : Vector2(sv.x, 0);
 			if (mEffect) mTran->PlusPosition(Vector2(0, mv.y) * dt * rt);
 			if (sEffect) sTran->PlusPosition(Vector2(0, sv.y) * dt * rt);
 		}
 
-		if (mEffect) {
-			moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
-		}
-		if (sEffect) {
-			staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
-		}
+		moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
+		staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
 
 	}
 	return t;

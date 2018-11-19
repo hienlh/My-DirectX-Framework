@@ -73,6 +73,8 @@ bool CScene::Destroy(CScene* scene)
 
 void CScene::Update(DWORD dt)
 {
+	CInput::GetInstance()->Update();
+
 	for (CGameObject* pGameObject : m_gameObjectList)
 	{
 		pGameObject->Update(dt);

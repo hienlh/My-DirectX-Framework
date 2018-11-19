@@ -3,6 +3,7 @@
 #include "Graphic.h"
 #include "Macros.h"
 #include "GameObject.h"
+#include "CTexture.h"
 
 using namespace Framework;
 
@@ -155,7 +156,7 @@ void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vect
 		pRect->right = pSourceRect->right;
 		pRect->bottom = pSourceRect->bottom;
 	}
-	m_pSpriteHandler->Draw(texture, pRect, offset3D, position3D, COLOR_WHITE);
+	m_pSpriteHandler->Draw(texture->texture, pRect, offset3D, position3D, COLOR_WHITE);
 
 }
 
@@ -193,9 +194,9 @@ void CGraphic::DrawRectangle(Rect rect, DWORD color)
 	m_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, 4);
 }
 
-Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight)
+Texture* CGraphic::CreateTexture(LPCWSTR texturePath)
 {
-	Texture* m_texture = nullptr;
+	Texture* m_texture = new Texture();
 	do
 	{
 		D3DXIMAGE_INFO info;
@@ -203,14 +204,14 @@ Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD
 		if (hr != S_OK)
 			break;
 
-		textureWidth = info.Width;
-		textureHeight = info.Height;
+		m_texture->width = info.Width;
+		m_texture->height = info.Height;
 
 		hr = D3DXCreateTextureFromFileExW(
 			m_pDevice,       // Pointer to Direct3D device object
 			texturePath, // Path to the image to load
-			info.Width,  // Texture width
-			info.Height, // Texture height
+			info.Width,  // CTexture width
+			info.Height, // CTexture height
 			1,
 			D3DUSAGE_DYNAMIC,
 			D3DFMT_UNKNOWN,
@@ -220,7 +221,7 @@ Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD
 			COLOR_BLACK, // Transparent color
 			&info,
 			nullptr,
-			&m_texture // Created texture pointer
+			&m_texture->texture // Created texture pointer
 
 		);
 
