@@ -3,14 +3,14 @@
 
 using namespace Framework;
 
-CTransform::CTransform(CGameObject* game_object, Vector2 position, Vector2 rotation, Vector2 local_scale) : CComponent(game_object)
+CTransform::CTransform(CGameObject* game_object, Vector2 position, Vector3 rotation, Vector2 local_scale) : CComponent(game_object)
 {
 	this->m_position = position;
 	this->m_rotation = rotation;
 	this->m_localScale = local_scale;
 }
 
-bool CTransform::Init(Vector2 position, Vector2 rotation, Vector2 scale)
+bool CTransform::Init(Vector2 position, Vector3 rotation, Vector2 scale)
 {
 	this->m_position = position;
 	this->m_rotation = rotation;

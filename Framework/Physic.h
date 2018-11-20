@@ -34,6 +34,7 @@ namespace Framework {
 	public:
 		static CPhysic* GetInstance();
 		static void Destroy();
+		static bool IsOverlapping(const Bound& object, const Bound& other);
 
 		void Update(DWORD dt);
 

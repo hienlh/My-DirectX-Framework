@@ -7,6 +7,13 @@ namespace Framework
 	class CObject {
 		// Properties
 	protected:
+		LPCWSTR m_Name = L"";
+
+		//Getter / Setter
+	public:
+		LPCWSTR GetName() const { return m_Name; }
+
+		void SetName(LPCWSTR name) { m_Name = name; }
 
 		// Cons / Des
 	public:

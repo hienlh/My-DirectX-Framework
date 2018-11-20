@@ -10,6 +10,7 @@ CCollider::CCollider(CGameObject* gameObject) : CComponent(gameObject)
 	m_IsTrigger = false;
 	m_Bound = Bound();
 	m_UsedByEffector = true;
+	m_IsDebugging = false;
 }
 
 Bound CCollider::GetBoundGlobal() const
@@ -21,6 +22,11 @@ Bound CCollider::GetBoundGlobal() const
 bool CCollider::GetUsedByEffector() const
 {
 	return m_UsedByEffector;
+}
+
+bool CCollider::GetIsDebugging() const
+{
+	return m_IsDebugging;
 }
 
 void CCollider::SetUsedByEffector(bool usedByEffector)
@@ -36,4 +42,9 @@ void CCollider::SetUsedByEffector(bool usedByEffector)
 void CCollider::SetOffset(Vector2 offset)
 {
 	m_Offset = offset;
+}
+
+void CCollider::SetIsDebugging(bool isDebugging)
+{
+	m_IsDebugging = isDebugging;
 }

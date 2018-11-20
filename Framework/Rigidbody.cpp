@@ -5,7 +5,7 @@
 
 using namespace Framework;
 
-CRigidbody::CRigidbody(Framework::CGameObject * gameObject)
+CRigidbody::CRigidbody(CGameObject * gameObject)
 {
 	this->m_pGameObject = gameObject;
 	this->_velocity = Vector2(0, 0);

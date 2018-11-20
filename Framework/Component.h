@@ -22,5 +22,8 @@ namespace Framework
 		CGameObject* GetGameObject() { return m_pGameObject; }
 		void SetGameObject(CGameObject* gameobject) { m_pGameObject = gameobject; }
 
+		//Friend
+	public:
+		friend class CPhysic;
 	};
 }

@@ -19,10 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BallController.cpp" />
-    <ClCompile Include="RightBlockController.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="CameraController.cpp" />
-    <ClCompile Include="LeftBlockController.cpp" />
+    <ClCompile Include="GroundController.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,10 +30,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BallController.h" />
-    <ClInclude Include="RightBlockController.h" />
+    <ClInclude Include="PlayerController.h" />
     <ClInclude Include="CameraController.h" />
-    <ClInclude Include="LeftBlockController.h" />
+    <ClInclude Include="GroundController.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

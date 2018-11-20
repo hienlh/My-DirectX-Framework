@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "BoxCollider.h"
 #include "GameObject.h"
+#include "Graphic.h"
 
 using namespace Framework;
 
@@ -28,5 +29,9 @@ void CBoxCollider::Update(DWORD dt)
 
 void CBoxCollider::Render()
 {
+	if(m_IsDebugging)
+	{
+		CGraphic::GetInstance()->DrawRectangle(GetBoundGlobal());
+	}
 }
 

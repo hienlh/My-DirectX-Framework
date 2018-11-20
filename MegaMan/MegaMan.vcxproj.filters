@@ -21,13 +21,10 @@
     <ClCompile Include="CameraController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="BallController.cpp">
+    <ClCompile Include="GroundController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="LeftBlockController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="RightBlockController.cpp">
+    <ClCompile Include="PlayerController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,13 +32,10 @@
     <ClInclude Include="CameraController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="BallController.h">
+    <ClInclude Include="GroundController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="LeftBlockController.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="RightBlockController.h">
+    <ClInclude Include="PlayerController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

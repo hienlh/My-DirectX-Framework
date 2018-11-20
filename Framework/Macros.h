@@ -2,6 +2,7 @@
 
 #define APP_TITLE L"My DirectX App"
 
+#define CUSTOMFVF (D3DFVF_XYZRHW | D3DFVF_DIFFUSE)
 
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
@@ -27,7 +28,12 @@
 
 #define COLOR_BLACK D3DCOLOR_XRGB(0, 0, 0)
 #define COLOR_WHITE D3DCOLOR_XRGB(255, 255, 255)
+#define COLOR_GREEN D3DCOLOR_XRGB(0, 255, 0)
+#define COLOR_RED D3DCOLOR_XRGB(255, 0, 0)
+#define COLOR_BLUE D3DCOLOR_XRGB(0, 0, 255)
 
 // Flag
 #define OVER_X 13
 #define OVER_Y 38
+
+#define GRAVITY 0.01

@@ -13,8 +13,7 @@ namespace Framework
 	{
 		// Properties
 	private:
-		LPCWSTR m_Name = L"";
-		std::unordered_map<std::string, CComponent*> m_pComponents = {};
+		std::map<std::string, CComponent*> m_pComponents = {};
 		CScene *m_pScene = nullptr;
 		
 		// Cons / Des
@@ -25,13 +24,16 @@ namespace Framework
 		// Friends
 	public:
 		friend class CScene;
+		friend class CPhysic;
 
 		// Public methods
 	public:
 		/// <summary>Return nullptr if component added already</summary> 
 		template<class T> T* AddComponent()
 		{
-			if(GetComponent<T>()) return nullptr;
+			//Ignore Added Component and Base Component
+			if(GetComponent<T>() || std::is_abstract<T>::value) return nullptr;
+			
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
 				if (!m_pComponents.insert({typeid(T).name(), tmp }).second) return nullptr;
@@ -49,7 +51,7 @@ namespace Framework
 		Type* GetComponent()
 		{
 			//Case get Component from Base Component. Ex: CBoxCollider && CCollider
-			if (std::is_abstract<Type>::value)
+			if(std::is_abstract<Type>::value)
 			{
 				for (auto component : m_pComponents)
 				{
@@ -61,14 +63,15 @@ namespace Framework
 				}
 				return nullptr;
 			}
+
 			//Case get Normal Component
 			std::string key = typeid(Type).name();
 			auto it = m_pComponents.find(key);
-			if (it != m_pComponents.end()) return dynamic_cast<Type *> (it->second);
 			if (it != m_pComponents.end())
 			{
 				return dynamic_cast<Type *> (it->second);
 			}
+
 			return nullptr;
 		}
 
@@ -90,7 +93,6 @@ namespace Framework
 	private:
 		void SetScene(CScene *scene) { m_pScene = scene; }
 	public:
-		LPCWSTR GetName() const { return m_Name; }
 		CScene* GetScene() const { return m_pScene; }
 
 		// Internal methods

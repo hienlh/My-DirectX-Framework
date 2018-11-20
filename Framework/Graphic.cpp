@@ -3,6 +3,7 @@
 #include "Graphic.h"
 #include "Macros.h"
 #include "GameObject.h"
+#include "CTexture.h"
 
 using namespace Framework;
 
@@ -72,6 +73,24 @@ bool CGraphic::Init(HWND hWind, bool fullscreen)
 	return result;
 }
 
+void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
+{
+	size_t size = vertices.size() * sizeof(CUSTOMVERTEX);
+
+	// create the vertex and store the pointer into v_buffer, which is created globally
+	m_pDevice->CreateVertexBuffer(size,
+		0,
+		CUSTOMFVF,
+		D3DPOOL_MANAGED,
+		&m_pVertexBuffer,
+		NULL);
+
+	VOID* pVoid;    // the void pointer
+	m_pVertexBuffer->Lock(0, 0, (void**)&pVoid, 0);    // lock the vertex buffer
+	memcpy(pVoid, vertices.data(), size);    // copy the vertices to the locked buffer
+	m_pVertexBuffer->Unlock();    // unlock the vertex buffer
+}
+
 void CGraphic::Release()
 {
 	if (m_pDirect3D)
@@ -85,9 +104,12 @@ void CGraphic::Release()
 
 	if (m_pSpriteHandler)
 		m_pSpriteHandler->Release();
+
+	if (m_pVertexBuffer)
+		m_pVertexBuffer->Release();
 }
 
-bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
+bool CGraphic::Render(std::list<CGameObject*> list_game_objects)
 {
 	bool result = false;
 	do
@@ -116,11 +138,17 @@ bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 	return result;
 }
 
-void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vector2* offset)
+void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vector2* offset, float angle)
 {
 	Vector3 *position3D = position ? new Vector3(position->x, position->y, 0) : nullptr;
 	Vector3 *offset3D = offset ? new Vector3(offset->x, offset->y, 0) : nullptr;
 	RECT* pRect = new RECT();
+
+	D3DXMATRIX oldMatrix;
+	m_pSpriteHandler->GetTransform(&oldMatrix);
+	D3DXMATRIX matRotate;
+	D3DXMatrixRotationZ(&matRotate, D3DXToRadian(angle));
+	m_pSpriteHandler->SetTransform(&matRotate);
 
 	if (pSourceRect) {
 		pRect->top = pSourceRect->top;
@@ -128,12 +156,47 @@ void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vect
 		pRect->right = pSourceRect->right;
 		pRect->bottom = pSourceRect->bottom;
 	}
-	m_pSpriteHandler->Draw(texture, pRect, offset3D, position3D, COLOR_WHITE);
+	m_pSpriteHandler->Draw(texture->texture, pRect, offset3D, position3D, COLOR_WHITE);
+
 }
 
-Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight)
+void CGraphic::DrawRectangle(Rect rect, DWORD color)
 {
-	Texture* m_texture = nullptr;
+	// Refer: http://directxtutorial.com/Lesson.aspx?lessonid=9-4-4
+	// create some vertices using the CUSTOMVERTEX struct built earlier
+	std::vector<CUSTOMVERTEX> vertices;
+	if(color)	
+		vertices = {
+			{ rect.left, rect.top, 0.5f, 1.0f, color, },
+			{ rect.right, rect.top, 0.5f, 1.0f, color, },
+			{ rect.right, rect.bottom, 0.5f, 1.0f, color, },
+			{ rect.left, rect.bottom, 0.5f, 1.0f, color, },
+			{ rect.left, rect.top, 0.5f, 1.0f, color, },
+		};
+	else 
+		vertices = {
+			{ rect.left, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 0, 255), },
+			{ rect.right, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 255, 0), },
+			{ rect.right, rect.bottom, 0.5f, 1.0f, D3DCOLOR_XRGB(255, 255, 255), },
+			{ rect.left, rect.bottom, 0.5f, 1.0f, D3DCOLOR_XRGB(255, 0, 0), },
+			{ rect.left, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 0, 255), },
+		};
+
+	Init_VertexGraphic(vertices);
+
+	// select which vertex format we are using
+	m_pDevice->SetFVF(CUSTOMFVF);
+
+	// select the vertex buffer to display
+	m_pDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
+
+	// copy the vertex buffer to the back buffer
+	m_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, 4);
+}
+
+Texture* CGraphic::CreateTexture(LPCWSTR texturePath)
+{
+	Texture* m_texture = new Texture();
 	do
 	{
 		D3DXIMAGE_INFO info;
@@ -141,14 +204,14 @@ Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD
 		if (hr != S_OK)
 			break;
 
-		textureWidth = info.Width;
-		textureHeight = info.Height;
+		m_texture->width = info.Width;
+		m_texture->height = info.Height;
 
 		hr = D3DXCreateTextureFromFileExW(
 			m_pDevice,       // Pointer to Direct3D device object
 			texturePath, // Path to the image to load
-			info.Width,  // Texture width
-			info.Height, // Texture height
+			info.Width,  // CTexture width
+			info.Height, // CTexture height
 			1,
 			D3DUSAGE_DYNAMIC,
 			D3DFMT_UNKNOWN,
@@ -158,7 +221,7 @@ Texture* CGraphic::CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD
 			COLOR_BLACK, // Transparent color
 			&info,
 			nullptr,
-			&m_texture // Created texture pointer
+			&m_texture->texture // Created texture pointer
 
 		);
 

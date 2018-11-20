@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+class CTexture;
+
 namespace Framework
 {
 	class CGraphic final
@@ -20,6 +22,7 @@ namespace Framework
 		Device* m_pDevice = nullptr;
 		Surface* m_pBackBuffer = nullptr;
 		Sprite* m_pSpriteHandler = nullptr;
+		IDirect3DVertexBuffer9* m_pVertexBuffer = nullptr;
 		
 		// Getter / Setters
 	public:
@@ -33,14 +36,17 @@ namespace Framework
 		// Internal methods
 	private:
 		bool Init(HWND hWind, bool fullscreen);
+		void Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices);
 		void Release();
 
 		// Public methods
 	public:
-		bool Render(std::set<CGameObject*> list_game_objects);
-		void Draw(Texture* texture, Vector2 *position = nullptr, Rect* pSourceRect = nullptr, Vector2* offset = nullptr);
+		bool Render(std::list<CGameObject*> list_game_objects);
+		void Draw(Texture* texture, Vector2* position = nullptr, Rect* pSourceRect = nullptr, Vector2* offset = nullptr,
+		          float angle = 0);
+		void DrawRectangle(Rect rect, DWORD color = NULL);
 		
-		Texture* CreateTexture(LPCWSTR texturePath, DWORD &textureWidth, DWORD &textureHeight);
+		Texture* CreateTexture(LPCWSTR texturePath);
 			
 		// Static methods
 	public:

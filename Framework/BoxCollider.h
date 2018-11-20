@@ -1,24 +1,25 @@
 ﻿#pragma once
 #include "Collider.h"
 
-using namespace Framework;
+namespace Framework {
 
-class CBoxCollider : public CCollider
-{
-private:
-	Vector2 m_Size;
-public:
-	CBoxCollider(CGameObject* gameObject);
-	~CBoxCollider() = default;
+	class CBoxCollider : public CCollider
+	{
+	private:
+		Vector2 m_Size;
+	public:
+		CBoxCollider(CGameObject* gameObject);
+		~CBoxCollider() = default;
 
-	//Getter / Setter
-public:
-	Vector2 GetSize() const { return m_Size; }
+		//Getter / Setter
+	public:
+		Vector2 GetSize() const { return m_Size; }
 
-	void SetSize(Vector2 size);
+		void SetSize(Vector2 size);
 
-	//Override
-public:
-	void Update(DWORD dt) override;
-	void Render() override;
-};
+		//Override
+	public:
+		void Update(DWORD dt) override;
+		void Render() override;
+	};
+}

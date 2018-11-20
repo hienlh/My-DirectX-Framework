@@ -42,12 +42,12 @@ bool CScene::Release()
 	return result;
 }
 
-std::set<CGameObject*> CScene::GetListGameObject() const
+std::list<CGameObject*> CScene::GetListGameObject() const
 {
 	return m_gameObjectList;
 }
 
-std::set<CGameObject*> CScene::GetListColliderObject() const
+std::list<CGameObject*> CScene::GetListColliderObject() const
 {
 	return m_colliderObjectList;
 }
@@ -79,11 +79,6 @@ void CScene::Update(DWORD dt)
 	{
 		pGameObject->Update(dt);
 	}
-	
-	for (auto pGameObject : m_gameObjectList)
-	{
-		pGameObject->Update(dt);
-	}
 
 	m_pMainCamera->Update(dt);
 	CGraphic::GetInstance()->SetTransform(m_pMainCamera->GetComponent<CCamera>()->GetOrthographicMatrix(),
@@ -97,7 +92,7 @@ void CScene::Render()
 
 void CScene::AddGameObject(CGameObject* gameObject)
 {
-	m_gameObjectList.insert(gameObject);
+	m_gameObjectList.push_back(gameObject);
 	gameObject->SetScene(this);
 	AddColliderObject(gameObject);
 }
@@ -118,6 +113,6 @@ void CScene::AddColliderObject(CGameObject* gameObject)
 {
 	if (gameObject->GetComponent<CCollider>())
 	{
-		m_colliderObjectList.insert(gameObject);
+		m_colliderObjectList.push_back(gameObject);
 	}
 }

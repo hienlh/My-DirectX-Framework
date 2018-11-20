@@ -8,8 +8,8 @@ namespace Framework
 	class CScene final : public CObject
 	{
 	private:
-		std::set<CGameObject*> m_gameObjectList = {};
-		std::set<CGameObject*> m_colliderObjectList = {};
+		std::list<CGameObject*> m_gameObjectList = {};
+		std::list<CGameObject*> m_colliderObjectList = {};
 		CGameObject *m_pMainCamera = nullptr;
 
 	public:
@@ -23,8 +23,8 @@ namespace Framework
 
 		// Getter/Setter
 	public:
-		std::set<CGameObject*> GetListGameObject() const;
-		std::set<CGameObject*> GetListColliderObject() const;
+		std::list<CGameObject*> GetListGameObject() const;
+		std::list<CGameObject*> GetListColliderObject() const;
 		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 
 	public:
