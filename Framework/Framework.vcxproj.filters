@@ -28,14 +28,17 @@
     <Filter Include="Framework\Game">
       <UniqueIdentifier>{07e53e92-2c37-4501-9336-2955d9dd9adf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Framework\Struct">
-      <UniqueIdentifier>{a858fb07-dd33-498c-8888-13805dadec58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Framework\Physics">
       <UniqueIdentifier>{5a9e6236-19ec-48e6-9272-8d8dda1501b6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Framework\Observers">
       <UniqueIdentifier>{d24fa052-0f51-483c-8fc0-3050089f8faa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Structures">
+      <UniqueIdentifier>{a858fb07-dd33-498c-8888-13805dadec58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Extends">
+      <UniqueIdentifier>{00e21c70-0c25-4930-a695-b6d49ab5ee3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -94,7 +97,7 @@
       <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Bound.h">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
     </ClInclude>
     <ClInclude Include="Physic.h">
       <Filter>Framework\Physics</Filter>
@@ -103,7 +106,7 @@
       <Filter>Framework\Observers</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
     </ClInclude>
     <ClInclude Include="BoxCollider.h">
       <Filter>Framework\Component</Filter>
@@ -115,16 +118,31 @@
       <Filter>Framework\Game</Filter>
     </ClInclude>
     <ClInclude Include="CTexture.h">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
     </ClInclude>
     <ClInclude Include="Debug.h">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml_utils.hpp">
+      <Filter>Framework\Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml_print.hpp">
+      <Filter>Framework\Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml_iterators.hpp">
+      <Filter>Framework\Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml.hpp">
+      <Filter>Framework\Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>Framework\Extends</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +201,7 @@
       <Filter>Framework\Observers</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
     </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
       <Filter>Framework\Component</Filter>
@@ -195,10 +213,13 @@
       <Filter>Framework\Game</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
-      <Filter>Framework\Struct</Filter>
+      <Filter>Framework\Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>Framework\Extends</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

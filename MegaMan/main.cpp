@@ -8,9 +8,37 @@
 #include "CameraController.h"
 #include "PlayerController.h"
 #include "ResourceManager.h"
+
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
+using namespace std;
+
+void ParseXML(const char* fileName, vector<Rect> &info, size_t depth)
+{
+	tinyxml2::XMLDocument doc;
+	doc.LoadFile(fileName);
+
+	tinyxml2::XMLElement* parent = doc.FirstChildElement();
+	for (size_t iDepth = 0; iDepth < depth - 1; iDepth++)
+		parent = parent->FirstChildElement();
+
+	// Count sprites stored in xml for resize
+	size_t spriteCount = 0;
+	for (tinyxml2::XMLNode* node = parent->FirstChild(); node; node = node->NextSibling())
+		spriteCount++;
+
+	info.resize(spriteCount);
+
+	// Load attributes
+	tinyxml2::XMLElement* child = parent->FirstChildElement();
+	for (size_t iSprite = 0; iSprite < info.size(); iSprite++)
+	{
+		info[iSprite] = { Vector2(child->IntAttribute("x"), child->IntAttribute("y")),
+									Vector2(child->IntAttribute("w"), child->IntAttribute("h")) };
+		child = child->NextSiblingElement();
+	}
+}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -23,101 +51,77 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pScene->GetMainCamera()->AddComponent<CameraController>();
 
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
-	
-	pResourceManager->AddTexture(L"Ground1", L".\\Resources\\ground1.jpg");
-	pResourceManager->AddTexture(L"Ground2", L".\\Resources\\ground2.jpg");
-	pResourceManager->AddTexture(L"Ground3", L".\\Resources\\ground3.jpg");
-	pResourceManager->AddTexture(L"Ground4", L".\\Resources\\ground4.jpg");
 
 	pResourceManager->AddTexture(L"Megaman Left", L".\\Resources\\megaman_left.png");
 	pResourceManager->AddTexture(L"Megaman Right", L".\\Resources\\megaman_right.png");
 	pResourceManager->AddTexture(L"Background", L".\\Resources\\mini_background.png");
+	pResourceManager->AddTexture(L"Intro Enemies", L".\\Resources\\Intro Enemies.png");
+
+	// Player
+	vector<Rect> megaman_left, megaman_right;
+	ParseXML(".\\Resources\\megaman_left.xml", megaman_left, 2);
+	ParseXML(".\\Resources\\megaman_right.xml", megaman_right, 2);
 
 	CAnimation* anim = CAnimation::Instantiate(L"Megaman Run Left", L"Megaman Left", 100);
-	anim->Add({ Vector2(85, 66), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(121, 67), Vector2(34, 33) }, 0.05f);
-	anim->Add({ Vector2(163, 66), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(200, 65), Vector2(25, 35) }, 0.05f);
-	anim->Add({ Vector2(229, 66), Vector2(22, 34) }, 0.05f);
-	anim->Add({ Vector2(257, 67), Vector2(26, 33) }, 0.05f);
-	anim->Add({ Vector2(294, 67), Vector2(34, 33) }, 0.05f);
-	anim->Add({ Vector2(336, 67), Vector2(32, 34) }, 0.05f);
-	anim->Add({ Vector2(375, 66), Vector2(23, 35) }, 0.05f);
-	anim->Add({ Vector2(403, 66), Vector2(20, 34) }, 0.05f);
-	anim->Add({ Vector2(438, 66), Vector2(30, 34) }, 0.05f);
+	for (size_t iAnimation = 18; iAnimation < 18 + 11; iAnimation++)
+		anim->Add(megaman_left[iAnimation], 0.05f);
 
 	anim = CAnimation::Instantiate(L"Megaman Run Right", L"Megaman Right", 100);
-	anim->Add({ Vector2(5, 66), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(50, 66), Vector2(20, 34) }, 0.05f);
-	anim->Add({ Vector2(75, 66), Vector2(23, 35) }, 0.05f);
-	anim->Add({ Vector2(105, 67), Vector2(32, 34) }, 0.05f);
-	anim->Add({ Vector2(145, 67), Vector2(22, 34) }, 0.05f);
-	anim->Add({ Vector2(190, 67), Vector2(34, 33) }, 0.05f);
-	anim->Add({ Vector2(222, 66), Vector2(26, 33) }, 0.05f);
-	anim->Add({ Vector2(248, 66), Vector2(25, 35) }, 0.05f);
-	anim->Add({ Vector2(248, 66), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(318, 67), Vector2(34, 33) }, 0.05f);
-	anim->Add({ Vector2(359, 67), Vector2(30, 34) }, 0.05f);
+	for (size_t iAnimation = 18; iAnimation < 18 + 11; iAnimation++)
+		anim->Add(megaman_right[iAnimation], 0.05f);
 
 	anim = CAnimation::Instantiate(L"Megaman Idle Left", L"Megaman Left", 100);
-	anim->Add({ Vector2(113, 28), Vector2(30, 34) }, 0.05f);
-	/*anim->Add({ Vector2(248, 66), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(182, 28), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(217, 28), Vector2(30, 34) }, 0.05f);*/
-	
+	anim->Add(megaman_left[10], 0.05f);
+
 	anim = CAnimation::Instantiate(L"Megaman Idle Right", L"Megaman Right", 100);
-	anim->Add({ Vector2(226, 28), Vector2(30, 34) }, 0.05f);
-	/*anim->Add({ Vector2(261, 28), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(295, 28), Vector2(30, 34) }, 0.05f);
-	anim->Add({ Vector2(330, 28), Vector2(30, 34) }, 0.05f);*/
-	
-	do
+	anim->Add(megaman_right[12], 0.05f);
+
+	// Grounds
+	vector<Rect> grounds;
+	ParseXML(".\\Resources\\mini_background.xml", grounds, 2);
+
+	for (size_t iGround = 0; iGround < grounds.size(); iGround++)
 	{
-		CGameObject* pBackground = CGameObject::Instantiate(L"Background", Vector2(0, 0));
-		pBackground->AddComponent<CRenderer>()->SetTexture(L"Background");
+		CGameObject* pGround = CGameObject::Instantiate((wstring(L"Ground") + to_wstring(iGround)).c_str(),
+			Vector2(grounds[iGround].left, grounds[iGround].top));
+		pGround->AddComponent<CRigidbody>()->SetGravityScale(0);
+		pGround->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		pGround->GetComponent<CBoxCollider>()->SetSize(Vector2(grounds[iGround].right - grounds[iGround].left, 
+			grounds[iGround].bottom - grounds[iGround].top));
+	}
 
-		CGameObject* pPlayer = CGameObject::Instantiate(L"Player", Vector2(100, 0));
-		pPlayer->GetComponent<CTransform>()->Set_Rotation(Vector3(0, 0, 0));
-		pPlayer->AddComponent<CAnimator>()->AddAnimation(L"Megaman Idle Right");
-		pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Idle Left");
-		pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Run Left");
-		pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Run Right");
-		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
-		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(16, 27));
-		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(false);
-		pPlayer->AddComponent<PlayerController>();
+	CGameObject* pBackground = CGameObject::Instantiate(L"Background", Vector2(0, 0));
+	pBackground->AddComponent<CRenderer>()->SetTexture(L"Background");
 
-		CGameObject* pGround1 = CGameObject::Instantiate(L"Ground1", Vector2(0, 178));
-		pGround1->AddComponent<CRenderer>()->SetTexture(L"Ground1");
-		pGround1->AddComponent<CRigidbody>()->SetGravityScale(0);
-		pGround1->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		
-		CGameObject* pGround2 = CGameObject::Instantiate(L"Ground2", Vector2(352, 132));
-		pGround2->AddComponent<CRenderer>()->SetTexture(L"Ground2");
-		pGround2->AddComponent<CRigidbody>()->SetGravityScale(0);
-		pGround2->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+	// Player components
+	CGameObject* pPlayer = CGameObject::Instantiate(L"Player", Vector2(100, 0));
+	pPlayer->GetComponent<CTransform>()->Set_Rotation(Vector3(0, 0, 0));
+	pPlayer->AddComponent<CAnimator>()->AddAnimation(L"Megaman Idle Right");
+	pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Idle Left");
+	pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Run Left");
+	pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Run Right");
+	pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+	pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+	pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(25, 35));
+	pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(false);
+	pPlayer->AddComponent<PlayerController>();
 
-		CGameObject* pGround3 = CGameObject::Instantiate(L"Ground3", Vector2(510, 82));
-		pGround3->AddComponent<CRenderer>()->SetTexture(L"Ground3");
-		pGround3->AddComponent<CRigidbody>()->SetGravityScale(0);
-		pGround3->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+	CGameObject* pCamera = pScene->GetMainCamera();
+	pCamera->GetComponent<CameraController>()->m_target = pPlayer;
+	pCamera->GetComponent<CameraController>()->SetIsFollow(true);
+	pGameManager->Run();
 
-		CGameObject* pGround4 = CGameObject::Instantiate(L"Ground4", Vector2(640, 178));
-		pGround4->AddComponent<CRenderer>()->SetTexture(L"Ground4");
-		pGround4->AddComponent<CRigidbody>()->SetGravityScale(0);
-		pGround4->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+	// Enermies
+	/*vector<Rect> enemies;
+	ParseXML(".\\Resources\\Intro Enemies.xml", grounds, 2);
 
-		CGameObject* pCamera = pScene->GetMainCamera();
-		pCamera->GetComponent<CameraController>()->m_target = pPlayer;
-		pCamera->GetComponent<CameraController>()->SetIsFollow(true);
-		pGameManager->Run();
-
-	} while (false);
-
+	anim = CAnimation::Instantiate(L"Enemies", L"Intro Enemies", 100);
+	for (size_t iAnimation = 18; iAnimation < 18 + 11; iAnimation++)
+		anim->Add(enemies[iAnimation], 0.05f);
+*/
 	CGameManager::Destroy();
 	CGraphic::Destroy();
 	CInput::Destroy();
-	
+
 	return 0;
 }
