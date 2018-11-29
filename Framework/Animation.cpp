@@ -4,10 +4,11 @@
 
 using namespace Framework;
 
-void CAnimation::Init(LPCWSTR textureName, DWORD defaultTime)
+CAnimation::CAnimation(CWString name, DWORD defaultTime)
 {
-	m_pTexture = CResourceManager::GetInstance()->GetTexture(textureName);
 	m_defaultTime = defaultTime;
+	if (!CResourceManager::GetInstance()->AddAnimation(name, this))
+		delete this;
 }
 
 void CAnimation::Update(DWORD dt)
@@ -32,19 +33,17 @@ void CAnimation::Add(SFrame frame)
 	m_frames.push_back(frame);
 }
 
-void CAnimation::Add(Rect rect, DWORD time)
+void CAnimation::Add(CSprite* sprite, DWORD time)
 {
-	Add({ rect, time });
+	Add({ sprite, time });
 }
 
-CAnimation* CAnimation::Instantiate(LPCWSTR name, LPCWSTR textureName, DWORD defaultTime)
+bool CAnimation::Add(CWString spriteName, DWORD time)
 {
-	CAnimation* anim = nullptr;
-	SAFE_ALLOC(anim, CAnimation);
-
-	anim->Init(textureName, defaultTime);
-
-	CResourceManager::GetInstance()->AddAnimation(name, anim);
-
-	return anim;
+	if(CSprite* sprite = CResourceManager::GetInstance()->GetSprite(spriteName))
+	{
+		Add({ sprite, time });
+		return true;
+	}
+	return false;
 }

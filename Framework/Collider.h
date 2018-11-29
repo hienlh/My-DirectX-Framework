@@ -13,6 +13,7 @@ namespace Framework {
 		bool m_IsTrigger;
 		bool m_UsedByEffector;
 		bool m_IsDebugging;
+		bool m_AutoBoundSize; //Used when animator have a lot of different sizes
 
 		//Cons / Des
 	public:
@@ -24,10 +25,12 @@ namespace Framework {
 		Bound GetBoundGlobal() const;
 		bool GetUsedByEffector() const;
 		bool GetIsDebugging() const;
+		bool GetAutoBoundSize() const;
 
 		void SetUsedByEffector(bool usedByEffector);
 		/*void SetBoundSize(Vector2 size);*/
 		void SetOffset(Vector2 offset);
 		void SetIsDebugging(bool isDebugging);
+		void SetAutoBoundSize(bool autoBoundSize);
 	};
 }

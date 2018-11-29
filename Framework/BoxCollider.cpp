@@ -17,6 +17,14 @@ CBoxCollider::CBoxCollider(CGameObject* gameObject) : CCollider(gameObject)
 	m_Bound = Bound(Vector2(0, 0), m_Size);
 }
 
+void CBoxCollider::Config(bool isTrigger, bool autoBoundSize, bool usedByEffector, bool isDebugging)
+{
+	m_IsTrigger = isTrigger;
+	m_AutoBoundSize = autoBoundSize;
+	m_UsedByEffector = usedByEffector;
+	m_IsDebugging = isDebugging;
+}
+
 void CBoxCollider::SetSize(Vector2 size)
 {
 	m_Size = size;
@@ -25,6 +33,8 @@ void CBoxCollider::SetSize(Vector2 size)
 
 void CBoxCollider::Update(DWORD dt)
 {
+	if (m_AutoBoundSize)
+		SetSize(m_pGameObject->GetComponent<CRenderer>()->GetSprite()->GetSize());
 }
 
 void CBoxCollider::Render()

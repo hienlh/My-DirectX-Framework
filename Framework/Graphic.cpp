@@ -3,7 +3,6 @@
 #include "Graphic.h"
 #include "Macros.h"
 #include "GameObject.h"
-#include "CTexture.h"
 
 using namespace Framework;
 
@@ -35,6 +34,8 @@ bool CGraphic::Init(HWND hWind, bool fullscreen)
 		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 		d3dpp.BackBufferCount = 1;
+		d3dpp.EnableAutoDepthStencil = TRUE;    // automatically run the z-buffer for us
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D16;    // 16-bit pixel format for the z-buffer
 
 		RECT rect;
 		GetClientRect(hWind, &rect); // retrieve Window width & height 
@@ -53,9 +54,11 @@ bool CGraphic::Init(HWND hWind, bool fullscreen)
 
 		if (!m_pDevice)
 			break;
+
+		m_pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);    // turn on the z-buffer
 		
 		// clear the back buffer to black
-		m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+		m_pDevice->Clear(0, nullptr, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 		// create pointer to the back buffer
 		m_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_pBackBuffer);
@@ -71,24 +74,6 @@ bool CGraphic::Init(HWND hWind, bool fullscreen)
 	} while (false);
 
 	return result;
-}
-
-void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
-{
-	size_t size = vertices.size() * sizeof(CUSTOMVERTEX);
-
-	// create the vertex and store the pointer into v_buffer, which is created globally
-	m_pDevice->CreateVertexBuffer(size,
-		0,
-		CUSTOMFVF,
-		D3DPOOL_MANAGED,
-		&m_pVertexBuffer,
-		NULL);
-
-	VOID* pVoid;    // the void pointer
-	m_pVertexBuffer->Lock(0, 0, (void**)&pVoid, 0);    // lock the vertex buffer
-	memcpy(pVoid, vertices.data(), size);    // copy the vertices to the locked buffer
-	m_pVertexBuffer->Unlock();    // unlock the vertex buffer
 }
 
 void CGraphic::Release()
@@ -114,12 +99,13 @@ bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 	bool result = false;
 	do
 	{
+		m_pDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 		// Start rendering
 		m_pDevice->BeginScene();
 		// Clear back buffer with black color
 		m_pDevice->ColorFill(m_pBackBuffer, nullptr, COLOR_BLACK);
 
-		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
+		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE); // D3DXSPRITE_SORT_DEPTH_BACKTOFRONT
 
 		for (CGameObject* pGameObject : list_game_objects)
 			pGameObject->Render();
@@ -138,17 +124,29 @@ bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 	return result;
 }
 
-void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vector2* offset, float angle)
+void CGraphic::Draw(Texture* texture, Vector3 *position, Rect* pSourceRect, Vector2* center, float angle, DWORD fillColor, Vector3 *scale, bool flipX, bool flipY) const
 {
-	Vector3 *position3D = position ? new Vector3(position->x, position->y, 0) : nullptr;
-	Vector3 *offset3D = offset ? new Vector3(offset->x, offset->y, 0) : nullptr;
+	Vector3 *center3D = center ? new Vector3(center->x, center->y, 0) : nullptr;
 	RECT* pRect = new RECT();
 
-	D3DXMATRIX oldMatrix;
-	m_pSpriteHandler->GetTransform(&oldMatrix);
+	D3DXMATRIX matCombined;
+	D3DXMatrixIdentity(&matCombined);
+
 	D3DXMATRIX matRotate;
 	D3DXMatrixRotationZ(&matRotate, D3DXToRadian(angle));
-	m_pSpriteHandler->SetTransform(&matRotate);
+	D3DXMATRIX matScale;
+	D3DXMatrixScaling(&matScale,
+		(flipX ? -1 : 1) * (scale ? scale->x : 1),
+		(flipY ? -1 : 1) * (scale ? scale->y : 1),
+		scale ? scale->z : 1);
+	D3DXMATRIX matTranslate;
+	D3DXMatrixTranslation(&matTranslate, position->x, position->y, position->z);
+
+	matCombined *= matRotate;
+	matCombined *= matScale;
+	matCombined *= matTranslate;
+
+	m_pSpriteHandler->SetTransform(&matCombined);
 
 	if (pSourceRect) {
 		pRect->top = pSourceRect->top;
@@ -156,8 +154,37 @@ void CGraphic::Draw(Texture* texture, Vector2 *position, Rect* pSourceRect, Vect
 		pRect->right = pSourceRect->right;
 		pRect->bottom = pSourceRect->bottom;
 	}
-	m_pSpriteHandler->Draw(texture->texture, pRect, offset3D, position3D, COLOR_WHITE);
+	m_pSpriteHandler->Draw(texture->texture, pRect, center3D, nullptr, fillColor);
 
+}
+
+void CGraphic::Draw(CSprite* sprite, Vector3* position, float angle, Vector3 *scale, bool flipX, bool flipY) const
+{
+	Texture* texture = sprite->GetTexture();
+	Vector2 anchor = sprite->GetAnchor();
+	Rect sourceRect = sprite->GetSourceRect();
+	Vector2 center = Vector2(anchor.x * (sourceRect.right - sourceRect.left), 
+							   anchor.y * (sourceRect.bottom - sourceRect.top));
+	
+	Draw(texture, position, &sourceRect, &center, angle, COLOR_WHITE, scale, flipX, flipY);
+}
+
+void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
+{
+	size_t size = vertices.size() * sizeof(CUSTOMVERTEX);
+
+	// create the vertex and store the pointer into v_buffer, which is created globally
+	m_pDevice->CreateVertexBuffer(size,
+		0,
+		CUSTOMFVF,
+		D3DPOOL_MANAGED,
+		&m_pVertexBuffer,
+		NULL);
+
+	VOID* pVoid;    // the void pointer
+	m_pVertexBuffer->Lock(0, 0, (void**)&pVoid, 0);    // lock the vertex buffer
+	memcpy(pVoid, vertices.data(), size);    // copy the vertices to the locked buffer
+	m_pVertexBuffer->Unlock();    // unlock the vertex buffer
 }
 
 void CGraphic::DrawRectangle(Rect rect, DWORD color)
@@ -167,19 +194,19 @@ void CGraphic::DrawRectangle(Rect rect, DWORD color)
 	std::vector<CUSTOMVERTEX> vertices;
 	if(color)	
 		vertices = {
-			{ rect.left, rect.top, 0.5f, 1.0f, color, },
-			{ rect.right, rect.top, 0.5f, 1.0f, color, },
-			{ rect.right, rect.bottom, 0.5f, 1.0f, color, },
-			{ rect.left, rect.bottom, 0.5f, 1.0f, color, },
-			{ rect.left, rect.top, 0.5f, 1.0f, color, },
+			{ rect.left, rect.top, -100, color },
+			{ rect.right, rect.top, -100, color },
+			{ rect.right, rect.bottom, -100, color },
+			{ rect.left, rect.bottom, -100, color },
+			{ rect.left, rect.top, -100, color },
 		};
 	else 
 		vertices = {
-			{ rect.left, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 0, 255), },
-			{ rect.right, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 255, 0), },
-			{ rect.right, rect.bottom, 0.5f, 1.0f, D3DCOLOR_XRGB(255, 255, 255), },
-			{ rect.left, rect.bottom, 0.5f, 1.0f, D3DCOLOR_XRGB(255, 0, 0), },
-			{ rect.left, rect.top, 0.5f, 1.0f, D3DCOLOR_XRGB(0, 0, 255), },
+			{ rect.left, rect.top, -100, D3DCOLOR_XRGB(0, 0, 255) },
+			{ rect.right, rect.top, -100, D3DCOLOR_XRGB(0, 255, 0) },
+			{ rect.right, rect.bottom, -100, D3DCOLOR_XRGB(255, 255, 255) },
+			{ rect.left, rect.bottom, -100, D3DCOLOR_XRGB(255, 0, 0) },
+			{ rect.left, rect.top, -100, D3DCOLOR_XRGB(0, 0, 255) },
 		};
 
 	Init_VertexGraphic(vertices);
@@ -194,7 +221,7 @@ void CGraphic::DrawRectangle(Rect rect, DWORD color)
 	m_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, 4);
 }
 
-Texture* CGraphic::CreateTexture(LPCWSTR texturePath)
+Texture* CGraphic::CreateTexture(LPCWSTR texturePath, D3DCOLOR transparentColor)
 {
 	Texture* m_texture = new Texture();
 	do
@@ -218,7 +245,7 @@ Texture* CGraphic::CreateTexture(LPCWSTR texturePath)
 			D3DPOOL_DEFAULT,
 			D3DX_DEFAULT,
 			D3DX_DEFAULT,
-			COLOR_BLACK, // Transparent color
+			transparentColor, // Transparent color
 			&info,
 			nullptr,
 			&m_texture->texture // Created texture pointer

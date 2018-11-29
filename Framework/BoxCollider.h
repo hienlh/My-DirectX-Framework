@@ -11,6 +11,8 @@ namespace Framework {
 		CBoxCollider(CGameObject* gameObject);
 		~CBoxCollider() = default;
 
+		void Config(bool isTrigger = false, bool autoBoundSize = false, bool usedByEffector = true, bool isDebugging = false);
+
 		//Getter / Setter
 	public:
 		Vector2 GetSize() const { return m_Size; }

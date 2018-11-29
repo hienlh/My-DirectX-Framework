@@ -101,11 +101,12 @@ bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
 	float right = other.right - object.left;
 	float bottom = other.top - object.bottom;
 
-	return !(left > 0 || right < 0 || top < 0 || bottom > 0);
+	return !(left >= 0 || right <= 0 || top <= 0 || bottom >= 0);
 }
 
 void CPhysic::Update(DWORD dt)
 {
+	//TODO make 2 objects not overlap each other, if they overlap, move movable object
 
 	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetListGameObject();
 	for (CGameObject* const game_object : list)
@@ -116,7 +117,7 @@ void CPhysic::Update(DWORD dt)
 		}
 	}
 
-	 list = CGameManager::GetInstance()->GetCurrentScene()->GetListColliderObject();
+	list = CGameManager::GetInstance()->GetCurrentScene()->GetListColliderObject();
 	for (auto i = list.begin(); i != list.end(); ++i)
 	{
 		for (auto j = i; j != list.end(); ++j)
@@ -149,6 +150,30 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 		sl, st, sr, sb,
 		t, nx, ny
 	);
+
+	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0) 
+	{
+		auto a = moveObject->GetComponent<CTransform>()->Get_Position();
+		CDebug::Log("Move (%f, %f)\n", a.x, a.y);
+		a = staticObject->GetComponent<CTransform>()->Get_Position();
+		CDebug::Log("Static (%f, %f)\n", a.x, a.y);
+		auto b = IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr));
+		moveObject->GetComponent<CTransform>()->PlusPosition(mv * dt * t - mv*dt*0.01);
+		staticObject->GetComponent<CTransform>()->PlusPosition(sv * dt * t - sv * dt*0.01);
+		//deflect
+		if (nx != 0) {
+			mv = Vector2(0, mv.y);
+			sv = Vector2(0, sv.y);
+		}
+		if (ny != 0) {
+			mv = Vector2(mv.x, 0);
+			sv = Vector2(sv.x, 0);
+		}
+
+		moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
+		staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
+		return t;
+	}
 
 	if (t >= 0 && t < 1) {
 		if(t > 0) NotifyCollisionEnter(new CCollision(moveObject, staticObject));
@@ -256,7 +281,7 @@ void CPhysic::SweptAABB(
 	}
 
 
-	if ((tx_entry < 0.0f && ty_entry < 0.0f) || tx_entry > 1.0f || ty_entry > 1.0f) return;
+	//if ((tx_entry < 0.0f && ty_entry < 0.0f) || tx_entry > 1.0f || ty_entry > 1.0f) return;
 
 	const float t_entry = max(tx_entry, ty_entry);
 	const float t_exit = min(tx_exit, ty_exit);

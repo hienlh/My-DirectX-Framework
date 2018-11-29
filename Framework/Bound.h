@@ -18,10 +18,25 @@ typedef struct Bound
 	}
 	Bound(Vector2 topLeft, Vector2 size)
 	{
-		top = topLeft.y;
-		left = topLeft.x;
-		right = left + size.x;
-		bottom = top + size.y;
+		if (size.x >= 0)
+		{
+			left = topLeft.x;
+			right = left + size.x;
+		}else
+		{
+			right = topLeft.x;
+			left = right + size.x;
+		}
+
+		if(size.y>=0)
+		{
+			top = topLeft.y;
+			bottom = top + size.y;
+		}else
+		{
+			bottom = topLeft.y;
+			top = bottom + size.y;
+		}
 	}
 	~Bound() = default;
 

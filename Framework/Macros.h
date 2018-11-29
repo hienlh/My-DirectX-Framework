@@ -2,7 +2,7 @@
 
 #define APP_TITLE L"My DirectX App"
 
-#define CUSTOMFVF (D3DFVF_XYZRHW | D3DFVF_DIFFUSE)
+#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)

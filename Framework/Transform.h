@@ -25,9 +25,9 @@ namespace Framework
 		Vector3 Get_Rotation() const { return m_rotation; }
 		Vector2 Get_Scale() const { return m_scale; }
 
-		void Set_Position(Vector2 position) { m_position = position; }
-		void Set_Rotation(Vector3 rotation) { m_rotation = rotation; }
-		void Set_Scale(Vector2 scale) { m_scale = scale; }
+		CTransform* Set_Position(Vector2 position) { m_position = position; return this; }
+		CTransform* Set_Rotation(Vector3 rotation) { m_rotation = rotation; return this; }
+		CTransform* Set_Scale(Vector2 scale) { m_scale = scale; return this; }
 
 		/// <summary>Like Position += Distance</summary> 
 		void PlusPosition(Vector2 distance) { m_position += distance; }

@@ -126,6 +126,9 @@
     <ClInclude Include="Debug.h">
       <Filter>Framework\Struct</Filter>
     </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Framework\Struct</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -198,6 +201,9 @@
       <Filter>Framework\Struct</Filter>
     </ClCompile>
     <ClCompile Include="Debug.cpp">
+      <Filter>Framework\Struct</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
       <Filter>Framework\Struct</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,43 +5,49 @@
 #include "GameManager.h"
 #include "CTexture.h"
 #include "ResourceManager.h"
+#include "Animator.h"
 
 using namespace Framework;
 
-void CRenderer::SetTexture(LPCWSTR texture_name)
+CRenderer* CRenderer::SetSprite(CWString spriteName)
 {
-	Init(texture_name);
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(spriteName);
+	m_pSprite = m_pRootSprite;
+	return this;
 }
 
-bool CRenderer::Init(LPCWSTR textureName)
+bool CRenderer::Init(CWString spriteName)
 {
-	m_pTexture = CResourceManager::GetInstance()->GetTexture(textureName);
-	m_textureWidth = m_pTexture->width;
-	m_textureHeight = m_pTexture->height;
-	return m_pTexture != nullptr;
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(spriteName);
+	m_pSprite = m_pRootSprite;
+	return m_pRootSprite != nullptr;
 }
 
-void CRenderer::Release()
+void CRenderer::Release() const
 {
-	delete m_pTexture;
+	delete m_pSprite;
+	delete m_pRootSprite;
 }
 
 void CRenderer::Update(DWORD dt)
 {
-	
+	if (CAnimator* anim = m_pGameObject->GetComponent<CAnimator>())
+		m_pSprite = anim->GetCurrentSprite();
+	else m_pSprite = m_pRootSprite;
 }
 
 void CRenderer::Render()
 {
 	if (m_pGameObject == nullptr) return;
 	const auto transform = m_pGameObject->GetComponent<CTransform>();
-	if (m_pTexture == nullptr || transform == nullptr) return;
+	if (!m_pSprite || !transform) return;
 
-	//If dev don't set width height then draw with default width, height of image
-	if (m_textureWidth == -1 || m_textureHeight == -1)
-		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), nullptr, nullptr, transform->Get_Rotation().z);
-	else
-		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), new Rect(Vector2(0,0), Vector2(m_textureWidth, m_textureHeight)), nullptr, transform->Get_Rotation().z);
+	Vector3 scale = Vector3(transform->Get_Scale());
+
+	Vector3 position3D = Vector3(transform->Get_Position());
+	position3D.z = m_zOrder;
+
+	CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)

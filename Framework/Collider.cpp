@@ -11,12 +11,15 @@ CCollider::CCollider(CGameObject* gameObject) : CComponent(gameObject)
 	m_Bound = Bound();
 	m_UsedByEffector = true;
 	m_IsDebugging = false;
+	m_AutoBoundSize = false;
 }
 
 Bound CCollider::GetBoundGlobal() const
 {
 	Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-	return Bound(pos + m_Offset, m_Bound.Size());
+	Vector2 scale = m_pGameObject->GetComponent<CTransform>()->Get_Scale();
+	Vector2 size = Vector2(m_Bound.Size().x * scale.x, m_Bound.Size().y * scale.y);
+	return Bound(pos + m_Offset, size);
 }
 
 bool CCollider::GetUsedByEffector() const
@@ -27,6 +30,11 @@ bool CCollider::GetUsedByEffector() const
 bool CCollider::GetIsDebugging() const
 {
 	return m_IsDebugging;
+}
+
+bool CCollider::GetAutoBoundSize() const
+{
+	return m_AutoBoundSize;
 }
 
 void CCollider::SetUsedByEffector(bool usedByEffector)
@@ -47,4 +55,9 @@ void CCollider::SetOffset(Vector2 offset)
 void CCollider::SetIsDebugging(bool isDebugging)
 {
 	m_IsDebugging = isDebugging;
+}
+
+void CCollider::SetAutoBoundSize(bool autoBoundSize)
+{
+	m_AutoBoundSize = autoBoundSize;
 }

@@ -10,7 +10,7 @@ Framework::CCamera::CCamera(CGameObject* gameObject) : CComponent(gameObject)
 	_height = SCREEN_HEIGHT;
 	_angle = 0;
 	_scaleFactors = Vector3(1, 1, 1);
-	D3DXMatrixOrthoLH(&_orthographicMatrix, _width, -_height, 0, 1);
+	D3DXMatrixOrthoLH(&_orthographicMatrix, _width, -_height, -100, 100);
 	D3DXMatrixIdentity(&_identityMatrix);
 }
 
@@ -20,7 +20,7 @@ Framework::CCamera::CCamera(CGameObject* gameObject, int width, int height, floa
 	_height = height;
 	_angle = angle;
 	_scaleFactors = scaleFactors;
-	D3DXMatrixOrthoLH(&_orthographicMatrix, width, -height, 0, 1);
+	D3DXMatrixOrthoLH(&_orthographicMatrix, width, -height, -100, 100);
 	D3DXMatrixIdentity(&_identityMatrix);
 }
 

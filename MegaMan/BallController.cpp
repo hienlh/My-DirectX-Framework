@@ -62,12 +62,12 @@ void BallController::SetState(int state)
 		break;
 	}
 
-	CDebug::Log("Current State: %d\n", m_state);
+	//CDebug::Log("Current State: %d\n", m_state);
 }
 
 void BallController::OnCollisionEnter(CCollision* collision)
 {
-	CDebug::Log("Collision ground \n");
+	//CDebug::Log("Collision ground \n");
 	SetState(IDLE);
 }
 
@@ -79,28 +79,33 @@ void BallController::Update(DWORD dt)
 
 	CInput *input = CInput::GetInstance();
 
-	if (input->KeyDown(DIK_W)) {
-		CDebug::Log("Jump \n");
+	if (input->KeyDown(DIK_UPARROW)) {
+		//CDebug::Log("Jump \n");
 		SetState(JUMP);
 	}
 
 
-	if (input->KeyDown(DIK_A)) {
-		CDebug::Log("Move Left \n");
+	if (input->KeyDown(DIK_LEFTARROW)) {
+		//CDebug::Log("Move Left \n");
 		SetState(MOVE_LEFT);
 	}
-	if (input->KeyUp(DIK_A)) {
-		CDebug::Log("UnMove Left \n");
+	if (input->KeyUp(DIK_LEFTARROW)) {
+		//CDebug::Log("UnMove Left \n");
 		SetState(~MOVE_LEFT);
 	}
 
-	if (input->KeyDown(DIK_D)) {
-		CDebug::Log("Move Right \n");
+	if (input->KeyDown(DIK_RIGHTARROW)) {
+		//CDebug::Log("Move Right \n");
 		SetState(MOVE_RIGHT);
 	}
-	if (input->KeyUp(DIK_D)) {
-		CDebug::Log("UnMove Right \n");
+	if (input->KeyUp(DIK_RIGHTARROW)) {
+		//CDebug::Log("UnMove Right \n");
 		SetState(~MOVE_RIGHT);
+	}
+
+	if (rigidbody->GetVelocity() == Vector2(0, 0) && m_state != IDLE)
+	{
+		SetState(IDLE);
 	}
 }
 

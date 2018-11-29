@@ -29,6 +29,9 @@ namespace Framework
 		void AddAnimation(LPCWSTR animationName);
 		void SetCurrentAnimation(LPCWSTR animationName);
 
+		CAnimation *GetCurrentAnimation() const;
+		CSprite *GetCurrentSprite() const;
+
 	public:
 		void Update(DWORD dt) override;
 		void Render();

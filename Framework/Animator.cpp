@@ -33,6 +33,16 @@ void CAnimator::SetCurrentAnimation(LPCWSTR animationName)
 	}
 }
 
+CAnimation* CAnimator::GetCurrentAnimation() const
+{
+	return m_pCurrentAnimation;
+}
+
+CSprite* CAnimator::GetCurrentSprite() const
+{
+	return m_pCurrentAnimation->GetSprite();
+}
+
 void CAnimator::Update(DWORD dt)
 {
 	m_pCurrentAnimation->Update(dt);
@@ -40,11 +50,14 @@ void CAnimator::Update(DWORD dt)
 
 void CAnimator::Render()
 {
-	Texture* pTexture = m_pCurrentAnimation->GetTexture();
-	CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
-	Rect rect = m_pCurrentAnimation->GetRect();
-	CGraphic::GetInstance()->Draw(pTexture, &pTransform->Get_Position(), &rect, nullptr,
-	                              pTransform->Get_Rotation().z);
+	//if (!m_pCurrentAnimation) return;
+	//CSprite* sprite = m_pCurrentAnimation->GetSprite();
+	//CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
+	//Vector3 position3D = Vector3(pTransform->Get_Position());
+	////TODO Add zorder for animator;
+	//position3D.z = 0;
+
+	//CGraphic::GetInstance()->Draw(sprite, &position3D);
 }
 
 CAnimator* CAnimator::Instantiate()

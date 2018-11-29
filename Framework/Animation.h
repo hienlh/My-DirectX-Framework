@@ -9,12 +9,11 @@ namespace Framework {
 	public:
 		struct SFrame
 		{
-			Rect m_rect;
+			CSprite *m_sprite;
 			DWORD m_delay = 0;
 		};
 
 	private:
-		Texture* m_pTexture = nullptr;
 		std::vector<SFrame> m_frames = {};
 
 		DWORD m_frameIndex = 0;
@@ -23,24 +22,23 @@ namespace Framework {
 
 	private:
 		CAnimation() = default;
+	public:
+		CAnimation(CWString name, DWORD defaultTime = 100);
 		~CAnimation() = default;
 
 	private:
-		void Init(LPCWSTR textureName, DWORD defaultTime);
+		bool Init(LPCWSTR textureName, DWORD defaultTime);
 		void Render() override;
 	public:
 		void Update(DWORD dt) override;
 
 	public:
-		Texture* GetTexture() const { return m_pTexture; }
-		Rect GetRect() { return m_frames[m_frameIndex].m_rect; }
+		CSprite* GetSprite() const { return m_frames[m_frameIndex].m_sprite; }
 
 		//Method
 	public:
 		void Add(SFrame frame);
-		void Add(Rect rect, DWORD time = 0);
-
-	public:
-		static CAnimation* Instantiate(LPCWSTR name, LPCWSTR textureName, DWORD defaultTime);
+		void Add(CSprite* sprite, DWORD time = 0);
+		bool Add(CWString spriteName, DWORD time = 0);
 	};
 }
