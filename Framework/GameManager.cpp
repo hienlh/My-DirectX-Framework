@@ -76,12 +76,7 @@ bool CGameManager::Run()
 
 			// process game loop
 
-			bool renderResult = CGraphic::GetInstance()->Render(m_currentScene->GetListGameObject());
-			if (!renderResult)
-			{
-				OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
-				break;
-			}
+			m_currentScene->Render();
 
 			if (m_currentScene)
 				m_currentScene->Update(dt);

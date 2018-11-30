@@ -117,13 +117,17 @@ void CPhysic::Update(DWORD dt)
 		}
 	}
 
-	list = CGameManager::GetInstance()->GetCurrentScene()->GetListColliderObject();
-	for (auto i = list.begin(); i != list.end(); ++i)
+	CScene* currentScreen = CGameManager::GetInstance()->GetCurrentScene();
+	auto listCollierObject = currentScreen->GetListColliderObject();
+	for (CGameObject* const object : listCollierObject)
 	{
-		for (auto j = i; j != list.end(); ++j)
+		const Bound bound = object->GetComponent<CCollider>()->GetBoundGlobal();
+		std::list<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
+
+		for (CGameObject* const otherObject : listReturnByQuadTree)
 		{
-			if (i != j) {
-				SweptAABBx(dt, *i, *j);
+			if (otherObject != object) {
+				SweptAABBx(dt, object, otherObject);
 			}
 		}
 	}
@@ -154,9 +158,9 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0) 
 	{
 		auto a = moveObject->GetComponent<CTransform>()->Get_Position();
-		CDebug::Log("Move (%f, %f)\n", a.x, a.y);
+		//CDebug::Log("Move (%f, %f)\n", a.x, a.y);
 		a = staticObject->GetComponent<CTransform>()->Get_Position();
-		CDebug::Log("Static (%f, %f)\n", a.x, a.y);
+		//CDebug::Log("Static (%f, %f)\n", a.x, a.y);
 		auto b = IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr));
 		moveObject->GetComponent<CTransform>()->PlusPosition(mv * dt * t - mv*dt*0.01);
 		staticObject->GetComponent<CTransform>()->PlusPosition(sv * dt * t - sv * dt*0.01);

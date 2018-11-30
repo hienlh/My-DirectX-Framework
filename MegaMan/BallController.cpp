@@ -19,10 +19,13 @@ void BallController::SetState(int state)
 	{
 	case JUMP:
 		if((m_state & JUMP) != JUMP){
-			rigidbody->SetVelocity(Vector2(0, -.2));
+			rigidbody->SetVelocity(Vector2(0, -.1));
 			m_state &= ~State::IDLE;
 			m_state |= State::JUMP;
 		}
+		break; 
+	case ~JUMP:
+		rigidbody->SetVelocity(Vector2(NULL, 0));
 		break;
 	case MOVE_RIGHT:
 		anim->SetCurrentAnimation(L"Mario Walk Right");
@@ -47,6 +50,12 @@ void BallController::SetState(int state)
 		anim->SetCurrentAnimation(L"Mario Idle Left");
 		rigidbody->SetVelocity(0);
 		m_state &= ~State::MOVE_LEFT;
+		break;
+	case MOVE_DOWN:
+		rigidbody->SetVelocity(NULL,.1);
+		break;
+	case ~MOVE_DOWN:
+		rigidbody->SetVelocity(NULL, 0);
 		break;
 	case IDLE:
 		if((m_state & MOVE_RIGHT) == MOVE_RIGHT)
@@ -83,6 +92,10 @@ void BallController::Update(DWORD dt)
 		//CDebug::Log("Jump \n");
 		SetState(JUMP);
 	}
+	if (input->KeyUp(DIK_UPARROW)) {
+		//CDebug::Log("Jump \n");
+		SetState(~JUMP);
+	}
 
 
 	if (input->KeyDown(DIK_LEFTARROW)) {
@@ -101,6 +114,15 @@ void BallController::Update(DWORD dt)
 	if (input->KeyUp(DIK_RIGHTARROW)) {
 		//CDebug::Log("UnMove Right \n");
 		SetState(~MOVE_RIGHT);
+	}
+
+	if(input->KeyDown(DIK_DOWNARROW))
+	{
+		SetState(MOVE_DOWN);
+	}
+	if (input->KeyUp(DIK_DOWNARROW))
+	{
+		SetState(~MOVE_DOWN);
 	}
 
 	if (rigidbody->GetVelocity() == Vector2(0, 0) && m_state != IDLE)

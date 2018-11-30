@@ -12,7 +12,8 @@ public:
 		JUMP = 1,
 		MOVE_RIGHT = 2,
 		MOVE_LEFT = 4,
-		IDLE = 0
+		IDLE = 0,
+		MOVE_DOWN = 8,
 	};
 
 private:

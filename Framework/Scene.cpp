@@ -8,6 +8,7 @@ using namespace Framework;
 bool CScene::Init()
 {
 	InitMainCamera();
+	m_pQuadTree = new CQuadTree(0, 0, Rect(0, 0, 600, 600));
 	return true;
 }
 
@@ -65,7 +66,7 @@ CScene* CScene::Instantiate()
 
 bool CScene::Destroy(CScene* scene)
 {
-	auto result = scene->Release();
+	const auto result = scene->Release();
 	SAFE_DELETE(scene);
 
 	return result;
@@ -75,9 +76,20 @@ void CScene::Update(DWORD dt)
 {
 	CInput::GetInstance()->Update();
 
+	m_pQuadTree->clear();
+	for (CGameObject* const object : m_colliderObjectList)
+	{
+		m_pQuadTree->insert(object);
+	}
+
 	for (CGameObject* pGameObject : m_gameObjectList)
 	{
 		pGameObject->Update(dt);
+
+		if (pGameObject->GetName() == L"Player")
+		{
+			auto tmp = m_pQuadTree->query(pGameObject->GetComponent<CCollider>()->GetBoundGlobal());
+		}
 	}
 
 	m_pMainCamera->Update(dt);
@@ -88,6 +100,9 @@ void CScene::Update(DWORD dt)
 
 void CScene::Render()
 {
+	std::set<CGameObject*> listRender = m_gameObjectList;
+	listRender.insert(reinterpret_cast<CGameObject*>(m_pQuadTree));
+	CGraphic::GetInstance()->Render(listRender);
 }
 
 void CScene::AddGameObject(CGameObject* gameObject)
