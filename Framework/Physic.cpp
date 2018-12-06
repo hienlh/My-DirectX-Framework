@@ -91,7 +91,7 @@ CPhysic* CPhysic::GetInstance()
 void CPhysic::Destroy()
 {
 	__instance->Release();
-	SAFE_DELETE(__instance);
+	SAFE_FREE(__instance);
 }
 
 bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
@@ -116,13 +116,16 @@ void CPhysic::Update(DWORD dt)
 		}
 	}
 
-	 list = CGameManager::GetInstance()->GetCurrentScene()->GetListColliderObject();
-	for (auto i = list.begin(); i != list.end(); ++i)
+	CScene* currentScreen = CGameManager::GetInstance()->GetCurrentScene();
+	auto listCollierObject = currentScreen->GetListColliderObject();
+	for (CGameObject* const object : listCollierObject)
 	{
-		for (auto j = i; j != list.end(); ++j)
+		const Bound bound = object->GetComponent<CCollider>()->GetBoundGlobal();
+		std::list<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
+		for (CGameObject* const otherObject : listReturnByQuadTree)
 		{
-			if (i != j) {
-				SweptAABBx(dt, *i, *j);
+			if (otherObject != object) {
+				SweptAABBx(dt, object, otherObject);
 			}
 		}
 	}

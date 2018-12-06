@@ -129,20 +129,11 @@
     <ClInclude Include="Debug.h">
       <Filter>Framework\Structures</Filter>
     </ClInclude>
-    <ClInclude Include="rapidxml_utils.hpp">
-      <Filter>Framework\Extends</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_print.hpp">
-      <Filter>Framework\Extends</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml_iterators.hpp">
-      <Filter>Framework\Extends</Filter>
-    </ClInclude>
-    <ClInclude Include="rapidxml.hpp">
-      <Filter>Framework\Extends</Filter>
-    </ClInclude>
     <ClInclude Include="tinyxml2.h">
       <Filter>Framework\Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadTree.h">
+      <Filter>Framework\Structures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
       <Filter>Framework\Extends</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadTree.cpp">
+      <Filter>Framework\Structures</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

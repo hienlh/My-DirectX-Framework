@@ -10,71 +10,53 @@ PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(game
 
 }
 
-void PlayerController::SetState(int state)
+void PlayerController::UpdateState(DWORD stateCode, bool flag)
 {
 	CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
-	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
+	CAnimator *animation = m_pGameObject->GetComponent<CAnimator>();
 	
-	switch (state)
+	// ON
+	if (flag)
+		m_stateCode |= stateCode;
+	// OFF
+	else
+		m_stateCode &= ~stateCode;
+
+	switch (m_stateCode)
 	{
-	case JUMP:
-		if((m_state & JUMP) != JUMP)
-		{
-			rigidbody->SetVelocity(Vector2(0, -.3));
-			m_state &= ~State::IDLE;
-			m_state |= State::JUMP;
-		}
+	case S_IDLE:
+		animation->SetCurrentState(L"Megaman Idle");
+		break;
+	
+	case S_RUN:
+		animation->SetCurrentState(L"Megaman Run");
 		break;
 
-	case MOVE_RIGHT:
-		anim->SetCurrentAnimation(L"Megaman Run Right");
-		rigidbody->SetVelocity(.12, NULL);
-
-		m_state &= ~State::MOVE_LEFT;
-		m_state |= State::MOVE_RIGHT;
+	case S_JUMP:
+		animation->SetCurrentState(L"Megaman Jump");
+		//OutputDebugStringW(L"Jump");
 		break;
 
-	case ~MOVE_RIGHT:
-		anim->SetCurrentAnimation(L"Megaman Idle Right");
-		rigidbody->SetVelocity(0);
-		m_state &= ~State::MOVE_RIGHT;
+	case S_FALL:
+		animation->SetCurrentState(L"Megaman Fall");
 		break;
 
-	case MOVE_LEFT:
-		anim->SetCurrentAnimation(L"Megaman Run Left");
-		rigidbody->SetVelocity(-.12, NULL);
-
-		m_state &= ~State::MOVE_RIGHT;
-		m_state |= State::MOVE_LEFT;
-		break;
-
-	case ~MOVE_LEFT:
-		anim->SetCurrentAnimation(L"Megaman Idle Left");
-		rigidbody->SetVelocity(0);
-		m_state &= ~State::MOVE_LEFT;
-		break;
-
-	case IDLE:
-		if ((m_state & MOVE_RIGHT) == MOVE_RIGHT)
-			anim->SetCurrentAnimation(L"Megaman Idle Right");
-		if ((m_state & MOVE_LEFT) == MOVE_LEFT)
-			anim->SetCurrentAnimation(L"Megaman Idle Left");
-		
-		rigidbody->SetVelocity(Vector2(0, 0));
-		m_state &= ~State::JUMP;
-		m_state &= ~State::MOVE_LEFT;
-		m_state &= ~State::MOVE_RIGHT;
-		m_state |= State::IDLE;
+	case S_IDLE_SHOOT:
+		animation->SetCurrentState(L"Megaman Idle Shoot");
+		OutputDebugStringW(L"Shoot\n");
 		break;
 	}
 
-	CDebug::Log("Current State: %d\n", m_state);
+	//m_pGameObject->GetComponent<CAnimator>()->SetStateCode(m_stateCode);
 }
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
 	CDebug::Log("Collision ground \n");
-	SetState(IDLE);
+	UpdateState(IDLE, true);
+	UpdateState(RUN, false);
+	UpdateState(JUMP, false);
+	UpdateState(FALL, false);
 }
 
 void PlayerController::Update(DWORD dt)
@@ -85,35 +67,60 @@ void PlayerController::Update(DWORD dt)
 
 	CInput *input = CInput::GetInstance();
 
-	if (input->KeyDown(DIK_W) || input->KeyDown(DIK_UP)) 
+	// SPACE 
+	if (input->KeyDown(DIK_SPACE))
 	{
-		CDebug::Log("Jump \n");
-		SetState(JUMP);
+		rigidbody->SetVelocity(Vector2(0, -.3));
+		UpdateState(JUMP, true);
+		UpdateState(IDLE, false);
+		UpdateState(RUN, false);
+		UpdateState(FALL, false);
 	}
 
-	if (input->KeyDown(DIK_A) || input->KeyDown(DIK_LEFT)) 
+	// LEFT
+	if (input->KeyDown(DIK_LEFT))
 	{
-		CDebug::Log("Move Left \n");
-		SetState(MOVE_LEFT);
+		m_pGameObject->GetComponent<CRenderer>()->SetFlipX(true);
+		rigidbody->SetVelocity(Vector2(-0.3, 0));
+		UpdateState(RUN, true);
+		UpdateState(IDLE, false);
 	}
 	
-	if (input->KeyUp(DIK_A) || input->KeyUp(DIK_LEFT)) 
+	// RIGHT
+	if (input->KeyDown(DIK_RIGHT))
 	{
-		CDebug::Log("UnMove Left \n");
-		SetState(~MOVE_LEFT);
+		m_pGameObject->GetComponent<CRenderer>()->SetFlipX(false);
+		rigidbody->SetVelocity(Vector2(0.3, 0));
+		UpdateState(RUN, true);
+		UpdateState(IDLE, false);
 	}
 
-	if (input->KeyDown(DIK_D) || input->KeyDown(DIK_RIGHT)) 
+	if (input->KeyUp(DIK_LEFT) || input->KeyUp(DIK_RIGHT))
 	{
-		CDebug::Log("Move Right \n");
-		SetState(MOVE_RIGHT);
+		rigidbody->SetVelocity(Vector2(0, 0));
+		UpdateState(RUN, false);
+		UpdateState(IDLE, true);
 	}
+
+	if (input->KeyDown(DIK_RETURN))
+	{
+		UpdateState(SHOOT, true);
+		UpdateState(IDLE, true);
+		UpdateState(RUN, false);
+		UpdateState(JUMP, false);
+		UpdateState(FALL, false);
+	}
+
+	if (input->KeyUp(DIK_RETURN))
+	{
+		UpdateState(SHOOT, false);
+	}
+	// SHOOT
+	/*if (input->KeyDown(DIK_RETURN))
+		UpdateState(EState::SHOOT);
 	
-	if (input->KeyUp(DIK_D) || input->KeyUp(DIK_RIGHT)) 
-	{
-		CDebug::Log("UnMove Right \n");
-		SetState(~MOVE_RIGHT);
-	}
+	if (input->KeyUp(DIK_RIGHT))
+		UpdateState(~EState::SHOOT);*/
 }
 
 void PlayerController::Render()

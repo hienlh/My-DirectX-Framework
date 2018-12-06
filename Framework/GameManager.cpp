@@ -76,12 +76,7 @@ bool CGameManager::Run()
 
 			// process game loop
 
-			bool renderResult = CGraphic::GetInstance()->Render(m_currentScene->GetListGameObject());
-			if (!renderResult)
-			{
-				OutputDebugStringA("[Error] m_pDirect3DCore::Render failed\n");
-				break;
-			}
+			m_currentScene->Render();
 
 			if (m_currentScene)
 				m_currentScene->Update(dt);
@@ -110,7 +105,7 @@ void CGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidt
 		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
 		{
 			__instance->Release();
-			SAFE_DELETE(__instance);
+			SAFE_FREE(__instance);
 		}
 	}
 }
@@ -120,7 +115,7 @@ void CGameManager::Destroy()
 	if (__instance)
 	{
 		__instance->Release();
-		SAFE_DELETE(__instance);
+		SAFE_FREE(__instance);
 	}
 }
 

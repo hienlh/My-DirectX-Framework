@@ -2,7 +2,7 @@
 
 #define APP_TITLE L"My DirectX App"
 
-#define CUSTOMFVF (D3DFVF_XYZRHW | D3DFVF_DIFFUSE)
+#define CUSTOMFVF (D3DFVF_XYZ | D3DFVF_DIFFUSE)
 
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
@@ -15,8 +15,9 @@
 
 #define FRAME_RATE 60
 
-#define SAFE_DELETE(p) if (p) { delete p; p = nullptr; }
-#define SAFE_ALLOC(p, object_type) if (!p) { p = new object_type(); }
+#define SAFE_FREE(p) if (p) { delete p; p = nullptr; }
+#define SAFE_ALLOC(p, objectType) if (!p) { p = new objectType(); }
+#define SAFE_ALLOC1(p, objectType, param) if (!p) { p = new objectType(param); }
 
 #define VECTOR3_ZERO { 0, 0, 0 } 
 #define VECTOR3_ZERO { 0, 0, 0 }
@@ -31,6 +32,10 @@
 #define COLOR_GREEN D3DCOLOR_XRGB(0, 255, 0)
 #define COLOR_RED D3DCOLOR_XRGB(255, 0, 0)
 #define COLOR_BLUE D3DCOLOR_XRGB(0, 0, 255)
+
+// Quad Tree
+#define MAX_OBJECTS 2
+#define MAX_LEVEL 5
 
 // Flag
 #define OVER_X 13

@@ -8,9 +8,10 @@
 
 using namespace Framework;
 
-void CRenderer::SetTexture(LPCWSTR texture_name)
+CRenderer* CRenderer::SetTexture(LPCWSTR texture_name)
 {
 	Init(texture_name);
+	return this;
 }
 
 bool CRenderer::Init(LPCWSTR textureName)
@@ -37,11 +38,17 @@ void CRenderer::Render()
 	const auto transform = m_pGameObject->GetComponent<CTransform>();
 	if (m_pTexture == nullptr || transform == nullptr) return;
 
+	Vector3 scale = Vector3(transform->Get_Scale());
+
+	Vector3 position3D = Vector3(transform->Get_Position());
+	position3D.z = m_zOrder;
+
 	//If dev don't set width height then draw with default width, height of image
 	if (m_textureWidth == -1 || m_textureHeight == -1)
-		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), nullptr, nullptr, transform->Get_Rotation().z);
+		CGraphic::GetInstance()->Draw(m_pTexture, &position3D, nullptr, false, false, nullptr, transform->Get_Rotation().z);
 	else
-		CGraphic::GetInstance()->Draw(m_pTexture, &transform->Get_Position(), new Rect(Vector2(0,0), Vector2(m_textureWidth, m_textureHeight)), nullptr, transform->Get_Rotation().z);
+		CGraphic::GetInstance()->Draw(m_pTexture, &position3D, new Rect(Vector2(m_renderPosX, m_renderPosY), Vector2(m_textureWidth, m_textureHeight)), 
+			m_flipX, m_flipY, nullptr, transform->Get_Rotation().z);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)
@@ -49,6 +56,6 @@ void CRenderer::Destroy(CRenderer* &instance)
 	if (instance)
 	{
 		instance->Release();
-		SAFE_DELETE(instance);
+		SAFE_FREE(instance);
 	}
 }

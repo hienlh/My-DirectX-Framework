@@ -27,7 +27,7 @@ bool CGameObject::Init()
 void CGameObject::Release()
 {
 	for (auto pComponent : m_pComponents) {
-		SAFE_DELETE(pComponent.second);
+		SAFE_FREE(pComponent.second);
 	}
 	m_pComponents.clear();
 }
@@ -50,7 +50,7 @@ CGameObject* CGameObject::Instantiate()
 	{
 		if (instance)
 			instance->Release();
-		SAFE_DELETE(instance);
+		SAFE_FREE(instance);
 	}
 	return instance;
 }
@@ -62,7 +62,7 @@ CGameObject* CGameObject::Instantiate(LPCWSTR name, Vector2 position)
 
 
 	if (!instance->Init())
-		SAFE_DELETE(instance);
+		SAFE_FREE(instance);
 
 	instance->m_Name = name;
 	instance->GetComponent<CTransform>()->Set_Position(position);
@@ -77,7 +77,7 @@ CGameObject* CGameObject::Instantiate(Vector2 position)
 
 
 	if (!instance->Init())
-		SAFE_DELETE(instance);
+		SAFE_FREE(instance);
 
 	instance->GetComponent<CTransform>()->Set_Position(position);
 
@@ -87,7 +87,7 @@ CGameObject* CGameObject::Instantiate(Vector2 position)
 void CGameObject::Destroy(CGameObject*& instance)
 {
 	instance->Release();
-	SAFE_DELETE(instance);
+	SAFE_FREE(instance);
 }
 
 void CGameObject::Update(DWORD dt)

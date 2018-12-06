@@ -8,6 +8,7 @@ using namespace Framework;
 bool CScene::Init()
 {
 	InitMainCamera();
+	m_pQuadTree = new CQuadTree(0, 0, Rect(0, 0, 2000, 2000));
 	return true;
 }
 
@@ -34,7 +35,7 @@ bool CScene::Release()
 		{
 			CGameObject::Destroy(gameObject);
 		}
-		SAFE_DELETE(m_pMainCamera);
+		SAFE_FREE(m_pMainCamera);
 
 		result = true;
 	} while (false);
@@ -58,7 +59,7 @@ CScene* CScene::Instantiate()
 	SAFE_ALLOC(scene, CScene);
 
 	if (!scene->Init())
-		SAFE_DELETE(scene);
+		SAFE_FREE(scene);
 
 	return scene;
 }
@@ -66,7 +67,7 @@ CScene* CScene::Instantiate()
 bool CScene::Destroy(CScene* scene)
 {
 	auto result = scene->Release();
-	SAFE_DELETE(scene);
+	SAFE_FREE(scene);
 
 	return result;
 }
@@ -74,6 +75,12 @@ bool CScene::Destroy(CScene* scene)
 void CScene::Update(DWORD dt)
 {
 	CInput::GetInstance()->Update();
+
+	m_pQuadTree->clear();
+	for (CGameObject* const object : m_colliderObjectList)
+	{
+		m_pQuadTree->insert(object);
+	}
 
 	for (CGameObject* pGameObject : m_gameObjectList)
 	{
@@ -88,6 +95,9 @@ void CScene::Update(DWORD dt)
 
 void CScene::Render()
 {
+	std::list<CGameObject*> listRender = m_gameObjectList;
+	listRender.push_back(reinterpret_cast<CGameObject*>(m_pQuadTree));
+	CGraphic::GetInstance()->Render(listRender);
 }
 
 void CScene::AddGameObject(CGameObject* gameObject)

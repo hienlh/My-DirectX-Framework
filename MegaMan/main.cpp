@@ -42,52 +42,80 @@ void ParseXML(const char* fileName, vector<Rect> &info, size_t depth)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	// Game Manager
 	CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 	CGameManager* pGameManager = CGameManager::GetInstance();
 
+	// Scene
 	CScene* pScene = CScene::Instantiate();
 	pGameManager->SetCurrentScene(pScene);
-	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
-	pScene->GetMainCamera()->AddComponent<CameraController>();
+	{
+		pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+		pScene->GetMainCamera()->AddComponent<CameraController>();
+	}
 
+	// Resource Manager
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
-
-	pResourceManager->AddTexture(L"Megaman Left", L".\\Resources\\megaman_left.png");
-	pResourceManager->AddTexture(L"Megaman Right", L".\\Resources\\megaman_right.png");
-	pResourceManager->AddTexture(L"Background", L".\\Resources\\mini_background.png");
-	pResourceManager->AddTexture(L"Intro Enemies", L".\\Resources\\Intro Enemies.png");
+	{
+		//pResourceManager->AddTexture(L"Megaman Left", L".\\Resources\\megaman_left.png");
+		pResourceManager->AddTexture(L"Megaman", L".\\Resources\\_megaman.png");
+		pResourceManager->AddTexture(L"Background", L".\\Resources\\mini_background.png");
+		pResourceManager->AddTexture(L"Intro Enemies", L".\\Resources\\Intro Enemies.png");
+	}
 
 	// Player
-	vector<Rect> megaman_left, megaman_right;
-	ParseXML(".\\Resources\\megaman_left.xml", megaman_left, 2);
-	ParseXML(".\\Resources\\megaman_right.xml", megaman_right, 2);
-
-	CAnimation* anim = CAnimation::Instantiate(L"Megaman Run Left", L"Megaman Left", 100);
-	for (size_t iAnimation = 18; iAnimation < 18 + 11; iAnimation++)
-		anim->Add(megaman_left[iAnimation], 0.05f);
-
-	anim = CAnimation::Instantiate(L"Megaman Run Right", L"Megaman Right", 100);
-	for (size_t iAnimation = 18; iAnimation < 18 + 11; iAnimation++)
-		anim->Add(megaman_right[iAnimation], 0.05f);
-
-	anim = CAnimation::Instantiate(L"Megaman Idle Left", L"Megaman Left", 100);
-	anim->Add(megaman_left[10], 0.05f);
-
-	anim = CAnimation::Instantiate(L"Megaman Idle Right", L"Megaman Right", 100);
-	anim->Add(megaman_right[12], 0.05f);
+	vector<Rect> megaman;
+	ParseXML(".\\Resources\\_megaman.xml", megaman, 2);
+	{
+		struct AnimationInfo
+		{
+			CWString name = nullptr;
+			CWString textureName = nullptr;
+			DWORD delayTime;
+			DWORD startID, count;
+			bool loop;
+		};
+		
+		AnimationInfo infoParams[] = { 
+			// Line 1
+			{ L"Megaman Init",			L"Megaman", 0.1f, 0, 6, false},
+			{ L"Megaman Idle",			L"Megaman", 0.1f, 7, 1, false},
+			{ L"Megaman Idle Hit",		L"Megaman", 0.1f, 8, 3, true},
+			{ L"Megaman Idle Shoot",	L"Megaman", 0.1f, 11, 2, true},
+			// Line 2
+			{ L"Megaman Run",			L"Megaman", 0.1f, 13, 11, true},
+			// Line 3
+			{ L"Megaman Run Shoot",		L"Megaman", 0.1f, 24, 10, true},
+			// Line 4
+			{ L"Megaman Jump",			L"Megaman", 0.1f, 34, 3, false},
+			{ L"Megaman Fall",			L"Megaman", 0.1f, 37, 4, false},
+			{ L"Megaman Jump Shoot",	L"Megaman", 0.1f, 41, 3, false},
+			{ L"Megaman Fall Shoot",	L"Megaman", 0.1f, 44, 4, false},
+		};
+		CAnimation* animation = nullptr;
+		for (const AnimationInfo &info : infoParams)
+		{
+			animation = CAnimation::Instantiate(info.name, info.textureName, info.loop);
+			for (size_t iAnimation = info.startID; iAnimation < info.startID + info.count; iAnimation++)
+				animation->Add(megaman[iAnimation], info.delayTime);
+		}
+	}
 
 	// Grounds
 	vector<Rect> grounds;
-	ParseXML(".\\Resources\\mini_background.xml", grounds, 2);
-
-	for (size_t iGround = 0; iGround < grounds.size(); iGround++)
 	{
-		CGameObject* pGround = CGameObject::Instantiate((wstring(L"Ground") + to_wstring(iGround)).c_str(),
-			Vector2(grounds[iGround].left, grounds[iGround].top));
-		pGround->AddComponent<CRigidbody>()->SetGravityScale(0);
-		pGround->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		pGround->GetComponent<CBoxCollider>()->SetSize(Vector2(grounds[iGround].right - grounds[iGround].left, 
-			grounds[iGround].bottom - grounds[iGround].top));
+		ParseXML(".\\Resources\\mini_background.xml", grounds, 2);
+
+		for (size_t iGround = 0; iGround < grounds.size(); iGround++)
+		{
+			CGameObject* pGround = CGameObject::Instantiate((wstring(L"Ground") + to_wstring(iGround)).c_str(),
+				Vector2(grounds[iGround].left, grounds[iGround].top));
+			pGround->AddComponent<CRigidbody>()->SetGravityScale(0);
+			pGround->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+			pGround->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+			pGround->GetComponent<CBoxCollider>()->SetSize(Vector2(grounds[iGround].right - grounds[iGround].left,
+				grounds[iGround].bottom - grounds[iGround].top));
+		}
 	}
 
 	CGameObject* pBackground = CGameObject::Instantiate(L"Background", Vector2(0, 0));
@@ -95,30 +123,44 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Player components
 	CGameObject* pPlayer = CGameObject::Instantiate(L"Player", Vector2(100, 0));
-	pPlayer->GetComponent<CTransform>()->Set_Rotation(Vector3(0, 0, 0));
-	pPlayer->AddComponent<CAnimator>()->AddAnimation(L"Megaman Idle Right");
-	pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Idle Left");
-	pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Run Left");
-	pPlayer->GetComponent<CAnimator>()->AddAnimation(L"Megaman Run Right");
-	pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
-	pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-	pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(25, 35));
-	pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(false);
-	pPlayer->AddComponent<PlayerController>();
+	{
+		pPlayer->GetComponent<CTransform>()->Set_Rotation(Vector3(0, 0, 0));
+		pPlayer->AddComponent<CRenderer>();
+		CAnimator* playerAnimator = pPlayer->AddComponent<CAnimator>();
+		
+		playerAnimator->AddState(L"Megaman Init");
+		playerAnimator->AddState(L"Megaman Idle");
+		playerAnimator->AddState(L"Megaman Idle Hit");
+		playerAnimator->AddState(L"Megaman Idle Shoot");
+		playerAnimator->AddState(L"Megaman Run");
+		playerAnimator->AddState(L"Megaman Run Shoot");
+		playerAnimator->AddState(L"Megaman Jump");
+		playerAnimator->AddState(L"Megaman Fall");
+		playerAnimator->AddState(L"Megaman Idle Shoot");
 
+		playerAnimator->AddTransition(L"Megaman Idle", L"Megaman Run")->SetCondition(L"Run", true);// PlayerController::EStateCode::S_RUN);
+		playerAnimator->AddTransition(L"Megaman Run", L"Megaman Idle")->SetCondition(L"Idle", true);// PlayerController::EStateCode::S_IDLE);
+		playerAnimator->AddTransition(L"Megaman Idle", L"Megaman Jump")->SetCondition(L"Jump", true);// ::EStateCode::S_JUMP);
+		playerAnimator->AddTransition(L"Megaman Jump", L"Megaman Idle")->SetCondition(L"Idle", true);// PlayerController::EStateCode::S_IDLE);
+		playerAnimator->AddTransition(L"Megaman Idle", L"Megaman Idle Shoot")->SetCondition(L"Idle Shoot", true);// , PlayerController::EStateCode::S_IDLE_SHOOT);
+		playerAnimator->AddTransition(L"Megaman Idle Shoot", L"Megaman Idle")->SetCondition(L"Idle", true);// , PlayerController::EStateCode::S_IDLE);
+		
+		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(25, 35));
+		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+		pPlayer->AddComponent<PlayerController>();
+	}
+
+	// Camera
 	CGameObject* pCamera = pScene->GetMainCamera();
-	pCamera->GetComponent<CameraController>()->m_target = pPlayer;
-	pCamera->GetComponent<CameraController>()->SetIsFollow(true);
+	{
+		pCamera->GetComponent<CameraController>()->m_target = pPlayer;
+		pCamera->GetComponent<CameraController>()->SetIsFollow(true);
+	}
+
 	pGameManager->Run();
 
-	// Enermies
-	/*vector<Rect> enemies;
-	ParseXML(".\\Resources\\Intro Enemies.xml", grounds, 2);
-
-	anim = CAnimation::Instantiate(L"Enemies", L"Intro Enemies", 100);
-	for (size_t iAnimation = 18; iAnimation < 18 + 11; iAnimation++)
-		anim->Add(enemies[iAnimation], 0.05f);
-*/
 	CGameManager::Destroy();
 	CGraphic::Destroy();
 	CInput::Destroy();

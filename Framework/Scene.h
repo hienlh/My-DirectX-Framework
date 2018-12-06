@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Object.h"
+#include "QuadTree.h"
 
 namespace Framework
 {
@@ -10,6 +11,7 @@ namespace Framework
 	private:
 		std::list<CGameObject*> m_gameObjectList = {};
 		std::list<CGameObject*> m_colliderObjectList = {};
+		CQuadTree *m_pQuadTree = nullptr;
 		CGameObject *m_pMainCamera = nullptr;
 
 	public:
@@ -26,6 +28,7 @@ namespace Framework
 		std::list<CGameObject*> GetListGameObject() const;
 		std::list<CGameObject*> GetListColliderObject() const;
 		CGameObject* GetMainCamera() const { return m_pMainCamera; }
+		CQuadTree* GetQuadTree() const { return m_pQuadTree; }
 
 	public:
 		static CScene* Instantiate();

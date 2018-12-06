@@ -29,7 +29,7 @@ CTransform* CTransform::Instantiate(Vector2 position)
 	if (!instance->Init(position))
 	{
 		instance->Release();
-		SAFE_DELETE(instance);
+		SAFE_FREE(instance);
 	}
 
 	return instance;
@@ -40,7 +40,7 @@ void CTransform::Destroy(CTransform *instance)
 	if (instance)
 	{
 		instance->Release();
-		SAFE_DELETE(instance);
+		SAFE_FREE(instance);
 	}
 }
 

@@ -83,7 +83,7 @@ namespace Framework
 				T* tmp = dynamic_cast<T *> (component);
 				if (tmp != nullptr)
 				{
-					SAFE_DELETE(tmp);
+					SAFE_FREE(tmp);
 				}
 			}
 			return true;
