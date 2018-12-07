@@ -221,7 +221,7 @@ void CGraphic::DrawRectangle(Rect rect, DWORD color)
 	m_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, 4);
 }
 
-Texture* CGraphic::CreateTexture(LPCWSTR texturePath, D3DCOLOR transparentColor)
+Texture* CGraphic::CreateTexture(CWString texturePath, D3DCOLOR transparentColor) const
 {
 	Texture* m_texture = new Texture();
 	do

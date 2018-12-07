@@ -54,7 +54,6 @@ void CAnimator::Render()
 	//CSprite* sprite = m_pCurrentAnimation->GetSprite();
 	//CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
 	//Vector3 position3D = Vector3(pTransform->Get_Position());
-	////TODO Add zorder for animator;
 	//position3D.z = 0;
 
 	//CGraphic::GetInstance()->Draw(sprite, &position3D);

@@ -23,7 +23,7 @@ namespace Framework {
 	private:
 		CAnimation() = default;
 	public:
-		CAnimation(CWString name, DWORD defaultTime = 100);
+		CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100);
 		~CAnimation() = default;
 
 	private:
@@ -32,13 +32,13 @@ namespace Framework {
 	public:
 		void Update(DWORD dt) override;
 
+		// Getter / Setter
 	public:
-		CSprite* GetSprite() const { return m_frames[m_frameIndex].m_sprite; }
+		CSprite* GetSprite();
 
 		//Method
 	public:
 		void Add(SFrame frame);
-		void Add(CSprite* sprite, DWORD time = 0);
-		bool Add(CWString spriteName, DWORD time = 0);
+		void Add(CSprite* sprite, DWORD pos = -1, DWORD time = 0);
 	};
 }

@@ -48,7 +48,7 @@ namespace Framework
 				  bool flipX = false, bool flipY = false) const;
 		void DrawRectangle(Rect rect, DWORD color = NULL);
 		
-		Texture* CreateTexture(LPCWSTR texturePath, D3DCOLOR transparentColor = COLOR_BLACK);
+		Texture* CreateTexture(CWString texturePath, D3DCOLOR transparentColor = COLOR_BLACK) const;
 			
 		// Static methods
 	public:

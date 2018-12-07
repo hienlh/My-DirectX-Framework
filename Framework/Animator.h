@@ -6,6 +6,21 @@
 
 namespace Framework
 {
+	class CState : public CObject
+	{
+	public:
+		CState(CAnimation *animation);
+
+	private:
+		CAnimation* m_animation = nullptr;
+
+	public:
+		void Update(DWORD dt) {}
+		void Render() {}
+
+		CAnimation* GetAnimation() { return m_animation; }
+	};
+
 	class CAnimator final : public CComponent
 	{
 		// Properties

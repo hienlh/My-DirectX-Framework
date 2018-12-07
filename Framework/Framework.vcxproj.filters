@@ -37,6 +37,9 @@
     <Filter Include="Framework\Observers">
       <UniqueIdentifier>{d24fa052-0f51-483c-8fc0-3050089f8faa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Extends">
+      <UniqueIdentifier>{1c6e2594-9ded-4608-9999-e9858d856902}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="QuadTree.h">
       <Filter>Framework\Struct</Filter>
     </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>Extends</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -211,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="QuadTree.cpp">
       <Filter>Framework\Struct</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>Extends</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

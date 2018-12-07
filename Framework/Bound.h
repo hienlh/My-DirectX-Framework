@@ -64,5 +64,17 @@ typedef struct Bound
 		return !(m_left > 0 || m_right < 0 || m_top < 0 || m_bottom > 0);
 	}
 
-	Bound& operator= (const Bound &_bounds) = default;
+	Bound& operator= (const Bound &_bound) = default;
+	bool operator== (const Bound &_bound) const
+	{
+		if (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom)
+			return false;
+		return true;
+	}
+	bool operator!= (const Bound &_bound) const
+	{
+		if (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom)
+			return true;
+		return false;
+	}
 };

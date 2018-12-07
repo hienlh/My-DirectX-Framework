@@ -9,16 +9,16 @@
 
 using namespace Framework;
 
-CRenderer* CRenderer::SetSprite(CWString spriteName)
+CRenderer* CRenderer::SetSprite(CWString textureName, DWORD index)
 {
-	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(spriteName);
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
 	m_pSprite = m_pRootSprite;
 	return this;
 }
 
-bool CRenderer::Init(CWString spriteName)
+bool CRenderer::Init(CWString textureName, DWORD index)
 {
-	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(spriteName);
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
 	m_pSprite = m_pRootSprite;
 	return m_pRootSprite != nullptr;
 }

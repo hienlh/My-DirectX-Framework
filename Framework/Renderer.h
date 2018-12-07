@@ -34,7 +34,7 @@ namespace Framework
 		bool GetFlipX() const { return m_flipX; }
 		bool GetFlipY() const { return m_flipY; }
 
-		CRenderer* SetSprite(CWString spriteName);
+		CRenderer* SetSprite(CWString textureName, DWORD index = 0);
 		CRenderer* SetAlpha(DWORD alpha) { m_alpha = alpha > 255 ? 255 : alpha;  return this; }
 		CRenderer* SetZOrder(int zOrder) { m_zOrder = zOrder; return this; }
 		CRenderer* SetFlipX(bool flipX) { m_flipX = flipX; return this; }
@@ -46,11 +46,10 @@ namespace Framework
 		CRenderer(CGameObject* game_object) : CComponent(game_object) {}
 		CRenderer(CGameObject* game_object, LPCWSTR texture_path) : CComponent(game_object) { this->Init(texture_path); }
 		virtual ~CRenderer() = default;
-		void Config(CWString textureName);
 
 		// Internal methods
 	private:
-		bool Init(CWString spriteName);
+		bool Init(CWString textureName, DWORD index = 0);
 		void Release() const;
 
 	public:

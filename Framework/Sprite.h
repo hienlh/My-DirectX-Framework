@@ -13,7 +13,7 @@ namespace Framework {
 	private:
 		CSprite() = default;
 	public:
-		CSprite(CWString name, CWString textureName, Rect *sourceRect = nullptr, Vector2 anchor = VECTOR2_ZERO);
+		CSprite(Texture* texture, Rect sourceRect = {0,0,0,0}, Vector2 anchor = { 0 , 0 });
 		~CSprite();
 
 		//Getter / Setter

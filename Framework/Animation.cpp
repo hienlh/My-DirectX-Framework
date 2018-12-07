@@ -4,11 +4,28 @@
 
 using namespace Framework;
 
-CAnimation::CAnimation(CWString name, DWORD defaultTime)
+CAnimation::CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime)
 {
-	m_defaultTime = defaultTime;
-	if (!CResourceManager::GetInstance()->AddAnimation(name, this))
-		delete this;
+	bool result = false;
+	do {
+		CResourceManager* pResourceManager = CResourceManager::GetInstance();
+
+		//Add texture, default time and list index of rect
+		m_defaultTime = defaultTime;
+
+		for (int i = startSprite; i < startSprite + count; i++)
+		{
+			m_frames.push_back({ pResourceManager->GetSprite(textureName, i), defaultTime});
+		}
+
+		//Add animation to resource manager
+		if (!pResourceManager->AddAnimation(name, this))
+			break;
+
+		result = true;
+	} while (false);
+
+	if(!result) delete this;
 }
 
 void CAnimation::Update(DWORD dt)
@@ -24,6 +41,11 @@ void CAnimation::Update(DWORD dt)
 	}
 }
 
+CSprite* CAnimation::GetSprite()
+{
+	return m_frames[m_frameIndex].m_sprite;
+}
+
 void CAnimation::Render()
 {
 }
@@ -33,17 +55,15 @@ void CAnimation::Add(SFrame frame)
 	m_frames.push_back(frame);
 }
 
-void CAnimation::Add(CSprite* sprite, DWORD time)
-{
-	Add({ sprite, time });
-}
+//void CAnimation::Add(Rect rect, DWORD time)
+//{
+//	Add({ rect, time });
+//}
 
-bool CAnimation::Add(CWString spriteName, DWORD time)
+void CAnimation::Add(CSprite* sprite, DWORD position, DWORD time)
 {
-	if(CSprite* sprite = CResourceManager::GetInstance()->GetSprite(spriteName))
-	{
-		Add({ sprite, time });
-		return true;
-	}
-	return false;
+	time = time != 0 ? time : m_defaultTime;
+
+	if (position == -1) Add({ sprite, time });
+	else m_frames.insert(m_frames.begin() + position, 1, { sprite, time });
 }

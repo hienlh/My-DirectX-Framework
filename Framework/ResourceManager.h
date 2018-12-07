@@ -9,7 +9,6 @@ namespace Framework
 		static CResourceManager* __instance;
 
 		std::unordered_map<CWString, Texture*> m_pTextures = {};
-		std::unordered_map<CWString, CSprite*> m_pSprites = {};
 		std::unordered_map<CWString, CAnimation*> m_pAnimations = {};
 
 	public:
@@ -19,16 +18,16 @@ namespace Framework
 	public:
 		static CResourceManager* GetInstance();
 		Texture* GetTexture(CWString name) const;
-		CSprite* GetSprite(CWString name) const;
 		CAnimation* GetAnimation(CWString name) const;
+		CSprite* GetSprite(CWString textureName, DWORD index) const;
+		static CSprite* GetSprite(Texture* texture, DWORD index);
 
 		//Method
 	public:
-		bool AddTexture(CWString name, CWString path, Color transparentColor = COLOR_BLACK);
-		bool EditTexture(CWString name, CWString path, Color transparentColor = COLOR_BLACK);
+		bool AddTexture(CWString name, CWString path, Color transparentColor = COLOR_BLACK, const char* xmlPath = nullptr);
+		static bool EditTexture(CWString name, CWString path, Color transparentColor = COLOR_BLACK, const char* xmlPath = nullptr);
 	private:
 		bool AddAnimation(CWString name, CAnimation* animation);
-		bool AddSprite(CWString name, CSprite *sprite);
 
 	private:
 		friend class CAnimation;
