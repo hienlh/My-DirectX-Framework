@@ -28,26 +28,22 @@ void BallController::SetState(int state)
 		rigidbody->SetVelocity(Vector2(NULL, 0));
 		break;
 	case MOVE_RIGHT:
-		anim->SetCurrentAnimation(L"Mario Walk Right");
 		rigidbody->SetVelocity(.1, NULL);
 
 		m_state &= ~State::MOVE_LEFT;
 		m_state |= State::MOVE_RIGHT;
 		break;
 	case ~MOVE_RIGHT:
-		anim->SetCurrentAnimation(L"Mario Idle Right");
 		rigidbody->SetVelocity(0);
 		m_state &= ~State::MOVE_RIGHT;
 		break;
 	case MOVE_LEFT:
-		anim->SetCurrentAnimation(L"Mario Walk Left");
 		rigidbody->SetVelocity(-.1);
 
 		m_state &= ~State::MOVE_RIGHT;
 		m_state |= State::MOVE_LEFT;
 		break;
 	case ~MOVE_LEFT:
-		anim->SetCurrentAnimation(L"Mario Idle Left");
 		rigidbody->SetVelocity(0);
 		m_state &= ~State::MOVE_LEFT;
 		break;
@@ -58,10 +54,8 @@ void BallController::SetState(int state)
 		rigidbody->SetVelocity(NULL, 0);
 		break;
 	case IDLE:
-		if((m_state & MOVE_RIGHT) == MOVE_RIGHT)
-			anim->SetCurrentAnimation(L"Mario Idle Right");
+		if((m_state & MOVE_RIGHT) == MOVE_RIGHT){}
 		else if((m_state & MOVE_LEFT) == MOVE_LEFT)
-			anim->SetCurrentAnimation(L"Mario Idle Left");
 		rigidbody->SetVelocity(Vector2(0, 0));
 
 		m_state &= ~State::JUMP;
@@ -77,42 +71,86 @@ void BallController::SetState(int state)
 void BallController::OnCollisionEnter(CCollision* collision)
 {
 	//CDebug::Log("Collision ground \n");
-	SetState(IDLE);
 }
 
 void BallController::Update(DWORD dt)
 {
 	CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
 	CTransform *transform = m_pGameObject->GetComponent<CTransform>();
+	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
+	Vector2 velocity = rigidbody->GetVelocity();
+
+	if(velocity.y > 0)
+	{
+		anim->SetBool(L"isFall", true);
+		anim->SetBool(L"isLandfall", false);
+	}
+	else
+	{
+		if (velocity.y == 0 && anim->GetBool(L"isFall")) {
+			anim->SetBool(L"isLandfall", true);
+			anim->SetBool(L"isFall", false);
+		}
+		else {
+			anim->SetBool(L"isFall", false);
+			anim->SetBool(L"isLandfall", false);
+		}
+	}
 
 	CInput *input = CInput::GetInstance();
 
+	if (input->KeyDown(DIK_SPACE)) {
+		anim->SetBool(L"isShoot", true);
+	}
+	if (input->KeyUp(DIK_SPACE)) {
+		anim->SetBool(L"isShoot", false);
+	}
+
 	if (input->KeyDown(DIK_UPARROW)) {
-		//CDebug::Log("Jump \n");
-		SetState(JUMP);
+		if (!anim->GetBool(L"isJump")) {
+			anim->SetBool(L"isJump", true);
+			rigidbody->AddVelocity(Vector2(0, -.3));
+		}
 	}
 	if (input->KeyUp(DIK_UPARROW)) {
-		//CDebug::Log("Jump \n");
-		SetState(~JUMP);
+		anim->SetBool(L"isJump", false);
 	}
 
+	if (anim->GetBool(L"isDash") && anim->GetCurrentAnimation()->IsLastFrame())
+	{
+		const bool isLeft = renderer->GetFlipX();
+		rigidbody->AddVelocity(Vector2(isLeft ? 0.2 : -0.2, 0));
+		anim->SetBool(L"isDash", false);
+	}
+
+	if (input->KeyDown(DIK_Z)) {
+		if (!anim->GetBool(L"isDash")) {
+			const bool isLeft = renderer->GetFlipX();
+			rigidbody->AddVelocity(Vector2(isLeft ? -0.2 : 0.2, 0));
+			anim->SetBool(L"isDash", true);
+		}
+	}
+	if (input->KeyUp(DIK_Z)) {
+	}
 
 	if (input->KeyDown(DIK_LEFTARROW)) {
-		//CDebug::Log("Move Left \n");
+		renderer->SetFlipX(true);
+		anim->SetBool(L"isRun", true);
 		SetState(MOVE_LEFT);
 	}
 	if (input->KeyUp(DIK_LEFTARROW)) {
-		//CDebug::Log("UnMove Left \n");
+		anim->SetBool(L"isRun", false);
 		SetState(~MOVE_LEFT);
 	}
 
 	if (input->KeyDown(DIK_RIGHTARROW)) {
-		//CDebug::Log("Move Right \n");
+		renderer->SetFlipX(false);
+		anim->SetBool(L"isRun", true);
 		SetState(MOVE_RIGHT);
 	}
 	if (input->KeyUp(DIK_RIGHTARROW)) {
-		//CDebug::Log("UnMove Right \n");
+		anim->SetBool(L"isRun", false);
 		SetState(~MOVE_RIGHT);
 	}
 

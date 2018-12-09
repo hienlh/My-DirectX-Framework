@@ -17,7 +17,7 @@ bool CScene::InitMainCamera()
 	bool result = false;
 	do
 	{
-		m_pMainCamera = CGameObject::Instantiate(L"Main Camera", VECTOR2_ZERO);
+		m_pMainCamera = new CGameObject(L"Main Camera");
 		m_pMainCamera->AddComponent<CCamera>();
 		const auto camera = m_pMainCamera->GetComponent<CCamera>();
 

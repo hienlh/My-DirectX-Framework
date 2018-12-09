@@ -26,7 +26,9 @@ std::vector<Rect> ParseXML(const char* fileName, size_t depth)
 	for (size_t iSprite = 0; iSprite < result.size(); iSprite++)
 	{
 		result[iSprite] = { Vector2(child->IntAttribute("x"), child->IntAttribute("y")),
-									Vector2(child->IntAttribute("w"), child->IntAttribute("h")) };
+									Vector2(child->IntAttribute("w") != 0 ? child->IntAttribute("w") : child->IntAttribute("width"),
+										child->IntAttribute("h")!= 0 ? child->IntAttribute("h") : child->IntAttribute("height")
+									) };
 		child = child->NextSiblingElement();
 	}
 
@@ -87,7 +89,7 @@ bool CResourceManager::AddTexture(CWString name, CWString path, Color transparen
 	if (auto tmp = CGraphic::GetInstance()->CreateTexture(path, transparentColor)) {
 		if(xmlPath)
 		{
-			std::vector<Rect> rects = ParseXML(xmlPath, 2);
+			std::vector<Rect> rects = ParseXML(xmlPath, 1);
 			const DWORD size = rects.size();
 			for (int i = 0; i < size; i++)
 			{

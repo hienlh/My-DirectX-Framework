@@ -6,6 +6,21 @@
 
 using namespace Framework;
 
+CGameObject::CGameObject(LPCWSTR name, Vector2 position, bool addIntoCurrentScene)
+{
+	if (!this->Init())
+		delete this;
+
+	if (addIntoCurrentScene) {
+		CScene* pScene = CGameManager::GetInstance()->GetCurrentScene();
+		if (pScene)
+			pScene->AddGameObject(this);
+	}
+
+	this->m_Name = name;
+	this->GetComponent<CTransform>()->Set_Position(position);
+}
+
 bool CGameObject::Init()
 {
 	bool result = false;
@@ -13,10 +28,6 @@ bool CGameObject::Init()
 	{
 		if (!this->AddComponent<CTransform>())
 			break;
-
-		CScene* pScene = CGameManager::GetInstance()->GetCurrentScene();
-		if (pScene)
-			pScene->AddGameObject(this);
 
 		result = true;
 	} while (false);
@@ -30,58 +41,6 @@ void CGameObject::Release()
 		SAFE_DELETE(pComponent.second);
 	}
 	m_pComponents.clear();
-}
-
-CGameObject* CGameObject::Instantiate()
-{
-	CGameObject* instance = nullptr;
-	bool result = false;
-	do
-	{
-		SAFE_ALLOC(instance, CGameObject);
-
-		if (!instance->Init())
-			break;
-
-		result = true;
-	} while (false);
-
-	if (!result)
-	{
-		if (instance)
-			instance->Release();
-		SAFE_DELETE(instance);
-	}
-	return instance;
-}
-
-CGameObject* CGameObject::Instantiate(LPCWSTR name, Vector2 position)
-{
-	CGameObject* instance = nullptr;
-	SAFE_ALLOC(instance, CGameObject);
-
-
-	if (!instance->Init())
-		SAFE_DELETE(instance);
-
-	instance->m_Name = name;
-	instance->GetComponent<CTransform>()->Set_Position(position);
-
-	return instance;
-}
-
-CGameObject* CGameObject::Instantiate(Vector2 position)
-{
-	CGameObject* instance = nullptr;
-	SAFE_ALLOC(instance, CGameObject);
-
-
-	if (!instance->Init())
-		SAFE_DELETE(instance);
-
-	instance->GetComponent<CTransform>()->Set_Position(position);
-
-	return instance;
 }
 
 void CGameObject::Destroy(CGameObject*& instance)

@@ -17,6 +17,7 @@
 
 #define SAFE_DELETE(p) if (p) { delete p; p = nullptr; }
 #define SAFE_ALLOC(p, object_type) if (!p) { p = new object_type(); }
+#define SAFE_ALLOC1(p, objectType, param) if (!p) { p = new objectType(param); }
 
 #define VECTOR3_ZERO { 0, 0, 0 } 
 #define VECTOR3_ZERO { 0, 0, 0 }

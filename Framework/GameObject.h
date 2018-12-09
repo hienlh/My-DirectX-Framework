@@ -19,6 +19,8 @@ namespace Framework
 		// Cons / Des
 	private:
 		CGameObject() = default;
+	public:
+		CGameObject(LPCWSTR name, Vector2 position = VECTOR2_ZERO, bool addIntoCurrentScene = true);
 		~CGameObject() = default;
 
 		// Friends
@@ -107,9 +109,6 @@ namespace Framework
 
 		// Static methods
 	public:
-		static CGameObject* Instantiate();
-		static CGameObject* Instantiate(LPCWSTR name, Vector2 position);
-		static CGameObject* Instantiate(Vector2 position);
 		static void Destroy(CGameObject* &instance);
 	};
 }

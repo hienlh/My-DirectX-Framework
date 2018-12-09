@@ -9,6 +9,7 @@ namespace Framework {
 		//Properties
 	protected:
 		Vector2 m_Offset;
+		Vector2 m_Anchor;
 		Bound m_Bound;
 		bool m_IsTrigger;
 		bool m_UsedByEffector;
@@ -26,11 +27,13 @@ namespace Framework {
 		bool GetUsedByEffector() const;
 		bool GetIsDebugging() const;
 		bool GetAutoBoundSize() const;
+		Vector2 GetAnchor() const;
 
 		void SetUsedByEffector(bool usedByEffector);
 		/*void SetBoundSize(Vector2 size);*/
 		void SetOffset(Vector2 offset);
 		void SetIsDebugging(bool isDebugging);
 		void SetAutoBoundSize(bool autoBoundSize);
+		void SetAnchor(Vector2 anchor);
 	};
 }

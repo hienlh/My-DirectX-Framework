@@ -12,14 +12,21 @@ CCollider::CCollider(CGameObject* gameObject) : CComponent(gameObject)
 	m_UsedByEffector = true;
 	m_IsDebugging = false;
 	m_AutoBoundSize = false;
+	m_Anchor = { 0.5, 0.5 };
 }
 
+
+/**
+ * \brief Main function to calculate the bound for handling collision
+ * \return The global bound
+ */
 Bound CCollider::GetBoundGlobal() const
 {
-	Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-	Vector2 scale = m_pGameObject->GetComponent<CTransform>()->Get_Scale();
-	Vector2 size = Vector2(m_Bound.Size().x * scale.x, m_Bound.Size().y * scale.y);
-	return Bound(pos + m_Offset, size);
+	const Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+	const Vector2 scale = m_pGameObject->GetComponent<CTransform>()->Get_Scale();
+	const Vector2 size = Vector2(m_Bound.Size().x * scale.x, m_Bound.Size().y * scale.y);
+	const Vector2 topLeft = Vector2(pos.x - m_Anchor.x * size.x, pos.y - m_Anchor.y * size.y);
+	return Bound(topLeft + m_Offset, size);
 }
 
 bool CCollider::GetUsedByEffector() const
@@ -35,6 +42,11 @@ bool CCollider::GetIsDebugging() const
 bool CCollider::GetAutoBoundSize() const
 {
 	return m_AutoBoundSize;
+}
+
+Vector2 CCollider::GetAnchor() const
+{
+	return m_Anchor;
 }
 
 void CCollider::SetUsedByEffector(bool usedByEffector)
@@ -60,4 +72,9 @@ void CCollider::SetIsDebugging(bool isDebugging)
 void CCollider::SetAutoBoundSize(bool autoBoundSize)
 {
 	m_AutoBoundSize = autoBoundSize;
+}
+
+void CCollider::SetAnchor(Vector2 anchor)
+{
+	m_Anchor = anchor;
 }

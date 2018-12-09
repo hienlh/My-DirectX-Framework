@@ -284,8 +284,8 @@ void CPhysic::SweptAABB(
 		ty_exit = dy_exit / dy;
 	}
 
-
 	//if ((tx_entry < 0.0f && ty_entry < 0.0f) || tx_entry > 1.0f || ty_entry > 1.0f) return;
+	// Comment Because: Continue calculate for process overlapping
 
 	const float t_entry = max(tx_entry, ty_entry);
 	const float t_exit = min(tx_exit, ty_exit);

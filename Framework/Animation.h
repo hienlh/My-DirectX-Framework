@@ -19,11 +19,12 @@ namespace Framework {
 		DWORD m_frameIndex = 0;
 		DWORD m_timeElapse = 0;
 		DWORD m_defaultTime = 0;
+		bool m_loop = true;
 
 	private:
 		CAnimation() = default;
 	public:
-		CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100);
+		CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100, bool loop = true);
 		~CAnimation() = default;
 
 	private:
@@ -35,10 +36,17 @@ namespace Framework {
 		// Getter / Setter
 	public:
 		CSprite* GetSprite();
+		bool IsLastFrame() const;
+		bool GetIndexCurrentFrame() const { return m_frameIndex; }
+
+		CAnimation* SetIndexCurrentFrame(int index);
 
 		//Method
 	public:
-		void Add(SFrame frame);
-		void Add(CSprite* sprite, DWORD pos = -1, DWORD time = 0);
+		CAnimation* Add(CWString textureName, DWORD indexSprite, DWORD pos = -1, DWORD time = 0);
+		CAnimation* Add(CSprite* sprite, DWORD pos = -1, DWORD time = 0);
+		void Refresh() { m_frameIndex = 0; }
+	private:
+		CAnimation* Add(SFrame frame);
 	};
 }

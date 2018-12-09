@@ -3,7 +3,6 @@
 #include "Macros.h"
 #include "Graphic.h"
 #include "GameManager.h"
-#include "CTexture.h"
 #include "ResourceManager.h"
 #include "Animator.h"
 
