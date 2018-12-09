@@ -44,7 +44,9 @@ void CAnimation::Update(DWORD dt)
 			else m_frameIndex--;
 		}
 	}
-	m_timeElapse += dt;
+
+	if(!m_isPause)
+		m_timeElapse += dt;
 }
 
 CSprite* CAnimation::GetSprite()

@@ -20,6 +20,7 @@ namespace Framework {
 		DWORD m_timeElapse = 0;
 		DWORD m_defaultTime = 0;
 		bool m_loop = true;
+		bool m_isPause = false;
 
 	private:
 		CAnimation() = default;
@@ -46,6 +47,8 @@ namespace Framework {
 		CAnimation* Add(CWString textureName, DWORD indexSprite, DWORD pos = -1, DWORD time = 0);
 		CAnimation* Add(CSprite* sprite, DWORD pos = -1, DWORD time = 0);
 		void Refresh() { m_frameIndex = 0; }
+		void Pause() { m_isPause = true; }
+		void Play() { m_isPause = false; }
 	private:
 		CAnimation* Add(SFrame frame);
 	};

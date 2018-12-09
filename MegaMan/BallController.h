@@ -18,6 +18,7 @@ public:
 
 private:
 	int m_state;
+	bool m_isCollideLadder = false;
 
 	//Cons / Des
 private:

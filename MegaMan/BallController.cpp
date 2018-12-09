@@ -70,7 +70,12 @@ void BallController::SetState(int state)
 
 void BallController::OnCollisionEnter(CCollision* collision)
 {
-	//CDebug::Log("Collision ground \n");
+	if (collision->GetCollider()->GetName() == L"Ladder" || collision->GetOtherCollider()->GetName() == L"Ladder") {
+		m_isCollideLadder = true;
+	}
+	else {
+
+	}
 }
 
 void BallController::Update(DWORD dt)
@@ -91,6 +96,7 @@ void BallController::Update(DWORD dt)
 		if (velocity.y == 0 && anim->GetBool(L"isFall")) {
 			anim->SetBool(L"isLandfall", true);
 			anim->SetBool(L"isFall", false);
+			anim->SetBool(L"isJump", false);
 		}
 		else {
 			anim->SetBool(L"isFall", false);
@@ -111,10 +117,18 @@ void BallController::Update(DWORD dt)
 		if (!anim->GetBool(L"isJump")) {
 			anim->SetBool(L"isJump", true);
 			rigidbody->AddVelocity(Vector2(0, -.3));
+
+
 		}
+		else {
+			if (!anim->GetBool(L"isClimbLadder") && m_isCollideLadder) {
+
+			}
+		}
+
+
 	}
 	if (input->KeyUp(DIK_UPARROW)) {
-		anim->SetBool(L"isJump", false);
 	}
 
 	if (anim->GetBool(L"isDash") && anim->GetCurrentAnimation()->IsLastFrame())

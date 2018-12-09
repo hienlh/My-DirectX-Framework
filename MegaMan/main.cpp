@@ -24,37 +24,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
 	pResourceManager->AddTexture(L"Block", L".\\Resources\\Block.png");
+	pResourceManager->AddTexture(L"Stairs", L".\\Resources\\Stairs.png"); 
 	pResourceManager->AddTexture(L"Background", L".\\Resources\\Background.jpg");
 	pResourceManager->AddTexture(L"MegaManX", L".\\Resources\\Player\\MegaManXEdited.png", NULL, ".\\Resources\\Player\\MegaManXEdited.xml");
 	pResourceManager->AddTexture(L"MegaManX-Dash", L".\\Resources\\Player\\MegaManX-Dash.png", NULL, ".\\Resources\\Player\\MegaManX-Dash.xml");
 
+	new CAnimation(L"MegaManX Dash", L"MegaManX-Dash", 0, 23, 20, false);
 
 	new CAnimation(L"MegaManX Init", L"MegaManX", 0, 8, 100, false);
 
 	CAnimation *anim = new CAnimation(L"MegaManX Idle", L"MegaManX", 8, 2, 100, true);
 	anim->Add(L"MegaManX", 7, 0, 2000);
 
-	new CAnimation(L"MegaManX Run", L"MegaManX", 14, 10, 100, true);
+	anim = new CAnimation(L"MegaManX Idle Shoot", L"MegaManX", 10, 3, 120, false);
+	anim->Add(L"MegaManX", 11)->Add(L"MegaManX", 10);
 
-	new CAnimation(L"MegaManX Dash", L"MegaManX-Dash", 0, 23, 20, false);
+	new CAnimation(L"MegaManX Run", L"MegaManX", 13, 10, 100, true);
 
 	new CAnimation(L"MegaManX Run Shoot", L"MegaManX", 24, 10, 100, true);
+
+	new CAnimation(L"MegaManX ClimbLadder", L"MegaManX", 62, 4, 100, true);
 
 	anim = new CAnimation(L"MegaManX Jump", L"MegaManX", 39, 1, 100, false);
 	anim->Add(L"MegaManX", 38)
 		->Add(L"MegaManX", 37)
 		->Add(L"MegaManX", 36);
-	
-	new CAnimation(L"MegaManX Jump Shoot", L"MegaManX", 41, 3, 120, true);
 
 	new CAnimation(L"MegaManX Fall", L"MegaManX", 37, 1, 120, false);
 	new CAnimation(L"MegaManX Landfall", L"MegaManX", 38, 2, 120, false);
+	
+	new CAnimation(L"MegaManX Jump Shoot", L"MegaManX", 41, 3, 120, true);
 
 	new CAnimation(L"MegaManX Fall Shoot", L"MegaManX", 44, 3, 120, true);
-
-	anim = new CAnimation(L"MegaManX Idle Shoot", L"MegaManX", 10, 2, 120, false);
-	anim->Add(L"MegaManX", 11)->Add(L"MegaManX", 10);
-
 
 	do
 	{
@@ -74,6 +75,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			AddAnimation(L"MegaManX Run")->
 			AddAnimation(L"MegaManX Dash")->
 			AddAnimation(L"MegaManX Run Shoot")->
+			AddAnimation(L"MegaManX Jump Shoot")->
+			AddAnimation(L"MegaManX Fall Shoot")->
+			AddAnimation(L"MegaManX ClimbLadder")->
 			AddBool(L"isIdle", false)->
 			AddBool(L"isJump", false)->
 			AddBool(L"isFall", false)->
@@ -81,6 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			AddBool(L"isShoot", false)->
 			AddBool(L"isRun", false)->
 			AddBool(L"isDash", false)->
+			AddBool(L"isClimbLadder",false)->
 			AddTransition(L"MegaManX Init", L"MegaManX Idle")->
 			AddTransition(L"MegaManX Idle", L"MegaManX Idle Shoot", true, L"isShoot", true)->
 			AddTransition(L"MegaManX Idle", L"MegaManX Dash", true, L"isDash", true)->
@@ -94,8 +99,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			AddTransition(L"MegaManX Landfall", L"MegaManX Idle")->
 			AddTransition(L"MegaManX Run", L"MegaManX Idle", true, L"isRun", false)->
 			AddTransition(L"MegaManX Run", L"MegaManX Jump", true, L"isJump", true)->
+
+			AddTransition(L"MegaManX Idle", L"MegaManX ClimbLadder", true, L"isClimbLadder", true)->
+			AddTransition(L"MegaManX ClimbLadder", L"MegaManX Idle", true, L"isClimbLadder", false)->
+
+
 			AddTransition(L"MegaManX Run", L"MegaManX Run Shoot", true, L"isShoot", true, true)->
 			AddTransition(L"MegaManX Run Shoot", L"MegaManX Run", true, L"isShoot", false, true)->
+
+			AddTransition(L"MegaManX Jump", L"MegaManX Jump Shoot", true, L"isShoot", true, true)->
+			AddTransition(L"MegaManX Jump Shoot", L"MegaManX Jump", true, L"isShoot", false, true)->
+
+			AddTransition(L"MegaManX Fall", L"MegaManX Fall Shoot", true, L"isShoot", true, true)->
+			AddTransition(L"MegaManX Fall Shoot", L"MegaManX Jump", true, L"isShoot", false, true)->
+
 			AddTransition(L"MegaManX Run", L"MegaManX Dash", true, L"isDash", true);
 		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
@@ -118,6 +135,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pLeftBlock->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pLeftBlock->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 		pLeftBlock->GetComponent<CBoxCollider>()->SetAutoBoundSize(true);
+		pLeftBlock->GetComponent<CTransform>()->Set_Scale(Vector2(10, 1));
+
+		CGameObject* Stairs = new CGameObject(L"Stairs", Vector2(500, 180));
+		Stairs->AddComponent<CRenderer>()->SetSprite(L"Stairs");
+		Stairs->GetComponent<CRenderer>()->SetZOrder(0);
+		Stairs->AddComponent<CRigidbody>()->SetGravityScale(0);
+		Stairs->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		Stairs->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+		Stairs->GetComponent<CBoxCollider>()->SetAutoBoundSize(true);
+		Stairs->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));               
 
 		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pPlayer;
 		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(false);
