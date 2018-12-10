@@ -19,11 +19,13 @@ namespace Framework {
 		// Getter / Setter
 	public:
 		inline Vector2 GetVelocity() { return _velocity; }
-		void SetVelocity(Vector2 velocity) { _velocity = velocity; }
-		void SetVelocity(float x = std::numeric_limits<float>::infinity(), float y = std::numeric_limits<float>::infinity())
+		void SetVelocity(Vector2 velocity) { SetVelocity(velocity.x, velocity.y); }
+		void SetVelocity(float x = MAX_VELOCITY, float y = MAX_VELOCITY)
 		{
-			if (x != std::numeric_limits<float>::infinity()) _velocity.x = x;
-			if (y != std::numeric_limits<float>::infinity()) _velocity.y = y;
+			if (fabs(x - MAX_VELOCITY) > EPSILON) 
+				_velocity.x = x;
+			if (fabs(y - MAX_VELOCITY) > EPSILON) 
+				_velocity.y = y;
 		}
 		void AddVelocity(Vector2 velocity) { _velocity += velocity; }
 		void MinarVelocity(Vector2 velocity) { _velocity -= velocity; }

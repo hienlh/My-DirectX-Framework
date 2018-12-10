@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas createBy="hienlh1298" imagePath="SNES_-_Mega_Man_X3_-_Zero.png" width="920" height="922">
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_0"	x="14"	y="854"	width="22"	height="60" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_1"	x="56"	y="858"	width="54"	height="53" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_2"	x="116"	y="856"	width="49"	height="56" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_3"	x="175"	y="858"	width="42"	height="47" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_4"	x="225"	y="859"	width="46"	height="40" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_5"	x="281"	y="853"	width="38"	height="53" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_6"	x="331"	y="855"	width="36"	height="52" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_7"	x="374"	y="860"	width="50"	height="42" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_8"	x="433"	y="859"	width="46"	height="44" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_9"	x="482"	y="861"	width="46"	height="48" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_10"	x="535"	y="861"	width="43"	height="49" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_11"	x="586"	y="866"	width="50"	height="46" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_12"	x="646"	y="864"	width="50"	height="43" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_13"	x="702"	y="871"	width="42"	height="38" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_14"	x="747"	y="871"	width="39"	height="36" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_15"	x="793"	y="867"	width="41"	height="32" />
+	<SubTexture name="SNES_-_Mega_Man_X3_-_Zero_16"	x="843"	y="876"	width="60"	height="20" />
+</TextureAtlas>

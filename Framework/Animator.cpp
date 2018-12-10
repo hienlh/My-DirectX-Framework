@@ -198,7 +198,7 @@ void CAnimator::Update(DWORD dt)
 				}
 				else
 				{
-					desAnimation->SetIndexCurrentFrame(m_pCurrentAnimation->GetIndexCurrentFrame() + 1);
+					desAnimation->SetIndexCurrentFrame(m_pCurrentAnimation->GetIndexCurrentFrame());
 				}
 				m_pCurrentAnimation = desAnimation;
 			}

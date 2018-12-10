@@ -38,6 +38,12 @@ namespace Framework {
 
 		int getQuadrant(Rect rectangle) const;
 
+		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;
+
+		void SaveToXml(const char* xmlPath);
+
+		void LoadFromXml(tinyxml2::XMLElement *node);
+
 		/**
 		 * \brief Get id of the smallest sub node consist of this rectangle 
 		 * \param rectangle 

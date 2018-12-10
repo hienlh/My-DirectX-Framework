@@ -106,17 +106,18 @@ bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
 
 void CPhysic::Update(DWORD dt)
 {
-	//TODO make 2 objects not overlap each other, if they overlap, move movable object
-
+	//Gravity for dynamic gameObjects
 	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetListGameObject();
 	for (CGameObject* const game_object : list)
 	{
 		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
 		{
-			rigid->_velocity.y += rigid->GetGravityScale() * GRAVITY;
+			if(!rigid->GetIsKinematic())
+				rigid->_velocity.y += rigid->GetGravityScale() * GRAVITY;
 		}
 	}
 
+	// Collision test
 	CScene* currentScreen = CGameManager::GetInstance()->GetCurrentScene();
 	auto listCollierObject = currentScreen->GetListColliderObject();
 	for (CGameObject* const object : listCollierObject)
@@ -142,6 +143,12 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 	staticObject->GetComponent<CCollider>()->GetBoundGlobal().GetBound(st, sl, sr, sb);
 	moveObject->GetComponent<CCollider>()->GetBoundGlobal().GetBound(mt, ml, mr, mb);
 
+	const bool mEffect = moveObject->GetComponent<CCollider>()->GetUsedByEffector();
+	const bool sEffect = staticObject->GetComponent<CCollider>()->GetUsedByEffector();
+
+	const bool mKinematic = moveObject->GetComponent<CRigidbody>()->GetIsKinematic();
+	const bool sKinematic = staticObject->GetComponent<CRigidbody>()->GetIsKinematic();
+
 	Vector2 mv = moveObject->GetComponent<CRigidbody>()->GetVelocity();
 	Vector2 sv = staticObject->GetComponent<CRigidbody>()->GetVelocity();
 	const Vector2 dv = (mv - sv) * dt;
@@ -157,11 +164,6 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 
 	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0) 
 	{
-		auto a = moveObject->GetComponent<CTransform>()->Get_Position();
-		//CDebug::Log("Move (%f, %f)\n", a.x, a.y);
-		a = staticObject->GetComponent<CTransform>()->Get_Position();
-		//CDebug::Log("Static (%f, %f)\n", a.x, a.y);
-		auto b = IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr));
 		moveObject->GetComponent<CTransform>()->PlusPosition(mv * dt * t - mv*dt*0.01);
 		staticObject->GetComponent<CTransform>()->PlusPosition(sv * dt * t - sv * dt*0.01);
 		//deflect
@@ -174,16 +176,14 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 			sv = Vector2(sv.x, 0);
 		}
 
-		moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
-		staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
+		if (!mKinematic) moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
+		if (!sKinematic) staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
 		return t;
 	}
 
 	if (t >= 0 && t < 1) {
 		if(t > 0) NotifyCollisionEnter(new CCollision(moveObject, staticObject));
 
-		const bool mEffect = moveObject->GetComponent<CCollider>()->GetUsedByEffector();
-		const bool sEffect = staticObject->GetComponent<CCollider>()->GetUsedByEffector();
 		CTransform *mTran = moveObject->GetComponent<CTransform>();
 		CTransform *sTran = staticObject->GetComponent<CTransform>();
 
@@ -194,16 +194,16 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 
 		//deflect
 		if (nx != 0) {
-			mv = mEffect ? Vector2(-mv.x, mv.y) : Vector2(0, mv.y);
-			sv = sEffect ? Vector2(-sv.x, sv.y) : Vector2(0, sv.y);
-			if (mEffect) mTran->PlusPosition(Vector2(mv.x, 0) * dt * rt);
-			if (sEffect) sTran->PlusPosition(Vector2(sv.x, 0) * dt * rt);
+			mv = mEffect && !mKinematic ? Vector2(-mv.x, mv.y) : Vector2(0, mv.y);
+			sv = sEffect && !sKinematic ? Vector2(-sv.x, sv.y) : Vector2(0, sv.y);
+			if (mEffect && !mKinematic) mTran->PlusPosition(Vector2(mv.x, 0) * dt * rt);
+			if (sEffect && !sKinematic) sTran->PlusPosition(Vector2(sv.x, 0) * dt * rt);
 		}
 		if (ny != 0) {
-			mv = mEffect ? Vector2(mv.x, -mv.y) : Vector2(mv.x, 0);
-			sv = sEffect ? Vector2(sv.x, -sv.y) : Vector2(sv.x, 0);
-			if (mEffect) mTran->PlusPosition(Vector2(0, mv.y) * dt * rt);
-			if (sEffect) sTran->PlusPosition(Vector2(0, sv.y) * dt * rt);
+			mv = mEffect && !mKinematic ? Vector2(mv.x, -mv.y) : Vector2(mv.x, 0);
+			sv = sEffect && !sKinematic ? Vector2(sv.x, -sv.y) : Vector2(sv.x, 0);
+			if (mEffect && !mKinematic) mTran->PlusPosition(Vector2(0, mv.y) * dt * rt);
+			if (sEffect && !sKinematic) sTran->PlusPosition(Vector2(0, sv.y) * dt * rt);
 		}
 
 		moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);

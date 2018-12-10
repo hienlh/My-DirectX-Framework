@@ -27,6 +27,9 @@
     <ClCompile Include="GroundController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="MegaManPowerController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h">
@@ -36,6 +39,9 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="GroundController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MegaManPowerController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

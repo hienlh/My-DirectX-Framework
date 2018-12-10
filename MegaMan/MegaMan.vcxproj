@@ -23,6 +23,7 @@
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="GroundController.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MegaManPowerController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.vcxproj">
@@ -33,6 +34,7 @@
     <ClInclude Include="BallController.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="GroundController.h" />
+    <ClInclude Include="MegaManPowerController.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

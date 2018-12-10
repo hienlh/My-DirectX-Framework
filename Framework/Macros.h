@@ -38,3 +38,6 @@
 #define OVER_Y 38
 
 #define GRAVITY 0.01
+
+#define MAX_VELOCITY 1e9
+#define EPSILON 1e-9

@@ -13,9 +13,10 @@ namespace Framework
 		std::set<CGameObject*> m_colliderObjectList = {};
 		CQuadTree *m_pQuadTree = nullptr;
 		CGameObject *m_pMainCamera = nullptr;
+		bool m_loadedQuadTree = false;
 
 	public:
-		CScene() = default;
+		CScene();
 		~CScene() = default;
 
 	private:
@@ -31,18 +32,22 @@ namespace Framework
 		CQuadTree* GetQuadTree() const { return m_pQuadTree; }
 
 	public:
-		static CScene* Instantiate();
 		static bool Destroy(CScene* scene);
 
 		void Update(DWORD dt);
 		void Render();
 
-		void AddGameObject(Framework::CGameObject* gameObject);
-		void AddGameObjects(int amount, CGameObject* gameObject, ...);
-
 		//Internal Method
 	private:
 		void AddColliderObject(CGameObject* gameObject);
+
+		//Method
+	public:
+		bool AddGameObject(Framework::CGameObject* gameObject);
+		CGameObject* FindGameObject(CWString name);
+		CGameObject* FindGameObject(DWORD id);
+		void SaveQuadTree() const;
+		void LoadQuadTree() const;
 
 		//Friend
 	public:

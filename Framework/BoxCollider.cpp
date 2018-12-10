@@ -25,10 +25,11 @@ void CBoxCollider::Config(bool isTrigger, bool autoBoundSize, bool usedByEffecto
 	m_IsDebugging = isDebugging;
 }
 
-void CBoxCollider::SetSize(Vector2 size)
+CBoxCollider* CBoxCollider::SetSize(Vector2 size)
 {
 	m_Size = size;
 	m_Bound = Bound(Vector2(0, 0), m_Size);
+	return this;
 }
 
 void CBoxCollider::Update(DWORD dt)

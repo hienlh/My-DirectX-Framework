@@ -49,6 +49,8 @@ bool CGameManager::Run()
 	DWORD frameStart = GetTickCount();
 	DWORD tickPerFrame = 1000 / FRAME_RATE;
 
+	m_currentScene->LoadQuadTree();
+
 	bool done = false;
 	while (!done)
 	{
@@ -68,7 +70,7 @@ bool CGameManager::Run()
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
 		//DWORD dt = now - frameStart;
-		DWORD dt = 20; // For Debug
+		DWORD       dt = 20; // For Debug
 
 		if (dt >= tickPerFrame)
 		{

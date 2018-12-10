@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "QuadTree.h"
 #include "Graphic.h"
+#include "Rigidbody.h"
+#include "GameManager.h"
 
 using namespace Framework;
 
@@ -27,12 +29,25 @@ void CQuadTree::Render()
 
 void CQuadTree::clear()
 {
-	m_pObjects.clear();
+	//Remove dynamic gameObjects
+	auto tmp = m_pObjects;
+	for (CGameObject* game_object : tmp)
+	{
+		if (!game_object->GetComponent<CRigidbody>()->GetIsKinematic()) 
+			m_pObjects.remove(game_object);
+	}
 
+	int amountGameObjectsOfChild = 0;
 	if(m_pNodes[0])
 		for (int i = 0; i < 4; i++)
 		{
 			m_pNodes[i]->clear();
+			amountGameObjectsOfChild += m_pNodes[i]->m_pObjects.size();
+		}
+
+	if (!amountGameObjectsOfChild)
+		for (int i = 0; i < 4; i++)
+		{
 			SAFE_DELETE(m_pNodes[i]);
 		}
 }
@@ -70,6 +85,74 @@ int CQuadTree::getQuadrant(Rect rectangle) const
 	}
 
 	return index;
+}
+
+tinyxml2::XMLElement* CQuadTree::ToXmlElement(tinyxml2::XMLDocument &doc) const
+{
+	tinyxml2::XMLElement *result = doc.NewElement("Node");
+
+	result->SetAttribute("id", m_id);
+	result->SetAttribute("x", m_bounds.left);
+	result->SetAttribute("y", m_bounds.top);
+	result->SetAttribute("width", m_bounds.Size().x);
+	result->SetAttribute("height", m_bounds.Size().y);
+
+	if (m_pObjects.size()) {
+		auto gameObjects = doc.NewElement("GameObjects");
+		for (CGameObject* const game_object : m_pObjects)
+		{
+			auto gameObject = doc.NewElement("GameObjectID");
+			gameObject->SetAttribute("id", static_cast<int>(game_object->GetID()));
+			gameObjects->InsertEndChild(gameObject);
+		}
+		result->InsertFirstChild(gameObjects);
+	}
+
+	if(m_pNodes[0])
+	{
+		auto pNodes = doc.NewElement("ChildNodes");
+		for (CQuadTree* const node : m_pNodes)
+		{
+			pNodes->InsertEndChild(node->ToXmlElement(doc));
+		}
+		result->InsertEndChild(pNodes);
+	}
+
+	return result;
+}
+
+void CQuadTree::SaveToXml(const char* xmlPath)
+{
+	FILE* file;
+	fopen_s(&file, xmlPath, "wb");
+
+	tinyxml2::XMLDocument doc;
+
+	auto pRoot = doc.NewElement("QuadTree");
+	doc.InsertFirstChild(pRoot);
+
+	pRoot->InsertFirstChild(ToXmlElement(doc));
+
+	doc.SaveFile(file);
+	fclose(file);
+}
+
+void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
+{
+	m_id = node->IntAttribute("id");
+	m_bounds = Bound(Vector2(node->IntAttribute("y"), node->IntAttribute("x")),
+	                 Vector2(node->IntAttribute("width"), node->IntAttribute("height")));
+	if(auto gameObjects = node->FirstChildElement("GameObjects"))
+	{
+		tinyxml2::XMLElement * gameObject = gameObjects->FirstChildElement("GameObjectID");
+		CScene *scene = CGameManager::GetInstance()->GetCurrentScene();
+		while (gameObject != nullptr)
+		{
+			m_pObjects.push_back(scene->FindGameObject(gameObject->IntAttribute("id", -1)));
+			gameObject = gameObject->NextSiblingElement("GameObjectID");
+		}
+
+	}
 }
 
 int CQuadTree::getFitId(Rect rectangle) const

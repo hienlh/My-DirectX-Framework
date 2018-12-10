@@ -6,19 +6,21 @@
 
 using namespace Framework;
 
+DWORD CGameObject::staticID = 0;
+
 CGameObject::CGameObject(LPCWSTR name, Vector2 position, bool addIntoCurrentScene)
 {
 	if (!this->Init())
 		delete this;
+	this->m_id = ++staticID;
+	this->m_Name = name;
+	this->GetComponent<CTransform>()->Set_Position(position);
 
 	if (addIntoCurrentScene) {
 		CScene* pScene = CGameManager::GetInstance()->GetCurrentScene();
 		if (pScene)
-			pScene->AddGameObject(this);
+			if (!pScene->AddGameObject(this)) delete this;
 	}
-
-	this->m_Name = name;
-	this->GetComponent<CTransform>()->Set_Position(position);
 }
 
 bool CGameObject::Init()
@@ -59,4 +61,14 @@ void CGameObject::Render()
 {
 	for (auto component : m_pComponents)
 		component.second->Render();
+}
+
+tinyxml2::XMLElement* CGameObject::ToXmlElement(tinyxml2::XMLDocument& doc) const
+{
+	tinyxml2::XMLElement *result = doc.NewElement("Node");
+
+	result->SetAttribute("name", m_Name);
+
+	//TODO ToXmlElement GameObject
+	return nullptr;
 }

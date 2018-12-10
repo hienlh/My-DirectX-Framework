@@ -12,9 +12,11 @@ namespace Framework
 	class CGameObject : public CObject
 	{
 		// Properties
+		static DWORD staticID;
 	private:
 		std::unordered_map<std::string, CComponent*> m_pComponents = {};
 		CScene *m_pScene = nullptr;
+		DWORD m_id;
 		
 		// Cons / Des
 	private:
@@ -96,6 +98,7 @@ namespace Framework
 		void SetScene(CScene *scene) { m_pScene = scene; }
 	public:
 		CScene* GetScene() const { return m_pScene; }
+		DWORD GetID() const { return m_id; }
 
 		// Internal methods
 	private:
@@ -106,6 +109,7 @@ namespace Framework
 	public:
 		virtual void Update(DWORD dt);
 		void Render();
+		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;
 
 		// Static methods
 	public:

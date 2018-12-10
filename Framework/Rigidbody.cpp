@@ -16,6 +16,8 @@ CRigidbody::CRigidbody(CGameObject * gameObject)
 
 void CRigidbody::Update(DWORD dt)
 {
+	if (_isKinematic) return;
+
 	auto pTransform = m_pGameObject->GetComponent<CTransform>();
 	if (pTransform)
 		pTransform->PlusPosition(_velocity * dt);
