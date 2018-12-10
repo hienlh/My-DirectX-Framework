@@ -89,7 +89,7 @@ CWindow* CWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth
 	SAFE_ALLOC(instance, CWindow);
 
 	if (!instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
-		SAFE_FREE(instance);
+		SAFE_DELETE(instance);
 
 	return instance;
 }
@@ -99,6 +99,6 @@ void CWindow::Destroy(CWindow* instance)
 	if (instance)
 	{
 		instance->Release();
-		SAFE_FREE(instance);
+		SAFE_DELETE(instance);
 	}
 }

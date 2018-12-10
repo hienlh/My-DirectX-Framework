@@ -1,56 +1,47 @@
 #pragma once
 #include "stdafx.h"
 #include "Component.h"
-#include "CTexture.h"
 #include "Animation.h"
 
 namespace Framework
 {
-	class CState : public CObject
-	{
-	public:
-		CState(CAnimation *animation);
-
-	private:
-		CAnimation* m_animation = nullptr;
-
-	public:
-		void Update(DWORD dt) {}
-		void Render() {}
-
-		CAnimation* GetAnimation() { return m_animation; }
-	};
 
 	class CTransition
 	{
 	private:
-		CWString m_dstStateName;
-		std::map<CWString, bool> m_conditions;
+		CWString m_dstAnimationName = L"";
+		std::map<CWString, bool> m_conditions = {};
+		bool m_hasExitTime = false;
+		bool m_isRelatedTo = false;
 
 	public:
-		CTransition(CWString name) { m_dstStateName = name; }
+		CTransition(CWString name) { m_dstAnimationName = name; }
 
 	public:
-		void SetCondition(CWString conditionName, bool value) { m_conditions[conditionName] = value; }
-		std::map<CWString, bool>& GetMapCondition() { return m_conditions; }
-		CWString GetDestinationStateName() { return m_dstStateName; }
+		CTransition* SetCondition(CWString conditionName, bool value) { m_conditions[conditionName] = value; return this; }
+		CTransition* SetHasExitTime(bool hasExitTime) { m_hasExitTime = hasExitTime; return this; };
+		CTransition* SetRelatedTo(bool relatedTo) { m_isRelatedTo = relatedTo; return this; }
+
+		std::map<CWString, bool>& GetConditions() { return m_conditions; }
+		CWString GetDestinationAnimationName() const { return m_dstAnimationName; }
+		bool GetHasExitTime() const { return m_hasExitTime; }
+		bool GetRelatedTo() const { return m_isRelatedTo; }
 	};
 
 	class CAnimator final : public CComponent
 	{
 		// Properties
 	private:
-		std::map<LPCWSTR, CState*> m_states = {};
-		std::map<LPCWSTR, std::list<CTransition*> > m_transitions;
-		std::map<LPCWSTR, bool> m_boolConditions;
-
-		CState* m_currentState = nullptr;
-		//DWORD m_stateCode = 0;
+		std::map<CWString, CAnimation*> m_Animations = {};
+		std::map<CWString, std::list<CTransition*> > m_transitions = {};
+		std::map<CWString, bool> m_boolConditions = {};
+		CAnimation* m_pCurrentAnimation = nullptr;
+		CAnimation* m_pRootAnimation = nullptr;
 
 		// Cons / Des
 	public:
 		CAnimator() = default;
-		CAnimator(CGameObject* gameObject) : CComponent(gameObject) {}
+		CAnimator(CGameObject* game_object) : CComponent(game_object) {}
 		virtual ~CAnimator() = default;
 
 		// Internal methods
@@ -58,25 +49,29 @@ namespace Framework
 		bool Init();
 		void Release();
 
-		// Getter / Setter
+		//Getter / Setter
 	public:
-		bool AddState(LPCWSTR stateName);
-		bool SetCurrentState(LPCWSTR stateName);
-		CTransition* AddTransition(LPCWSTR srcStateName, LPCWSTR dstStateName);
+		CAnimator* AddAnimation(CWString animationName);
+		CAnimator* AddTransition(CWString srcAnimationName, CWString dstAnimationName, bool hasExitTime = false,
+		                         CWString conditionName = L"", bool value = false, bool relatedTo = false);
+		CAnimator* SetRootAnimation(CWString animationName);
 
-		//void SetStateCode(DWORD stateCode) { m_stateCode = stateCode; };
-		
-		bool AddBool(LPCWSTR name, bool value);
-		bool SetBool(LPCWSTR name, bool value);
-		bool GetBool(LPCWSTR name);
+		CAnimation *GetCurrentAnimation() const;
+		CSprite *GetCurrentSprite() const;
+		CTransition *GetTransition(CWString srcAnimationName, CWString dstAnimationName);
+
+		CAnimator* AddBool(CWString name, bool value);
+		CAnimator* SetBool(CWString name, bool value);
+		bool GetBool(CWString name);
 
 	public:
 		void Update(DWORD dt) override;
-		void Render();
+		void Render() override;
 
 		// Static methods
 	public:
 		static CAnimator* Instantiate();
 		static void Destroy(CAnimator* &instance);
+
 	};
 }

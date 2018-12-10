@@ -8,37 +8,9 @@
 #include "CameraController.h"
 #include "PlayerController.h"
 #include "ResourceManager.h"
-
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
-using namespace std;
-
-void ParseXML(const char* fileName, vector<Rect> &info, size_t depth)
-{
-	tinyxml2::XMLDocument doc;
-	doc.LoadFile(fileName);
-
-	tinyxml2::XMLElement* parent = doc.FirstChildElement();
-	for (size_t iDepth = 0; iDepth < depth - 1; iDepth++)
-		parent = parent->FirstChildElement();
-
-	// Count sprites stored in xml for resize
-	size_t spriteCount = 0;
-	for (tinyxml2::XMLNode* node = parent->FirstChild(); node; node = node->NextSibling())
-		spriteCount++;
-
-	info.resize(spriteCount);
-
-	// Load attributes
-	tinyxml2::XMLElement* child = parent->FirstChildElement();
-	for (size_t iSprite = 0; iSprite < info.size(); iSprite++)
-	{
-		info[iSprite] = { Vector2(child->IntAttribute("x"), child->IntAttribute("y")),
-									Vector2(child->IntAttribute("w"), child->IntAttribute("h")) };
-		child = child->NextSiblingElement();
-	}
-}
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -48,8 +20,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Scene
 	CScene* pScene = CScene::Instantiate();
-	pGameManager->SetCurrentScene(pScene);
 	{
+		pGameManager->SetCurrentScene(pScene);
 		pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 		pScene->GetMainCamera()->AddComponent<CameraController>();
 	}
@@ -57,113 +29,137 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Resource Manager
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
 	{
-		//pResourceManager->AddTexture(L"Megaman Left", L".\\Resources\\megaman_left.png");
-		pResourceManager->AddTexture(L"Megaman", L".\\Resources\\_megaman.png");
-		pResourceManager->AddTexture(L"Background", L".\\Resources\\mini_background.png");
-		pResourceManager->AddTexture(L"Intro Enemies", L".\\Resources\\Intro Enemies.png");
+		pResourceManager->AddTexture(L"Background", L".\\Resources\\mini_background.png", NULL, ".\\Resources\\mini_background.xml");
+		pResourceManager->AddTexture(L"Megaman", L".\\Resources\\Player\\MegaManXEdited.png", NULL, ".\\Resources\\Player\\MegaManXEdited.xml");
+		pResourceManager->AddTexture(L"Megaman Dash", L".\\Resources\\Player\\MegaManX-Dash.png", NULL, ".\\Resources\\Player\\MegaManX-Dash.xml");
+		pResourceManager->AddTexture(L"Wall", L".\\Resources\\wall.png");
 	}
 
-	// Player
-	vector<Rect> megaman;
-	ParseXML(".\\Resources\\_megaman.xml", megaman, 2);
+	// Player Animations
 	{
 		struct AnimationInfo
 		{
 			CWString name = nullptr;
 			CWString textureName = nullptr;
-			DWORD delayTime;
 			DWORD startID, count;
+			DWORD delayTime;
 			bool loop;
 		};
-		
-		AnimationInfo infoParams[] = { 
-			// Line 1
-			{ L"Megaman Init",			L"Megaman", 0.1f, 0, 6, false},
-			{ L"Megaman Idle",			L"Megaman", 0.1f, 7, 1, false},
-			{ L"Megaman Idle Hit",		L"Megaman", 0.1f, 8, 3, true},
-			{ L"Megaman Idle Shoot",	L"Megaman", 0.1f, 11, 2, true},
-			// Line 2
-			{ L"Megaman Run",			L"Megaman", 0.1f, 13, 11, true},
-			// Line 3
-			{ L"Megaman Run Shoot",		L"Megaman", 0.1f, 24, 10, true},
-			// Line 4
-			{ L"Megaman Jump",			L"Megaman", 0.1f, 34, 3, false},
-			{ L"Megaman Fall",			L"Megaman", 0.1f, 37, 4, false},
-			{ L"Megaman Jump Shoot",	L"Megaman", 0.1f, 41, 3, false},
-			{ L"Megaman Fall Shoot",	L"Megaman", 0.1f, 44, 4, false},
+
+		AnimationInfo infoParams[] = {
+			{ L"Megaman Init", L"Megaman", 0, 8, 100, false},
+			{ L"Megaman Idle", L"Megaman", 8, 2, 100, true},
+			{ L"Megaman Run", L"Megaman", 14, 10, 100, true},
+			{ L"Megaman Jump Shoot", L"Megaman", 41, 3, 120, true},
+			{ L"Megaman Dash", L"Megaman Dash", 0, 23, 20, false},
+			{ L"Megaman Run Shoot", L"Megaman", 24, 10, 100, true},
+			{ L"Megaman Jump",	L"Megaman", 39, 1, 100, false},
+			{ L"Megaman Fall", L"Megaman", 37, 1, 120, false},
+			{ L"Megaman Land Fall", L"Megaman", 38, 2, 120, false},
+			{ L"Megaman Fall Shoot", L"Megaman", 44, 3, 120, true},
+			{ L"Megaman Idle Shoot", L"Megaman", 10, 2, 120, false},
+			{ L"Megaman Cling", L"Megaman", 49, 2, 100, false },
+			{ L"Megaman Cling Fall", L"Megaman", 51, 1, 100, false },
+			{ L"Megaman Cling Jump", L"Megaman", 52, 2, 100, false },
 		};
-		CAnimation* animation = nullptr;
+
 		for (const AnimationInfo &info : infoParams)
-		{
-			animation = CAnimation::Instantiate(info.name, info.textureName, info.loop);
-			for (size_t iAnimation = info.startID; iAnimation < info.startID + info.count; iAnimation++)
-				animation->Add(megaman[iAnimation], info.delayTime);
-		}
+			new CAnimation(info.name, info.textureName, info.startID, info.count, info.delayTime, info.loop);
 	}
 
-	// Grounds
-	vector<Rect> grounds;
 	{
-		ParseXML(".\\Resources\\mini_background.xml", grounds, 2);
-
-		for (size_t iGround = 0; iGround < grounds.size(); iGround++)
+		CGameObject* pBackground = new CGameObject(L"Background");
+		pBackground->AddComponent<CRenderer>()->SetSprite(L"Background")->GetSprite()->SetAnchor(VECTOR2_ZERO);
+		pBackground->GetComponent<CRenderer>()->SetZOrder(1);
+		
 		{
-			CGameObject* pGround = CGameObject::Instantiate((wstring(L"Ground") + to_wstring(iGround)).c_str(),
-				Vector2(grounds[iGround].left, grounds[iGround].top));
-			pGround->AddComponent<CRigidbody>()->SetGravityScale(0);
-			pGround->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-			pGround->GetComponent<CBoxCollider>()->SetIsDebugging(true);
-			pGround->GetComponent<CBoxCollider>()->SetSize(Vector2(grounds[iGround].right - grounds[iGround].left,
-				grounds[iGround].bottom - grounds[iGround].top));
+			const std::vector<CSprite*> &sprites = pResourceManager->GetTexture(L"Background")->m_sprites;
+
+			for (size_t iSprite = 0; iSprite < sprites.size(); iSprite++)
+			{
+				CGameObject* pGround = new CGameObject((std::wstring(L"Ground") + std::to_wstring(iSprite)).c_str(),
+					Vector2(sprites[iSprite]->GetSourceRect().left, sprites[iSprite]->GetSourceRect().top));
+				pGround->AddComponent<CRigidbody>()->SetGravityScale(0);
+
+				pGround->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+				pGround->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+				pGround->GetComponent<CBoxCollider>()->SetSize(sprites[iSprite]->GetSourceRect().Size());
+				pGround->GetComponent<CBoxCollider>()->SetAnchor(VECTOR2_ZERO);
+				pGround->GetComponent<CTransform>()->SetParent(pBackground);				
+			}
 		}
-	}
 
-	CGameObject* pBackground = CGameObject::Instantiate(L"Background", Vector2(0, 0));
-	pBackground->AddComponent<CRenderer>()->SetTexture(L"Background");
+		CGameObject* pWall = new CGameObject(L"Wall Object", Vector2(200, 120));
+		pWall->AddComponent<CRigidbody>()->SetGravityScale(0);
+		pWall->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		pWall->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+		pWall->GetComponent<CBoxCollider>()->SetAnchor(VECTOR2_ZERO);
+		//pWall->AddComponent<CRenderer>()->SetSprite(L"Wall");
+		//pWall->GetComponent<CTransform>()->SetParent(pBackground);
 
-	// Player components
-	CGameObject* pPlayer = CGameObject::Instantiate(L"Player", Vector2(100, 0));
-	{
-		pPlayer->GetComponent<CTransform>()->Set_Rotation(Vector3(0, 0, 0));
-		pPlayer->AddComponent<CRenderer>();
-		CAnimator* playerAnimator = pPlayer->AddComponent<CAnimator>();
-		
-		playerAnimator->AddState(L"Megaman Init");
-		playerAnimator->AddState(L"Megaman Idle");
-		playerAnimator->AddState(L"Megaman Idle Hit");
-		playerAnimator->AddState(L"Megaman Idle Shoot");
-		playerAnimator->AddState(L"Megaman Run");
-		playerAnimator->AddState(L"Megaman Run Shoot");
-		playerAnimator->AddState(L"Megaman Jump");
-		playerAnimator->AddState(L"Megaman Fall");
-		playerAnimator->AddState(L"Megaman Idle Shoot");
+		CGameObject* pPlayer = new CGameObject(L"Player", Vector2(0, 0));
+		pPlayer->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
+		pPlayer->AddComponent<CRenderer>()->SetFlipY(false);
+		pPlayer->AddComponent<CAnimator>()->
+			AddAnimation(L"Megaman Init")->
+			AddAnimation(L"Megaman Idle")->
+			AddAnimation(L"Megaman Idle Shoot")->
+			AddAnimation(L"Megaman Jump")->
+			AddAnimation(L"Megaman Fall")->
+			AddAnimation(L"Megaman Land Fall")->
+			AddAnimation(L"Megaman Run")->
+			AddAnimation(L"Megaman Dash")->
+			AddAnimation(L"Megaman Run Shoot")->
+			AddAnimation(L"Megaman Cling")->
+			AddAnimation(L"Megaman Cling Fall")->
+			AddAnimation(L"Megaman Cling Jump")->
 
-		playerAnimator->AddTransition(L"Megaman Idle", L"Megaman Run")->SetCondition(L"Run", true);// PlayerController::EStateCode::S_RUN);
-		playerAnimator->AddTransition(L"Megaman Run", L"Megaman Idle")->SetCondition(L"Idle", true);// PlayerController::EStateCode::S_IDLE);
-		playerAnimator->AddTransition(L"Megaman Idle", L"Megaman Jump")->SetCondition(L"Jump", true);// ::EStateCode::S_JUMP);
-		playerAnimator->AddTransition(L"Megaman Jump", L"Megaman Idle")->SetCondition(L"Idle", true);// PlayerController::EStateCode::S_IDLE);
-		playerAnimator->AddTransition(L"Megaman Idle", L"Megaman Idle Shoot")->SetCondition(L"Idle Shoot", true);// , PlayerController::EStateCode::S_IDLE_SHOOT);
-		playerAnimator->AddTransition(L"Megaman Idle Shoot", L"Megaman Idle")->SetCondition(L"Idle", true);// , PlayerController::EStateCode::S_IDLE);
-		
+			AddBool(L"isIdle", false)->
+			AddBool(L"isJump", false)->
+			AddBool(L"isFall", false)->
+			AddBool(L"isLandFall", false)->
+			AddBool(L"isShoot", false)->
+			AddBool(L"isRun", false)->
+			AddBool(L"isDash", false)->
+			AddBool(L"isClining", false)->
+
+			AddTransition(L"Megaman Init", L"Megaman Idle")->
+			AddTransition(L"Megaman Idle", L"Megaman Idle Shoot", true, L"isShoot", true)->
+			AddTransition(L"Megaman Idle", L"Megaman Dash", true, L"isDash", true)->
+			AddTransition(L"Megaman Idle", L"Megaman Jump", true, L"isJump", true)->
+			AddTransition(L"Megaman Idle", L"Megaman Fall", true, L"isFall", true)->
+			AddTransition(L"Megaman Idle", L"Megaman Run", true, L"isRun", true)->
+			AddTransition(L"Megaman Dash", L"Megaman Idle")->
+			AddTransition(L"Megaman Idle Shoot", L"Megaman Idle")->
+			AddTransition(L"Megaman Jump", L"Megaman Fall", true, L"isFall", true)->
+			AddTransition(L"Megaman Fall", L"Megaman Land Fall", true, L"isLandFall", true)->
+			AddTransition(L"Megaman Land Fall", L"Megaman Idle")->
+			AddTransition(L"Megaman Run", L"Megaman Idle", true, L"isRun", false)->
+			AddTransition(L"Megaman Run", L"Megaman Jump", true, L"isJump", true)->
+			AddTransition(L"Megaman Run", L"Megaman Run Shoot", true, L"isShoot", true, true)->
+			AddTransition(L"Megaman Run Shoot", L"Megaman Run", true, L"isShoot", false, true)->
+			AddTransition(L"Megaman Run", L"Megaman Dash", true, L"isDash", true)->
+			AddTransition(L"Megaman Jump", L"Megaman Cling", true, L"isClining", true, false)->
+			AddTransition(L"Megaman Cling", L"Megaman Cling Fall", true, L"isFall", true, false)->
+			AddTransition(L"Megaman Cling", L"Megaman Cling Jump", true, L"isJump", true, false)->
+			AddTransition(L"Megaman Cling Jump", L"Megaman Fall", true, L"isFall", true, false);
+
 		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
 		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(25, 35));
+		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
 		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+		pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 		pPlayer->AddComponent<PlayerController>();
-	}
 
-	// Camera
-	CGameObject* pCamera = pScene->GetMainCamera();
-	{
-		pCamera->GetComponent<CameraController>()->m_target = pPlayer;
-		pCamera->GetComponent<CameraController>()->SetIsFollow(true);
+		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pPlayer;
+		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
+		pGameManager->Run();
 	}
-
-	pGameManager->Run();
 
 	CGameManager::Destroy();
 	CGraphic::Destroy();
 	CInput::Destroy();
-
+	
 	return 0;
 }

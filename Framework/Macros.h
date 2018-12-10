@@ -15,8 +15,8 @@
 
 #define FRAME_RATE 60
 
-#define SAFE_FREE(p) if (p) { delete p; p = nullptr; }
-#define SAFE_ALLOC(p, objectType) if (!p) { p = new objectType(); }
+#define SAFE_DELETE(p) if (p) { delete p; p = nullptr; }
+#define SAFE_ALLOC(p, object_type) if (!p) { p = new object_type(); }
 #define SAFE_ALLOC1(p, objectType, param) if (!p) { p = new objectType(param); }
 
 #define VECTOR3_ZERO { 0, 0, 0 } 
@@ -33,12 +33,11 @@
 #define COLOR_RED D3DCOLOR_XRGB(255, 0, 0)
 #define COLOR_BLUE D3DCOLOR_XRGB(0, 0, 255)
 
-// Quad Tree
-#define MAX_OBJECTS 2
-#define MAX_LEVEL 5
-
 // Flag
 #define OVER_X 13
 #define OVER_Y 38
 
 #define GRAVITY 0.01
+
+#define MAX_VELOCITY 1e9
+#define EPSILON 1e-6

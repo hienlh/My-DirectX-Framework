@@ -18,8 +18,8 @@ CCollision::CCollision(CGameObject* collider, CGameObject* otherCollider)
 
 CCollision::~CCollision()
 {
-	SAFE_FREE(m_pCollider);
-	SAFE_FREE(m_pOtherCollider);
+	SAFE_DELETE(m_pCollider);
+	SAFE_DELETE(m_pOtherCollider);
 }
 
 Vector2 CCollision::GetRelativeVelocity()

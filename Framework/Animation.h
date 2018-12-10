@@ -9,41 +9,44 @@ namespace Framework {
 	public:
 		struct SFrame
 		{
-			Rect m_rect;
+			CSprite *m_sprite;
 			DWORD m_delay = 0;
 		};
 
 	private:
-		Texture* m_pTexture = nullptr;
 		std::vector<SFrame> m_frames = {};
 
-		bool m_loop = true;
 		DWORD m_frameIndex = 0;
 		DWORD m_timeElapse = 0;
 		DWORD m_defaultTime = 0;
+		bool m_loop = true;
 
 	private:
 		CAnimation() = default;
+	public:
+		CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100, bool loop = true);
 		~CAnimation() = default;
 
 	private:
-		void Init(LPCWSTR textureName, bool loop, DWORD defaultTime);
+		bool Init(LPCWSTR textureName, DWORD defaultTime);
 		void Render() override;
 	public:
 		void Update(DWORD dt) override;
 
+		// Getter / Setter
 	public:
-		Texture* GetTexture() const { return m_pTexture; }
-		Rect GetRect() { return m_frames[m_frameIndex].m_rect; }
+		CSprite* GetSprite();
+		bool IsLastFrame() const;
+		bool GetIndexCurrentFrame() const { return m_frameIndex; }
 
-		CAnimation* SetLoop(bool isLoop) { m_loop = isLoop; return this; };
+		CAnimation* SetIndexCurrentFrame(int index);
 
 		//Method
 	public:
-		void Add(SFrame frame);
-		void Add(Rect rect, DWORD time = 0);
-
-	public:
-		static CAnimation* Instantiate(LPCWSTR name, LPCWSTR textureName, bool loop = true, DWORD defaultTime = 100);
+		CAnimation* Add(CWString textureName, DWORD indexSprite, DWORD pos = -1, DWORD time = 0);
+		CAnimation* Add(CSprite* sprite, DWORD pos = -1, DWORD time = 0);
+		void Refresh() { m_frameIndex = 0; }
+	private:
+		CAnimation* Add(SFrame frame);
 	};
 }

@@ -8,7 +8,7 @@ using namespace Framework;
 bool CScene::Init()
 {
 	InitMainCamera();
-	m_pQuadTree = new CQuadTree(0, 0, Rect(0, 0, 2000, 2000));
+	m_pQuadTree = new CQuadTree(0, 0, Rect(0, 0, 600, 1200));
 	return true;
 }
 
@@ -17,7 +17,7 @@ bool CScene::InitMainCamera()
 	bool result = false;
 	do
 	{
-		m_pMainCamera = CGameObject::Instantiate(L"Main Camera", VECTOR2_ZERO);
+		m_pMainCamera = new CGameObject(L"Main Camera");
 		m_pMainCamera->AddComponent<CCamera>();
 		const auto camera = m_pMainCamera->GetComponent<CCamera>();
 
@@ -35,7 +35,7 @@ bool CScene::Release()
 		{
 			CGameObject::Destroy(gameObject);
 		}
-		SAFE_FREE(m_pMainCamera);
+		SAFE_DELETE(m_pMainCamera);
 
 		result = true;
 	} while (false);
@@ -43,12 +43,12 @@ bool CScene::Release()
 	return result;
 }
 
-std::list<CGameObject*> CScene::GetListGameObject() const
+std::set<CGameObject*> CScene::GetListGameObject() const
 {
 	return m_gameObjectList;
 }
 
-std::list<CGameObject*> CScene::GetListColliderObject() const
+std::set<CGameObject*> CScene::GetListColliderObject() const
 {
 	return m_colliderObjectList;
 }
@@ -59,15 +59,15 @@ CScene* CScene::Instantiate()
 	SAFE_ALLOC(scene, CScene);
 
 	if (!scene->Init())
-		SAFE_FREE(scene);
+		SAFE_DELETE(scene);
 
 	return scene;
 }
 
 bool CScene::Destroy(CScene* scene)
 {
-	auto result = scene->Release();
-	SAFE_FREE(scene);
+	const auto result = scene->Release();
+	SAFE_DELETE(scene);
 
 	return result;
 }
@@ -85,6 +85,11 @@ void CScene::Update(DWORD dt)
 	for (CGameObject* pGameObject : m_gameObjectList)
 	{
 		pGameObject->Update(dt);
+
+		if (pGameObject->GetName() == L"Player")
+		{
+			auto tmp = m_pQuadTree->query(pGameObject->GetComponent<CCollider>()->GetBoundGlobal());
+		}
 	}
 
 	m_pMainCamera->Update(dt);
@@ -95,14 +100,14 @@ void CScene::Update(DWORD dt)
 
 void CScene::Render()
 {
-	std::list<CGameObject*> listRender = m_gameObjectList;
-	listRender.push_back(reinterpret_cast<CGameObject*>(m_pQuadTree));
+	std::set<CGameObject*> listRender = m_gameObjectList;
+	listRender.insert(reinterpret_cast<CGameObject*>(m_pQuadTree));
 	CGraphic::GetInstance()->Render(listRender);
 }
 
 void CScene::AddGameObject(CGameObject* gameObject)
 {
-	m_gameObjectList.push_back(gameObject);
+	m_gameObjectList.insert(gameObject);
 	gameObject->SetScene(this);
 	AddColliderObject(gameObject);
 }
@@ -123,6 +128,6 @@ void CScene::AddColliderObject(CGameObject* gameObject)
 {
 	if (gameObject->GetComponent<CCollider>())
 	{
-		m_colliderObjectList.push_back(gameObject);
+		m_colliderObjectList.insert(gameObject);
 	}
 }

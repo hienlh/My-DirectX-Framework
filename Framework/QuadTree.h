@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "stdafx.h"
+
+#define MAX_OBJECTS 2
+#define MAX_LEVEL 5
 #include "Object.h"
 
 namespace Framework {
@@ -37,8 +39,8 @@ namespace Framework {
 		int getQuadrant(Rect rectangle) const;
 
 		/**
-		 * \brief Get id of the smallest sub node consist of this rectangle
-		 * \param rectangle
+		 * \brief Get id of the smallest sub node consist of this rectangle 
+		 * \param rectangle 
 		 * \return Id of QuadTree
 		 */
 		int getFitId(Rect rectangle) const;

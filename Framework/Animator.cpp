@@ -1,146 +1,224 @@
 #include "stdafx.h"
 #include "Macros.h"
 #include "Animator.h"
-#include "Graphic.h"
 #include "ResourceManager.h"
 
 using namespace Framework;
 
 bool CAnimator::Init()
 {
-	//m_pGameObject->AddComponent<CRenderer>();
-
 	return true;
 }
 
 void CAnimator::Release()
 {
-	for (std::map<LPCWSTR, CState*>::iterator it = m_states.begin(); it != m_states.end(); it++)
-		SAFE_FREE(it->second);
 }
 
-bool CAnimator::AddState(LPCWSTR stateName)
+
+/**
+ * \brief The first time you add animation into animator, 
+ * it'll set that animation into the root animation of the animator
+ */
+CAnimator* CAnimator::AddAnimation(CWString animationName)
 {
-	CAnimation* animation = CResourceManager::GetInstance()->GetAnimation(stateName);
+	CAnimation* anim = CResourceManager::GetInstance()->GetAnimation(animationName);
 
-	// Resource found
-	if (animation)
-	{
-		SAFE_ALLOC1(m_states[stateName], CState, animation);
-
-		if (m_states.size() == 1)
-			m_currentState = m_states[stateName];
-
-		return true;
+	if (anim) {
+		if (m_Animations.size() <= 0) m_pCurrentAnimation = anim;
+		m_Animations[animationName] = anim;
 	}
-	// Resource not found
-	else
-		return false;
+
+	if (!m_pRootAnimation) m_pRootAnimation = anim;
+	return this;
 }
 
-bool CAnimator::SetCurrentState(LPCWSTR stateName)
-{
-	if (m_states[stateName])
-	{
-		m_currentState = m_states[stateName];
-		return true;
-	}
-	else
-		return false;
-}
 
-CTransition* Framework::CAnimator::AddTransition(LPCWSTR srcStateName, LPCWSTR dstStateName)
+/**
+ * \brief Add transition into Animator
+ * \param srcAnimationName Name of source animation 
+ * \param dstAnimationName Name of destination animation
+ * \param hasExitTime change animation immediately, not wait for source animation finishing
+ * \param conditionName A condition is to allow to change animation
+ * \param value Value of the condition
+ * \param relatedTo To the destination animation change in correctly index of source animation
+ */
+CAnimator* CAnimator::AddTransition(CWString srcAnimationName, CWString dstAnimationName, bool hasExitTime,
+                                    CWString conditionName, bool value, bool relatedTo)
 {
-	CState *srcState = m_states[srcStateName];
-	CState *dstState = m_states[dstStateName];
+	CAnimation *srcAnimation = m_Animations[srcAnimationName];
+	CAnimation *dstAnimation = m_Animations[dstAnimationName];
 
-	if (srcState && dstState && srcState != dstState)
+	if (srcAnimation && dstAnimation && srcAnimation != dstAnimation)
 	{
 		CTransition* transition = nullptr;
-		SAFE_ALLOC1(transition, CTransition, dstStateName);
+		SAFE_ALLOC1(transition, CTransition, dstAnimationName);
+		if (conditionName != L"")
+			transition->SetCondition(conditionName, value)->SetHasExitTime(hasExitTime)->SetRelatedTo(relatedTo);
 
-		m_transitions[srcStateName].push_back(transition);
-		return transition;
+		m_transitions[srcAnimationName].push_back(transition);
+		return this;
 	}
 	else
 		return nullptr;
 }
 
-bool Framework::CAnimator::AddBool(LPCWSTR name, bool value)
+
+/**
+ * \brief Set the root animation, 
+ * if this animation is not in the animator, 
+ * it'll be added into
+ * \param animationName 
+ * \return nullptr if animation is not in Resource Manager
+ */
+CAnimator* CAnimator::SetRootAnimation(CWString animationName)
 {
-	if (m_boolConditions.find(name) == m_boolConditions.end())
+	bool result = true;
+	do
 	{
-		m_boolConditions[name] = value;
-		return true;
-	}
-	else
-		return false;
+		if (m_Animations.count(animationName))
+		{
+			m_pRootAnimation = m_Animations[animationName];
+		}
+		else
+		{
+			CAnimation* anim = CResourceManager::GetInstance()->GetAnimation(animationName);
+			if(anim)
+			{
+				AddAnimation(animationName);
+				m_pRootAnimation = anim;
+			}
+			else
+			{
+				result = false;
+			}
+		}
+
+	} while (false);
+
+	return result ? this : nullptr;
 }
 
-bool Framework::CAnimator::SetBool(LPCWSTR name, bool value)
+CAnimation* CAnimator::GetCurrentAnimation() const
 {
-	if (m_boolConditions.find(name) != m_boolConditions.end())
-	{
-		m_boolConditions[name] = value;
-	}
-	else
-		return false;
+	return m_pCurrentAnimation;
 }
 
-bool Framework::CAnimator::GetBool(LPCWSTR name)
+CSprite* CAnimator::GetCurrentSprite() const
 {
-	if (m_boolConditions.find(name) != m_boolConditions.end())
+	return m_pCurrentAnimation->GetSprite();
+}
+
+CTransition* CAnimator::GetTransition(CWString srcAnimationName, CWString dstAnimationName)
+{
+	if (!m_transitions.count(srcAnimationName)) return nullptr;
+
+	std::list<CTransition*> transitions = m_transitions[srcAnimationName];
+
+	for (CTransition* transition : transitions)
+	{
+		if (transition->GetDestinationAnimationName() == dstAnimationName) return transition;
+	}
+
+	CDebug::Log("Warning GetTransition: Transition '%s' to '%s' is not in animator", srcAnimationName, dstAnimationName);
+	return nullptr;
+}
+
+CAnimator* CAnimator::AddBool(CWString name, bool value)
+{
+	bool result;
+	do { 
+		result = !m_boolConditions.count(name);
+		if (result)
+		{
+			m_boolConditions[name] = value;
+		}
+	} while (false);
+
+	if (!result) CDebug::Log("Error AddBool: Bool '%s' has been added before", name);
+	return result ? this : nullptr;
+}
+
+CAnimator* CAnimator::SetBool(CWString name, bool value)
+{
+	bool result;
+	do {
+		result = m_boolConditions.count(name);
+		if (result)
+		{
+			m_boolConditions[name] = value;
+		}
+	} while (false);
+
+	return result ? this : nullptr;
+}
+
+bool CAnimator::GetBool(CWString name)
+{
+	if (m_boolConditions.count(name))
 	{
 		return m_boolConditions[name];
 	}
-	else
-		return false;
+
+	CDebug::Log("Error GetBool: Bool '%s' is not in Animator", name);
+	return false;
 }
 
 void CAnimator::Update(DWORD dt)
 {
-	std::list<CTransition*> &transitionList = m_transitions[m_currentState->GetName()];
+	std::list<CTransition*> &transitionList = m_transitions[m_pCurrentAnimation->GetName()];
 
-	bool found = false;
+	bool found = true;
 	for (CTransition* transition : transitionList)
 	{
-		std::map<CWString, bool> conditions = transition->GetMapCondition();
-		for (const std::pair<CWString, bool> &condition : conditions)
+		std::map<CWString, bool> conditions = transition->GetConditions();
+		for (const std::pair<CWString, bool> condition : conditions)
 		{
-			if (m_boolConditions.find(condition.first) != m_boolConditions.end())
+			if (m_boolConditions.count(condition.first))
 			{
-				if (m_boolConditions[condition.first] == condition.second)
+				if (m_boolConditions[condition.first] != condition.second)
 				{
-					m_currentState = m_states[transition->GetDestinationStateName()];
-					found = true;
+					found = false;
 					break;
 				}
+			} 
+			else
+			{
+				found = false;
+				break;
 			}
 		}
+
 		if (found)
+		{
+			if (transition->GetHasExitTime() || m_pCurrentAnimation->IsLastFrame()) {
+
+				CAnimation* desAnimation = m_Animations[transition->GetDestinationAnimationName()];
+				if (!transition->GetRelatedTo()) {
+					desAnimation->Refresh();
+				}
+				else
+				{
+					desAnimation->SetIndexCurrentFrame(m_pCurrentAnimation->GetIndexCurrentFrame() + 1);
+				}
+				m_pCurrentAnimation = desAnimation;
+			}
 			break;
+		}
+		found = true;
 	}
 
-	m_currentState->GetAnimation()->Update(dt);
+	m_pCurrentAnimation->Update(dt);
 }
 
 void CAnimator::Render()
 {
-	CAnimation* animation = m_currentState->GetAnimation();
-	Texture* pTexture = animation->GetTexture();
-	CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
-	Rect rect = animation->GetRect();
-	Vector3 pos = Vector3(pTransform->Get_Position());
-	pos.z = 0;
-	
-	CRenderer* renderer = m_pGameObject->GetComponent<CRenderer>();
-	renderer->SetTexture(pTexture);
-	renderer->SetWidth(rect.Size().x)->SetHeight(rect.Size().y);
-	renderer->SetRenderPosX(rect.left)->SetRenderPosY(rect.top);
-	renderer->SetZOrder(pTransform->Get_Rotation().z);
-	renderer->Render();
-	
-	//CGraphic::GetInstance()->Draw(pTexture, &pos, &rect, nullptr, pTransform->Get_Rotation().z);
+	//if (!m_pCurrentAnimation) return;
+	//CSprite* sprite = m_pCurrentAnimation->GetSprite();
+	//CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
+	//Vector3 position3D = Vector3(pTransform->Get_Position());
+	//position3D.z = 0;
+
+	//CGraphic::GetInstance()->Draw(sprite, &position3D);
 }
 
 CAnimator* CAnimator::Instantiate()
@@ -151,7 +229,7 @@ CAnimator* CAnimator::Instantiate()
 	if (!instance->Init())
 	{
 		instance->Release();
-		SAFE_FREE(instance);
+		SAFE_DELETE(instance);
 	}
 
 	return instance;
@@ -162,11 +240,6 @@ void CAnimator::Destroy(CAnimator*& instance)
 	if (instance)
 	{
 		instance->Release();
-		SAFE_FREE(instance);
+		SAFE_DELETE(instance);
 	}
-}
-
-Framework::CState::CState(CAnimation * animation)
-{
-	m_animation = animation;
 }

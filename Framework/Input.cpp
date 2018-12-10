@@ -32,7 +32,7 @@ void CInput::Instantiate()
 		if (!__instance->Init())
 		{
 			__instance->Release();
-			SAFE_FREE(__instance);
+			SAFE_DELETE(__instance);
 		}
 	}
 }
@@ -40,7 +40,7 @@ void CInput::Instantiate()
 void CInput::Destroy()
 {
 	__instance->Release();
-	SAFE_FREE(__instance);
+	SAFE_DELETE(__instance);
 }
 
 Input *Framework::CInput::CreateInput()
@@ -124,16 +124,13 @@ void CInput::PollKeyboard()
 int CInput::KeyDown(int key)
 {
 	return m_keys[key] && !m_prevKeys[key];
+	// KEY_DOWN(m_keys[key]) && !KEY_DOWN(m_prevKeys[key]);
 }
 
 int CInput::KeyUp(int key)
 {
 	return !m_keys[key] && m_prevKeys[key];
-}
-
-int Framework::CInput::KeyHold(int key)
-{
-	return m_keys[key] && m_prevKeys[key];
+	//return !KEY_DOWN(m_keys[key]) && KEY_DOWN(m_prevKeys[key]);
 }
 
 void CInput::KillKeyboard()

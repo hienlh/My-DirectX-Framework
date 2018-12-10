@@ -13,12 +13,14 @@ namespace Framework
 	{
 		// Properties
 	private:
-		std::map<std::string, CComponent*> m_pComponents = {};
+		std::unordered_map<std::string, CComponent*> m_pComponents = {};
 		CScene *m_pScene = nullptr;
 		
 		// Cons / Des
 	private:
 		CGameObject() = default;
+	public:
+		CGameObject(LPCWSTR name, Vector2 position = VECTOR2_ZERO, bool addIntoCurrentScene = true);
 		~CGameObject() = default;
 
 		// Friends
@@ -83,7 +85,7 @@ namespace Framework
 				T* tmp = dynamic_cast<T *> (component);
 				if (tmp != nullptr)
 				{
-					SAFE_FREE(tmp);
+					SAFE_DELETE(tmp);
 				}
 			}
 			return true;
@@ -107,9 +109,6 @@ namespace Framework
 
 		// Static methods
 	public:
-		static CGameObject* Instantiate();
-		static CGameObject* Instantiate(LPCWSTR name, Vector2 position);
-		static CGameObject* Instantiate(Vector2 position);
 		static void Destroy(CGameObject* &instance);
 	};
 }

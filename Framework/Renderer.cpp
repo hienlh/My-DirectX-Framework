@@ -3,52 +3,50 @@
 #include "Macros.h"
 #include "Graphic.h"
 #include "GameManager.h"
-#include "CTexture.h"
 #include "ResourceManager.h"
+#include "Animator.h"
 
 using namespace Framework;
 
-CRenderer* CRenderer::SetTexture(LPCWSTR texture_name)
+CRenderer* CRenderer::SetSprite(CWString textureName, DWORD index)
 {
-	Init(texture_name);
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
+	m_pSprite = m_pRootSprite;
 	return this;
 }
 
-bool CRenderer::Init(LPCWSTR textureName)
+bool CRenderer::Init(CWString textureName, DWORD index)
 {
-	m_pTexture = CResourceManager::GetInstance()->GetTexture(textureName);
-	m_textureWidth = m_pTexture->width;
-	m_textureHeight = m_pTexture->height;
-	return m_pTexture != nullptr;
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
+	m_pSprite = m_pRootSprite;
+	return m_pRootSprite != nullptr;
 }
 
-void CRenderer::Release()
+void CRenderer::Release() const
 {
-	delete m_pTexture;
+	delete m_pSprite;
+	delete m_pRootSprite;
 }
 
 void CRenderer::Update(DWORD dt)
 {
-	
+	if (CAnimator* anim = m_pGameObject->GetComponent<CAnimator>())
+		m_pSprite = anim->GetCurrentSprite();
+	else m_pSprite = m_pRootSprite;
 }
 
 void CRenderer::Render()
 {
 	if (m_pGameObject == nullptr) return;
 	const auto transform = m_pGameObject->GetComponent<CTransform>();
-	if (m_pTexture == nullptr || transform == nullptr) return;
+	if (!m_pSprite || !transform) return;
 
 	Vector3 scale = Vector3(transform->Get_Scale());
 
 	Vector3 position3D = Vector3(transform->Get_Position());
 	position3D.z = m_zOrder;
 
-	//If dev don't set width height then draw with default width, height of image
-	if (m_textureWidth == -1 || m_textureHeight == -1)
-		CGraphic::GetInstance()->Draw(m_pTexture, &position3D, nullptr, false, false, nullptr, transform->Get_Rotation().z);
-	else
-		CGraphic::GetInstance()->Draw(m_pTexture, &position3D, new Rect(Vector2(m_renderPosX, m_renderPosY), Vector2(m_textureWidth, m_textureHeight)), 
-			m_flipX, m_flipY, nullptr, transform->Get_Rotation().z);
+	CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)
@@ -56,6 +54,6 @@ void CRenderer::Destroy(CRenderer* &instance)
 	if (instance)
 	{
 		instance->Release();
-		SAFE_FREE(instance);
+		SAFE_DELETE(instance);
 	}
 }

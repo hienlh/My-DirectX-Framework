@@ -105,7 +105,7 @@ void CGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidt
 		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
 		{
 			__instance->Release();
-			SAFE_FREE(__instance);
+			SAFE_DELETE(__instance);
 		}
 	}
 }
@@ -115,7 +115,7 @@ void CGameManager::Destroy()
 	if (__instance)
 	{
 		__instance->Release();
-		SAFE_FREE(__instance);
+		SAFE_DELETE(__instance);
 	}
 }
 

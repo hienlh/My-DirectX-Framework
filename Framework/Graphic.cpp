@@ -3,7 +3,6 @@
 #include "Graphic.h"
 #include "Macros.h"
 #include "GameObject.h"
-#include "CTexture.h"
 
 using namespace Framework;
 
@@ -77,24 +76,6 @@ bool CGraphic::Init(HWND hWind, bool fullscreen)
 	return result;
 }
 
-void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
-{
-	size_t size = vertices.size() * sizeof(CUSTOMVERTEX);
-
-	// create the vertex and store the pointer into v_buffer, which is created globally
-	m_pDevice->CreateVertexBuffer(size,
-		0,
-		CUSTOMFVF,
-		D3DPOOL_MANAGED,
-		&m_pVertexBuffer,
-		NULL);
-
-	VOID* pVoid;    // the void pointer
-	m_pVertexBuffer->Lock(0, 0, (void**)&pVoid, 0);    // lock the vertex buffer
-	memcpy(pVoid, vertices.data(), size);    // copy the vertices to the locked buffer
-	m_pVertexBuffer->Unlock();    // unlock the vertex buffer
-}
-
 void CGraphic::Release()
 {
 	if (m_pDirect3D)
@@ -113,18 +94,18 @@ void CGraphic::Release()
 		m_pVertexBuffer->Release();
 }
 
-bool CGraphic::Render(std::list<CGameObject*> list_game_objects)
+bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 {
 	bool result = false;
 	do
 	{
-		m_pDevice->Clear(0, nullptr, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+		m_pDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 		// Start rendering
 		m_pDevice->BeginScene();
 		// Clear back buffer with black color
 		m_pDevice->ColorFill(m_pBackBuffer, nullptr, COLOR_BLACK);
 
-		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
+		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE); // D3DXSPRITE_SORT_DEPTH_BACKTOFRONT
 
 		for (CGameObject* pGameObject : list_game_objects)
 			pGameObject->Render();
@@ -143,7 +124,7 @@ bool CGraphic::Render(std::list<CGameObject*> list_game_objects)
 	return result;
 }
 
-void CGraphic::Draw(Texture* texture, Vector3 *position, Rect* pSourceRect, bool flipX, bool flipY, Vector2* center, float angle, DWORD fillColor, Vector3 *scale) const
+void CGraphic::Draw(Texture* texture, Vector3 *position, Rect* pSourceRect, Vector2* center, float angle, DWORD fillColor, Vector3 *scale, bool flipX, bool flipY) const
 {
 	Vector3 *center3D = center ? new Vector3(center->x, center->y, 0) : nullptr;
 	RECT* pRect = new RECT();
@@ -177,12 +158,41 @@ void CGraphic::Draw(Texture* texture, Vector3 *position, Rect* pSourceRect, bool
 
 }
 
+void CGraphic::Draw(CSprite* sprite, Vector3* position, float angle, Vector3 *scale, bool flipX, bool flipY) const
+{
+	Texture* texture = sprite->GetTexture();
+	Vector2 anchor = sprite->GetAnchor();
+	Rect sourceRect = sprite->GetSourceRect();
+	Vector2 center = Vector2(anchor.x * (sourceRect.right - sourceRect.left), 
+							   anchor.y * (sourceRect.bottom - sourceRect.top));
+	
+	Draw(texture, position, &sourceRect, &center, angle, COLOR_WHITE, scale, flipX, flipY);
+}
+
+void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
+{
+	size_t size = vertices.size() * sizeof(CUSTOMVERTEX);
+
+	// create the vertex and store the pointer into v_buffer, which is created globally
+	m_pDevice->CreateVertexBuffer(size,
+		0,
+		CUSTOMFVF,
+		D3DPOOL_MANAGED,
+		&m_pVertexBuffer,
+		NULL);
+
+	VOID* pVoid;    // the void pointer
+	m_pVertexBuffer->Lock(0, 0, (void**)&pVoid, 0);    // lock the vertex buffer
+	memcpy(pVoid, vertices.data(), size);    // copy the vertices to the locked buffer
+	m_pVertexBuffer->Unlock();    // unlock the vertex buffer
+}
+
 void CGraphic::DrawRectangle(Rect rect, DWORD color)
 {
 	// Refer: http://directxtutorial.com/Lesson.aspx?lessonid=9-4-4
 	// create some vertices using the CUSTOMVERTEX struct built earlier
 	std::vector<CUSTOMVERTEX> vertices;
-	if (color)
+	if(color)	
 		vertices = {
 			{ rect.left, rect.top, -100, color },
 			{ rect.right, rect.top, -100, color },
@@ -190,7 +200,7 @@ void CGraphic::DrawRectangle(Rect rect, DWORD color)
 			{ rect.left, rect.bottom, -100, color },
 			{ rect.left, rect.top, -100, color },
 		};
-	else
+	else 
 		vertices = {
 			{ rect.left, rect.top, -100, D3DCOLOR_XRGB(0, 0, 255) },
 			{ rect.right, rect.top, -100, D3DCOLOR_XRGB(0, 255, 0) },
@@ -259,7 +269,7 @@ void CGraphic::Instantiate(HWND hWnd, bool fullscreen)
 		if (!__instance->Init(hWnd, fullscreen))
 		{
 			__instance->Release();
-			SAFE_FREE(__instance);
+			SAFE_DELETE(__instance);
 		}
 	}
 }
@@ -269,7 +279,7 @@ void CGraphic::Destroy()
 	if (__instance)
 	{
 		__instance->Release();
-		SAFE_FREE(__instance);
+		SAFE_DELETE(__instance);
 	}
 }
 

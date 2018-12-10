@@ -18,7 +18,7 @@ void CQuadTree::Update(DWORD dt)
 void CQuadTree::Render()
 {
 	CGraphic::GetInstance()->DrawRectangle(m_bounds, D3DCOLOR_XRGB(255, 0, 0));
-	if (m_pNodes[0])
+	if(m_pNodes[0])
 		for (CQuadTree* node : m_pNodes)
 		{
 			node->Render();
@@ -29,11 +29,11 @@ void CQuadTree::clear()
 {
 	m_pObjects.clear();
 
-	if (m_pNodes[0])
+	if(m_pNodes[0])
 		for (int i = 0; i < 4; i++)
 		{
 			m_pNodes[i]->clear();
-			SAFE_FREE(m_pNodes[i]);
+			SAFE_DELETE(m_pNodes[i]);
 		}
 }
 
@@ -77,11 +77,11 @@ int CQuadTree::getFitId(Rect rectangle) const
 	int id = m_id;
 
 	// If this node is split 
-	if (m_pNodes[0])
+	if(m_pNodes[0]) 
 	{
 		// If having a appropriate quadrant for this rectangle
 		const int index = getQuadrant(rectangle);
-		if (index != -1)
+		if(index != -1)
 		{
 			id = m_pNodes[index]->getFitId(rectangle);
 		}
@@ -98,12 +98,12 @@ void CQuadTree::insert(CGameObject *gameObject)
 
 	// Check if this node has sub node, get quadrant and recursive insert game object 
 	// into appropriate sub node, then break out of this function
-	if (m_pNodes[0])
+	if(m_pNodes[0])
 	{
 		const int index = getQuadrant(bound);
-		if (index != -1)
+		if(index!=-1)
 		{
-			m_pNodes[index]->insert(gameObject);
+			m_pNodes[index]->insert(gameObject);			
 			return;
 		}
 	}
@@ -113,20 +113,20 @@ void CQuadTree::insert(CGameObject *gameObject)
 
 	// Check if node has more than max objects and level lower than max level, 
 	// split this node and add to appropriate sub node
-	if (m_pObjects.size() > MAX_OBJECTS && m_level < MAX_LEVEL)
+	if(m_pObjects.size() > MAX_OBJECTS && m_level < MAX_LEVEL)
 	{
-		if (!m_pNodes[0])
+		if(!m_pNodes[0])
 		{
 			split();
 		}
 
 		// To store game object to remove after that
-		std::list<CGameObject*> removedObjects = {};
+		std::list<CGameObject*> removedObjects = {}; 
 
 		for (CGameObject* object : m_pObjects)
 		{
 			const int index = getQuadrant(object->GetComponent<CCollider>()->GetBoundGlobal());
-			if (index != -1)
+			if(index!=-1)
 			{
 				m_pNodes[index]->insert(object);
 				removedObjects.push_back(object);
@@ -154,7 +154,7 @@ std::list<CGameObject*> CQuadTree::query(Rect rectangle)
 
 	//Check if this node is split, get all objects of sub node intersecting with this rectangle
 	const int index = getQuadrant(rectangle);
-	if (index != -1 && m_pNodes[0]) // If this rectangle is cover by 1 sub node, just get objects of this node
+	if(index != -1 && m_pNodes[0]) // If this rectangle is cover by 1 sub node, just get objects of this node
 	{
 		auto tmp = m_pNodes[index]->query(rectangle);
 		for (CGameObject* object : tmp)
@@ -162,7 +162,7 @@ std::list<CGameObject*> CQuadTree::query(Rect rectangle)
 			result.push_back(object);
 		}
 	}
-	else if (m_pNodes[0])// Else check all of sub node
+	else if(m_pNodes[0])// Else check all of sub node
 	{
 		for (CQuadTree* node : m_pNodes)
 		{

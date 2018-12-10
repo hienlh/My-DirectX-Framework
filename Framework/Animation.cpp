@@ -4,54 +4,93 @@
 
 using namespace Framework;
 
-void CAnimation::Init(LPCWSTR textureName, bool loop, DWORD defaultTime)
+CAnimation::CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime, bool loop)
 {
-	m_pTexture = CResourceManager::GetInstance()->GetTexture(textureName);
-	m_defaultTime = defaultTime;
+	bool result = false;
+	do {
+		CResourceManager* pResourceManager = CResourceManager::GetInstance();
+
+		//Add texture, default time and list index of rect
+		m_defaultTime = defaultTime;
+		m_loop = loop;
+		m_Name = name;
+
+		for (int i = startSprite; i < startSprite + count; i++)
+		{
+			m_frames.push_back({ pResourceManager->GetSprite(textureName, i), defaultTime});
+		}
+
+		//Add animation to resource manager
+		if (!pResourceManager->AddAnimation(name, this))
+			break;
+
+		result = true;
+	} while (false);
+
+	if(!result) delete this;
 }
 
 void CAnimation::Update(DWORD dt)
 {
-	m_timeElapse += dt;
 	const DWORD delayTime = m_frames[m_frameIndex].m_delay == 0 ? m_defaultTime : m_frames[m_frameIndex].m_delay;
 
 	if (m_timeElapse >= delayTime)
 	{
-		m_frameIndex++;
 		m_timeElapse = 0;
-
-		if (m_loop)
+		if (++m_frameIndex >= m_frames.size())
 		{
-			if (m_frameIndex >= m_frames.size())
-				m_frameIndex = m_frames.size() - 1;
+			if(m_loop)
+				m_frameIndex = 0;
+			else m_frameIndex--;
 		}
-		else if (m_frameIndex >= m_frames.size())
-			m_frameIndex = 0;
 	}
+	m_timeElapse += dt;
+}
+
+CSprite* CAnimation::GetSprite()
+{
+	return m_frames[m_frameIndex].m_sprite;
+}
+
+bool CAnimation::IsLastFrame() const
+{
+	const DWORD delayTime = m_frames[m_frameIndex].m_delay == 0 ? m_defaultTime : m_frames[m_frameIndex].m_delay;
+	return m_frameIndex == m_frames.size() - 1 && m_timeElapse >= delayTime;
+}
+
+CAnimation* CAnimation::SetIndexCurrentFrame(int index)
+{
+	m_frameIndex = index;
+	return this;
+}
+
+CAnimation* CAnimation::Add(CWString textureName, DWORD indexSprite, DWORD position, DWORD time)
+{
+	Add(CResourceManager::GetInstance()->GetSprite(textureName, indexSprite), position, time);
+	return this;
 }
 
 void CAnimation::Render()
 {
 }
 
-void CAnimation::Add(SFrame frame)
+CAnimation* CAnimation::Add(SFrame frame)
 {
 	m_frames.push_back(frame);
+	return this;
 }
 
-void CAnimation::Add(Rect rect, DWORD time)
+//void CAnimation::Add(Rect rect, DWORD time)
+//{
+//	Add({ rect, time });
+//}
+
+CAnimation* CAnimation::Add(CSprite* sprite, DWORD position, DWORD time)
 {
-	Add({ rect, time});
-}
+	time = time != 0 ? time : m_defaultTime;
 
-CAnimation* CAnimation::Instantiate(LPCWSTR name, LPCWSTR textureName, bool loop, DWORD defaultTime)
-{
-	CAnimation* anim = nullptr;
-	SAFE_ALLOC(anim, CAnimation);
+	if (position == -1) Add({ sprite, time });
+	else m_frames.insert(m_frames.begin() + position, 1, { sprite, time });
 
-	anim->Init(textureName, defaultTime, loop);
-
-	CResourceManager::GetInstance()->AddAnimation(name, anim);
-
-	return anim;
+	return this;
 }
