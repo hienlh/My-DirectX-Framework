@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
+class CTexture;
+
 namespace Framework
 {
 	class CGraphic final
@@ -19,26 +21,34 @@ namespace Framework
 		Direct3D* m_pDirect3D = nullptr;
 		Device* m_pDevice = nullptr;
 		Surface* m_pBackBuffer = nullptr;
-		Sprite* m_pSpriteHandler = nullptr;
+		ID3DXSprite* m_pSpriteHandler = nullptr;
+		IDirect3DVertexBuffer9* m_pVertexBuffer = nullptr;
 		
 		// Getter / Setters
 	public:
-		Direct3D* Get_Direct3D() { return this->m_pDirect3D; }
-		Device* Get_Device() { return this->m_pDevice; }
-		Surface* Get_BackBuffer() { return this->m_pBackBuffer; }
-		Sprite* Get_SpriteHandler() { return m_pSpriteHandler; }
+		Direct3D* Get_Direct3D() const { return this->m_pDirect3D; }
+		Device* Get_Device() const { return this->m_pDevice; }
+		Surface* Get_BackBuffer() const { return this->m_pBackBuffer; }
+		ID3DXSprite* Get_SpriteHandler() const { return m_pSpriteHandler; }
+
+		void SetTransform(Matrix &orthographicMatrix, Matrix &identityMatrix, Matrix &viewMatrix);
 
 		// Internal methods
 	private:
 		bool Init(HWND hWind, bool fullscreen);
+		void Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices);
 		void Release();
 
 		// Public methods
 	public:
-		bool Render(const std::list<CGameObject*> &gameObjectList);
-		void Draw(Vector3 position, Texture* texture);
+		bool Render(std::set<CGameObject*> list_game_objects);
+		void Draw(Texture* texture, Vector3* position = nullptr, Rect* pSourceRect = nullptr, Vector2* center = nullptr,
+		          float angle = 0, DWORD fillColor = COLOR_WHITE, Vector3 *scale = nullptr, bool flipX = false, bool flipY = false) const;
+		void Draw(CSprite* sprite, Vector3* position = nullptr, float angle = 0, Vector3 *scale = nullptr, 
+				  bool flipX = false, bool flipY = false) const;
+		void DrawRectangle(Rect rect, DWORD color = NULL);
 		
-		Texture* CreateTexture(CWString texturePath);
+		Texture* CreateTexture(CWString texturePath, D3DCOLOR transparentColor = COLOR_BLACK) const;
 			
 		// Static methods
 	public:

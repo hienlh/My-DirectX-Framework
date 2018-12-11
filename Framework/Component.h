@@ -8,23 +8,25 @@ namespace Framework
 	// Component Class
 	class CComponent : public CObject
 	{
+	protected:
+		CGameObject* m_pGameObject = nullptr;
+
 		// Cons / Des
 	public:
 		CComponent() = default;
+		CComponent(CGameObject *game_object) { m_pGameObject = game_object; }
 		virtual ~CComponent() = default;
 
+		// Override
+	public:
+		CWString GetName() const override;
 		//Getter / Setter
 	public:
-		//CGameObject* GetGameObject() { return _gameObject; }
-		//void SetGameObject(CGameObject* gameobject) { m_gameObject = gameobject; }
+		CGameObject* GetGameObject() { return m_pGameObject; }
+		void SetGameObject(CGameObject* gameobject) { m_pGameObject = gameobject; }
 
-		// Abstract Classes
+		//Friend
 	public:
-		virtual void Update(DWORD dt) = 0;
-
-		// Static methods
-	public:
-		static CComponent* Instantiate(SBuilder builder);
-		static void Destroy(CComponent* &instance);
+		friend class CPhysic;
 	};
 }

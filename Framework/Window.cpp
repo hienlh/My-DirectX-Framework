@@ -5,7 +5,20 @@
 
 using namespace Framework;
 
-CWindow* CWindow::__instance = nullptr;
+LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT result = 0;
+	switch (message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		result = DefWindowProc(hWnd, message, wParam, lParam);
+	}
+
+	return result;
+}
 
 bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
@@ -70,30 +83,22 @@ void CWindow::Release()
 	DestroyWindow(m_hWnd);
 }
 
-void CWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+CWindow* CWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
-	if (!__instance)
-	{
-		SAFE_ALLOC(__instance, CWindow);
+	CWindow* instance = nullptr;
+	SAFE_ALLOC(instance, CWindow);
 
-		if (!__instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
-		{
-			__instance->Release();
-			SAFE_DELETE(__instance);
-		}
-	}
+	if (!instance->Init(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen))
+		SAFE_DELETE(instance);
+
+	return instance;
 }
 
-void CWindow::Destroy()
+void CWindow::Destroy(CWindow* instance)
 {
-	if (__instance)
+	if (instance)
 	{
-		__instance->Release();
-		SAFE_DELETE(__instance);
+		instance->Release();
+		SAFE_DELETE(instance);
 	}
-}
-
-CWindow* CWindow::GetInstance()
-{
-	return __instance;
 }

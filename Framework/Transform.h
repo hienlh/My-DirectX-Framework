@@ -5,47 +5,54 @@ namespace Framework
 {
 	class CTransform final : public CComponent
 	{
-	public:
+	private:
+		CTransform* m_pParent = nullptr;
 		Vector2 m_position = VECTOR2_ZERO;
-		Vector2 m_localPosition = VECTOR2_ZERO;
-		Vector2 m_rotation = VECTOR2_ZERO;
-		Vector2 m_localRotation = VECTOR2_ZERO;
+		Vector3 m_rotation = VECTOR3_ZERO;
 		Vector2 m_scale = VECTOR2_ONE;
-		Vector2 m_localScale = VECTOR2_ONE;
 
 		// Cons / Des
 	public:
 		CTransform() = default;
+		CTransform(CGameObject* game_object, Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO, Vector2 scale = VECTOR2_ONE);
 		virtual ~CTransform() = default;
 
 		// Getters / Setters
 	public:
-		Vector2 Get_Position() { return m_position; }
-		Vector2 Get_Rotation() { return m_rotation; }
-		Vector2 Get_Scale() { return m_scale; }
+		Vector2 Get_Position() const;
+		Vector3 Get_Rotation() const;
+		Vector2 Get_Scale() const;
+		Vector2 GetLocalPosition() const { return m_position; }
+		Vector3 GetLocalRotation() const { return m_rotation; }
+		Vector2 GetLocalScale() const { return m_scale; }
+		CTransform* GetParent() const { return m_pParent; }
 
-		void Set_Position(Vector2 position) { m_position = position; }
-		void Set_Rotation(Vector2 rotation) { m_rotation = rotation; }
-		void Set_Scale(Vector2 scale) { m_scale = scale; }
+		CTransform* Set_Position(Vector2 position);
+		CTransform* Set_Rotation(Vector3 rotation);
+		CTransform* Set_Scale(Vector2 scale);
+		CTransform* SetParent(CTransform *parent);
+		CTransform* SetParent(CGameObject *parentGameObject);
 
-	public:
-		//void Update(Vector3 position = VECTOR3_ZERO, Vector3 rotation = VECTOR3_ZERO, Vector3 scale = VECTOR3_ONE);
-		void Update(DWORD dt) override {};
+		/**
+		 * \brief Like Position += Distance
+		 * \param distance 
+		 */
+		void PlusPosition(Vector2 distance) { m_position += distance; }
 
 		// Internal methods
 	private:
-		bool Init(Vector2 position = VECTOR2_ZERO, Vector2 rotation = VECTOR2_ZERO, Vector2 local_scale = VECTOR2_ONE);
+		bool Init(Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO, Vector2 local_scale = VECTOR2_ONE);
 		void Release();
 
 		// Static methods
 	public:
 		static CTransform* Instantiate(Vector2 position);
-		static CTransform* Instantiate(UObjectData data = { {} });
 		static void Destroy(CTransform *instance);
 
 		// Override methods
 	public:
-
+		void Update(DWORD dt) override;
+		void Render() override;
 
 	};
 }

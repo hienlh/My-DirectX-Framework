@@ -3,36 +3,50 @@
 #include "Macros.h"
 #include "Graphic.h"
 #include "GameManager.h"
+#include "ResourceManager.h"
+#include "Animator.h"
 
 using namespace Framework;
 
-bool CRenderer::Init(CWString texturePath)
+CRenderer* CRenderer::SetSprite(CWString textureName, DWORD index)
 {
-	m_texture = 
-		CGraphic::GetInstance()->CreateTexture(texturePath);
-	return m_texture != nullptr;
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
+	m_pSprite = m_pRootSprite;
+	return this;
 }
 
-void CRenderer::Release()
+bool CRenderer::Init(CWString textureName, DWORD index)
 {
-	if (m_texture)
-		m_texture->Release();
+	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
+	m_pSprite = m_pRootSprite;
+	return m_pRootSprite != nullptr;
 }
 
-CRenderer* CRenderer::Instantiate(Framework::UObjectData data)
+void CRenderer::Release() const
 {
-	CRenderer* instance = nullptr;
-	SAFE_ALLOC(instance, CRenderer);
+	delete m_pSprite;
+	delete m_pRootSprite;
+}
 
-	instance->m_type = EObjectType::RENDERER;
+void CRenderer::Update(DWORD dt)
+{
+	if (CAnimator* anim = m_pGameObject->GetComponent<CAnimator>())
+		m_pSprite = anim->GetCurrentSprite();
+	else m_pSprite = m_pRootSprite;
+}
 
-	if (!instance->Init(data.renderData.texturePath))
-	{
-		instance->Release();
-		SAFE_DELETE(instance);
-	}
+void CRenderer::Render()
+{
+	if (m_pGameObject == nullptr) return;
+	const auto transform = m_pGameObject->GetComponent<CTransform>();
+	if (!m_pSprite || !transform) return;
 
-	return instance;
+	Vector3 scale = Vector3(transform->Get_Scale());
+
+	Vector3 position3D = Vector3(transform->Get_Position());
+	position3D.z = m_zOrder;
+
+	CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)
@@ -42,15 +56,4 @@ void CRenderer::Destroy(CRenderer* &instance)
 		instance->Release();
 		SAFE_DELETE(instance);
 	}
-}
-
-void CRenderer::Update(DWORD dt)
-{
-	CGraphic::GetInstance()->Draw(VECTOR3_ZERO, m_texture);
-}
-
-void CRenderer::Render()
-{
-	CTransform* transform = reinterpret_cast<CGameObject*>(m_parentObject)->GetTranform();
-	CGraphic::GetInstance()->Draw({ transform->m_position.x, transform->m_position.y,0 }, m_texture);
 }

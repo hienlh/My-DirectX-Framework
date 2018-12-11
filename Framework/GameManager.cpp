@@ -3,36 +3,35 @@
 #include "GameManager.h"
 #include "Window.h"
 #include "Graphic.h"
+#include "Physic.h"
 
 using namespace Framework;
 
 CGameManager* CGameManager::__instance = nullptr;
-	
-void CGameManager::SetCurrentScene(CScene* scene)
-{
-	m_currentScene = scene;
-}
-
-CScene* CGameManager::GetCurrentScene()
-{
-	return m_currentScene;
-}
 
 bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
 	bool result = false;
 	do
 	{
-		CWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
-		m_pWindow = CWindow::GetInstance();
+		m_pWindow = CWindow::Instantiate(hInstance, nShowCmd, screenWidth, screenHeight, fullscreen);
+
 		if (!m_pWindow)
+		{
+			OutputDebugStringA("[Error] CWindow::Instantiate failed\n");
 			break;
-		
-		CGraphic::Instantiate(m_pWindow->Get_WindowHandle(), fullscreen);
-		m_pGraphic = CGraphic::GetInstance();
-		if (!m_pGraphic)
+		}
+		HWND hWnd = m_pWindow->Get_WindowHandle();
+
+		// Init Direct3DCore
+		CGraphic::Instantiate(hWnd, fullscreen);
+
+		if (!CGraphic::GetInstance())
+		{
+			OutputDebugStringA("[Error] CGraphic::Instantiate failed\n");
 			break;
-		
+		}
+
 		result = true;
 	} while (false);
 
@@ -41,8 +40,8 @@ bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int 
 
 void CGameManager::Release()
 {
-	CWindow::Destroy();
-	CGraphic::Destroy();
+	CWindow::Destroy(m_pWindow);
+	CScene::Destroy(m_currentScene);
 }
 
 bool CGameManager::Run()
@@ -69,32 +68,20 @@ bool CGameManager::Run()
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
 		DWORD dt = now - frameStart;
+		//DWORD dt = 20; // For Debug
 
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
 
-			/*for (auto lis_game_object : lis_game_objects)
-			{
-				lis_game_object->Update();
-				auto x = lis_game_object->Get_Transform()->m_position.x;
-				auto y = lis_game_object->Get_Transform()->m_position.y;
-				if (y <= 0 && x <= SCREEN_WIDTH / 2)
-					lis_game_object->Get_Transform()->m_position.x += dt / 10;
-				else if (y < SCREEN_HEIGHT / 2 && x >= SCREEN_WIDTH / 2)
-				{
-					lis_game_object->Get_Transform()->m_position.y += dt / 10;
-				}
-				else if (x > 0 && y >= SCREEN_HEIGHT / 2)
-					lis_game_object->Get_Transform()->m_position.x -= dt / 10;
-				else
-					lis_game_object->Get_Transform()->m_position.y -= dt / 10;
-			}
-*/
-// process game loop
-			bool renderResult = m_pGraphic->Render(m_gameObjectList);
-			if (!renderResult)
-				break;
+			// process game loop
+
+			m_currentScene->Render();
+
+			if (m_currentScene)
+				m_currentScene->Update(dt);
+
+			CPhysic::GetInstance()->Update(dt);
 		}
 		else
 			Sleep(tickPerFrame - dt);
@@ -104,10 +91,10 @@ bool CGameManager::Run()
 
 }
 
-void CGameManager::AddGameObject(CGameObject* pGameObject)
-{
-	m_gameObjectList.push_back(pGameObject);
-}
+//void CGameManager::AddGameObject(CGameObject* pGameObject)
+//{
+//	m_gameObjectList.push_back(pGameObject);
+//}
 
 void CGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
 {
