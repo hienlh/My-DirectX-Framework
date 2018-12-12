@@ -5,6 +5,11 @@
 
 using namespace Framework;
 
+CBoxCollider::CBoxCollider(const CBoxCollider &boxCollider) : CCollider(boxCollider)
+{
+	m_Size = boxCollider.m_Size;
+}
+
 CBoxCollider::CBoxCollider(CGameObject* gameObject) : CCollider(gameObject)
 {
 	const auto transform = m_pGameObject->GetComponent<CTransform>();
@@ -44,5 +49,10 @@ void CBoxCollider::Render()
 	{
 		CGraphic::GetInstance()->DrawRectangle(GetBoundGlobal());
 	}
+}
+
+CBoxCollider* CBoxCollider::Clone() const
+{
+	return new CBoxCollider(*this);
 }
 

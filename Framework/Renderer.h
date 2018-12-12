@@ -34,7 +34,7 @@ namespace Framework
 		bool GetFlipX() const { return m_flipX; }
 		bool GetFlipY() const { return m_flipY; }
 
-		CRenderer* SetSprite(CWString textureName, DWORD index = 0);
+		CRenderer* SetSprite(std::string textureName, DWORD index = -1);
 		CRenderer* SetAlpha(DWORD alpha) { m_alpha = alpha > 255 ? 255 : alpha;  return this; }
 		CRenderer* SetZOrder(int zOrder) { m_zOrder = zOrder; return this; }
 		CRenderer* SetFlipX(bool flipX) { m_flipX = flipX; return this; }
@@ -43,18 +43,21 @@ namespace Framework
 		// Cons / Des
 	public:
 		CRenderer() = default;
+		CRenderer(const CRenderer &renderer);
 		CRenderer(CGameObject* game_object) : CComponent(game_object) {}
-		CRenderer(CGameObject* game_object, LPCWSTR texture_path) : CComponent(game_object) { this->Init(texture_path); }
+		CRenderer(CGameObject* game_object, std::string texture_path) : CComponent(game_object) { this->Init(texture_path); }
 		virtual ~CRenderer() = default;
 
 		// Internal methods
 	private:
-		bool Init(CWString textureName, DWORD index = 0);
+		bool Init(std::string textureName, DWORD index = 0);
 		void Release() const;
 
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
+
+		CRenderer* Clone() const override;
 
 		// Static methods
 	public:

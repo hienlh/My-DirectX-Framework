@@ -6,8 +6,9 @@ namespace Framework {
 	class CBoxCollider : public CCollider
 	{
 	private:
-		Vector2 m_Size;
+		Vector2 m_Size = VECTOR2_ZERO;
 	public:
+		CBoxCollider(const CBoxCollider &boxCollider);
 		CBoxCollider(CGameObject* gameObject);
 		~CBoxCollider() = default;
 
@@ -23,5 +24,7 @@ namespace Framework {
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
+
+		CBoxCollider* Clone() const override;
 	};
 }

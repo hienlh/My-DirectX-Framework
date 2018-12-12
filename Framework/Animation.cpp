@@ -4,7 +4,17 @@
 
 using namespace Framework;
 
-CAnimation::CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime, bool loop)
+CAnimation::CAnimation(const CAnimation& animation) : CObject(animation)
+{
+	m_loop = animation.m_loop;
+	m_defaultTime = animation.m_defaultTime;
+	m_frames = animation.m_frames;
+	m_frameIndex = 0;
+	m_timeElapse = animation.m_timeElapse;
+	m_Name = animation.m_Name;
+}
+
+CAnimation::CAnimation(std::string name, std::string textureName, DWORD startSprite, DWORD count, DWORD defaultTime, bool loop)
 {
 	bool result = false;
 	do {
@@ -47,6 +57,11 @@ void CAnimation::Update(DWORD dt)
 	m_timeElapse += dt;
 }
 
+CAnimation* CAnimation::Clone() const
+{
+	return new CAnimation(*this);
+}
+
 CSprite* CAnimation::GetSprite()
 {
 	return m_frames[m_frameIndex].m_sprite;
@@ -64,7 +79,7 @@ CAnimation* CAnimation::SetIndexCurrentFrame(int index)
 	return this;
 }
 
-CAnimation* CAnimation::Add(CWString textureName, DWORD indexSprite, DWORD position, DWORD time)
+CAnimation* CAnimation::Add(std::string textureName, DWORD indexSprite, DWORD position, DWORD time)
 {
 	Add(CResourceManager::GetInstance()->GetSprite(textureName, indexSprite), position, time);
 	return this;

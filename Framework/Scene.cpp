@@ -6,24 +6,24 @@
 
 using namespace Framework;
 
-CScene::CScene()
+CScene::CScene(std::string name, Vector2 quadTreeSize)
 {
-	if (!this->Init())
+	if (!this->Init(name, quadTreeSize))
 		delete this;
 }
 
-bool CScene::Init()
+bool CScene::Init(std::string name, Vector2 quadTreeSize)
 {
 	if (!InitMainCamera()) return false;
 
-	FILE* tmp;
 	struct stat buffer;
 	if(stat("QuadTree.xml", &buffer) == 0)
 	{
 		m_loadedQuadTree = true;
 	}
 
-	m_pQuadTree = new CQuadTree(0, 0, Rect(0, 0, 600, 600));
+	m_pQuadTree = new CQuadTree(quadTreeSize);
+	m_Name = name;
 
 	return true;
 }
@@ -33,9 +33,8 @@ bool CScene::InitMainCamera()
 	bool result = false;
 	do
 	{
-		m_pMainCamera = new CGameObject(L"Main Camera");
+		m_pMainCamera = new CGameObject("Main Camera");
 		m_pMainCamera->AddComponent<CCamera>();
-		const auto camera = m_pMainCamera->GetComponent<CCamera>();
 
 		result = true;
 	} while (false);
@@ -82,7 +81,7 @@ void CScene::Update(DWORD dt)
 	CInput::GetInstance()->Update();
 
 	// Remove dynamic gameObjects
-	m_pQuadTree->clear();
+	m_pQuadTree->clearDynamicObject();
 	// ReAdd dynamic gameObjects
 	for (CGameObject* const object : m_colliderObjectList)
 	{
@@ -94,7 +93,7 @@ void CScene::Update(DWORD dt)
 	{
 		pGameObject->Update(dt);
 
-		if (pGameObject->GetName() == L"Player")
+		if (pGameObject->GetName() == "Player")
 		{
 			auto tmp = m_pQuadTree->query(pGameObject->GetComponent<CCollider>()->GetBoundGlobal());
 		}
@@ -115,11 +114,11 @@ void CScene::Render()
 
 bool CScene::AddGameObject(CGameObject* gameObject)
 {
-	const auto name = gameObject->GetName();
+	/*const auto name = gameObject->GetName();
 	if (FindGameObject(name))
 	{
 		return false;
-	}
+	}*/
 
 	m_gameObjectList.insert(gameObject);
 	gameObject->SetScene(this);
@@ -127,7 +126,7 @@ bool CScene::AddGameObject(CGameObject* gameObject)
 	return true;
 }
 
-CGameObject* CScene::FindGameObject(CWString name)
+CGameObject* CScene::FindGameObject(std::string name)
 {
 	for (CGameObject* const game_object : m_gameObjectList)
 	{
@@ -162,7 +161,7 @@ void CScene::AddColliderObject(CGameObject* gameObject)
 
 void CScene::SaveQuadTree() const
 {
-	m_pQuadTree->clear();
+	m_pQuadTree->clearDynamicObject();
 	m_pQuadTree->SaveToXml("QuadTree.xml");
 }
 

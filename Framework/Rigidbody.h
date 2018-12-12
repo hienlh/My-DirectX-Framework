@@ -6,40 +6,43 @@ namespace Framework {
 	class CRigidbody : public CComponent
 	{
 	private:
-		Vector2 _velocity;
-		float _gravityScale;
-		bool _isKinematic;
-		float _mass;
+		Vector2 m_velocity = VECTOR2_ZERO;
+		float m_gravityScale = 1;
+		bool m_isKinematic = false;
+		float m_mass = 0;
 
 	public:
+		CRigidbody(const CRigidbody &rigidbody);
 		CRigidbody(CGameObject* gameObject);
 		~CRigidbody() = default;
 
 
 		// Getter / Setter
 	public:
-		inline Vector2 GetVelocity() { return _velocity; }
+		inline Vector2 GetVelocity() const { return m_velocity; }
 		void SetVelocity(Vector2 velocity) { SetVelocity(velocity.x, velocity.y); }
 		void SetVelocity(float x = MAX_VELOCITY, float y = MAX_VELOCITY)
 		{
 			if (fabs(x - MAX_VELOCITY) > EPSILON) 
-				_velocity.x = x;
+				m_velocity.x = x;
 			if (fabs(y - MAX_VELOCITY) > EPSILON) 
-				_velocity.y = y;
+				m_velocity.y = y;
 		}
-		void AddVelocity(Vector2 velocity) { _velocity += velocity; }
-		void MinarVelocity(Vector2 velocity) { _velocity -= velocity; }
-		float GetGravityScale() { return _gravityScale; }
-		void SetGravityScale(float gravityScale) { _gravityScale = gravityScale; }
-		float GetMass() { return _mass; }
-		void SetMass(float mass) { _mass = mass; }
-		bool GetIsKinematic() { return _isKinematic; }
-		void SetIsKinematic(bool isKinematic) { _isKinematic = isKinematic; }
+		void AddVelocity(Vector2 velocity) { m_velocity += velocity; }
+		void MinarVelocity(Vector2 velocity) { m_velocity -= velocity; }
+		float GetGravityScale() const { return m_gravityScale; }
+		void SetGravityScale(float gravityScale) { m_gravityScale = gravityScale; }
+		float GetMass() const { return m_mass; }
+		void SetMass(float mass) { m_mass = mass; }
+		bool GetIsKinematic() const { return m_isKinematic; }
+		void SetIsKinematic(bool isKinematic);
 
 		// Override
 	public:
 		void Update(DWORD dt) override;
 		void Render();
+
+		CRigidbody* Clone() const override;
 		
 		//Friend
 	public:

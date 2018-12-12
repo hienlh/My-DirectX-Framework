@@ -6,4 +6,7 @@
 
 using namespace Framework;
 
-Framework::CGameObject* _gameObject = nullptr;
+CComponent::CComponent(const CComponent& component) : CObject(component)
+{
+
+}

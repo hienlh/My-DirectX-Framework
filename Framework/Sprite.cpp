@@ -16,9 +16,9 @@ CSprite::~CSprite()
 	delete m_pTexture;
 }
 
-bool CSprite::SetTexture(CWString textureName)
-{
-	if (m_pTexture = CResourceManager::GetInstance()->GetTexture(textureName)) 
-		return true;
-	return false;
-}
+//bool CSprite::SetTexture(std::string textureName)
+//{
+//	if (m_pTexture = CResourceManager::GetInstance()->GetTexture(textureName)) 
+//		return true;
+//	return false;
+//}

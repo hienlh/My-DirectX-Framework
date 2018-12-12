@@ -11,5 +11,7 @@ public:
 private:
 	void Update(DWORD dt) override;
 	void Render() override;
+
+	MegaManPowerController* Clone() const override { return new MegaManPowerController(*this); }
 };
 

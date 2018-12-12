@@ -113,7 +113,7 @@ void CPhysic::Update(DWORD dt)
 		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
 		{
 			if(!rigid->GetIsKinematic())
-				rigid->_velocity.y += rigid->GetGravityScale() * GRAVITY;
+				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
 		}
 	}
 
@@ -122,6 +122,10 @@ void CPhysic::Update(DWORD dt)
 	auto listCollierObject = currentScreen->GetListColliderObject();
 	for (CGameObject* const object : listCollierObject)
 	{
+		if(object->GetName() == "Player")
+		{
+			auto a = object;
+		}
 		const Bound bound = object->GetComponent<CCollider>()->GetBoundGlobal();
 		std::list<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
 

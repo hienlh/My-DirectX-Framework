@@ -16,11 +16,11 @@ namespace Framework
 		bool m_loadedQuadTree = false;
 
 	public:
-		CScene();
+		CScene(std::string name, Vector2 quadTreeSize = {1000, 1000});
 		~CScene() = default;
 
 	private:
-		bool Init();
+		bool Init(std::string name, Vector2 quadTreeSize);
 		bool InitMainCamera();
 		bool Release();
 
@@ -34,8 +34,11 @@ namespace Framework
 	public:
 		static bool Destroy(CScene* scene);
 
-		void Update(DWORD dt);
-		void Render();
+		void Update(DWORD dt) override;
+		void Render() override;
+
+	private:
+		CScene* Clone() const override { return nullptr; }
 
 		//Internal Method
 	private:
@@ -44,7 +47,7 @@ namespace Framework
 		//Method
 	public:
 		bool AddGameObject(Framework::CGameObject* gameObject);
-		CGameObject* FindGameObject(CWString name);
+		CGameObject* FindGameObject(std::string name);
 		CGameObject* FindGameObject(DWORD id);
 		void SaveQuadTree() const;
 		void LoadQuadTree() const;
@@ -52,5 +55,6 @@ namespace Framework
 		//Friend
 	public:
 		friend class CGameObject;
+		friend class CRigidbody;
 	};
 }

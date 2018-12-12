@@ -1,8 +1,21 @@
 ﻿#include "stdafx.h"
 #include "Camera.h"
 #include "GameObject.h"
+#include "Transform.h"
 
 using namespace Framework;
+
+CCamera::CCamera(const CCamera &camera) : CComponent(camera)
+{
+	m_Name = camera.m_Name;
+	_width = camera._width;
+	_height = camera._height;
+	_angle = camera._angle;
+	_identityMatrix = camera._identityMatrix;
+	_orthographicMatrix = camera._orthographicMatrix;
+	_scaleFactors = camera._scaleFactors;
+	_viewMatrix = camera._viewMatrix;
+}
 
 Framework::CCamera::CCamera(CGameObject* gameObject) : CComponent(gameObject)
 {
@@ -24,10 +37,6 @@ Framework::CCamera::CCamera(CGameObject* gameObject, int width, int height, floa
 	D3DXMatrixIdentity(&_identityMatrix);
 }
 
-Framework::CCamera::~CCamera()
-{
-}
-
 void Framework::CCamera::Update(DWORD dt)
 {
 	auto pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
@@ -42,4 +51,9 @@ void Framework::CCamera::Update(DWORD dt)
 
 void Framework::CCamera::Render()
 {
+}
+
+CCamera* CCamera::Clone() const
+{
+	return new CCamera(*this);
 }

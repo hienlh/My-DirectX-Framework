@@ -1,7 +1,4 @@
 ﻿#pragma once
-
-#define MAX_OBJECTS 2
-#define MAX_LEVEL 5
 #include "Object.h"
 
 namespace Framework {
@@ -16,11 +13,12 @@ namespace Framework {
 
 		std::list < CGameObject* > m_pObjects = {};
 
-		Rect m_bounds = {};
+		Rect m_bounds = { 0,0,1000,1000 };
 
 		CQuadTree* m_pNodes[4] = {};
 
 	public:
+		CQuadTree(Vector2 size = { 1000,1000 });
 		CQuadTree(int id, int level, Rect bounds);
 		~CQuadTree() = default;
 
@@ -30,9 +28,12 @@ namespace Framework {
 
 		void Render() override;
 
+	private:
+		CObject* Clone() const override { return nullptr; }
+
 		//Method
 	public:
-		void clear();
+		void clearDynamicObject();
 
 		void split();
 

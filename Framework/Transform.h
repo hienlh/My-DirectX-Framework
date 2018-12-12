@@ -14,6 +14,7 @@ namespace Framework
 		// Cons / Des
 	public:
 		CTransform() = default;
+		CTransform(const CTransform &transform);
 		CTransform(CGameObject* game_object, Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO, Vector2 scale = VECTOR2_ONE);
 		virtual ~CTransform() = default;
 
@@ -27,7 +28,7 @@ namespace Framework
 		Vector2 GetLocalScale() const { return m_scale; }
 		CTransform* GetParent() const { return m_pParent; }
 
-		CTransform* Set_Position(Vector2 position);
+		CTransform* Set_Position(Vector2 position, bool inWorldSpace = true);
 		CTransform* Set_Rotation(Vector3 rotation);
 		CTransform* Set_Scale(Vector2 scale);
 		CTransform* SetParent(CTransform *parent);
@@ -53,6 +54,8 @@ namespace Framework
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
+
+		CTransform* Clone() const override;
 
 	};
 }

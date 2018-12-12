@@ -221,22 +221,21 @@ void CGraphic::DrawRectangle(Rect rect, DWORD color)
 	m_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, 4);
 }
 
-Texture* CGraphic::CreateTexture(CWString texturePath, D3DCOLOR transparentColor) const
+Texture* CGraphic::CreateTexture(std::string texturePath, D3DCOLOR transparentColor) const
 {
 	Texture* m_texture = new Texture();
 	do
 	{
 		D3DXIMAGE_INFO info;
-		HRESULT hr = D3DXGetImageInfoFromFileW(texturePath, &info);
+		HRESULT hr = D3DXGetImageInfoFromFileA(texturePath.c_str(), &info);
 		if (hr != S_OK)
 			break;
 
 		m_texture->width = info.Width;
 		m_texture->height = info.Height;
-
-		hr = D3DXCreateTextureFromFileExW(
+		hr = D3DXCreateTextureFromFileExA(
 			m_pDevice,       // Pointer to Direct3D device object
-			texturePath, // Path to the image to load
+			texturePath.c_str(), // Path to the image to load
 			info.Width,  // CTexture width
 			info.Height, // CTexture height
 			1,

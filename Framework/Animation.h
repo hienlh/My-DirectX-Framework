@@ -24,14 +24,17 @@ namespace Framework {
 	private:
 		CAnimation() = default;
 	public:
-		CAnimation(CWString name, CWString textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100, bool loop = true);
+		CAnimation(const CAnimation& animation);
+		CAnimation(std::string name, std::string textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100, bool loop = true);
 		~CAnimation() = default;
 
 	private:
-		bool Init(LPCWSTR textureName, DWORD defaultTime);
+		bool Init(std::string textureName, DWORD defaultTime);
 		void Render() override;
 	public:
 		void Update(DWORD dt) override;
+
+		CAnimation* Clone() const override;
 
 		// Getter / Setter
 	public:
@@ -43,10 +46,11 @@ namespace Framework {
 
 		//Method
 	public:
-		CAnimation* Add(CWString textureName, DWORD indexSprite, DWORD pos = -1, DWORD time = 0);
+		CAnimation* Add(std::string textureName, DWORD indexSprite, DWORD pos = -1, DWORD time = 0);
 		CAnimation* Add(CSprite* sprite, DWORD pos = -1, DWORD time = 0);
 		void Refresh() { m_frameIndex = 0; }
 	private:
 		CAnimation* Add(SFrame frame);
+
 	};
 }

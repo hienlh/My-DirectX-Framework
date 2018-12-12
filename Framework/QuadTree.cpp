@@ -3,8 +3,16 @@
 #include "Graphic.h"
 #include "Rigidbody.h"
 #include "GameManager.h"
+#include "Collider.h"
 
 using namespace Framework;
+
+CQuadTree::CQuadTree(Vector2 size)
+{
+	m_id = 0;
+	m_level = 0;
+	m_bounds = Rect(Vector2(0,0), size);
+}
 
 CQuadTree::CQuadTree(int id, int level, Rect bounds)
 {
@@ -27,7 +35,7 @@ void CQuadTree::Render()
 		}
 }
 
-void CQuadTree::clear()
+void CQuadTree::clearDynamicObject()
 {
 	//Remove dynamic gameObjects
 	auto tmp = m_pObjects;
@@ -37,19 +45,23 @@ void CQuadTree::clear()
 			m_pObjects.remove(game_object);
 	}
 
-	int amountGameObjectsOfChild = 0;
-	if(m_pNodes[0])
-		for (int i = 0; i < 4; i++)
-		{
-			m_pNodes[i]->clear();
-			amountGameObjectsOfChild += m_pNodes[i]->m_pObjects.size();
-		}
+	int nodesCanDelete = 0;
 
-	if (!amountGameObjectsOfChild)
+	if (m_pNodes[0]) {
 		for (int i = 0; i < 4; i++)
 		{
-			SAFE_DELETE(m_pNodes[i]);
+			m_pNodes[i]->clearDynamicObject();
+
+			if(!m_pNodes[i]->m_pObjects.size() && !m_pNodes[i]->m_pNodes[0])
+			{
+				nodesCanDelete++;
+			}
 		}
+	}
+
+	if(nodesCanDelete == 4)
+		for (int i = 0; i < 4; i++)
+			SAFE_DELETE(m_pNodes[i]);
 }
 
 void CQuadTree::split()
@@ -103,6 +115,7 @@ tinyxml2::XMLElement* CQuadTree::ToXmlElement(tinyxml2::XMLDocument &doc) const
 		{
 			auto gameObject = doc.NewElement("GameObjectID");
 			gameObject->SetAttribute("id", static_cast<int>(game_object->GetID()));
+			gameObject->SetAttribute("name", game_object->GetName().c_str());
 			gameObjects->InsertEndChild(gameObject);
 		}
 		result->InsertFirstChild(gameObjects);
@@ -139,8 +152,8 @@ void CQuadTree::SaveToXml(const char* xmlPath)
 
 void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
 {
-	m_id = node->IntAttribute("id");
-	m_bounds = Bound(Vector2(node->IntAttribute("y"), node->IntAttribute("x")),
+	this->m_id = node->IntAttribute("id");
+	this->m_bounds = Bound(Vector2(node->IntAttribute("y"), node->IntAttribute("x")),
 	                 Vector2(node->IntAttribute("width"), node->IntAttribute("height")));
 	if(auto gameObjects = node->FirstChildElement("GameObjects"))
 	{
@@ -148,8 +161,21 @@ void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
 		CScene *scene = CGameManager::GetInstance()->GetCurrentScene();
 		while (gameObject != nullptr)
 		{
-			m_pObjects.push_back(scene->FindGameObject(gameObject->IntAttribute("id", -1)));
+			this->m_pObjects.push_back(scene->FindGameObject(gameObject->IntAttribute("id", -1)));
 			gameObject = gameObject->NextSiblingElement("GameObjectID");
+		}
+
+	}
+
+	if (auto childNodes = node->FirstChildElement("ChildNodes"))
+	{
+		split();
+		tinyxml2::XMLElement * childNode = childNodes->FirstChildElement("Node");
+		int index = 0;
+		while (childNode)
+		{
+			m_pNodes[index++]->LoadFromXml(childNode);
+			childNode = childNode->NextSiblingElement("Node");
 		}
 
 	}
@@ -196,7 +222,7 @@ void CQuadTree::insert(CGameObject *gameObject)
 
 	// Check if node has more than max objects and level lower than max level, 
 	// split this node and add to appropriate sub node
-	if(m_pObjects.size() > MAX_OBJECTS && m_level < MAX_LEVEL)
+	if(m_pObjects.size() > MAX_QUAD_TREE_OBJECTS && m_level < MAX_QUAD_TREE_LEVEL)
 	{
 		if(!m_pNodes[0])
 		{
@@ -227,8 +253,8 @@ std::list<CGameObject*> CQuadTree::query(Rect rectangle)
 	std::list<CGameObject*> result = {};
 
 	// Check if it overlap with this node, then get all objects of this node to result;
-	if (!m_bounds.intersect(rectangle))
-		return result;
+	/*if (!m_bounds.intersect(rectangle))
+		return result;*/
 
 	for (CGameObject* object : m_pObjects)
 	{

@@ -41,3 +41,6 @@
 
 #define MAX_VELOCITY 1e9
 #define EPSILON 1e-9
+
+#define MAX_QUAD_TREE_OBJECTS 3
+#define MAX_QUAD_TREE_LEVEL 5

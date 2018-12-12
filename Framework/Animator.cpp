@@ -5,6 +5,33 @@
 
 using namespace Framework;
 
+CAnimator::CAnimator(const CAnimator& animator) : CComponent(animator)
+{
+	m_Name = animator.m_Name;
+	m_boolConditions = animator.m_boolConditions;
+	for (const std::pair<const std::basic_string<char>, CAnimation*> animation : animator.m_Animations)
+	{
+		const auto clone = animation.second->Clone();
+		AddAnimation(clone);
+
+		if (animator.m_pRootAnimation == animation.second)
+			m_pRootAnimation = clone;
+	}
+
+	m_transitions = animator.m_transitions;
+	for (std::pair<const std::basic_string<char>, std::list<CTransition*>> listTransition : animator.m_transitions)
+	{
+		std::list<CTransition*> cloneList = {};
+		for (CTransition* transition : listTransition.second)
+		{
+			cloneList.push_back(transition->Clone());
+		}
+		m_transitions[listTransition.first] = cloneList;
+	}
+
+	m_pCurrentAnimation = m_pRootAnimation;
+}
+
 bool CAnimator::Init()
 {
 	return true;
@@ -16,22 +43,33 @@ void CAnimator::Release()
 
 
 /**
- * \brief The first time you add animation into animator, 
+ * \brief Deep copy. The first time you add animation into animator, 
  * it'll set that animation into the root animation of the animator
  */
-CAnimator* CAnimator::AddAnimation(CWString animationName)
+CAnimator* CAnimator::AddAnimation(std::string animationName)
 {
 	CAnimation* anim = CResourceManager::GetInstance()->GetAnimation(animationName);
 
 	if (anim) {
 		if (m_Animations.size() <= 0) m_pCurrentAnimation = anim;
-		m_Animations[animationName] = anim;
+		m_Animations[animationName] = anim->Clone();
 	}
 
-	if (!m_pRootAnimation) m_pRootAnimation = anim;
+	if (!m_pRootAnimation) m_pRootAnimation = m_Animations[animationName];
 	return this;
 }
 
+
+/**
+ * \brief Note: shallow copy
+ * \param animation 
+ * \return Return nullptr neu trung ten
+ */
+CAnimator* CAnimator::AddAnimation(CAnimation* animation)
+{
+	m_Animations[animation->GetName()] = animation;
+	return this;
+}
 
 /**
  * \brief Add transition into Animator
@@ -42,8 +80,8 @@ CAnimator* CAnimator::AddAnimation(CWString animationName)
  * \param value Value of the condition
  * \param relatedTo To the destination animation change in correctly index of source animation
  */
-CAnimator* CAnimator::AddTransition(CWString srcAnimationName, CWString dstAnimationName, bool hasExitTime,
-                                    CWString conditionName, bool value, bool relatedTo)
+CAnimator* CAnimator::AddTransition(std::string srcAnimationName, std::string dstAnimationName, bool hasExitTime,
+	std::string conditionName, bool value, bool relatedTo)
 {
 	CAnimation *srcAnimation = m_Animations[srcAnimationName];
 	CAnimation *dstAnimation = m_Animations[dstAnimationName];
@@ -52,7 +90,7 @@ CAnimator* CAnimator::AddTransition(CWString srcAnimationName, CWString dstAnima
 	{
 		CTransition* transition = nullptr;
 		SAFE_ALLOC1(transition, CTransition, dstAnimationName);
-		if (conditionName != L"")
+		if (conditionName != "")
 			transition->SetCondition(conditionName, value)->SetHasExitTime(hasExitTime)->SetRelatedTo(relatedTo);
 
 		m_transitions[srcAnimationName].push_back(transition);
@@ -70,7 +108,7 @@ CAnimator* CAnimator::AddTransition(CWString srcAnimationName, CWString dstAnima
  * \param animationName 
  * \return nullptr if animation is not in Resource Manager
  */
-CAnimator* CAnimator::SetRootAnimation(CWString animationName)
+CAnimator* CAnimator::SetRootAnimation(std::string animationName)
 {
 	bool result = true;
 	do
@@ -98,17 +136,18 @@ CAnimator* CAnimator::SetRootAnimation(CWString animationName)
 	return result ? this : nullptr;
 }
 
-CAnimation* CAnimator::GetCurrentAnimation() const
+CAnimation* CAnimator::GetCurrentAnimation()
 {
+	if (!m_pCurrentAnimation) m_pCurrentAnimation = m_pRootAnimation;
 	return m_pCurrentAnimation;
 }
 
-CSprite* CAnimator::GetCurrentSprite() const
+CSprite* CAnimator::GetCurrentSprite()
 {
-	return m_pCurrentAnimation->GetSprite();
+	return GetCurrentAnimation()->GetSprite();
 }
 
-CTransition* CAnimator::GetTransition(CWString srcAnimationName, CWString dstAnimationName)
+CTransition* CAnimator::GetTransition(std::string srcAnimationName, std::string dstAnimationName)
 {
 	if (!m_transitions.count(srcAnimationName)) return nullptr;
 
@@ -123,7 +162,7 @@ CTransition* CAnimator::GetTransition(CWString srcAnimationName, CWString dstAni
 	return nullptr;
 }
 
-CAnimator* CAnimator::AddBool(CWString name, bool value)
+CAnimator* CAnimator::AddBool(std::string name, bool value)
 {
 	bool result;
 	do { 
@@ -138,7 +177,7 @@ CAnimator* CAnimator::AddBool(CWString name, bool value)
 	return result ? this : nullptr;
 }
 
-CAnimator* CAnimator::SetBool(CWString name, bool value)
+CAnimator* CAnimator::SetBool(std::string name, bool value)
 {
 	bool result;
 	do {
@@ -152,7 +191,7 @@ CAnimator* CAnimator::SetBool(CWString name, bool value)
 	return result ? this : nullptr;
 }
 
-bool CAnimator::GetBool(CWString name)
+bool CAnimator::GetBool(std::string name)
 {
 	if (m_boolConditions.count(name))
 	{
@@ -170,8 +209,8 @@ void CAnimator::Update(DWORD dt)
 	bool found = true;
 	for (CTransition* transition : transitionList)
 	{
-		std::map<CWString, bool> conditions = transition->GetConditions();
-		for (const std::pair<CWString, bool> condition : conditions)
+		std::map<std::string, bool> conditions = transition->GetConditions();
+		for (const std::pair<std::string, bool> condition : conditions)
 		{
 			if (m_boolConditions.count(condition.first))
 			{
@@ -219,6 +258,11 @@ void CAnimator::Render()
 	//position3D.z = 0;
 
 	//CGraphic::GetInstance()->Draw(sprite, &position3D);
+}
+
+CAnimator* CAnimator::Clone() const
+{
+	return new CAnimator(*this);
 }
 
 CAnimator* CAnimator::Instantiate()

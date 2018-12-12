@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BallController.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="GroundController.cpp" />
     <ClCompile Include="main.cpp" />
@@ -31,7 +31,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BallController.h" />
+    <ClInclude Include="PlayerController.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="GroundController.h" />
     <ClInclude Include="MegaManPowerController.h" />

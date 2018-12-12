@@ -4,6 +4,18 @@
 
 using namespace Framework;
 
+CCollider::CCollider(const CCollider& collider) : CComponent(collider)
+{
+	m_Anchor = collider.m_Anchor;
+	m_AutoBoundSize = collider.m_AutoBoundSize;
+	m_Bound = collider.m_Bound;
+	m_IsDebugging = collider.m_IsDebugging;
+	m_IsTrigger = collider.m_IsTrigger;
+	m_Offset = collider.m_Offset;
+	m_UsedByEffector = collider.m_UsedByEffector;
+	m_Name = collider.m_Name;
+}
+
 CCollider::CCollider(CGameObject* gameObject) : CComponent(gameObject)
 {
 	m_Offset = VECTOR2_ZERO;

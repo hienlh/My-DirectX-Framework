@@ -4,6 +4,15 @@
 
 using namespace Framework;
 
+CTransform::CTransform(const CTransform& transform) : CComponent(transform)
+{
+	m_pParent = transform.m_pParent;
+	m_position = transform.m_position;
+	m_rotation = transform.m_rotation;
+	m_scale = transform.m_scale;
+	m_Name = transform.m_Name;
+}
+
 CTransform::CTransform(CGameObject* game_object, Vector2 position, Vector3 rotation, Vector2 scale) : CComponent(game_object)
 {
 	this->m_position = position;
@@ -11,6 +20,11 @@ CTransform::CTransform(CGameObject* game_object, Vector2 position, Vector3 rotat
 	this->m_scale = scale;
 }
 
+
+/**
+ * \brief Get Position
+ * \return Position in the world space
+ */
 Vector2 CTransform::Get_Position() const
 { 
 	if (m_pParent)
@@ -39,9 +53,18 @@ Vector2 CTransform::Get_Scale() const
 	return result;
 }
 
-CTransform* CTransform::Set_Position(Vector2 position)
+/**
+ * \brief Set position
+ * \param position Value of position
+ * \param inWorldSpace this value of position is in world space or local
+ */
+CTransform* CTransform::Set_Position(Vector2 position, bool inWorldSpace)
 {
-	m_position = position - (m_pParent ? m_pParent->Get_Position() : Vector2(0, 0));
+	m_position = position;
+	if (inWorldSpace)
+	{
+		m_position -= (m_pParent ? m_pParent->Get_Position() : Vector2(0, 0));
+	}
 	return this;
 }
 
@@ -68,7 +91,8 @@ CTransform* CTransform::SetParent(CTransform* parent)
 
 CTransform* CTransform::SetParent(CGameObject* parentGameObject)
 {
-	SetParent(parentGameObject->GetComponent<CTransform>());
+	if(parentGameObject)
+		SetParent(parentGameObject->GetComponent<CTransform>());
 	return this;
 }
 
@@ -112,5 +136,10 @@ void CTransform::Update(DWORD dt)
 
 void CTransform::Render()
 {
+}
+
+CTransform* CTransform::Clone() const
+{
+	return new CTransform(*this);
 }
 
