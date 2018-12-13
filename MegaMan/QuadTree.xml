@@ -23,15 +23,31 @@
                                             <Node id="22212" x="500" y="0" width="250" height="250"/>
                                             <Node id="22213" x="500" y="250" width="250" height="250"/>
                                             <Node id="22214" x="750" y="250" width="250" height="250">
-                                                <GameObjects>
-                                                    <GameObjectID id="11" name="Ground13"/>
-                                                    <GameObjectID id="12" name="Ground14"/>
-                                                    <GameObjectID id="16" name="Ceiling3"/>
-                                                    <GameObjectID id="17" name="Ceiling4"/>
-                                                    <GameObjectID id="24" name="Wall20"/>
-                                                    <GameObjectID id="25" name="Wall21"/>
-                                                    <GameObjectID id="26" name="Wall22"/>
-                                                </GameObjects>
+                                                <ChildNodes>
+                                                    <Node id="222141" x="875" y="250" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="17" name="Ceiling4"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                    <Node id="222142" x="750" y="250" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="16" name="Ceiling3"/>
+                                                            <GameObjectID id="26" name="Wall22"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                    <Node id="222143" x="750" y="375" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="11" name="Ground13"/>
+                                                            <GameObjectID id="24" name="Wall20"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                    <Node id="222144" x="875" y="375" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="12" name="Ground14"/>
+                                                            <GameObjectID id="25" name="Wall21"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                </ChildNodes>
                                             </Node>
                                         </ChildNodes>
                                     </Node>
@@ -48,9 +64,21 @@
                                             <Node id="22234" x="250" y="750" width="250" height="250">
                                                 <GameObjects>
                                                     <GameObjectID id="14" name="Ceiling1"/>
-                                                    <GameObjectID id="15" name="Ceiling2"/>
-                                                    <GameObjectID id="19" name="Wall15"/>
                                                 </GameObjects>
+                                                <ChildNodes>
+                                                    <Node id="222341" x="375" y="750" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="15" name="Ceiling2"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                    <Node id="222342" x="250" y="750" width="125" height="125"/>
+                                                    <Node id="222343" x="250" y="875" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="19" name="Wall15"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                    <Node id="222344" x="375" y="875" width="125" height="125"/>
+                                                </ChildNodes>
                                             </Node>
                                         </ChildNodes>
                                     </Node>
@@ -60,20 +88,39 @@
                                         </GameObjects>
                                         <ChildNodes>
                                             <Node id="22241" x="750" y="500" width="250" height="250">
-                                                <GameObjects>
-                                                    <GameObjectID id="9" name="Ground11"/>
-                                                    <GameObjectID id="10" name="Ground12"/>
-                                                    <GameObjectID id="22" name="Wall18"/>
-                                                    <GameObjectID id="23" name="Wall19"/>
-                                                </GameObjects>
+                                                <ChildNodes>
+                                                    <Node id="222411" x="875" y="500" width="125" height="125"/>
+                                                    <Node id="222412" x="750" y="500" width="125" height="125"/>
+                                                    <Node id="222413" x="750" y="625" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="9" name="Ground11"/>
+                                                            <GameObjectID id="22" name="Wall18"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                    <Node id="222414" x="875" y="625" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="10" name="Ground12"/>
+                                                            <GameObjectID id="23" name="Wall19"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                </ChildNodes>
                                             </Node>
                                             <Node id="22242" x="500" y="500" width="250" height="250"/>
                                             <Node id="22243" x="500" y="750" width="250" height="250">
                                                 <GameObjects>
                                                     <GameObjectID id="6" name="Ground8"/>
                                                     <GameObjectID id="20" name="Wall16"/>
-                                                    <GameObjectID id="21" name="Wall17"/>
                                                 </GameObjects>
+                                                <ChildNodes>
+                                                    <Node id="222431" x="625" y="750" width="125" height="125">
+                                                        <GameObjects>
+                                                            <GameObjectID id="21" name="Wall17"/>
+                                                        </GameObjects>
+                                                    </Node>
+                                                    <Node id="222432" x="500" y="750" width="125" height="125"/>
+                                                    <Node id="222433" x="500" y="875" width="125" height="125"/>
+                                                    <Node id="222434" x="625" y="875" width="125" height="125"/>
+                                                </ChildNodes>
                                             </Node>
                                             <Node id="22244" x="750" y="750" width="250" height="250">
                                                 <GameObjects>

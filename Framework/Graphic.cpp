@@ -158,15 +158,25 @@ void CGraphic::Draw(Texture* texture, Vector3 *position, Rect* pSourceRect, Vect
 
 }
 
-void CGraphic::Draw(CSprite* sprite, Vector3* position, float angle, Vector3 *scale, bool flipX, bool flipY) const
+void CGraphic::Draw(CSprite* sprite, Vector3* position, float angle, Vector3 *scale, bool flipX, bool flipY, DWORD fillColor, DWORD alpha) const
 {
 	Texture* texture = sprite->GetTexture();
-	Vector2 anchor = sprite->GetAnchor();
+	const Vector2 anchor = sprite->GetAnchor();
 	Rect sourceRect = sprite->GetSourceRect();
 	Vector2 center = Vector2(anchor.x * (sourceRect.right - sourceRect.left), 
 							   anchor.y * (sourceRect.bottom - sourceRect.top));
-	
-	Draw(texture, position, &sourceRect, &center, angle, COLOR_WHITE, scale, flipX, flipY);
+	if(fillColor!=COLOR_WHITE)
+	{
+		int a = alpha;
+		int r = COLOR_GET_R(fillColor);
+		int b = COLOR_GET_B(fillColor);
+		int g = COLOR_GET_G(fillColor);
+		CDebug::Log(static_cast<long>(a));
+	}
+
+	const DWORD _fillColor = D3DCOLOR_RGBA(COLOR_GET_R(fillColor), COLOR_GET_G(fillColor), COLOR_GET_B(fillColor), alpha);
+
+	Draw(texture, position, &sourceRect, &center, angle, _fillColor, scale, flipX, flipY);
 }
 
 void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)

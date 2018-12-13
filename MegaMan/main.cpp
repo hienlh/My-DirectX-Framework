@@ -204,7 +204,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
 		;
 		pPlayer->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
-		pPlayer->GetComponent<CRenderer>()->SetFlipY(false);
+		pPlayer->GetComponent<CRenderer>()->SetFlipY(false)->SetFillColor(D3DCOLOR_XRGB(0,0,255))->SetAlpha(100);
 		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
 		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);

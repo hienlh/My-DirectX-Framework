@@ -70,7 +70,7 @@ bool CGameManager::Run()
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
 		DWORD dt = now - frameStart;
-		//dt = 20; // For Debug
+		dt = 20; // For Debug
 
 		if (dt >= tickPerFrame)
 		{

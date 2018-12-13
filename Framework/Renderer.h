@@ -17,7 +17,7 @@ namespace Framework
 	private:
 		CSprite *m_pRootSprite = nullptr;
 		CSprite *m_pSprite = nullptr;
-		DWORD m_alpha = 255;
+		DWORD m_alpha = 255, m_fillColor = COLOR_WHITE;
 		int m_zOrder = 0;
 		bool m_flipX = false, m_flipY = false;
 
@@ -29,6 +29,7 @@ namespace Framework
 		Vector2 GetSize() const { return m_pSprite ? m_pSprite->GetSize() : Vector2(0, 0); }
 		Rect GetSourceRect() const { return m_pSprite ? m_pSprite->GetSourceRect() : Rect(0, 0, 0, 0); }
 		DWORD GetAlpha() const { return m_alpha; }
+		DWORD GetFillColor() const { return m_fillColor; }
 		int GetZOrder() const { return m_zOrder; }
 		Vector2 GetAnchor() const { return m_pSprite ? m_pSprite->GetAnchor() : Vector2(0, 0); }
 		bool GetFlipX() const { return m_flipX; }
@@ -36,6 +37,7 @@ namespace Framework
 
 		CRenderer* SetSprite(std::string textureName, DWORD index = -1);
 		CRenderer* SetAlpha(DWORD alpha) { m_alpha = alpha > 255 ? 255 : alpha;  return this; }
+		CRenderer* SetFillColor(DWORD color) { m_fillColor = color;  return this; }
 		CRenderer* SetZOrder(int zOrder) { m_zOrder = zOrder; return this; }
 		CRenderer* SetFlipX(bool flipX) { m_flipX = flipX; return this; }
 		CRenderer* SetFlipY(bool flipY) { m_flipY = flipY; return this; }
