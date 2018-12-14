@@ -10,7 +10,10 @@ namespace Framework
 	{
 	private:
 		std::set<CGameObject*> m_gameObjectList = {};
-		std::set<CGameObject*> m_colliderObjectList = {};
+		std::set<CGameObject*> m_dynamicObjectList = {};
+		std::set<CGameObject*> m_staticObjectList = {};
+		std::set<CGameObject*> m_halfStaticObjectList = {};
+
 		CQuadTree *m_pQuadTree = nullptr;
 		CGameObject *m_pMainCamera = nullptr;
 		bool m_loadedQuadTree = false;
@@ -27,7 +30,10 @@ namespace Framework
 		// Getter/Setter
 	public:
 		std::set<CGameObject*> GetListGameObject() const;
-		std::set<CGameObject*> GetListColliderObject() const;
+		std::set<CGameObject*> GetListDynamicGameObject() const;
+		std::set<CGameObject*> GetListStaticGameObject() const;
+		std::set<CGameObject*> GetListHalfStaticGameObject() const;
+		std::set<CGameObject*> GetAllGameObjects() const;
 		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 		CQuadTree* GetQuadTree() const { return m_pQuadTree; }
 
@@ -42,7 +48,7 @@ namespace Framework
 
 		//Internal Method
 	private:
-		void AddColliderObject(CGameObject* gameObject);
+		void AddColliderObject(CGameObject* gameObject, bool isUpdate = false);
 
 		//Method
 	public:
@@ -56,5 +62,8 @@ namespace Framework
 	public:
 		friend class CGameObject;
 		friend class CRigidbody;
+		friend class CBoxCollider;
+		friend class CCollider;
+		friend class CTransform;
 	};
 }

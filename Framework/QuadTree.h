@@ -37,6 +37,8 @@ namespace Framework {
 
 		void split();
 
+		bool remove(CGameObject* gameObject);
+
 		int getQuadrant(Rect rectangle) const;
 
 		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;

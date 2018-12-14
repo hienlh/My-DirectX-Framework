@@ -46,7 +46,7 @@ bool CScene::Release()
 {
 	bool result = false;
 	do {
-		for (auto gameObject : m_gameObjectList)
+		for (auto gameObject : GetAllGameObjects())
 		{
 			CGameObject::Destroy(gameObject);
 		}
@@ -63,9 +63,30 @@ std::set<CGameObject*> CScene::GetListGameObject() const
 	return m_gameObjectList;
 }
 
-std::set<CGameObject*> CScene::GetListColliderObject() const
+std::set<CGameObject*> CScene::GetListDynamicGameObject() const
 {
-	return m_colliderObjectList;
+	return m_dynamicObjectList;
+}
+
+std::set<CGameObject*> CScene::GetListStaticGameObject() const
+{
+	return m_staticObjectList;
+}
+
+std::set<CGameObject*> CScene::GetListHalfStaticGameObject() const
+{
+	return m_halfStaticObjectList;
+}
+
+std::set<CGameObject*> CScene::GetAllGameObjects() const
+{
+	std::set<CGameObject*> result = {};
+	result.insert(m_dynamicObjectList.begin(), m_dynamicObjectList.end());
+	result.insert(m_staticObjectList.begin(), m_staticObjectList.end());
+	result.insert(m_gameObjectList.begin(), m_gameObjectList.end());
+	result.insert(m_halfStaticObjectList.begin(), m_halfStaticObjectList.end());
+
+	return result;
 }
 
 bool CScene::Destroy(CScene* scene)
@@ -80,23 +101,9 @@ void CScene::Update(DWORD dt)
 {
 	CInput::GetInstance()->Update();
 
-	// Remove dynamic gameObjects
-	m_pQuadTree->clearDynamicObject();
-	// ReAdd dynamic gameObjects
-	for (CGameObject* const object : m_colliderObjectList)
-	{
-		if(!object->GetComponent<CRigidbody>()->GetIsKinematic())
-			m_pQuadTree->insert(object);
-	}
-
-	for (CGameObject* pGameObject : m_gameObjectList)
+	for (CGameObject* pGameObject : GetAllGameObjects())
 	{
 		pGameObject->Update(dt);
-
-		if (pGameObject->GetName() == "Player")
-		{
-			auto tmp = m_pQuadTree->query(pGameObject->GetComponent<CCollider>()->GetBoundGlobal());
-		}
 	}
 
 	m_pMainCamera->Update(dt);
@@ -107,9 +114,9 @@ void CScene::Update(DWORD dt)
 
 void CScene::Render()
 {
-	std::set<CGameObject*> listRender = m_gameObjectList;
+	std::set<CGameObject*> listRender = m_dynamicObjectList;
 	listRender.insert(reinterpret_cast<CGameObject*>(m_pQuadTree));
-	CGraphic::GetInstance()->Render(listRender);
+	CGraphic::GetInstance()->Render(this);
 }
 
 bool CScene::AddGameObject(CGameObject* gameObject)
@@ -139,7 +146,7 @@ CGameObject* CScene::FindGameObject(std::string name)
 
 CGameObject* CScene::FindGameObject(DWORD id)
 {
-	for (CGameObject* const game_object : m_gameObjectList)
+	for (CGameObject* const game_object : GetAllGameObjects())
 	{
 		if (game_object->GetID() == id)
 			return game_object;
@@ -148,14 +155,48 @@ CGameObject* CScene::FindGameObject(DWORD id)
 	return nullptr;
 }
 
-void CScene::AddColliderObject(CGameObject* gameObject)
+void CScene::AddColliderObject(CGameObject* gameObject, bool isUpdate)
 {
 	if (gameObject->GetComponent<CCollider>())
 	{
-		m_colliderObjectList.insert(gameObject);
+		const auto rigidBody = gameObject->GetComponent<CRigidbody>();
+		if (rigidBody->GetIsKinematic())
+		{
+			m_staticObjectList.insert(gameObject);
+			m_dynamicObjectList.erase(gameObject);
+			m_gameObjectList.erase(gameObject);
+			m_halfStaticObjectList.erase(gameObject);
 
-		if (!m_loadedQuadTree && gameObject->GetComponent<CRigidbody>()->GetIsKinematic())
-			m_pQuadTree->insert(gameObject);
+			if (!m_loadedQuadTree) {
+				if (isUpdate)
+					m_pQuadTree->remove(gameObject);
+				m_pQuadTree->insert(gameObject);
+			}
+		}
+		else if (rigidBody->GetLimitedArea() != Rect(0, 0, 0, 0))
+		{
+			if (isUpdate) m_halfStaticObjectList.erase(gameObject);
+			m_staticObjectList.erase(gameObject);
+			m_dynamicObjectList.erase(gameObject);
+			m_gameObjectList.erase(gameObject);
+			m_halfStaticObjectList.insert(gameObject);
+
+			if (!m_loadedQuadTree) {
+				if (isUpdate)
+					m_pQuadTree->remove(gameObject);
+				m_pQuadTree->insert(gameObject);
+			}
+		}
+		else
+		{
+			m_dynamicObjectList.insert(gameObject);
+			m_staticObjectList.erase(gameObject);
+			m_gameObjectList.erase(gameObject);
+			m_halfStaticObjectList.erase(gameObject);
+
+			if (!m_loadedQuadTree)
+				m_pQuadTree->remove(gameObject);
+		}
 	}
 }
 

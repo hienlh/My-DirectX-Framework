@@ -34,8 +34,9 @@ CCollider::CCollider(CGameObject* gameObject) : CComponent(gameObject)
  */
 Bound CCollider::GetBoundGlobal() const
 {
-	const Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-	const Vector2 scale = m_pGameObject->GetComponent<CTransform>()->Get_Scale();
+	const auto transform = m_pGameObject->GetComponent<CTransform>();
+	const Vector2 pos = transform->Get_Position();
+	const Vector2 scale = transform->Get_Scale();
 	const Vector2 size = Vector2(m_Bound.Size().x * scale.x, m_Bound.Size().y * scale.y);
 	const Vector2 topLeft = Vector2(pos.x - m_Anchor.x * size.x, pos.y - m_Anchor.y * size.y);
 	return Bound(topLeft + m_Offset, size);
@@ -83,10 +84,13 @@ void CCollider::SetIsDebugging(bool isDebugging)
 
 void CCollider::SetAutoBoundSize(bool autoBoundSize)
 {
+	if (m_pGameObject->GetComponent<CRigidbody>()->GetIsKinematic() && autoBoundSize) return;
+	
 	m_AutoBoundSize = autoBoundSize;
 }
 
 void CCollider::SetAnchor(Vector2 anchor)
 {
 	m_Anchor = anchor;
+	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject, true);
 }

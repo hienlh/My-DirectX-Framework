@@ -65,6 +65,7 @@ CTransform* CTransform::Set_Position(Vector2 position, bool inWorldSpace)
 	{
 		m_position -= (m_pParent ? m_pParent->Get_Position() : Vector2(0, 0));
 	}
+	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject, true);
 	return this;
 }
 

@@ -98,7 +98,7 @@ namespace Framework
 			return nullptr;
 		}
 
-		template<class T>
+		/*template<class T>
 		bool RemoveComponent()
 		{
 			for (CComponent* component : m_pComponents)
@@ -110,7 +110,7 @@ namespace Framework
 				}
 			}
 			return true;
-		}
+		}*/
 
 		// Getters / Setters
 	private:

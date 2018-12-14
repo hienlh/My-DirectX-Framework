@@ -77,6 +77,31 @@ void CQuadTree::split()
 	m_pNodes[3] = new CQuadTree(m_id * 10 + 4, m_level + 1, Rect(Vector2(x + subWidth, y + subHeight), Vector2(subWidth, subHeight)));
 }
 
+bool CQuadTree::remove(CGameObject* gameObject)
+{
+	if(!CGameManager::GetInstance()->IsRunning())
+	{
+		if (const int size = m_pObjects.size())
+		{
+			m_pObjects.remove(gameObject);
+
+			if (size != m_pObjects.size())
+				return true;
+		}
+
+		if(m_pNodes[0])
+		{
+			int i = 0;
+			while (i < 4 && !m_pNodes[i]->remove(gameObject))
+				i++;
+			
+			return i != 4;
+		}
+	}
+
+	return false;
+}
+
 int CQuadTree::getQuadrant(Rect rectangle) const
 {
 	int index = -1;
@@ -113,9 +138,25 @@ tinyxml2::XMLElement* CQuadTree::ToXmlElement(tinyxml2::XMLDocument &doc) const
 		auto gameObjects = doc.NewElement("GameObjects");
 		for (CGameObject* const game_object : m_pObjects)
 		{
+			const auto transform = game_object->GetComponent<CTransform>();
+			const auto collider = game_object->GetComponent<CBoxCollider>();
+
+			const Vector2 pos = transform->Get_Position();
+			const Vector2 scale = transform->Get_Scale();
+			const Vector2 anchor = collider->GetAnchor();
+			const Vector2 size = collider->GetSize();
+
 			auto gameObject = doc.NewElement("GameObjectID");
 			gameObject->SetAttribute("id", static_cast<int>(game_object->GetID()));
 			gameObject->SetAttribute("name", game_object->GetName().c_str());
+			gameObject->SetAttribute("posX", pos.x);
+			gameObject->SetAttribute("posY", pos.y);
+			gameObject->SetAttribute("scaleX", scale.x);
+			gameObject->SetAttribute("scaleY", scale.y);
+			gameObject->SetAttribute("anchorX", anchor.x);
+			gameObject->SetAttribute("anchorY", anchor.y);
+			gameObject->SetAttribute("sizeX", size.x);
+			gameObject->SetAttribute("sizeY", size.y);
 			gameObjects->InsertEndChild(gameObject);
 		}
 		result->InsertFirstChild(gameObjects);
@@ -157,12 +198,24 @@ void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
 	                 Vector2(node->IntAttribute("width"), node->IntAttribute("height")));
 	if(auto gameObjects = node->FirstChildElement("GameObjects"))
 	{
-		tinyxml2::XMLElement * gameObject = gameObjects->FirstChildElement("GameObjectID");
+		tinyxml2::XMLElement * gameObjectXML = gameObjects->FirstChildElement("GameObjectID");
 		CScene *scene = CGameManager::GetInstance()->GetCurrentScene();
-		while (gameObject != nullptr)
+		while (gameObjectXML != nullptr)
 		{
-			this->m_pObjects.push_back(scene->FindGameObject(gameObject->IntAttribute("id", -1)));
-			gameObject = gameObject->NextSiblingElement("GameObjectID");
+			auto gameObject = scene->FindGameObject(gameObjectXML->IntAttribute("id", -1));
+
+			if (gameObject) {
+				gameObject->GetComponent<CTransform>()
+					->Set_Position(Vector2(gameObjectXML->IntAttribute("posX", 0), gameObjectXML->IntAttribute("posY", 0)))
+					->Set_Scale(Vector2(gameObjectXML->IntAttribute("scaleX", 1), gameObjectXML->IntAttribute("scaleY", 1)));
+
+				gameObject->GetComponent<CBoxCollider>()
+					->SetSize(Vector2(gameObjectXML->IntAttribute("sizeX", 0), gameObjectXML->IntAttribute("sizeY", 0)))
+					->SetAnchor(Vector2(gameObjectXML->IntAttribute("anchorX", 0.5), gameObjectXML->IntAttribute("anchorY", 0.5)));
+
+				this->m_pObjects.push_back(gameObject);
+			}
+			gameObjectXML = gameObjectXML->NextSiblingElement("GameObjectID");
 		}
 
 	}

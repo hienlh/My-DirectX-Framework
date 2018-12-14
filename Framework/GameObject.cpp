@@ -98,8 +98,40 @@ void CGameObject::Destroy(CGameObject*& instance)
 
 void CGameObject::Update(DWORD dt)
 {
+	CTransform * transform = dynamic_cast<CTransform *>(m_pComponents[typeid(CTransform).name()]);
+
+	const Vector2 prePos = transform->Get_Position();
+
 	for (auto component : m_pComponents)
 		component.second->Update(dt);
+
+	//Reset position of static gameObjects and half-static gameObjects which is moved
+	Vector2 curPos = transform->Get_Position();
+	if(CheckAddedComponent<CRigidbody>() && curPos != prePos)
+	{
+		auto rigidBody = GetComponent<CRigidbody>();
+		if (rigidBody->GetIsKinematic()) {
+			GetComponent<CTransform>()->Set_Position(prePos);
+		}
+		else if(rigidBody->GetLimitedArea() != Rect(0,0,0,0))
+		{
+			Rect limitedArea = rigidBody->GetLimitedArea();
+			if(!limitedArea.isInside(curPos))
+			{
+				if(curPos.x < limitedArea.left || curPos.x > limitedArea.right)
+				{
+					curPos.x = prePos.x;
+				}
+
+				if (curPos.y < limitedArea.top || curPos.y > limitedArea.bottom)
+				{
+					curPos.y = prePos.y;
+				}
+
+				transform->Set_Position(curPos);
+			}
+		}
+	}
 }
 
 void CGameObject::Render()
@@ -118,15 +150,8 @@ CGameObject* CGameObject::Clone() const
 	return result;
 }
 
-//CGameObject* CGameObject::Clone() const
-//{
-//	return new CGameObject(*this);
-//}
-
 tinyxml2::XMLElement* CGameObject::ToXmlElement(tinyxml2::XMLDocument& doc) const
 {
-	tinyxml2::XMLElement *result = doc.NewElement("Node");
-
 	//TODO ToXmlElement GameObject
 	return nullptr;
 }

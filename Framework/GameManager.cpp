@@ -46,6 +46,8 @@ void CGameManager::Release()
 
 bool CGameManager::Run()
 {
+	m_isRunning = true;
+
 	DWORD frameStart = GetTickCount();
 	DWORD tickPerFrame = 1000 / FRAME_RATE;
 
@@ -78,10 +80,10 @@ bool CGameManager::Run()
 
 			// process game loop
 
+			CPhysic::GetInstance()->Update(dt);
+
 			if (m_currentScene)
 				m_currentScene->Update(dt);
-
-			CPhysic::GetInstance()->Update(dt);
 
 			m_currentScene->Render();
 		}

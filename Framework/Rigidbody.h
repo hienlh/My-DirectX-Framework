@@ -10,6 +10,7 @@ namespace Framework {
 		float m_gravityScale = 1;
 		bool m_isKinematic = false;
 		float m_mass = 0;
+		Rect m_limitedArea = { 0,0,0,0 };
 
 	public:
 		CRigidbody(const CRigidbody &rigidbody);
@@ -20,22 +21,24 @@ namespace Framework {
 		// Getter / Setter
 	public:
 		inline Vector2 GetVelocity() const { return m_velocity; }
+		float GetGravityScale() const { return m_gravityScale; }
+		float GetMass() const { return m_mass; }
+		bool GetIsKinematic() const { return m_isKinematic; }
+		Rect GetLimitedArea() const { return m_limitedArea; }
+
 		void SetVelocity(Vector2 velocity) { SetVelocity(velocity.x, velocity.y); }
 		void SetVelocity(float x = MAX_VELOCITY, float y = MAX_VELOCITY)
 		{
-			if (fabs(x - MAX_VELOCITY) > EPSILON) 
+			if (fabs(x - MAX_VELOCITY) > EPSILON)
 				m_velocity.x = x;
-			if (fabs(y - MAX_VELOCITY) > EPSILON) 
+			if (fabs(y - MAX_VELOCITY) > EPSILON)
 				m_velocity.y = y;
 		}
 		void AddVelocity(Vector2 velocity) { m_velocity += velocity; }
-		void MinarVelocity(Vector2 velocity) { m_velocity -= velocity; }
-		float GetGravityScale() const { return m_gravityScale; }
-		void SetGravityScale(float gravityScale) { m_gravityScale = gravityScale; }
-		float GetMass() const { return m_mass; }
 		void SetMass(float mass) { m_mass = mass; }
-		bool GetIsKinematic() const { return m_isKinematic; }
 		void SetIsKinematic(bool isKinematic);
+		void SetGravityScale(float gravityScale) { m_gravityScale = gravityScale; }
+		void SetLimitedArea(Rect limitedArea);
 
 		// Override
 	public:

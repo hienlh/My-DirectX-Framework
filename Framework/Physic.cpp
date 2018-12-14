@@ -107,7 +107,7 @@ bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
 void CPhysic::Update(DWORD dt)
 {
 	//Gravity for dynamic gameObjects
-	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetListGameObject();
+	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetAllGameObjects();
 	for (CGameObject* const game_object : list)
 	{
 		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
@@ -118,24 +118,46 @@ void CPhysic::Update(DWORD dt)
 	}
 
 	// Collision test
+
+	//Dynamic GameObject
 	CScene* currentScreen = CGameManager::GetInstance()->GetCurrentScene();
-	auto listCollierObject = currentScreen->GetListColliderObject();
-	for (CGameObject* const object : listCollierObject)
+	auto listDynamicGameObject = currentScreen->GetListDynamicGameObject();
+
+	for (auto i = listDynamicGameObject.begin(); i != listDynamicGameObject.end(); ++i)
 	{
-		if(object->GetName() == "Player")
-		{
-			auto a = object;
-		}
-		const Bound bound = object->GetComponent<CCollider>()->GetBoundGlobal();
+		//test with QuadTree
+		const Bound bound = (*i)->GetComponent<CCollider>()->GetBoundGlobal();
 		std::list<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
 
 		for (CGameObject* const otherObject : listReturnByQuadTree)
 		{
-			if (otherObject != object) {
-				SweptAABBx(dt, object, otherObject);
+			SweptAABBx(dt, *i, otherObject);
+		}
+
+		//test with others
+		for (auto j = i; j != listDynamicGameObject.end(); ++j)
+		{
+			if (i != j) {
+				SweptAABBx(dt, *i, *j);
 			}
 		}
 	}
+
+	//Half-Static GameObjects
+	auto listHalfStaticGameObject = currentScreen->GetListHalfStaticGameObject();
+	for (auto game_object : listHalfStaticGameObject)
+	{
+		const Bound bound = game_object->GetComponent<CCollider>()->GetBoundGlobal();
+		std::list<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
+
+		for (auto otherObject : listReturnByQuadTree)
+		{
+			if (otherObject != game_object) {
+				SweptAABBx(dt, game_object, otherObject);
+			}
+		}
+	}
+
 }
 
 float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* staticObject)

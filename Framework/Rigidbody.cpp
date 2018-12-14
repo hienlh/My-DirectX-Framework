@@ -28,6 +28,18 @@ void CRigidbody::SetIsKinematic(bool isKinematic)
 	m_isKinematic = isKinematic;
 	if(isKinematic)
 	{
+		//Add to scene to change quadTree
+		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
+	}
+}
+
+void CRigidbody::SetLimitedArea(Rect limitedArea)
+{
+	//If object is static, not update limited area
+	if (!m_isKinematic) {
+		m_limitedArea = limitedArea;
+
+		//Add to scene to change quadTree
 		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	}
 }

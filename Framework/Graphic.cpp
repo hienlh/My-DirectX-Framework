@@ -94,7 +94,7 @@ void CGraphic::Release()
 		m_pVertexBuffer->Release();
 }
 
-bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
+bool CGraphic::Render(CScene * scene) const
 {
 	bool result = false;
 	do
@@ -107,8 +107,10 @@ bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 
 		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE); // D3DXSPRITE_SORT_DEPTH_BACKTOFRONT
 
-		for (CGameObject* pGameObject : list_game_objects)
+		for (CGameObject* pGameObject : scene->GetAllGameObjects())
 			pGameObject->Render();
+
+		scene->GetQuadTree()->Render();
 
 		m_pSpriteHandler->End();
 

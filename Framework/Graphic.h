@@ -41,7 +41,7 @@ namespace Framework
 
 		// Public methods
 	public:
-		bool Render(std::set<CGameObject*> list_game_objects);
+		bool Render(CScene * scene) const;
 		void Draw(Texture* texture, Vector3* position = nullptr, Rect* pSourceRect = nullptr, Vector2* center = nullptr,
 		          float angle = 0, DWORD fillColor = COLOR_WHITE, Vector3 *scale = nullptr, bool flipX = false, bool flipY = false) const;
 		void Draw(CSprite* sprite, Vector3* position = nullptr, float angle = 0, Vector3 *scale = nullptr, 

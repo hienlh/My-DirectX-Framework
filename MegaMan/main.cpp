@@ -83,7 +83,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite("Map", i)->GetSourceRect();
 
-				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i));
+				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i-6));
 				pGround->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pGround->AddComponent<CRigidbody>()->SetIsKinematic(true);
 				pGround->AddComponent<CBoxCollider>()->SetIsDebugging(true);
@@ -107,7 +107,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite("Map", i)->GetSourceRect();
 
-				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i));
+				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i-15));
 				pWall->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pWall->AddComponent<CRigidbody>()->SetIsKinematic(true);
 				pWall->AddComponent<CBoxCollider>()->SetIsDebugging(true);
@@ -204,7 +204,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
 		;
 		pPlayer->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
-		pPlayer->GetComponent<CRenderer>()->SetFlipY(false)->SetFillColor(D3DCOLOR_XRGB(0,0,255))->SetAlpha(100);
+		pPlayer->GetComponent<CRenderer>()->SetFlipY(false);
 		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
 		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
