@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Component.h"
-#include "GameObject.h"
+#include "Renderer.h"
+#include "Transform.h"
+#include "Animator.h"
 
 using namespace Framework;
 
-Framework::CGameObject* _gameObject = nullptr;
-
-CWString CComponent::GetName() const
+CComponent::CComponent(const CComponent& component) : CObject(component)
 {
-	return m_pGameObject->GetName();
+
 }

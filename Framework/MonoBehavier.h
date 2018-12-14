@@ -10,7 +10,12 @@ namespace Framework {
 	private:
 		CMonoBehavior() = default;
 	public:
+		CMonoBehavior(const CMonoBehavior &monoBehavior) : CComponent(monoBehavior) {}
 		CMonoBehavior(CGameObject* gameObject) : CComponent(gameObject) { CPhysic::GetInstance()->RegisterObserver(this); }
 		virtual ~CMonoBehavior() = default;
+
+		void Update(DWORD dt) override {}
+		void Render() override {}
+		CMonoBehavior* Clone() const override { return new CMonoBehavior(*this); }
 	};
 }

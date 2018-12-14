@@ -8,14 +8,25 @@
 
 using namespace Framework;
 
-CRenderer* CRenderer::SetSprite(CWString textureName, DWORD index)
+CRenderer* CRenderer::SetSprite(std::string textureName, DWORD index)
 {
 	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
 	m_pSprite = m_pRootSprite;
 	return this;
 }
 
-bool CRenderer::Init(CWString textureName, DWORD index)
+CRenderer::CRenderer(const CRenderer &renderer) : CComponent(renderer)
+{
+	m_alpha = renderer.m_alpha;
+	m_flipX = renderer.m_flipX;
+	m_flipY = renderer.m_flipY;
+	m_pRootSprite = renderer.m_pRootSprite;
+	m_pSprite = renderer.m_pSprite;
+	m_zOrder = renderer.m_zOrder;
+	m_Name = renderer.m_Name;
+}
+
+bool CRenderer::Init(std::string textureName, DWORD index)
 {
 	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
 	m_pSprite = m_pRootSprite;
@@ -46,7 +57,12 @@ void CRenderer::Render()
 	Vector3 position3D = Vector3(transform->Get_Position());
 	position3D.z = m_zOrder;
 
-	CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY);
+	CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY, m_fillColor, m_alpha);
+}
+
+CRenderer* CRenderer::Clone() const
+{
+	return new CRenderer(*this);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)

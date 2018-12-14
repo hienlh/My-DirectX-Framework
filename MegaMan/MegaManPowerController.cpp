@@ -21,12 +21,12 @@ void MegaManPowerController::Update(DWORD dt)
 	CInput *input = CInput::GetInstance();
 
 	if (input->KeyDown(DIK_E)) {
-		anim->SetBool(L"isPowering", true);
+		anim->SetBool("isPowering", true);
 	}
 	if (input->KeyUp(DIK_E)) {
-		anim->SetBool(L"isPowering", false);
+		anim->SetBool("isPowering", false);
 	}
-	if(anim->GetBool(L"isPowering"))
+	if(anim->GetBool("isPowering"))
 	{
 		transform->Set_Scale(Vector2(1, 1));
 	}

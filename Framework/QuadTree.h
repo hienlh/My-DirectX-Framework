@@ -1,7 +1,4 @@
 ﻿#pragma once
-
-#define MAX_OBJECTS 2
-#define MAX_LEVEL 5
 #include "Object.h"
 
 namespace Framework {
@@ -14,15 +11,16 @@ namespace Framework {
 
 		int m_level;
 
-		std::list < CGameObject* > m_pObjects = {};
+		std::set < CGameObject* > m_pObjects = {};
 
-		Rect m_bounds = {};
+		Rect m_bounds = { 0,0,1000,1000 };
 
 		CQuadTree* m_pNodes[4] = {};
 
 	public:
+		CQuadTree(Vector2 size = { 1000,1000 });
 		CQuadTree(int id, int level, Rect bounds);
-		~CQuadTree() = default;
+		~CQuadTree();
 
 		//Override
 	public:
@@ -30,23 +28,26 @@ namespace Framework {
 
 		void Render() override;
 
+	private:
+		CObject* Clone() const override { return nullptr; }
+
 		//Method
 	public:
-		void clear();
+
+		static int GetAmountGameObjects(CQuadTree* quadTree);
 
 		void split();
 
-		int getQuadrant(Rect rectangle) const;
+		void remove(CGameObject* gameObject);
 
-		/**
-		 * \brief Get id of the smallest sub node consist of this rectangle 
-		 * \param rectangle 
-		 * \return Id of QuadTree
-		 */
-		int getFitId(Rect rectangle) const;
+		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;
+
+		void SaveToXml(const char* xmlPath) const;
+
+		void LoadFromXml(tinyxml2::XMLElement *node);
 
 		void insert(CGameObject *gameObject);
 
-		std::list <CGameObject*> query(Rect rectangle);
+		std::set <CGameObject*> query(Rect rectangle);
 	};
 }

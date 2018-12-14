@@ -17,6 +17,11 @@ void CameraController::Render()
 
 }
 
+CameraController* CameraController::Clone() const
+{
+	return new CameraController(*this);
+}
+
 void CameraController::Following()
 {
 	if(m_target)

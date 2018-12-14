@@ -1,2 +1,7 @@
 ﻿#include "stdafx.h"
 #include "Object.h"
+
+Framework::CObject::CObject(const CObject& object)
+{
+	m_Name = object.m_Name + " Clone";
+}

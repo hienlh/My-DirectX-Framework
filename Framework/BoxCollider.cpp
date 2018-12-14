@@ -5,6 +5,11 @@
 
 using namespace Framework;
 
+CBoxCollider::CBoxCollider(const CBoxCollider &boxCollider) : CCollider(boxCollider)
+{
+	m_Size = boxCollider.m_Size;
+}
+
 CBoxCollider::CBoxCollider(CGameObject* gameObject) : CCollider(gameObject)
 {
 	const auto transform = m_pGameObject->GetComponent<CTransform>();
@@ -25,10 +30,12 @@ void CBoxCollider::Config(bool isTrigger, bool autoBoundSize, bool usedByEffecto
 	m_IsDebugging = isDebugging;
 }
 
-void CBoxCollider::SetSize(Vector2 size)
+CBoxCollider* CBoxCollider::SetSize(Vector2 size)
 {
 	m_Size = size;
 	m_Bound = Bound(Vector2(0, 0), m_Size);
+	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject, true);
+	return this;
 }
 
 void CBoxCollider::Update(DWORD dt)
@@ -43,5 +50,10 @@ void CBoxCollider::Render()
 	{
 		CGraphic::GetInstance()->DrawRectangle(GetBoundGlobal());
 	}
+}
+
+CBoxCollider* CBoxCollider::Clone() const
+{
+	return new CBoxCollider(*this);
 }
 

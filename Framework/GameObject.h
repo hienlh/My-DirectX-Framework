@@ -5,22 +5,28 @@
 #include "Transform.h"
 #include "Scene.h"
 #include "Collider.h"
+#include "Rigidbody.h"
+#include "BoxCollider.h"
 
 namespace Framework
 {
+
 	// Game Object Class
 	class CGameObject : public CObject
 	{
 		// Properties
+		static DWORD staticID;
 	private:
 		std::unordered_map<std::string, CComponent*> m_pComponents = {};
 		CScene *m_pScene = nullptr;
+		DWORD m_id = 0;
 		
 		// Cons / Des
 	private:
 		CGameObject() = default;
 	public:
-		CGameObject(LPCWSTR name, Vector2 position = VECTOR2_ZERO, bool addIntoCurrentScene = true);
+		CGameObject(const CGameObject& gameObject);
+		CGameObject(std::string name, Vector2 position = VECTOR2_ZERO, bool addIntoCurrentScene = true);
 		~CGameObject() = default;
 
 		// Friends
@@ -30,24 +36,39 @@ namespace Framework
 
 		// Public methods
 	public:
+		template<class T> bool CheckAddedComponent() const
+		{
+			return m_pComponents.count(typeid(T).name());
+		}
+
 		/// <summary>Return nullptr if component added already</summary> 
 		template<class T> T* AddComponent()
 		{
+			std::string typeName = typeid(T).name();
 			//Ignore Added Component and Base Component
-			if(GetComponent<T>() || std::is_abstract<T>::value) return nullptr;
+			if(CheckAddedComponent<T>() || std::is_abstract<T>::value) return GetComponent<T>();
 			
 			T* tmp = new T(this);
 			if (reinterpret_cast<CComponent *> (&tmp)) {
-				if (!m_pComponents.insert({typeid(T).name(), tmp }).second) return nullptr;
-
-				if (reinterpret_cast<CCollider *> (&tmp) && m_pScene)
+				if (!m_pComponents.insert({ typeName, tmp }).second) return nullptr;
+				
+				//if (reinterpret_cast<CCollider *> (&tmp) && m_pScene) //Da bi loi, sau khi co copy constructor
+				if (typeName == typeid(CBoxCollider).name() && m_pScene)
 				{
 					m_pScene->AddColliderObject(this);
+
+					if (!CheckAddedComponent<CRigidbody>())
+						AddComponent<CRigidbody>();
 				}
+
+				CheckAfterAddComponent(tmp);
+
 				return tmp;
 			}
 			return nullptr;
 		}
+
+		bool AddComponent(CComponent *component);
 
 		template<class Type>
 		Type* GetComponent()
@@ -77,7 +98,7 @@ namespace Framework
 			return nullptr;
 		}
 
-		template<class T>
+		/*template<class T>
 		bool RemoveComponent()
 		{
 			for (CComponent* component : m_pComponents)
@@ -89,26 +110,38 @@ namespace Framework
 				}
 			}
 			return true;
-		}
+		}*/
 
 		// Getters / Setters
 	private:
 		void SetScene(CScene *scene) { m_pScene = scene; }
 	public:
 		CScene* GetScene() const { return m_pScene; }
+		DWORD GetID() const { return m_id; }
 
 		// Internal methods
 	private:
 		bool Init();
 		void Release();
+		void CheckAfterAddComponent(CComponent *component);
 
 		// Override methods
 	public:
 		virtual void Update(DWORD dt);
 		void Render();
 
+		CGameObject* Clone() const override;
+
+		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;
+
 		// Static methods
 	public:
+		static CGameObject* Instantiate(CGameObject* gameObject, CGameObject* parent = nullptr,
+		                                Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO,
+		                                bool instantiateInWorldSpace = false);
+		static CGameObject* Instantiate(std::string prefabName, CGameObject* parent = nullptr,
+										Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO,
+										bool instantiateInWorldSpace = false);
 		static void Destroy(CGameObject* &instance);
 	};
 }

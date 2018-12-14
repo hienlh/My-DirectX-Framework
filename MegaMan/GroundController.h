@@ -13,5 +13,7 @@ public:
 	void OnCollisionEnter(Framework::CCollision* collision) override;
 	void Update(DWORD dt) override;
 	void Render() override;
+
+	GroundController* Clone() const override { return new GroundController(*this); }
 	
 };

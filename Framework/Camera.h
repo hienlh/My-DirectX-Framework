@@ -10,13 +10,13 @@ namespace Framework
 	{
 		//Properties
 	private:
-		int _width;
-		int _height;
-		float _angle;
-		Vector3 _scaleFactors;
-		Matrix _orthographicMatrix;
-		Matrix _identityMatrix;
-		Matrix _viewMatrix;
+		int _width = 0;
+		int _height = 0;
+		float _angle = 0;
+		Vector3 _scaleFactors = VECTOR3_ZERO;
+		Matrix _orthographicMatrix = {};
+		Matrix _identityMatrix = {};
+		Matrix _viewMatrix = {};
 
 		// Getter / Setter
 	public:
@@ -26,14 +26,17 @@ namespace Framework
 
 		// Cons / Des
 	public:
+		CCamera(const CCamera &camera);
 		CCamera(CGameObject* gameObject);
 		CCamera(CGameObject* gameObject, int width, int height, float angle, Vector3 scaleFactors);
-		~CCamera();
+		~CCamera() = default;
 
 		//Override
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
+
+		CCamera* Clone() const override;
 	};
 	
 }

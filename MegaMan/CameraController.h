@@ -23,5 +23,7 @@ public:
 	void Update(DWORD dt) override;
 	void Render() override;
 
+	CameraController* Clone() const override;
+
 	void Following();
 };

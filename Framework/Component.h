@@ -14,19 +14,25 @@ namespace Framework
 		// Cons / Des
 	public:
 		CComponent() = default;
+		CComponent(const CComponent& component);
 		CComponent(CGameObject *game_object) { m_pGameObject = game_object; }
 		virtual ~CComponent() = default;
 
-		// Override
-	public:
-		CWString GetName() const override;
 		//Getter / Setter
 	public:
-		CGameObject* GetGameObject() { return m_pGameObject; }
-		void SetGameObject(CGameObject* gameobject) { m_pGameObject = gameobject; }
+		CGameObject* GetGameObject() const { return m_pGameObject; }
+
+	private:
+		/**
+		 * \brief Function is limited access from outside, just can access from CGameObject
+		 */
+		void SetGameObject(CGameObject* gameObject) { m_pGameObject = gameObject; }
+
+		virtual CComponent* Clone() const override = 0;
 
 		//Friend
 	public:
 		friend class CPhysic;
+		friend class CGameObject;
 	};
 }

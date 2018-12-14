@@ -64,17 +64,18 @@ typedef struct Bound
 		return !(m_left > 0 || m_right < 0 || m_top < 0 || m_bottom > 0);
 	}
 
+	bool isInside(Vector2 point) const
+	{
+		return !(point.x < left || point.x > right || point.y < top || point.y > bottom);
+	}
+
 	Bound& operator= (const Bound &_bound) = default;
 	bool operator== (const Bound &_bound) const
 	{
-		if (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom)
-			return false;
-		return true;
+		return !(left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom);
 	}
 	bool operator!= (const Bound &_bound) const
 	{
-		if (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom)
-			return true;
-		return false;
+		return (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom);
 	}
 };

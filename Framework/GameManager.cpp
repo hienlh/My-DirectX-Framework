@@ -46,8 +46,12 @@ void CGameManager::Release()
 
 bool CGameManager::Run()
 {
+	m_isRunning = true;
+
 	DWORD frameStart = GetTickCount();
 	DWORD tickPerFrame = 1000 / FRAME_RATE;
+
+	m_currentScene->LoadQuadTree();
 
 	bool done = false;
 	while (!done)
@@ -68,7 +72,7 @@ bool CGameManager::Run()
 		// this frame: the frame we are about to render
 		DWORD now = GetTickCount();
 		DWORD dt = now - frameStart;
-		//DWORD dt = 20; // For Debug
+		//dt = 20; // For Debug
 
 		if (dt >= tickPerFrame)
 		{
@@ -76,12 +80,12 @@ bool CGameManager::Run()
 
 			// process game loop
 
-			m_currentScene->Render();
+			CPhysic::GetInstance()->Update(dt);
 
 			if (m_currentScene)
 				m_currentScene->Update(dt);
 
-			CPhysic::GetInstance()->Update(dt);
+			m_currentScene->Render();
 		}
 		else
 			Sleep(tickPerFrame - dt);
