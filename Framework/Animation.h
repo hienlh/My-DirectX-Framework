@@ -20,12 +20,13 @@ namespace Framework {
 		DWORD m_timeElapse = 0;
 		DWORD m_defaultTime = 0;
 		bool m_loop = true;
+		float m_speed = 1;
 
 	private:
 		CAnimation() = default;
 	public:
 		CAnimation(const CAnimation& animation);
-		CAnimation(std::string name, std::string textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100, bool loop = true);
+		CAnimation(std::string name, std::string textureName, DWORD startSprite, DWORD count, DWORD defaultTime = 100, bool loop = true, float speed = 1);
 		~CAnimation() = default;
 
 	private:
@@ -41,8 +42,10 @@ namespace Framework {
 		CSprite* GetSprite();
 		bool IsLastFrame() const;
 		bool GetIndexCurrentFrame() const { return m_frameIndex; }
+		DWORD GetSpeed() const { return m_speed; }
 
 		CAnimation* SetIndexCurrentFrame(int index);
+		CAnimation* SetSpeed(DWORD speed) { m_speed = speed; return this; }
 
 		//Method
 	public:

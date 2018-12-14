@@ -42,8 +42,7 @@
 #define MAX_VELOCITY 1e9
 #define EPSILON 1e-9
 
-#define MAX_QUAD_TREE_OBJECTS 2
-#define MAX_QUAD_TREE_LEVEL 6
+#define MAX_QUAD_TREE_LEVEL 5
 
 #define COLOR_GET_A( c ) ((c)>>24)
 #define COLOR_GET_R( c ) (((c)>>16) & 0xFF)

@@ -127,7 +127,7 @@ void CPhysic::Update(DWORD dt)
 	{
 		//test with QuadTree
 		const Bound bound = (*i)->GetComponent<CCollider>()->GetBoundGlobal();
-		std::list<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
+		std::set<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
 
 		for (CGameObject* const otherObject : listReturnByQuadTree)
 		{
@@ -148,7 +148,7 @@ void CPhysic::Update(DWORD dt)
 	for (auto game_object : listHalfStaticGameObject)
 	{
 		const Bound bound = game_object->GetComponent<CCollider>()->GetBoundGlobal();
-		std::list<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
+		std::set<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
 
 		for (auto otherObject : listReturnByQuadTree)
 		{

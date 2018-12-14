@@ -11,7 +11,7 @@ namespace Framework {
 
 		int m_level;
 
-		std::list < CGameObject* > m_pObjects = {};
+		std::set < CGameObject* > m_pObjects = {};
 
 		Rect m_bounds = { 0,0,1000,1000 };
 
@@ -20,7 +20,7 @@ namespace Framework {
 	public:
 		CQuadTree(Vector2 size = { 1000,1000 });
 		CQuadTree(int id, int level, Rect bounds);
-		~CQuadTree() = default;
+		~CQuadTree();
 
 		//Override
 	public:
@@ -33,29 +33,21 @@ namespace Framework {
 
 		//Method
 	public:
-		void clearDynamicObject();
+
+		static int GetAmountGameObjects(CQuadTree* quadTree);
 
 		void split();
 
-		bool remove(CGameObject* gameObject);
-
-		int getQuadrant(Rect rectangle) const;
+		void remove(CGameObject* gameObject);
 
 		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;
 
-		void SaveToXml(const char* xmlPath);
+		void SaveToXml(const char* xmlPath) const;
 
 		void LoadFromXml(tinyxml2::XMLElement *node);
 
-		/**
-		 * \brief Get id of the smallest sub node consist of this rectangle 
-		 * \param rectangle 
-		 * \return Id of QuadTree
-		 */
-		int getFitId(Rect rectangle) const;
-
 		void insert(CGameObject *gameObject);
 
-		std::list <CGameObject*> query(Rect rectangle);
+		std::set <CGameObject*> query(Rect rectangle);
 	};
 }

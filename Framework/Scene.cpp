@@ -202,7 +202,6 @@ void CScene::AddColliderObject(CGameObject* gameObject, bool isUpdate)
 
 void CScene::SaveQuadTree() const
 {
-	m_pQuadTree->clearDynamicObject();
 	m_pQuadTree->SaveToXml("QuadTree.xml");
 }
 

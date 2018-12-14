@@ -12,9 +12,10 @@ CAnimation::CAnimation(const CAnimation& animation) : CObject(animation)
 	m_frameIndex = 0;
 	m_timeElapse = animation.m_timeElapse;
 	m_Name = animation.m_Name;
+	m_speed = animation.m_speed;
 }
 
-CAnimation::CAnimation(std::string name, std::string textureName, DWORD startSprite, DWORD count, DWORD defaultTime, bool loop)
+CAnimation::CAnimation(std::string name, std::string textureName, DWORD startSprite, DWORD count, DWORD defaultTime, bool loop, float speed)
 {
 	bool result = false;
 	do {
@@ -24,6 +25,7 @@ CAnimation::CAnimation(std::string name, std::string textureName, DWORD startSpr
 		m_defaultTime = defaultTime;
 		m_loop = loop;
 		m_Name = name;
+		m_speed = speed;
 
 		for (int i = startSprite; i < startSprite + count; i++)
 		{
@@ -54,7 +56,7 @@ void CAnimation::Update(DWORD dt)
 			else m_frameIndex--;
 		}
 	}
-	m_timeElapse += dt;
+	m_timeElapse += dt * fabs(m_speed);
 }
 
 CAnimation* CAnimation::Clone() const
