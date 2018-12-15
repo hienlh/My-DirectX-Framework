@@ -8,8 +8,8 @@
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
 #define BUTTON_DOWN(obj, button) ((obj.rgbButtons[button] &0x80)? 1: 0)
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
 #define FULL_SCREEN false
 

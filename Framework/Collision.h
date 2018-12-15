@@ -24,7 +24,8 @@ namespace Framework {
 
 		std::string GetColliderName() const { return m_pCollider->GetGameObject()->GetName(); }
 		std::string GetOtherColliderName() const { return m_pOtherCollider->GetGameObject()->GetName(); }
-
+		
+		bool CheckNameInCollision(std::string colliderName) const;
 		bool CollisionBetween(std::string name, std::string otherName) const;
 	};
 

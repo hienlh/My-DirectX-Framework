@@ -22,10 +22,16 @@ CCollision::~CCollision()
 	SAFE_DELETE(m_pOtherCollider);
 }
 
+bool CCollision::CheckNameInCollision(std::string colliderName) const
+{
+	return m_pCollider->GetGameObject()->GetName() == colliderName || 
+		m_pOtherCollider->GetGameObject()->GetName() == colliderName;
+}
+
 bool CCollision::CollisionBetween(std::string name, std::string otherName) const
 {
-	std::string colliderName = m_pCollider->GetGameObject()->GetName();
-	std::string otherColliderName = m_pOtherCollider->GetGameObject()->GetName();
+	const std::string colliderName = m_pCollider->GetGameObject()->GetName();
+	const std::string otherColliderName = m_pOtherCollider->GetGameObject()->GetName();
 	return (colliderName == name && otherColliderName == otherName) || (colliderName == otherName && otherColliderName == name);
 }
 

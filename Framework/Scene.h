@@ -35,6 +35,7 @@ namespace Framework
 		std::set<CGameObject*> GetListStaticGameObject() const;
 		std::set<CGameObject*> GetListHalfStaticGameObject() const;
 		std::set<CGameObject*> GetAllGameObjects() const;
+		std::set<CGameObject*> GetRenderGameObjects() const;
 		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 		CQuadTree* GetQuadTree() const { return m_pQuadTree; }
 		bool GetIsRenderQuadTree() const { return m_isRenderQuadTree; }

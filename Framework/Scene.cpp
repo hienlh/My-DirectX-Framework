@@ -89,6 +89,16 @@ std::set<CGameObject*> CScene::GetAllGameObjects() const
 	return result;
 }
 
+std::set<CGameObject*> CScene::GetRenderGameObjects() const
+{
+	std::set<CGameObject*> result = {};
+	result.insert(m_gameObjectList.begin(), m_gameObjectList.end());
+	result.insert(m_dynamicObjectList.begin(), m_dynamicObjectList.end());
+	auto quadTreeList = m_pQuadTree->query(Rect(m_pMainCamera->GetComponent<CTransform>()->Get_Position(), { 256, 256 }, { 0.5,0.5 }));
+	result.insert(quadTreeList.begin(), quadTreeList.end());
+	return result;
+}
+
 bool CScene::Destroy(CScene* scene)
 {
 	const auto result = scene->Release();

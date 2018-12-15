@@ -10,19 +10,19 @@ namespace Framework
 	{
 		//Properties
 	private:
-		int _width = 0;
-		int _height = 0;
-		float _angle = 0;
-		Vector3 _scaleFactors = VECTOR3_ZERO;
-		Matrix _orthographicMatrix = {};
-		Matrix _identityMatrix = {};
-		Matrix _viewMatrix = {};
+		int m_width = 0;
+		int m_height = 0;
+		float m_angle = 0;
+		Vector3 m_scaleFactors = VECTOR3_ZERO;
+		Matrix m_orthographicMatrix = {};
+		Matrix m_identityMatrix = {};
+		Matrix m_viewMatrix = {};
 
 		// Getter / Setter
 	public:
-		Matrix &GetOrthographicMatrix() { return _orthographicMatrix; }
-		Matrix &GetIdentityMatrix() { return _identityMatrix; }
-		Matrix &GetViewMatrix() { return _viewMatrix; }
+		Matrix &GetOrthographicMatrix() { return m_orthographicMatrix; }
+		Matrix &GetIdentityMatrix() { return m_identityMatrix; }
+		Matrix &GetViewMatrix() { return m_viewMatrix; }
 
 		// Cons / Des
 	public:

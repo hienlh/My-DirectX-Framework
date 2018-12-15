@@ -22,6 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pGameManager->SetCurrentScene(pScene);
 	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	pScene->GetMainCamera()->AddComponent<CameraController>();
+	pScene->SetIsRenderQuadTree(true);
 
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
 	pResourceManager->AddTexture("Block", ".\\Resources\\Block.png");

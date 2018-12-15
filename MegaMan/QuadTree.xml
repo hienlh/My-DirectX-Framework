@@ -17,8 +17,8 @@
                                             <Node id="22123" x="1000" y="250" width="250" height="250">
                                                 <GameObjects>
                                                     <GameObjectID id="12" name="Ground8" posX="944" posY="435"/>
-                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
                                                     <GameObjectID id="17" name="Ceiling4" posX="992" posY="270"/>
+                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
                                                 </GameObjects>
                                             </Node>
                                             <Node id="22124" x="1250" y="250" width="250" height="250">
@@ -35,8 +35,8 @@
                                             <Node id="22132" x="1000" y="500" width="250" height="250">
                                                 <GameObjects>
                                                     <GameObjectID id="10" name="Ground6" posX="944" posY="690"/>
-                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
                                                     <GameObjectID id="23" name="Wall4" posX="992" posY="728"/>
+                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
                                                 </GameObjects>
                                             </Node>
                                             <Node id="22133" x="1000" y="750" width="250" height="250">
@@ -60,14 +60,14 @@
                                             <Node id="22213" x="500" y="250" width="250" height="250"/>
                                             <Node id="22214" x="750" y="250" width="250" height="250">
                                                 <GameObjects>
-                                                    <GameObjectID id="12" name="Ground8" posX="944" posY="435"/>
                                                     <GameObjectID id="11" name="Ground7" posX="768" posY="434"/>
-                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
-                                                    <GameObjectID id="17" name="Ceiling4" posX="992" posY="270"/>
+                                                    <GameObjectID id="12" name="Ground8" posX="944" posY="435"/>
                                                     <GameObjectID id="24" name="Wall5" posX="790" posY="471"/>
-                                                    <GameObjectID id="26" name="Wall7" posX="787" posY="270"/>
+                                                    <GameObjectID id="17" name="Ceiling4" posX="992" posY="270"/>
                                                     <GameObjectID id="27" name="Machine_1" posX="895" posY="960"/>
                                                     <GameObjectID id="16" name="Ceiling3" posX="800" posY="264"/>
+                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
+                                                    <GameObjectID id="26" name="Wall7" posX="787" posY="270"/>
                                                 </GameObjects>
                                             </Node>
                                         </ChildNodes>
@@ -79,18 +79,18 @@
                                             <Node id="22232" x="0" y="500" width="250" height="250"/>
                                             <Node id="22233" x="0" y="750" width="250" height="250">
                                                 <GameObjects>
-                                                    <GameObjectID id="4" name="Ground0" posX="0" posY="946"/>
                                                     <GameObjectID id="13" name="Ceiling0" posX="0" posY="815"/>
+                                                    <GameObjectID id="4" name="Ground0" posX="0" posY="946"/>
                                                 </GameObjects>
                                             </Node>
                                             <Node id="22234" x="250" y="750" width="250" height="250">
                                                 <GameObjects>
-                                                    <GameObjectID id="4" name="Ground0" posX="0" posY="946"/>
-                                                    <GameObjectID id="5" name="Ground1" posX="352" posY="899"/>
                                                     <GameObjectID id="13" name="Ceiling0" posX="0" posY="815"/>
+                                                    <GameObjectID id="5" name="Ground1" posX="352" posY="899"/>
+                                                    <GameObjectID id="4" name="Ground0" posX="0" posY="946"/>
                                                     <GameObjectID id="14" name="Ceiling1" posX="256" posY="783"/>
-                                                    <GameObjectID id="19" name="Wall0" posX="352" posY="906"/>
                                                     <GameObjectID id="15" name="Ceiling2" posX="383" posY="771"/>
+                                                    <GameObjectID id="19" name="Wall0" posX="352" posY="906"/>
                                                 </GameObjects>
                                             </Node>
                                         </ChildNodes>
@@ -101,32 +101,32 @@
                                                 <GameObjects>
                                                     <GameObjectID id="10" name="Ground6" posX="944" posY="690"/>
                                                     <GameObjectID id="9" name="Ground5" posX="768" posY="690"/>
-                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
                                                     <GameObjectID id="24" name="Wall5" posX="790" posY="471"/>
-                                                    <GameObjectID id="22" name="Wall3" posX="790" posY="728"/>
                                                     <GameObjectID id="27" name="Machine_1" posX="895" posY="960"/>
                                                     <GameObjectID id="23" name="Wall4" posX="992" posY="728"/>
+                                                    <GameObjectID id="25" name="Wall6" posX="992" posY="472"/>
+                                                    <GameObjectID id="22" name="Wall3" posX="790" posY="728"/>
                                                 </GameObjects>
                                             </Node>
                                             <Node id="22242" x="500" y="500" width="250" height="250"/>
                                             <Node id="22243" x="500" y="750" width="250" height="250">
                                                 <GameObjects>
                                                     <GameObjectID id="5" name="Ground1" posX="352" posY="899"/>
-                                                    <GameObjectID id="6" name="Ground2" posX="512" posY="851"/>
                                                     <GameObjectID id="7" name="Ground3" posX="640" posY="946"/>
+                                                    <GameObjectID id="6" name="Ground2" posX="512" posY="851"/>
                                                     <GameObjectID id="15" name="Ceiling2" posX="383" posY="771"/>
-                                                    <GameObjectID id="21" name="Wall2" posX="632" posY="856"/>
                                                     <GameObjectID id="20" name="Wall1" posX="512" posY="856"/>
+                                                    <GameObjectID id="21" name="Wall2" posX="632" posY="856"/>
                                                 </GameObjects>
                                             </Node>
                                             <Node id="22244" x="750" y="750" width="250" height="250">
                                                 <GameObjects>
-                                                    <GameObjectID id="8" name="Ground4" posX="944" posY="947"/>
                                                     <GameObjectID id="7" name="Ground3" posX="640" posY="946"/>
+                                                    <GameObjectID id="8" name="Ground4" posX="944" posY="947"/>
                                                     <GameObjectID id="15" name="Ceiling2" posX="383" posY="771"/>
-                                                    <GameObjectID id="22" name="Wall3" posX="790" posY="728"/>
                                                     <GameObjectID id="27" name="Machine_1" posX="895" posY="960"/>
                                                     <GameObjectID id="23" name="Wall4" posX="992" posY="728"/>
+                                                    <GameObjectID id="22" name="Wall3" posX="790" posY="728"/>
                                                 </GameObjects>
                                             </Node>
                                         </ChildNodes>

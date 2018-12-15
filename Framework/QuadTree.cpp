@@ -159,7 +159,7 @@ void CQuadTree::SaveToXml(const char* xmlPath) const
 void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
 {
 	this->m_id = node->IntAttribute("id");
-	this->m_bounds = Bound(Vector2(node->IntAttribute("y"), node->IntAttribute("x")),
+	this->m_bounds = Bound(Vector2(node->IntAttribute("x"), node->IntAttribute("y")),
 	                 Vector2(node->IntAttribute("width"), node->IntAttribute("height")));
 
 	if (auto childNodes = node->FirstChildElement("ChildNodes"))
@@ -242,8 +242,10 @@ std::set<CGameObject*> CQuadTree::query(Rect rectangle)
 	{
 		for (CQuadTree* node : m_pNodes)
 		{
-			auto nodeResult = node->query(rectangle);
-			result.insert(nodeResult.begin(), nodeResult.end());
+			if (rectangle.intersect(node->m_bounds)) {
+				auto nodeResult = node->query(rectangle);
+				result.insert(nodeResult.begin(), nodeResult.end());
+			}
 		}
 	}
 	else
