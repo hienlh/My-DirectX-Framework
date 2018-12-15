@@ -8,7 +8,6 @@
 #include "CameraController.h"
 #include "PlayerController.h"
 #include "ResourceManager.h"
-#include "MegaManPowerController.h"
 #include "MachineController.h"
 #pragma comment(lib, "Framework.lib")
 
@@ -79,7 +78,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		CGameObject* pBackground = new CGameObject("Map");
 		pBackground->AddComponent<CRenderer>()->SetSprite("Map")
-			->SetZOrder(1)->GetSprite()->SetAnchor(VECTOR2_ZERO);
+			->SetZOrder(10)->GetSprite()->SetAnchor(VECTOR2_ZERO);
 		{
 			//Ground
 			for (int i = 6; i < 6 + 9; i++)
@@ -221,7 +220,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition("MegaManX Wall Clinging", "MegaManX Wall Clinging Shoot", true, "isShoot", true, true)
 			->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
 		;
-		pPlayer->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
 		pPlayer->GetComponent<CRenderer>()->SetFlipY(false);
 		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
@@ -231,18 +229,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 		pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
 
-		CGameObject* pPowerEffect = new CGameObject("Power Effect", Vector2(50, 50));
+		CGameObject* pPowerEffect = new CGameObject("Power Effect", Vector2(800, 875));
+		pPowerEffect->SetIsActive(false);
 		pPowerEffect->GetComponent<CTransform>()->SetParent(pPlayer);
 		pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-1);
-		pPowerEffect->AddComponent<MegaManPowerController>();
 		pPowerEffect->AddComponent<CAnimator>()
-			->AddBool("isPowering", false)
 			->AddAnimation("MegaManX Power");
+		pPlayer->GetComponent<PlayerController>()->m_Power = pPowerEffect;
 
 		//CGameObject::Instantiate(pPlayer, pPlayer, Vector2(50, 50));
 
 		//CGameObject::Instantiate("MapBehind_1", nullptr, {500, 500})->GetComponent<CRenderer>()->SetZOrder(-1);
 
+		pMachine1->GetComponent<MachineController>()->m_player = pPlayer;
 		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pPlayer;
 		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
 

@@ -16,8 +16,8 @@ namespace Framework {
 		virtual void OnCollisionExit(CCollision *collision) {}
 		virtual void OnCollisionStay(CCollision *collision) {}
 
-		virtual void OnTriggerEnter(CCollider *other) {}
-		virtual void OnTriggerExit(CCollider *other) {}
-		virtual void OnTriggerStay(CCollider *other) {}
+		virtual void OnTriggerEnter(CCollision *collision) {}
+		virtual void OnTriggerExit(CCollision *collision) {}
+		virtual void OnTriggerStay(CCollision *collision) {}
 	};
 }

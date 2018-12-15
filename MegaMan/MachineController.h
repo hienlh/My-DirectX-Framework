@@ -4,6 +4,8 @@
 class MachineController : public Framework::CMonoBehavior
 {
 public:
+	Framework::CGameObject *m_player = nullptr;
+public:
 	explicit MachineController(const CMonoBehavior& monoBehavior)
 		: CMonoBehavior(monoBehavior)
 	{

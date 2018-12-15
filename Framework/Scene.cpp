@@ -103,10 +103,13 @@ void CScene::Update(DWORD dt)
 
 	for (CGameObject* pGameObject : GetAllGameObjects())
 	{
-		pGameObject->Update(dt);
+		if(pGameObject->GetIsActive())
+			pGameObject->Update(dt);
 	}
 
-	m_pMainCamera->Update(dt);
+	if(m_pMainCamera->GetIsActive())
+		m_pMainCamera->Update(dt);
+
 	CGraphic::GetInstance()->SetTransform(m_pMainCamera->GetComponent<CCamera>()->GetOrthographicMatrix(),
 		m_pMainCamera->GetComponent<CCamera>()->GetIdentityMatrix(),
 		m_pMainCamera->GetComponent<CCamera>()->GetViewMatrix());

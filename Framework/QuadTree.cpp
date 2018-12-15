@@ -214,11 +214,12 @@ void CQuadTree::insert(CGameObject *gameObject)
 	for (CQuadTree* node : m_pNodes)
 	{
 		if (rigidBody->GetIsKinematic()) {
-			if (node->m_bounds.intersect(gameObject->GetComponent<CCollider>()->GetBoundGlobal())) node->insert(gameObject);
+			if (node->m_bounds.intersect(gameObject->GetComponent<CCollider>()->GetBoundGlobal())) 
+				node->insert(gameObject);
 		}
 		else if (rigidBody->GetLimitedArea() != Rect(0, 0, 0, 0))
 		{
-			if (node->m_bounds.intersect(rigidBody->GetLimitedArea())) 
+			if (node->m_bounds.intersect(gameObject->GetComponent<CCollider>()->GetBoundArea()))
 				node->insert(gameObject);
 		}
 	}

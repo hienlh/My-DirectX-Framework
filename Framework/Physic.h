@@ -27,9 +27,9 @@ namespace Framework {
 		void NotifyCollisionEnter(CCollision* collision);
 		void NotifyCollisionExit(CCollision* collision);
 		void NotifyCollisionStay(CCollision* collision);
-		void NotifyTriggerEnter(CCollider* other);
-		void NotifyTriggerExit(CCollider* other);
-		void NotifyTriggerStay(CCollider* other);
+		void NotifyTriggerEnter(CCollision* collision);
+		void NotifyTriggerExit(CCollision* collision);
+		void NotifyTriggerStay(CCollision* collision);
 
 	public:
 		static CPhysic* GetInstance();

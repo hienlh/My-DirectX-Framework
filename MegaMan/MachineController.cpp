@@ -16,8 +16,16 @@ void MachineController::OnCollisionEnter(Framework::CCollision* collision)
 void MachineController::Update(DWORD dt)
 {
 	auto anim = m_pGameObject->GetComponent<Framework::CAnimator>();
+	auto transform = m_pGameObject->GetComponent<Framework::CTransform>();
+	auto rigidBody = m_pGameObject->GetComponent<Framework::CRigidbody>();
 	if(anim->GetBool("isRun") == true)
 	{
 		m_pGameObject->GetComponent<Framework::CTransform>()->Translate(Vector2(0, -.1) * dt);
+		m_player->GetComponent<Framework::CTransform>()->Translate(Vector2(0, -.1) * dt);
+	}
+
+	if(transform->Get_Position().y <= rigidBody->GetLimitedArea().top)
+	{
+		anim->SetBool("isRun", false);
 	}
 }

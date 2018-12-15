@@ -103,7 +103,8 @@ void CGameObject::Update(DWORD dt)
 	const Vector2 prePos = transform->Get_Position();
 
 	for (auto component : m_pComponents)
-		component.second->Update(dt);
+		if(component.second->GetIsActive())
+			component.second->Update(dt);
 
 	//Reset position of static gameObjects and half-static gameObjects which is moved
 	Vector2 curPos = transform->Get_Position();
@@ -137,7 +138,8 @@ void CGameObject::Update(DWORD dt)
 void CGameObject::Render()
 {
 	for (auto component : m_pComponents)
-		component.second->Render();
+		if(component.second->GetIsActive())
+			component.second->Render();
 }
 
 /**

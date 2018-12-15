@@ -27,14 +27,7 @@ namespace Framework {
 		Rect GetLimitedArea() const { return m_limitedArea; }
 
 		CRigidbody* SetVelocity(Vector2 velocity) { SetVelocity(velocity.x, velocity.y); return this; }
-		CRigidbody* SetVelocity(float x = MAX_VELOCITY, float y = MAX_VELOCITY)
-		{
-			if (fabs(x - MAX_VELOCITY) > EPSILON)
-				m_velocity.x = x;
-			if (fabs(y - MAX_VELOCITY) > EPSILON)
-				m_velocity.y = y;
-			return this;
-		}
+		CRigidbody* SetVelocity(float x = MAX_VELOCITY, float y = MAX_VELOCITY);
 		CRigidbody* AddVelocity(Vector2 velocity) { m_velocity += velocity; return this; }
 		CRigidbody* SetMass(float mass) { m_mass = mass; return this; }
 		CRigidbody* SetIsKinematic(bool isKinematic);

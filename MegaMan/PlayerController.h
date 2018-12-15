@@ -6,6 +6,9 @@ using namespace Framework;
 
 class PlayerController : public CMonoBehavior
 {
+public:
+	CGameObject* m_Power;
+
 private:
 	float m_speed = 0;
 
@@ -29,6 +32,7 @@ public:
 	//Override
 private:
 	void OnCollisionEnter(CCollision* collision) override;
+	void OnTriggerEnter(CCollision* collision) override;
 	void Update(DWORD dt) override;
 	void Render() override;
 

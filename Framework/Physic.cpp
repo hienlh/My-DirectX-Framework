@@ -56,27 +56,27 @@ void CPhysic::NotifyCollisionStay(CCollision* collision)
 	}
 }
 
-void CPhysic::NotifyTriggerEnter(CCollider* other)
+void CPhysic::NotifyTriggerEnter(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnTriggerEnter(other);
+		observer->OnTriggerEnter(collision);
 	}
 }
 
-void CPhysic::NotifyTriggerExit(CCollider* other)
+void CPhysic::NotifyTriggerExit(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnTriggerExit(other);
+		observer->OnTriggerExit(collision);
 	}
 }
 
-void CPhysic::NotifyTriggerStay(CCollider* other)
+void CPhysic::NotifyTriggerStay(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnTriggerStay(other);
+		observer->OnTriggerStay(collision);
 	}
 }
 
@@ -166,11 +166,17 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 	float ml, mt, mr, mb;		// moving object bbox
 	float t, nx, ny;
 
+	if (!moveObject->GetIsActive() || !staticObject->GetIsActive()) return -1;
+
 	staticObject->GetComponent<CCollider>()->GetBoundGlobal().GetBound(st, sl, sr, sb);
 	moveObject->GetComponent<CCollider>()->GetBoundGlobal().GetBound(mt, ml, mr, mb);
 
 	const bool mEffect = moveObject->GetComponent<CCollider>()->GetUsedByEffector();
 	const bool sEffect = staticObject->GetComponent<CCollider>()->GetUsedByEffector();
+
+	const bool mTrigger = moveObject->GetComponent<CCollider>()->GetIsTrigger();
+	const bool sTrigger = staticObject->GetComponent<CCollider>()->GetIsTrigger();
+	const bool isTrigger = mTrigger || sTrigger;
 
 	const bool mKinematic = moveObject->GetComponent<CRigidbody>()->GetIsKinematic();
 	const bool sKinematic = staticObject->GetComponent<CRigidbody>()->GetIsKinematic();
@@ -188,7 +194,7 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 		t, nx, ny
 	);
 
-	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0) 
+	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0 && !isTrigger)
 	{
 		OverLapResponse(moveObject, staticObject);
 		//deflect
@@ -207,32 +213,38 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 	}
 
 	if (t >= 0 && t < 1) {
-		CTransform *mTran = moveObject->GetComponent<CTransform>();
-		CTransform *sTran = staticObject->GetComponent<CTransform>(); 
+		if (!isTrigger) {
+			CTransform *mTran = moveObject->GetComponent<CTransform>();
+			CTransform *sTran = staticObject->GetComponent<CTransform>();
 
-		mTran->PlusPosition(mv * dt * t);
-		sTran->PlusPosition(sv * dt * t);
+			mTran->PlusPosition(mv * dt * t);
+			sTran->PlusPosition(sv * dt * t);
 
-		float rt = 1 - t;
+			float rt = 1 - t;
 
-		//deflect
-		if (nx != 0) {
-			mv = mEffect && !mKinematic ? Vector2(-mv.x, mv.y) : Vector2(0, mv.y);
-			sv = sEffect && !sKinematic ? Vector2(-sv.x, sv.y) : Vector2(0, sv.y);
-			if (mEffect && !mKinematic) mTran->PlusPosition(Vector2(mv.x, 0) * dt * rt);
-			if (sEffect && !sKinematic) sTran->PlusPosition(Vector2(sv.x, 0) * dt * rt);
+			//deflect
+			if (nx != 0) {
+				mv = mEffect && !mKinematic ? Vector2(-mv.x, mv.y) : Vector2(0, mv.y);
+				sv = sEffect && !sKinematic ? Vector2(-sv.x, sv.y) : Vector2(0, sv.y);
+				if (mEffect && !mKinematic) mTran->PlusPosition(Vector2(mv.x, 0) * dt * rt);
+				if (sEffect && !sKinematic) sTran->PlusPosition(Vector2(sv.x, 0) * dt * rt);
+			}
+			if (ny != 0) {
+				mv = mEffect && !mKinematic ? Vector2(mv.x, -mv.y) : Vector2(mv.x, 0);
+				sv = sEffect && !sKinematic ? Vector2(sv.x, -sv.y) : Vector2(sv.x, 0);
+				if (mEffect && !mKinematic) mTran->PlusPosition(Vector2(0, mv.y) * dt * rt);
+				if (sEffect && !sKinematic) sTran->PlusPosition(Vector2(0, sv.y) * dt * rt);
+			}
+
+			moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
+			staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
 		}
-		if (ny != 0) {
-			mv = mEffect && !mKinematic ? Vector2(mv.x, -mv.y) : Vector2(mv.x, 0);
-			sv = sEffect && !sKinematic ? Vector2(sv.x, -sv.y) : Vector2(sv.x, 0);
-			if (mEffect && !mKinematic) mTran->PlusPosition(Vector2(0, mv.y) * dt * rt);
-			if (sEffect && !sKinematic) sTran->PlusPosition(Vector2(0, sv.y) * dt * rt);
+
+		if (t > 0) {
+			!isTrigger
+				? NotifyCollisionEnter(new CCollision(moveObject, staticObject))
+				: NotifyTriggerEnter(new CCollision(moveObject, staticObject));
 		}
-
-		moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
-		staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
-
-		if (t > 0) NotifyCollisionEnter(new CCollision(moveObject, staticObject));
 	}
 	return t;
 }
@@ -258,7 +270,7 @@ void CPhysic::SweptAABB(
 	float br = dx > 0 ? mr + dx : mr;
 	float bb = dy > 0 ? mb + dy : mb;
 
-	if (br < sl || bl > sr || bb < st || bt > sb) return;
+	if (br <= sl || bl >= sr || bb <= st || bt >= sb) return;
 
 
 	if (dx == 0 && dy == 0) return;		// moving object is not moving > obvious no collision

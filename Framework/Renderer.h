@@ -65,8 +65,7 @@ namespace Framework
 	public:
 		static void Destroy(CRenderer* &instance);
 
-		// Override method
+		// Friend
 	public:
-
 	};
 }

@@ -22,7 +22,13 @@ PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(game
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
-	//CDebug::Log("Collision ground \n");
+	CDebug::Log("Collision ground \n");
+	m_pGameObject->GetComponent<CAnimator>()->SetBool("isJump", false);
+}
+
+void PlayerController::OnTriggerEnter(CCollision* collision)
+{
+	CDebug::Log("Collision ground \n");
 }
 
 void PlayerController::Update(DWORD dt)
@@ -152,6 +158,15 @@ void PlayerController::Update(DWORD dt)
 			anim->SetBool("isRun", false);
 			rigidbody->SetVelocity(Vector2(0, MAX_VELOCITY));
 		}
+	}
+
+	if (input->KeyDown(DIK_E)) {
+		if(m_Power)
+			m_Power->SetIsActive(true);
+	}
+	if (input->KeyUp(DIK_E)) {
+		if (m_Power)
+			m_Power->SetIsActive(false);
 	}
 }
 
