@@ -64,6 +64,18 @@ typedef struct Bound
 		return !(m_left > 0 || m_right < 0 || m_top < 0 || m_bottom > 0);
 	}
 
+	Bound OverLapBound(Bound other)
+	{
+		const float _top = top > other.top ? top : other.top;
+		const float _bottom = bottom < other.bottom ? bottom : other.bottom;
+		const float _left = left > other.left ? left : other.left;
+		const float _right = right < other.right ? right : other.right;
+
+		if (_top > _bottom || _left > _right) return Bound(0, 0, 0, 0);
+
+		return Bound(_top, _left, _bottom, _right);
+	}
+
 	bool isInside(Vector2 point) const
 	{
 		return !(point.x < left || point.x > right || point.y < top || point.y > bottom);

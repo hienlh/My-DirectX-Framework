@@ -48,6 +48,8 @@ namespace Framework {
 
 		void insert(CGameObject *gameObject);
 
+		void insert_s(CGameObject *gameObject);
+
 		std::set <CGameObject*> query(Rect rectangle);
 	};
 }

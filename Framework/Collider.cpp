@@ -92,5 +92,5 @@ void CCollider::SetAutoBoundSize(bool autoBoundSize)
 void CCollider::SetAnchor(Vector2 anchor)
 {
 	m_Anchor = anchor;
-	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject, true);
+	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 }

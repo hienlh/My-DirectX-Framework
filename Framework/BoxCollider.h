@@ -19,6 +19,7 @@ namespace Framework {
 		Vector2 GetSize() const { return m_Size; }
 
 		CBoxCollider* SetSize(Vector2 size);
+		CBoxCollider* PlusSize(Vector2 size);
 
 		//Override
 	public:

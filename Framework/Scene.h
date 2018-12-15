@@ -48,7 +48,7 @@ namespace Framework
 
 		//Internal Method
 	private:
-		void AddColliderObject(CGameObject* gameObject, bool isUpdate = false);
+		void AddColliderObject(CGameObject* gameObject);
 
 		//Method
 	public:

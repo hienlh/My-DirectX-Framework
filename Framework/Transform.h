@@ -38,7 +38,7 @@ namespace Framework
 		 * \brief Like Position += Distance
 		 * \param distance 
 		 */
-		void PlusPosition(Vector2 distance) { m_position += distance; }
+		CTransform* PlusPosition(Vector2 distance) { m_position += distance;  return this; }
 
 		// Internal methods
 	private:
@@ -56,6 +56,10 @@ namespace Framework
 		void Render() override;
 
 		CTransform* Clone() const override;
+
+		//Methods
+	public:
+		CTransform* Translate(Vector2 translate) { m_position += translate;  return this; }
 
 	};
 }

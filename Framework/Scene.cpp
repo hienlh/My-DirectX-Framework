@@ -114,8 +114,8 @@ void CScene::Update(DWORD dt)
 
 void CScene::Render()
 {
-	std::set<CGameObject*> listRender = m_dynamicObjectList;
-	listRender.insert(reinterpret_cast<CGameObject*>(m_pQuadTree));
+	/*std::set<CGameObject*> listRender = m_dynamicObjectList;
+	listRender.insert(reinterpret_cast<CGameObject*>(m_pQuadTree));*/
 	CGraphic::GetInstance()->Render(this);
 }
 
@@ -155,7 +155,7 @@ CGameObject* CScene::FindGameObject(DWORD id)
 	return nullptr;
 }
 
-void CScene::AddColliderObject(CGameObject* gameObject, bool isUpdate)
+void CScene::AddColliderObject(CGameObject* gameObject)
 {
 	if (gameObject->GetComponent<CCollider>())
 	{
@@ -168,23 +168,18 @@ void CScene::AddColliderObject(CGameObject* gameObject, bool isUpdate)
 			m_halfStaticObjectList.erase(gameObject);
 
 			if (!m_loadedQuadTree) {
-				if (isUpdate)
-					m_pQuadTree->remove(gameObject);
-				m_pQuadTree->insert(gameObject);
+				m_pQuadTree->insert_s(gameObject);
 			}
 		}
 		else if (rigidBody->GetLimitedArea() != Rect(0, 0, 0, 0))
 		{
-			if (isUpdate) m_halfStaticObjectList.erase(gameObject);
 			m_staticObjectList.erase(gameObject);
 			m_dynamicObjectList.erase(gameObject);
 			m_gameObjectList.erase(gameObject);
 			m_halfStaticObjectList.insert(gameObject);
 
 			if (!m_loadedQuadTree) {
-				if (isUpdate)
-					m_pQuadTree->remove(gameObject);
-				m_pQuadTree->insert(gameObject);
+				m_pQuadTree->insert_s(gameObject);
 			}
 		}
 		else

@@ -30,6 +30,9 @@
     <ClCompile Include="PlayerController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="MachineController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h">
@@ -42,6 +45,9 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="PlayerController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MachineController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

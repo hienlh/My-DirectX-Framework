@@ -22,8 +22,10 @@ CCollision::~CCollision()
 	SAFE_DELETE(m_pOtherCollider);
 }
 
-Vector2 CCollision::GetRelativeVelocity()
+bool CCollision::CollisionBetween(std::string name, std::string otherName) const
 {
-	return Vector2();
+	std::string colliderName = m_pCollider->GetGameObject()->GetName();
+	std::string otherColliderName = m_pOtherCollider->GetGameObject()->GetName();
+	return (colliderName == name && otherColliderName == otherName) || (colliderName == otherName && otherColliderName == name);
 }
 

@@ -80,10 +80,10 @@ bool CGameManager::Run()
 
 			// process game loop
 
-			CPhysic::GetInstance()->Update(dt);
-
 			if (m_currentScene)
 				m_currentScene->Update(dt);
+
+			CPhysic::GetInstance()->Update(dt);
 
 			m_currentScene->Render();
 		}

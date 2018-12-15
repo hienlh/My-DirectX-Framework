@@ -55,10 +55,10 @@ namespace Framework
 				//if (reinterpret_cast<CCollider *> (&tmp) && m_pScene) //Da bi loi, sau khi co copy constructor
 				if (typeName == typeid(CBoxCollider).name() && m_pScene)
 				{
-					m_pScene->AddColliderObject(this);
-
 					if (!CheckAddedComponent<CRigidbody>())
 						AddComponent<CRigidbody>();
+
+					m_pScene->AddColliderObject(this);
 				}
 
 				CheckAfterAddComponent(tmp);

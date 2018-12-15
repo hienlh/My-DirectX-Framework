@@ -2,6 +2,7 @@
 #include "Rigidbody.h"
 
 #include "GameObject.h"
+#include "Graphic.h"
 
 using namespace Framework;
 
@@ -23,7 +24,7 @@ CRigidbody::CRigidbody(CGameObject * gameObject)
 	this->m_isKinematic = false;
 }
 
-void CRigidbody::SetIsKinematic(bool isKinematic)
+CRigidbody* CRigidbody::SetIsKinematic(bool isKinematic)
 {
 	m_isKinematic = isKinematic;
 	if(isKinematic)
@@ -31,9 +32,10 @@ void CRigidbody::SetIsKinematic(bool isKinematic)
 		//Add to scene to change quadTree
 		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	}
+	return this;
 }
 
-void CRigidbody::SetLimitedArea(Rect limitedArea)
+CRigidbody* CRigidbody::SetLimitedArea(Rect limitedArea)
 {
 	//If object is static, not update limited area
 	if (!m_isKinematic) {
@@ -42,6 +44,7 @@ void CRigidbody::SetLimitedArea(Rect limitedArea)
 		//Add to scene to change quadTree
 		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	}
+	return this;
 }
 
 void CRigidbody::Update(DWORD dt)
@@ -55,6 +58,10 @@ void CRigidbody::Update(DWORD dt)
 
 void CRigidbody::Render()
 {
+	if(m_limitedArea != Bound(0,0,0,0))
+	{
+		CGraphic::GetInstance()->DrawRectangle(m_limitedArea, D3DCOLOR_XRGB(0, 0, 255));
+	}
 }
 
 CRigidbody* CRigidbody::Clone() const

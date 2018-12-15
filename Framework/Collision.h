@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Collider.h"
+#include "GameObject.h"
 
 namespace Framework {
 
@@ -21,7 +22,10 @@ namespace Framework {
 		CCollider *GetCollider() const { return m_pCollider; }
 		CCollider *GetOtherCollider() const { return m_pOtherCollider; }
 
-		Vector2 GetRelativeVelocity();
+		std::string GetColliderName() const { return m_pCollider->GetGameObject()->GetName(); }
+		std::string GetOtherColliderName() const { return m_pOtherCollider->GetGameObject()->GetName(); }
+
+		bool CollisionBetween(std::string name, std::string otherName) const;
 	};
 
 }

@@ -9,6 +9,7 @@
 #include "PlayerController.h"
 #include "ResourceManager.h"
 #include "MegaManPowerController.h"
+#include "MachineController.h"
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
@@ -68,6 +69,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//From file Map/Objects.png
 	new CAnimation("MapBehind_1", "MapObjects", 29, 9, 100, true);
+	new CAnimation("Machine_1_Run", "MapObjects", 25, 3, 50, true);
+	new CAnimation("Machine_1_Idle", "MapObjects", 25, 1, 50, true);
 
 	pResourceManager->AddPrefab("MapBehind_1")
 		->AddComponent<CAnimator>()->AddAnimation("MapBehind_1");
@@ -115,7 +118,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		CGameObject* pPlayer = new CGameObject("Player", Vector2(45, 875));
+		CGameObject* pMachine1 = new CGameObject("Machine_1");
+		pMachine1->GetComponent<CTransform>()->Set_Position(Vector2(895, 960));
+		pMachine1->AddComponent<CRenderer>()->SetSprite("MapObjects", 25)->SetZOrder(-1);
+		pMachine1->AddComponent<CAnimator>()
+			->AddAnimation("Machine_1_Idle")
+			->AddAnimation("Machine_1_Run")
+			->AddBool("isRun", false)
+			->AddTransition("Machine_1_Idle", "Machine_1_Run", true, "isRun", true)
+			->AddTransition("Machine_1_Run", "Machine_1_Idle", true, "isRun", false);
+		pMachine1->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		pMachine1->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+		pMachine1->GetComponent<CBoxCollider>()->PlusSize(Vector2(-6, -20));
+		pMachine1->GetComponent<CRigidbody>()->SetGravityScale(0)->SetLimitedArea(Rect(Vector2(895, 400), Vector2(0, 560)));
+		pMachine1->AddComponent<MachineController>();
+
+		CGameObject* pPlayer = new CGameObject("Player", Vector2(800, 875));
 		pPlayer->AddComponent<CAnimator>()
 			->AddAnimation("MegaManX Init")
 			->AddAnimation("MegaManX InitLand")
@@ -209,7 +227,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
 		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
-		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(false);
+		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 		pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 		pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
 

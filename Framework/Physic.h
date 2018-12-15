@@ -47,5 +47,6 @@ namespace Framework {
 			float dx, float dy,
 			float sl, float st, float sr, float sb,
 			float &t, float &nx, float &ny);
+		static void OverLapResponse(CGameObject* object, CGameObject* other);
 	};
 }
