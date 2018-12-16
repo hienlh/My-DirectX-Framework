@@ -2,6 +2,7 @@
 #include "BoxCollider.h"
 #include "GameObject.h"
 #include "Graphic.h"
+#include "GameManager.h"
 
 using namespace Framework;
 
@@ -12,7 +13,6 @@ CBoxCollider::CBoxCollider(const CBoxCollider &boxCollider) : CCollider(boxColli
 
 CBoxCollider::CBoxCollider(CGameObject* gameObject) : CCollider(gameObject)
 {
-	const auto transform = m_pGameObject->GetComponent<CTransform>();
 	m_Size = Vector2(1, 1);
 	if (const auto renderer = m_pGameObject->GetComponent<CRenderer>())
 	{
@@ -20,14 +20,6 @@ CBoxCollider::CBoxCollider(CGameObject* gameObject) : CCollider(gameObject)
 	}
 	m_Offset = Vector2(0, 0);
 	m_Bound = Bound(Vector2(0, 0), m_Size);
-}
-
-void CBoxCollider::Config(bool isTrigger, bool autoBoundSize, bool usedByEffector, bool isDebugging)
-{
-	m_IsTrigger = isTrigger;
-	m_AutoBoundSize = autoBoundSize;
-	m_UsedByEffector = usedByEffector;
-	m_IsDebugging = isDebugging;
 }
 
 CBoxCollider* CBoxCollider::SetSize(Vector2 size)
@@ -52,10 +44,7 @@ void CBoxCollider::Update(DWORD dt)
 
 void CBoxCollider::Render()
 {
-	if(m_IsDebugging)
-	{
-		CGraphic::GetInstance()->DrawRectangle(GetBoundGlobal());
-	}
+	CGraphic::GetInstance()->DrawRectangle(GetBoundGlobal());
 }
 
 CBoxCollider* CBoxCollider::Clone() const

@@ -13,7 +13,6 @@ namespace Framework {
 		//Cons / Des
 	private:
 		CPhysic() = default;
-		void Release();
 	public:
 		~CPhysic() = default;
 
@@ -42,7 +41,7 @@ namespace Framework {
 	private:
 		/*Return time collision and output vector2 normal*/
 		float SweptAABBx(DWORD dt, CGameObject *moveObject, CGameObject *staticObject);
-		void SweptAABB(
+		static void SweptAABB(
 			float ml, float mt, float mr, float mb,
 			float dx, float dy,
 			float sl, float st, float sr, float sb,

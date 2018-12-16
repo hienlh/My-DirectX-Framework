@@ -20,6 +20,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	CScene* pScene = new CScene("Main Scene", {8000,8000});
 	pGameManager->SetCurrentScene(pScene);
+	pGameManager->SetIsDebugging(false);
 	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	pScene->GetMainCamera()->AddComponent<CameraController>();
 	pScene->SetIsRenderQuadTree(true);
@@ -89,8 +90,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i-6));
 				pGround->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pGround->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pGround->AddComponent<CBoxCollider>()->SetIsDebugging(true);
-				pGround->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
+				pGround->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 
 			//Ceiling
@@ -101,8 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				CGameObject* pCeiling = new CGameObject("Ceiling" + std::to_string(i));
 				pCeiling->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pCeiling->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pCeiling->AddComponent<CBoxCollider>()->SetIsDebugging(true);
-				pCeiling->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
+				pCeiling->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 
 			//Wall
@@ -113,8 +112,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i-15));
 				pWall->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pWall->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pWall->AddComponent<CBoxCollider>()->SetIsDebugging(true);
-				pWall->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
+				pWall->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 		}
 
@@ -128,7 +126,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition("Machine_1_Idle", "Machine_1_Run", true, "isRun", true)
 			->AddTransition("Machine_1_Run", "Machine_1_Idle", true, "isRun", false);
 		pMachine1->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		pMachine1->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 		pMachine1->GetComponent<CBoxCollider>()->PlusSize(Vector2(-6, -20));
 		pMachine1->GetComponent<CRigidbody>()->SetGravityScale(0)->SetLimitedArea(Rect(Vector2(895, 400), Vector2(0, 560)));
 		pMachine1->AddComponent<MachineController>();
@@ -197,8 +194,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			->AddTransition("MegaManX Fall", "MegaManX Landfall", true, "isLandfall", true)
 			->AddTransition("MegaManX Fall", "MegaManX Fall Shoot", true, "isShoot", true, true)
+			->AddTransition("MegaManX Fall", "MegaManX Wall Clinging", true, "isClinging", true)
 			->AddTransition("MegaManX Fall Shoot", "MegaManX Fall", true, "isShoot", false, true)
 			->AddTransition("MegaManX Fall Shoot", "MegaManX Landfall", true, "isLandfall", true)
+			->AddTransition("MegaManX Fall Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
 
 			->AddTransition("MegaManX Landfall", "MegaManX Idle")
 			->AddTransition("MegaManX Landfall", "MegaManX Landfall Shoot", true, "isShoot", true, true)
@@ -217,7 +216,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition("MegaManX ClimbLadder", "MegaManX Idle", true, "isClimbLadder", false)
 
 			->AddTransition("MegaManX Wall Clinging", "MegaManX Idle", true, "isClinging", false)
-			->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
+			//->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
 			->AddTransition("MegaManX Wall Clinging", "MegaManX Wall Clinging Shoot", true, "isShoot", true, true)
 			->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
 		;
@@ -226,7 +225,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
 		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
-		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 		pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 		pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
 

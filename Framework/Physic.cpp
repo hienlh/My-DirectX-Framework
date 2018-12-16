@@ -10,12 +10,15 @@ using namespace Framework;
 
 CPhysic* CPhysic::__instance = nullptr;
 
-void CPhysic::Release()
-{
-}
-
 void CPhysic::RegisterObserver(CPhysicObserver* observer)
 {
+	const auto component = dynamic_cast<CComponent*>(observer);
+	if(component)
+	{
+		if (component->m_pGameObject->GetScene() != CGameManager::GetInstance()->GetCurrentScene())
+			return;
+	}
+
 	m_observers.push_back(observer);
 }
 
@@ -36,48 +39,132 @@ void CPhysic::NotifyCollisionEnter(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnCollisionEnter(collision);
+		const auto component = dynamic_cast<CComponent*>(observer);
+		if (component)
+		{
+			if (component->m_pGameObject == collision->m_pCollider) 
+			{
+				observer->OnCollisionEnter(collision);
+			}
+			else if ( component->m_pGameObject == collision->m_pOtherCollider)
+			{
+				observer->OnCollisionEnter(collision->Swap());
+			}
+		}
+		else observer->OnCollisionEnter(collision);
 	}
+
+	//SAFE_DELETE(collision);
 }
 
 void CPhysic::NotifyCollisionExit(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnCollisionExit(collision);
+		const auto component = dynamic_cast<CComponent*>(observer);
+		if (component)
+		{
+			if (component->m_pGameObject == collision->m_pCollider)
+			{
+				observer->OnCollisionExit(collision);
+			}
+			else if (component->m_pGameObject == collision->m_pOtherCollider)
+			{
+				observer->OnCollisionExit(collision->Swap());
+			}
+		}
+		else observer->OnCollisionExit(collision);
 	}
+
+	//SAFE_DELETE(collision);
 }
 
 void CPhysic::NotifyCollisionStay(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnCollisionStay(collision);
+		const auto component = dynamic_cast<CComponent*>(observer);
+		if (component)
+		{
+			if (component->m_pGameObject == collision->m_pCollider)
+			{
+				observer->OnCollisionStay(collision);
+			}
+			else if (component->m_pGameObject == collision->m_pOtherCollider)
+			{
+				observer->OnCollisionStay(collision->Swap());
+			}
+		}
+		else observer->OnCollisionStay(collision);
 	}
+
+	//SAFE_DELETE(collision);
 }
 
 void CPhysic::NotifyTriggerEnter(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnTriggerEnter(collision);
+		const auto component = dynamic_cast<CComponent*>(observer);
+		if (component)
+		{
+			if (component->m_pGameObject == collision->m_pCollider)
+			{
+				observer->OnTriggerEnter(collision);
+			}
+			else if (component->m_pGameObject == collision->m_pOtherCollider)
+			{
+				observer->OnTriggerEnter(collision->Swap());
+			}
+		}
+		else observer->OnTriggerEnter(collision);
 	}
+
+	//SAFE_DELETE(collision);
 }
 
 void CPhysic::NotifyTriggerExit(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnTriggerExit(collision);
+		const auto component = dynamic_cast<CComponent*>(observer);
+		if (component)
+		{
+			if (component->m_pGameObject == collision->m_pCollider)
+			{
+				observer->OnTriggerExit(collision);
+			}
+			else if (component->m_pGameObject == collision->m_pOtherCollider)
+			{
+				observer->OnTriggerExit(collision->Swap());
+			}
+		}
+		else observer->OnTriggerExit(collision);
 	}
+
+	//SAFE_DELETE(collision);
 }
 
 void CPhysic::NotifyTriggerStay(CCollision* collision)
 {
 	for (CPhysicObserver* observer : m_observers)
 	{
-		observer->OnTriggerStay(collision);
+		const auto component = dynamic_cast<CComponent*>(observer);
+		if (component)
+		{
+			if (component->m_pGameObject == collision->m_pCollider)
+			{
+				observer->OnTriggerStay(collision);
+			}
+			else if (component->m_pGameObject == collision->m_pOtherCollider)
+			{
+				observer->OnTriggerStay(collision->Swap());
+			}
+		}
+		else observer->OnTriggerStay(collision);
 	}
+
+	//SAFE_DELETE(collision);
 }
 
 CPhysic* CPhysic::GetInstance()
@@ -90,16 +177,15 @@ CPhysic* CPhysic::GetInstance()
 
 void CPhysic::Destroy()
 {
-	__instance->Release();
 	SAFE_DELETE(__instance);
 }
 
 bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
 {
-	float left = other.left - object.right;
-	float top = other.bottom - object.top;
-	float right = other.right - object.left;
-	float bottom = other.top - object.bottom;
+	const float left = other.left - object.right;
+	const float top = other.bottom - object.top;
+	const float right = other.right - object.left;
+	const float bottom = other.top - object.bottom;
 
 	return !(left >= 0 || right <= 0 || top <= 0 || bottom >= 0);
 }
@@ -160,7 +246,7 @@ void CPhysic::Update(DWORD dt)
 
 }
 
-float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* staticObject)
+float CPhysic::SweptAABBx(const DWORD dt, CGameObject* moveObject, CGameObject* staticObject)
 {
 	float sl, st, sr, sb;		// static object bbox
 	float ml, mt, mr, mb;		// moving object bbox
@@ -187,6 +273,17 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 	const float dx = dv.x;
 	const float dy = dv.y;
 
+	if (dx != 0 || dy != 0)
+		if (!Bound(mt, ml, mb, mr).intersect(Bound(st, sl, sb, sr))) {
+			auto nextBound = Bound(mt + dy, ml + dx, mb + dy, mr + dx);
+			if (nextBound.intersect(Bound(st, sl, sb, sr)))
+			{
+				!isTrigger
+					? NotifyCollisionEnter(new CCollision(moveObject, staticObject))
+					: NotifyTriggerEnter(new CCollision(moveObject, staticObject));
+			}
+		}
+
 	SweptAABB(
 		ml, mt, mr, mb,
 		dx, dy,
@@ -212,7 +309,7 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 		return t;
 	}
 
-	if (t >= 0 && t < 1) {
+	if (t >= 0 && t <= 1) {
 		if (!isTrigger) {
 			CTransform *mTran = moveObject->GetComponent<CTransform>();
 			CTransform *sTran = staticObject->GetComponent<CTransform>();
@@ -220,7 +317,7 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 			mTran->PlusPosition(mv * dt * t);
 			sTran->PlusPosition(sv * dt * t);
 
-			float rt = 1 - t;
+			const float rt = 1 - t;
 
 			//deflect
 			if (nx != 0) {
@@ -238,12 +335,6 @@ float CPhysic::SweptAABBx(DWORD dt, CGameObject* moveObject, CGameObject* static
 
 			moveObject->GetComponent<CRigidbody>()->SetVelocity(mv);
 			staticObject->GetComponent<CRigidbody>()->SetVelocity(sv);
-		}
-
-		if (t > 0) {
-			!isTrigger
-				? NotifyCollisionEnter(new CCollision(moveObject, staticObject))
-				: NotifyTriggerEnter(new CCollision(moveObject, staticObject));
 		}
 	}
 	return t;
@@ -265,13 +356,11 @@ void CPhysic::SweptAABB(
 	// Broad-phase test 
 	//
 
-	float bl = dx > 0 ? ml : ml + dx;
-	float bt = dy > 0 ? mt : mt + dy;
-	float br = dx > 0 ? mr + dx : mr;
-	float bb = dy > 0 ? mb + dy : mb;
-
+	const float bl = dx > 0 ? ml : ml + dx;
+	const float bt = dy > 0 ? mt : mt + dy;
+	const float br = dx > 0 ? mr + dx : mr;
+	const float bb = dy > 0 ? mb + dy : mb;
 	if (br <= sl || bl >= sr || bb <= st || bt >= sb) return;
-
 
 	if (dx == 0 && dy == 0) return;		// moving object is not moving > obvious no collision
 

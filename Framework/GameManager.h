@@ -24,6 +24,7 @@ namespace Framework
 		CWindow* m_pWindow = nullptr;
 		CScene* m_currentScene = nullptr;
 		bool m_isRunning = false;
+		bool m_isDebugging = false;
 
 		// Internal methods
 	private:
@@ -32,9 +33,12 @@ namespace Framework
 
 		// Getters / Setters
 	public:
-		void SetCurrentScene(CScene* scene) { m_currentScene = scene; }
+		CGameManager* SetCurrentScene(CScene* scene) { m_currentScene = scene; return this; }
+		CGameManager* SetIsDebugging(bool isDebugging) { m_isDebugging = isDebugging; return this; }
+
 		CScene* GetCurrentScene() const { return m_currentScene; }
 		CWindow* GetWindow() const { return m_pWindow; }
+		bool GetIsDebugging() const { return m_isDebugging; }
 
 		bool IsRunning() const { return m_isRunning; }
 		

@@ -22,13 +22,16 @@ PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(game
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
-	CDebug::Log("Collision ground \n");
-	m_pGameObject->GetComponent<CAnimator>()->SetBool("isJump", false);
-}
+	auto anim = m_pGameObject->GetComponent<CAnimator>();
 
-void PlayerController::OnTriggerEnter(CCollision* collision)
-{
-	CDebug::Log("Collision ground \n");
+	CDebug::Log("%s - %s\n", collision->GetCollider()->GetName().c_str(),
+	            collision->GetOtherCollider()->GetName().c_str());
+	if(strstr(collision->GetOtherCollider()->GetName().c_str(), std::string("Wall").c_str()))
+	{
+		anim->SetBool("isClinging", true);
+		anim->SetBool("isJump", false);
+	}
+	//m_pGameObject->GetComponent<CAnimator>()->SetBool("isJump", false);
 }
 
 void PlayerController::Update(DWORD dt)
@@ -43,10 +46,10 @@ void PlayerController::Update(DWORD dt)
 	{
 		anim->SetBool("isFall", true);
 		anim->SetBool("isLandfall", false);
-		anim->SetBool("isJump", true);
 	}
 	else if (velocity.y == 0) {
 		if (anim->GetBool("isFall")) anim->SetBool("isLandfall", true);
+		anim->SetBool("isClinging", false);
 		anim->SetBool("isFall", false);
 		anim->SetBool("isJump", false);
 	}
@@ -119,16 +122,11 @@ void PlayerController::Update(DWORD dt)
 		rigidbody->SetGravityScale(1);
 	}
 
-	if (input->KeyDown(DIK_Q)) {
-		anim->SetBool("isClinging", true);
-	}
-	if (input->KeyUp(DIK_Q)) {
-
-	}
 	if (anim->GetBool("isLandfall") || anim->GetBool("isJump"))
 	{
 		anim->SetBool("isClinging", false);
 	}
+
 	if (anim->GetBool("isClinging") && anim->GetBool("isJump"))
 	{
 		const bool isLeft = renderer->GetFlipX();
