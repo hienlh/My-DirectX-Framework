@@ -1,14 +1,30 @@
 ﻿#include "stdafx.h"
 #include "QuadTree.h"
 #include "Graphic.h"
+#include "Rigidbody.h"
+#include "GameManager.h"
+#include "Collider.h"
 
 using namespace Framework;
+
+CQuadTree::CQuadTree(Vector2 size)
+{
+	m_id = 0;
+	m_level = 0;
+	m_bounds = Rect(Vector2(0,0), size);
+}
 
 CQuadTree::CQuadTree(int id, int level, Rect bounds)
 {
 	m_id = id;
 	m_level = level;
 	m_bounds = bounds;
+}
+
+CQuadTree::~CQuadTree()
+{
+	for (int i = 0; i < 4; i++)
+		SAFE_DELETE(m_pNodes[i]);
 }
 
 void CQuadTree::Update(DWORD dt)
@@ -25,16 +41,22 @@ void CQuadTree::Render()
 		}
 }
 
-void CQuadTree::clear()
+int CQuadTree::GetAmountGameObjects(CQuadTree* quadTree)
 {
-	m_pObjects.clear();
-
-	if(m_pNodes[0])
-		for (int i = 0; i < 4; i++)
+	int result = 0;
+	if(quadTree->m_pNodes[0])
+	{
+		for (CQuadTree* node : quadTree->m_pNodes)
 		{
-			m_pNodes[i]->clear();
-			SAFE_DELETE(m_pNodes[i]);
+			result += GetAmountGameObjects(node);
 		}
+	}
+	else
+	{
+		result += quadTree->m_pObjects.size();
+	}
+
+	return result;
 }
 
 void CQuadTree::split()
@@ -50,128 +72,185 @@ void CQuadTree::split()
 	m_pNodes[3] = new CQuadTree(m_id * 10 + 4, m_level + 1, Rect(Vector2(x + subWidth, y + subHeight), Vector2(subWidth, subHeight)));
 }
 
-int CQuadTree::getQuadrant(Rect rectangle) const
+void CQuadTree::remove(CGameObject* gameObject)
 {
-	int index = -1;
-	const float verticalMidpoint = m_bounds.left + static_cast<float>(m_bounds.Size().x / 2);
-	const float horizontalMidpoint = m_bounds.top + static_cast<float>(m_bounds.Size().y / 2);
-
-	const bool topQuadrant = rectangle.bottom < horizontalMidpoint;
-	const bool bottomQuadrant = rectangle.top > horizontalMidpoint;
-
-	if (rectangle.right < verticalMidpoint) {
-		if (topQuadrant) index = 1;
-		else if (bottomQuadrant) index = 2;
-	}
-	else if (rectangle.left > verticalMidpoint)
+	if (CGameManager::GetInstance()->IsRunning()) return;
+	
+	if(m_pNodes[0])
 	{
-		if (topQuadrant) index = 0;
-		else if (bottomQuadrant) index = 3;
-	}
+		for (CQuadTree* node : m_pNodes)
+		{
+			node->remove(gameObject);
+		}
 
-	return index;
+		if(!GetAmountGameObjects(this))
+		{
+			for(int i=0;i<4;i++)
+				SAFE_DELETE(m_pNodes[i]);
+		}
+	}
+	else
+	{
+		m_pObjects.erase(gameObject);
+	}
 }
 
-int CQuadTree::getFitId(Rect rectangle) const
+tinyxml2::XMLElement* CQuadTree::ToXmlElement(tinyxml2::XMLDocument &doc) const
 {
-	int id = m_id;
+	tinyxml2::XMLElement *result = doc.NewElement("Node");
 
-	// If this node is split 
-	if(m_pNodes[0]) 
+	result->SetAttribute("id", m_id);
+	result->SetAttribute("x", m_bounds.left);
+	result->SetAttribute("y", m_bounds.top);
+	result->SetAttribute("width", m_bounds.Size().x);
+	result->SetAttribute("height", m_bounds.Size().y);
+
+	if(m_pNodes[0])
 	{
-		// If having a appropriate quadrant for this rectangle
-		const int index = getQuadrant(rectangle);
-		if(index != -1)
+		auto pNodes = doc.NewElement("ChildNodes");
+		for (CQuadTree* const node : m_pNodes)
 		{
-			id = m_pNodes[index]->getFitId(rectangle);
+			pNodes->InsertEndChild(node->ToXmlElement(doc));
+		}
+		result->InsertEndChild(pNodes);
+	}
+	else
+	{
+		if (m_pObjects.size() != 0) {
+			auto gameObjects = doc.NewElement("GameObjects");
+			for (CGameObject* const game_object : m_pObjects)
+			{
+				const auto transform = game_object->GetComponent<CTransform>();
+				const auto collider = game_object->GetComponent<CBoxCollider>();
+
+				const Vector2 pos = transform->Get_Position();
+
+				auto gameObject = doc.NewElement("GameObjectID");
+				gameObject->SetAttribute("id", static_cast<int>(game_object->GetID()));
+				gameObject->SetAttribute("name", game_object->GetName().c_str());
+				gameObject->SetAttribute("posX", pos.x);
+				gameObject->SetAttribute("posY", pos.y);
+
+				gameObjects->InsertEndChild(gameObject);
+			}
+			result->InsertFirstChild(gameObjects);
 		}
 	}
 
-	// Else this node does not have sub node or no sub node can fit with this rectangle
-	return id;
+	return result;
+}
+
+void CQuadTree::SaveToXml(const char* xmlPath) const
+{
+	FILE* file;
+	fopen_s(&file, xmlPath, "wb");
+
+	tinyxml2::XMLDocument doc;
+
+	auto pRoot = doc.NewElement("QuadTree");
+	doc.InsertFirstChild(pRoot);
+
+	pRoot->InsertFirstChild(ToXmlElement(doc));
+
+	doc.SaveFile(file);
+	fclose(file);
+}
+
+void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
+{
+	this->m_id = node->IntAttribute("id");
+	this->m_bounds = Bound(Vector2(node->IntAttribute("x"), node->IntAttribute("y")),
+	                 Vector2(node->IntAttribute("width"), node->IntAttribute("height")));
+
+	if (auto childNodes = node->FirstChildElement("ChildNodes"))
+	{
+		split();
+		tinyxml2::XMLElement * childNode = childNodes->FirstChildElement("Node");
+		int index = 0;
+		while (childNode)
+		{
+			m_pNodes[index++]->LoadFromXml(childNode);
+			childNode = childNode->NextSiblingElement("Node");
+		}
+
+	}else
+	{
+		if (auto gameObjects = node->FirstChildElement("GameObjects"))
+		{
+			tinyxml2::XMLElement * gameObjectXML = gameObjects->FirstChildElement("GameObjectID");
+			CScene *scene = CGameManager::GetInstance()->GetCurrentScene();
+			while (gameObjectXML != nullptr)
+			{
+				auto gameObject = scene->FindGameObject(gameObjectXML->IntAttribute("id", -1));
+
+				if (gameObject) {
+					gameObject->GetComponent<CTransform>()
+						->Set_Position(Vector2(gameObjectXML->IntAttribute("posX", 0), gameObjectXML->IntAttribute("posY", 0)));
+
+					this->m_pObjects.insert(gameObject);
+				}
+				gameObjectXML = gameObjectXML->NextSiblingElement("GameObjectID");
+			}
+
+		}
+	}
 }
 
 void CQuadTree::insert(CGameObject *gameObject)
 {
-	//Get bound of Game Object
-	const Rect bound = gameObject->GetComponent<CCollider>()->GetBoundGlobal();
+	if (CGameManager::GetInstance()->IsRunning()) return;
 
-	// Check if this node has sub node, get quadrant and recursive insert game object 
-	// into appropriate sub node, then break out of this function
-	if(m_pNodes[0])
+	if(!m_pNodes[0])
 	{
-		const int index = getQuadrant(bound);
-		if(index!=-1)
+		if (m_level < MAX_QUAD_TREE_LEVEL) split();
+		else
 		{
-			m_pNodes[index]->insert(gameObject);			
+			m_pObjects.insert(gameObject);
 			return;
 		}
 	}
 
-	// Add game object to list object of this node
-	m_pObjects.push_back(gameObject);
-
-	// Check if node has more than max objects and level lower than max level, 
-	// split this node and add to appropriate sub node
-	if(m_pObjects.size() > MAX_OBJECTS && m_level < MAX_LEVEL)
+	const auto rigidBody = gameObject->GetComponent<CRigidbody>();
+	for (CQuadTree* node : m_pNodes)
 	{
-		if(!m_pNodes[0])
-		{
-			split();
+		if (rigidBody->GetIsKinematic()) {
+			if (node->m_bounds.intersect(gameObject->GetComponent<CCollider>()->GetBoundGlobal())) 
+				node->insert(gameObject);
 		}
-
-		// To store game object to remove after that
-		std::list<CGameObject*> removedObjects = {}; 
-
-		for (CGameObject* object : m_pObjects)
+		else if (rigidBody->GetLimitedArea() != Rect(0, 0, 0, 0))
 		{
-			const int index = getQuadrant(object->GetComponent<CCollider>()->GetBoundGlobal());
-			if(index!=-1)
-			{
-				m_pNodes[index]->insert(object);
-				removedObjects.push_back(object);
-			}
-		}
-		for (CGameObject* object : removedObjects)
-		{
-			m_pObjects.remove(object);
+			if (node->m_bounds.intersect(gameObject->GetComponent<CCollider>()->GetBoundArea()))
+				node->insert(gameObject);
 		}
 	}
 }
 
-std::list<CGameObject*> CQuadTree::query(Rect rectangle)
+void CQuadTree::insert_s(CGameObject* gameObject)
 {
-	std::list<CGameObject*> result = {};
+	if (CGameManager::GetInstance()->IsRunning()) return;
 
-	// Check if it overlap with this node, then get all objects of this node to result;
-	if (!m_bounds.intersect(rectangle))
-		return result;
+	remove(gameObject);
 
-	for (CGameObject* object : m_pObjects)
-	{
-		result.push_back(object);
-	}
+	insert(gameObject);
+}
 
-	//Check if this node is split, get all objects of sub node intersecting with this rectangle
-	const int index = getQuadrant(rectangle);
-	if(index != -1 && m_pNodes[0]) // If this rectangle is cover by 1 sub node, just get objects of this node
-	{
-		auto tmp = m_pNodes[index]->query(rectangle);
-		for (CGameObject* object : tmp)
-		{
-			result.push_back(object);
-		}
-	}
-	else if(m_pNodes[0])// Else check all of sub node
+std::set<CGameObject*> CQuadTree::query(Rect rectangle)
+{
+	std::set<CGameObject*> result = {};
+
+	if(m_pNodes[0])
 	{
 		for (CQuadTree* node : m_pNodes)
 		{
-			auto tmp = node->query(rectangle);
-			for (CGameObject* object : tmp)
-			{
-				result.push_back(object);
+			if (rectangle.intersect(node->m_bounds)) {
+				auto nodeResult = node->query(rectangle);
+				result.insert(nodeResult.begin(), nodeResult.end());
 			}
 		}
+	}
+	else
+	{
+		result.insert(m_pObjects.begin(), m_pObjects.end());
 	}
 
 	return result;

@@ -7,16 +7,20 @@ namespace Framework
 	class CObject {
 		// Properties
 	protected:
-		LPCWSTR m_Name = L"";
+		std::string m_Name = "";
+		bool m_isActive = true;
 
 		//Getter / Setter
 	public:
-		LPCWSTR GetName() const { return m_Name; }
+		std::string GetName() const { return m_Name; }
+		bool GetIsActive() const { return m_isActive; }
 
-		void SetName(LPCWSTR name) { m_Name = name; }
+		void SetName(std::string name) { m_Name = name; }
+		void SetIsActive(bool isActive) { m_isActive = isActive; }
 
 		// Cons / Des
 	public:
+		CObject(const CObject& object);
 		CObject() = default;
 		virtual ~CObject() = default;
 
@@ -24,5 +28,7 @@ namespace Framework
 	public:
 		virtual void Update(DWORD dt) = 0;
 		virtual void Render() = 0;
+
+		virtual CObject* Clone() const = 0;
 	};
 }

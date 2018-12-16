@@ -1,0 +1,11 @@
+<!DOCTYPE SpriteDecomposer>
+<sprites image="Effect.png" transparentColor="">
+ <animation title="Default animation" delay="150">
+  <cut w="10" x="0" y="226" h="12" row="1" col="1"/>
+  <cut w="14" x="10" y="226" h="13" row="1" col="1"/>
+  <cut w="21" x="24" y="226" h="13" row="1" col="1"/>
+  <cut w="20" x="45" y="226" h="15" row="1" col="1"/>
+  <cut w="23" x="65" y="226" h="15" row="1" col="1"/>
+  <cut w="20" x="88" y="226" h="15" row="1" col="1"/>
+ </animation>
+</sprites>

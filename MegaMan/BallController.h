@@ -28,7 +28,6 @@ public:
 	~BallController() = default;
 
 	int GetState() const { return m_state; }
-	void SetState(int state);
 
 	//Override
 private:

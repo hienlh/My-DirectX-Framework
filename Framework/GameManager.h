@@ -23,6 +23,7 @@ namespace Framework
 	private:
 		CWindow* m_pWindow = nullptr;
 		CScene* m_currentScene = nullptr;
+		bool m_isRunning = false;
 
 		// Internal methods
 	private:
@@ -34,6 +35,8 @@ namespace Framework
 		void SetCurrentScene(CScene* scene) { m_currentScene = scene; }
 		CScene* GetCurrentScene() const { return m_currentScene; }
 		CWindow* GetWindow() const { return m_pWindow; }
+
+		bool IsRunning() const { return m_isRunning; }
 		
 		// Public methods
 	public:

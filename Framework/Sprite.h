@@ -23,8 +23,8 @@ namespace Framework {
 		Rect GetSourceRect() const { return m_sourceRect; }
 		Vector2 GetAnchor() const { return m_anchor; }
 
-		bool SetTexture(CWString textureName);
-		void SetSourceRect(Rect sourceRect) { m_sourceRect = sourceRect; }
+		/*bool SetTexture(std::string textureName);
+		void SetSourceRect(Rect sourceRect) { m_sourceRect = sourceRect; }*/
 		void SetAnchor(Vector2 anchor) { m_anchor = anchor; }
 	};
 

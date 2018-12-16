@@ -120,9 +120,6 @@
     <ClInclude Include="CTexture.h">
       <Filter>Framework\Struct</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Framework\Struct</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Framework\Struct</Filter>
     </ClInclude>
@@ -132,11 +129,14 @@
     <ClInclude Include="Sprite.h">
       <Filter>Framework\Struct</Filter>
     </ClInclude>
-    <ClInclude Include="QuadTree.h">
-      <Filter>Framework\Struct</Filter>
-    </ClInclude>
     <ClInclude Include="tinyxml2.h">
       <Filter>Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Framework\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadTree.h">
+      <Filter>Framework\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -206,20 +206,20 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Framework\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Framework\Struct</Filter>
-    </ClCompile>
     <ClCompile Include="Debug.cpp">
       <Filter>Framework\Struct</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>Framework\Struct</Filter>
     </ClCompile>
-    <ClCompile Include="QuadTree.cpp">
-      <Filter>Framework\Struct</Filter>
-    </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
       <Filter>Extends</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Framework\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadTree.cpp">
+      <Filter>Framework\Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
