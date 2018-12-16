@@ -9,7 +9,7 @@ namespace Framework {
 		//Properties
 	protected:
 		Vector2 m_Offset = VECTOR2_ZERO;
-		Vector2 m_Anchor = VECTOR2_ONE;
+		Vector2 m_Anchor = {0.5, 0.5};
 		Bound m_Bound = {};
 		bool m_IsTrigger = false;
 		bool m_UsedByEffector = true;
@@ -19,15 +19,17 @@ namespace Framework {
 		//Cons / Des
 	public:
 		CCollider(const CCollider& collider);
-		CCollider(CGameObject* gameObject);
+		CCollider(CGameObject* gameObject) : CComponent(gameObject){}
 		virtual ~CCollider() = default;
 
 		//Getter / Setter
 	public:
 		Bound GetBoundGlobal() const;
+		Rect GetBoundArea() const;
 		bool GetUsedByEffector() const;
 		bool GetIsDebugging() const;
 		bool GetAutoBoundSize() const;
+		bool GetIsTrigger() const;
 		Vector2 GetAnchor() const;
 
 		void SetUsedByEffector(bool usedByEffector);
@@ -36,6 +38,7 @@ namespace Framework {
 		void SetIsDebugging(bool isDebugging);
 		void SetAutoBoundSize(bool autoBoundSize);
 		void SetAnchor(Vector2 anchor);
+		void SetIsTrigger(bool isTrigger);
 
 	public:
 		virtual CCollider* Clone() const override = 0;

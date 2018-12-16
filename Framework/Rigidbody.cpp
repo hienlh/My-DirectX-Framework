@@ -2,6 +2,7 @@
 #include "Rigidbody.h"
 
 #include "GameObject.h"
+#include "Graphic.h"
 
 using namespace Framework;
 
@@ -11,19 +12,23 @@ CRigidbody::CRigidbody(const CRigidbody& rigidbody) : CComponent(rigidbody)
 	m_isKinematic = rigidbody.m_isKinematic;
 	m_mass = rigidbody.m_mass;
 	m_velocity = rigidbody.m_velocity;
-	m_Name = rigidbody.m_Name;
+	m_limitedArea = rigidbody.m_limitedArea;
 }
 
-CRigidbody::CRigidbody(CGameObject * gameObject)
+CRigidbody::CRigidbody(CGameObject * gameObject) : CComponent(gameObject)
 {
-	this->m_pGameObject = gameObject;
-	this->m_velocity = Vector2(0, 0);
-	this->m_mass = 0;
-	this->m_gravityScale = 1;
-	this->m_isKinematic = false;
 }
 
-void CRigidbody::SetIsKinematic(bool isKinematic)
+CRigidbody* CRigidbody::SetVelocity(float x, float y)
+{
+	if (fabs(x - MAX_VELOCITY) > EPSILON)
+		m_velocity.x = x;
+	if (fabs(y - MAX_VELOCITY) > EPSILON)
+		m_velocity.y = y;
+	return this;
+}
+
+CRigidbody* CRigidbody::SetIsKinematic(bool isKinematic)
 {
 	m_isKinematic = isKinematic;
 	if(isKinematic)
@@ -31,9 +36,10 @@ void CRigidbody::SetIsKinematic(bool isKinematic)
 		//Add to scene to change quadTree
 		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	}
+	return this;
 }
 
-void CRigidbody::SetLimitedArea(Rect limitedArea)
+CRigidbody* CRigidbody::SetLimitedArea(Rect limitedArea)
 {
 	//If object is static, not update limited area
 	if (!m_isKinematic) {
@@ -42,6 +48,7 @@ void CRigidbody::SetLimitedArea(Rect limitedArea)
 		//Add to scene to change quadTree
 		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	}
+	return this;
 }
 
 void CRigidbody::Update(DWORD dt)
@@ -55,6 +62,12 @@ void CRigidbody::Update(DWORD dt)
 
 void CRigidbody::Render()
 {
+	if(m_limitedArea != Bound(0,0,0,0))
+	{
+		if(m_pGameObject->CheckAddedComponent<CBoxCollider>())
+		 	CGraphic::GetInstance()->DrawRectangle(m_pGameObject->GetComponent<CCollider>()->GetBoundArea(), D3DCOLOR_XRGB(0, 0, 255));
+		else CGraphic::GetInstance()->DrawRectangle(m_limitedArea, D3DCOLOR_XRGB(0, 0, 255));
+	}
 }
 
 CRigidbody* CRigidbody::Clone() const

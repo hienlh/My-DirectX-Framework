@@ -10,6 +10,8 @@
 #include "ResourceManager.h"
 #include "MegaManPowerController.h"
 #include "BlastHornetController.h"
+#include "BulletController.h"
+#include "BusterShotController.h"
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
@@ -36,6 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture("MapObjects", ".\\Resources\\Map\\Objects.png", NULL, ".\\Resources\\Map\\Objects.xml");
 	pResourceManager->AddTexture("Map", ".\\Resources\\Map\\Map.png", NULL, ".\\Resources\\Map\\Map.xml");
 	pResourceManager->AddTexture("Blast_Hornet", ".\\Resources\\Blast Hornet\\sprites.png", NULL, ".\\Resources\\Blast Hornet\\sprites.xml");
+	pResourceManager->AddTexture("WeaponsAndItems", ".\\Resources\\Weapons and Items\\Weapons and Items.png", NULL, ".\\Resources\\Weapons and Items\\Weapons and Items.xml");
 
 	//From file MegaManXEdited.png
 	new CAnimation("MegaManX Init", "MegaManX", 0, 2, 1000, false);
@@ -225,9 +228,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pPowerEffect->GetComponent<CTransform>()->SetParent(pPlayer);
 		pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-1);
 		pPowerEffect->AddComponent<MegaManPowerController>();
-		//CGameObject::Instantiate(pPlayer, pPlayer, Vector2(50, 50));
+		// CGameObject::Instantiate(pPlayer, pPlayer, Vector2(50, 50));
 
-		//CGameObject::Instantiate("MapBehind_1", nullptr, {500, 500})->GetComponent<CRenderer>()->SetZOrder(-1);
+		// CGameObject::Instantiate("MapBehind_1", nullptr, {500, 500})->GetComponent<CRenderer>()->SetZOrder(-1);
 
 
 
@@ -277,13 +280,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pHornetWing->AddComponent<CRenderer>();
 			pHornetWing->AddComponent<CAnimator>()
 				->AddAnimation("BlastHornet_Wing");
-
-
-			//Camera
-			pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pPlayer;
-			pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
 		}
 
+		CGameObject *pBulletManager = new CGameObject("BulletManager", Vector2(PlayerPos.x, PlayerPos.y));
+		pBulletManager->GetComponent<CTransform>()->SetParent(pPlayer);
+		pBulletManager->AddComponent<BulletController>();
+
+		//Weapons and Items
+		{
+			//Buster Shots
+			{
+				new CAnimation("BusterShot_Init", "WeaponsAndItems", 0, 1, 100, false);
+				new CAnimation("BusterShot_Explosive", "WeaponsAndItems", 1, 3, 100, false);
+				auto pBullet = pResourceManager->AddPrefab("BusterShot");
+				pBullet->AddComponent<CAnimator>()
+					->AddAnimation("BusterShot_Init")
+					->AddAnimation("BusterShot_Explosive")
+					->AddBool("isCollision", false)
+					->AddTransition("BusterShot_Init", "BusterShot_Explosive", true, "isCollision", true);
+				pBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
+				pBullet->AddComponent<CBoxCollider>()->SetSize({ 1,1 });
+				pBullet->AddComponent<BusterShotController>();
+							
+					
+			}
+		}
+		//Camera
+		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pPlayer;
+		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
 		pGameManager->Run();
 
 	} while (false);

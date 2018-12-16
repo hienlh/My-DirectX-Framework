@@ -124,21 +124,12 @@ tinyxml2::XMLElement* CQuadTree::ToXmlElement(tinyxml2::XMLDocument &doc) const
 				const auto collider = game_object->GetComponent<CBoxCollider>();
 
 				const Vector2 pos = transform->Get_Position();
-				const Vector2 scale = transform->Get_Scale();
-				const Vector2 anchor = collider->GetAnchor();
-				const Vector2 size = collider->GetSize();
 
 				auto gameObject = doc.NewElement("GameObjectID");
 				gameObject->SetAttribute("id", static_cast<int>(game_object->GetID()));
 				gameObject->SetAttribute("name", game_object->GetName().c_str());
 				gameObject->SetAttribute("posX", pos.x);
 				gameObject->SetAttribute("posY", pos.y);
-				gameObject->SetAttribute("scaleX", scale.x);
-				gameObject->SetAttribute("scaleY", scale.y);
-				gameObject->SetAttribute("anchorX", anchor.x);
-				gameObject->SetAttribute("anchorY", anchor.y);
-				gameObject->SetAttribute("sizeX", size.x);
-				gameObject->SetAttribute("sizeY", size.y);
 
 				gameObjects->InsertEndChild(gameObject);
 			}
@@ -168,7 +159,7 @@ void CQuadTree::SaveToXml(const char* xmlPath) const
 void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
 {
 	this->m_id = node->IntAttribute("id");
-	this->m_bounds = Bound(Vector2(node->IntAttribute("y"), node->IntAttribute("x")),
+	this->m_bounds = Bound(Vector2(node->IntAttribute("x"), node->IntAttribute("y")),
 	                 Vector2(node->IntAttribute("width"), node->IntAttribute("height")));
 
 	if (auto childNodes = node->FirstChildElement("ChildNodes"))
@@ -194,12 +185,7 @@ void CQuadTree::LoadFromXml(tinyxml2::XMLElement *node)
 
 				if (gameObject) {
 					gameObject->GetComponent<CTransform>()
-						->Set_Position(Vector2(gameObjectXML->IntAttribute("posX", 0), gameObjectXML->IntAttribute("posY", 0)))
-						->Set_Scale(Vector2(gameObjectXML->IntAttribute("scaleX", 1), gameObjectXML->IntAttribute("scaleY", 1)));
-
-					gameObject->GetComponent<CBoxCollider>()
-						->SetSize(Vector2(gameObjectXML->IntAttribute("sizeX", 0), gameObjectXML->IntAttribute("sizeY", 0)))
-						->SetAnchor(Vector2(gameObjectXML->IntAttribute("anchorX", 0.5), gameObjectXML->IntAttribute("anchorY", 0.5)));
+						->Set_Position(Vector2(gameObjectXML->IntAttribute("posX", 0), gameObjectXML->IntAttribute("posY", 0)));
 
 					this->m_pObjects.insert(gameObject);
 				}
@@ -214,8 +200,6 @@ void CQuadTree::insert(CGameObject *gameObject)
 {
 	if (CGameManager::GetInstance()->IsRunning()) return;
 
-	remove(gameObject);
-
 	if(!m_pNodes[0])
 	{
 		if (m_level < MAX_QUAD_TREE_LEVEL) split();
@@ -226,11 +210,28 @@ void CQuadTree::insert(CGameObject *gameObject)
 		}
 	}
 
+	const auto rigidBody = gameObject->GetComponent<CRigidbody>();
 	for (CQuadTree* node : m_pNodes)
 	{
-		const Rect bound = gameObject->GetComponent<CCollider>()->GetBoundGlobal();
-		if (node->m_bounds.intersect(bound)) node->insert(gameObject);
+		if (rigidBody->GetIsKinematic()) {
+			if (node->m_bounds.intersect(gameObject->GetComponent<CCollider>()->GetBoundGlobal())) 
+				node->insert(gameObject);
+		}
+		else if (rigidBody->GetLimitedArea() != Rect(0, 0, 0, 0))
+		{
+			if (node->m_bounds.intersect(gameObject->GetComponent<CCollider>()->GetBoundArea()))
+				node->insert(gameObject);
+		}
 	}
+}
+
+void CQuadTree::insert_s(CGameObject* gameObject)
+{
+	if (CGameManager::GetInstance()->IsRunning()) return;
+
+	remove(gameObject);
+
+	insert(gameObject);
 }
 
 std::set<CGameObject*> CQuadTree::query(Rect rectangle)
@@ -241,8 +242,10 @@ std::set<CGameObject*> CQuadTree::query(Rect rectangle)
 	{
 		for (CQuadTree* node : m_pNodes)
 		{
-			auto nodeResult = node->query(rectangle);
-			result.insert(nodeResult.begin(), nodeResult.end());
+			if (rectangle.intersect(node->m_bounds)) {
+				auto nodeResult = node->query(rectangle);
+				result.insert(nodeResult.begin(), nodeResult.end());
+			}
 		}
 	}
 	else

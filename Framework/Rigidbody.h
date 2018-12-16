@@ -26,24 +26,18 @@ namespace Framework {
 		bool GetIsKinematic() const { return m_isKinematic; }
 		Rect GetLimitedArea() const { return m_limitedArea; }
 
-		void SetVelocity(Vector2 velocity) { SetVelocity(velocity.x, velocity.y); }
-		void SetVelocity(float x = MAX_VELOCITY, float y = MAX_VELOCITY)
-		{
-			if (fabs(x - MAX_VELOCITY) > EPSILON)
-				m_velocity.x = x;
-			if (fabs(y - MAX_VELOCITY) > EPSILON)
-				m_velocity.y = y;
-		}
-		void AddVelocity(Vector2 velocity) { m_velocity += velocity; }
-		void SetMass(float mass) { m_mass = mass; }
-		void SetIsKinematic(bool isKinematic);
-		void SetGravityScale(float gravityScale) { m_gravityScale = gravityScale; }
-		void SetLimitedArea(Rect limitedArea);
+		CRigidbody* SetVelocity(Vector2 velocity) { SetVelocity(velocity.x, velocity.y); return this; }
+		CRigidbody* SetVelocity(float x = MAX_VELOCITY, float y = MAX_VELOCITY);
+		CRigidbody* AddVelocity(Vector2 velocity) { m_velocity += velocity; return this; }
+		CRigidbody* SetMass(float mass) { m_mass = mass; return this; }
+		CRigidbody* SetIsKinematic(bool isKinematic);
+		CRigidbody* SetGravityScale(float gravityScale) { m_gravityScale = gravityScale; return this; }
+		CRigidbody* SetLimitedArea(Rect limitedArea);
 
 		// Override
 	public:
 		void Update(DWORD dt) override;
-		void Render();
+		void Render() override;
 
 		CRigidbody* Clone() const override;
 		

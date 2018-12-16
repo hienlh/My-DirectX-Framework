@@ -16,17 +16,6 @@ CCollider::CCollider(const CCollider& collider) : CComponent(collider)
 	m_Name = collider.m_Name;
 }
 
-CCollider::CCollider(CGameObject* gameObject) : CComponent(gameObject)
-{
-	m_Offset = VECTOR2_ZERO;
-	m_IsTrigger = false;
-	m_Bound = Bound();
-	m_UsedByEffector = true;
-	m_IsDebugging = false;
-	m_AutoBoundSize = false;
-	m_Anchor = { 0.5, 0.5 };
-}
-
 
 /**
  * \brief Main function to calculate the bound for handling collision
@@ -42,6 +31,23 @@ Bound CCollider::GetBoundGlobal() const
 	return Bound(topLeft + m_Offset, size);
 }
 
+/**
+ * \brief Get area used in QuadTree
+ * \return 
+ */
+Rect CCollider::GetBoundArea() const
+{
+	const auto limitedArea = m_pGameObject->GetComponent<CRigidbody>()->GetLimitedArea();
+	const auto boundSize = m_Bound.Size();
+
+	const float left = limitedArea.left - boundSize.x * m_Anchor.x;
+	const float right = limitedArea.right + boundSize.x * (1 - m_Anchor.x);
+	const float top = limitedArea.top - boundSize.y * m_Anchor.y;
+	const float bottom = limitedArea.bottom + boundSize.y * (1 - m_Anchor.y);
+
+	return Rect(top, left, bottom, right);
+}
+
 bool CCollider::GetUsedByEffector() const
 {
 	return m_UsedByEffector;
@@ -55,6 +61,11 @@ bool CCollider::GetIsDebugging() const
 bool CCollider::GetAutoBoundSize() const
 {
 	return m_AutoBoundSize;
+}
+
+bool CCollider::GetIsTrigger() const
+{
+	return m_IsTrigger;
 }
 
 Vector2 CCollider::GetAnchor() const
@@ -92,5 +103,10 @@ void CCollider::SetAutoBoundSize(bool autoBoundSize)
 void CCollider::SetAnchor(Vector2 anchor)
 {
 	m_Anchor = anchor;
-	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject, true);
+	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
+}
+
+void CCollider::SetIsTrigger(bool isTrigger)
+{
+	m_IsTrigger = isTrigger;
 }

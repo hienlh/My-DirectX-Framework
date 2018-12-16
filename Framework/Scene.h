@@ -17,6 +17,7 @@ namespace Framework
 		CQuadTree *m_pQuadTree = nullptr;
 		CGameObject *m_pMainCamera = nullptr;
 		bool m_loadedQuadTree = false;
+		bool m_isRenderQuadTree = false;
 
 	public:
 		CScene(std::string name, Vector2 quadTreeSize = {1000, 1000});
@@ -34,8 +35,12 @@ namespace Framework
 		std::set<CGameObject*> GetListStaticGameObject() const;
 		std::set<CGameObject*> GetListHalfStaticGameObject() const;
 		std::set<CGameObject*> GetAllGameObjects() const;
+		std::set<CGameObject*> GetRenderGameObjects() const;
 		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 		CQuadTree* GetQuadTree() const { return m_pQuadTree; }
+		bool GetIsRenderQuadTree() const { return m_isRenderQuadTree; }
+
+		CScene* SetIsRenderQuadTree(bool isRenderQuadTree) { m_isRenderQuadTree = isRenderQuadTree; return this; }
 
 	public:
 		static bool Destroy(CScene* scene);
@@ -48,7 +53,7 @@ namespace Framework
 
 		//Internal Method
 	private:
-		void AddColliderObject(CGameObject* gameObject, bool isUpdate = false);
+		void AddColliderObject(CGameObject* gameObject);
 
 		//Method
 	public:

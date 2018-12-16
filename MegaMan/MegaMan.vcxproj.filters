@@ -33,6 +33,12 @@
     <ClCompile Include="BlastHornetController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="BusterShotController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h">
@@ -48,6 +54,12 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="BlastHornetController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BusterShotController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>
