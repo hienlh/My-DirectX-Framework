@@ -3,6 +3,7 @@
 #include "Graphic.h"
 #include "Macros.h"
 #include "GameObject.h"
+#include "GameManager.h"
 
 using namespace Framework;
 
@@ -205,6 +206,7 @@ void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
 
 void CGraphic::DrawRectangle(Rect rect, DWORD color)
 {
+	if (!CGameManager::GetInstance()->GetIsDebugging()) return;
 	// Refer: http://directxtutorial.com/Lesson.aspx?lessonid=9-4-4
 	// create some vertices using the CUSTOMVERTEX struct built earlier
 	std::vector<CUSTOMVERTEX> vertices;

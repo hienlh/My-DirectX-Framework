@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BlastHornetChildController.cpp" />
     <ClCompile Include="BlastHornetController.cpp" />
     <ClCompile Include="BulletController.cpp" />
     <ClCompile Include="BusterShotController.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="MegaManPowerController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlastHornetChildController.h" />
     <ClInclude Include="BlastHornetController.h" />
     <ClInclude Include="BulletController.h" />
     <ClInclude Include="BusterShotController.h" />

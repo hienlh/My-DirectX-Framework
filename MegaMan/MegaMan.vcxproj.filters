@@ -37,7 +37,10 @@
       <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="BulletController.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetChildController.cpp">
+      <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +63,9 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="BulletController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetChildController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

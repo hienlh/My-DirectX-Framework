@@ -16,6 +16,7 @@ public:
 
 	//Override
 private:
+	void OnTriggerEnter(CCollision* collision) override;
 	void OnCollisionEnter(CCollision* collision) override;
 	void Update(DWORD dt) override;
 	void Render() override;

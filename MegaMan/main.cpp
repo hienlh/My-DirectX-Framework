@@ -12,6 +12,7 @@
 #include "BlastHornetController.h"
 #include "BulletController.h"
 #include "BusterShotController.h"
+#include "BlastHornetChildController.h"
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
@@ -39,6 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture("Map", ".\\Resources\\Map\\Map.png", NULL, ".\\Resources\\Map\\Map.xml");
 	pResourceManager->AddTexture("Blast_Hornet", ".\\Resources\\Blast Hornet\\sprites.png", NULL, ".\\Resources\\Blast Hornet\\sprites.xml");
 	pResourceManager->AddTexture("WeaponsAndItems", ".\\Resources\\Weapons and Items\\Weapons and Items.png", NULL, ".\\Resources\\Weapons and Items\\Weapons and Items.xml");
+	pResourceManager->AddTexture("EnemiesAndBosses", ".\\Resources\\Enemies and Boss\\enermies_and_bosses.png", NULL, ".\\Resources\\Enemies and Boss\\enermies_and_bosses.xml");
 
 	//From file MegaManXEdited.png
 	new CAnimation("MegaManX Init", "MegaManX", 0, 2, 1000, false);
@@ -91,7 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i));
 				pGround->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pGround->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pGround->AddComponent<CBoxCollider>()->SetIsDebugging(true);
+				pGround->AddComponent<CBoxCollider>();
 				pGround->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 		
@@ -103,7 +105,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				CGameObject* pCeiling = new CGameObject("Ceiling" + std::to_string(i));
 				pCeiling->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pCeiling->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pCeiling->AddComponent<CBoxCollider>()->SetIsDebugging(true);
+				pCeiling->AddComponent<CBoxCollider>();
 				pCeiling->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 		
@@ -115,7 +117,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i));
 				pWall->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pWall->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pWall->AddComponent<CBoxCollider>()->SetIsDebugging(true);
+				pWall->AddComponent<CBoxCollider>();
 				pWall->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 		}
@@ -215,7 +217,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
 		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
-		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(false);
 		pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 		pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
 		
@@ -228,6 +229,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pPowerEffect->GetComponent<CTransform>()->SetParent(pPlayer);
 		pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-1);
 		pPowerEffect->AddComponent<MegaManPowerController>();
+		
 		// CGameObject::Instantiate(pPlayer, pPlayer, Vector2(50, 50));
 
 		// CGameObject::Instantiate("MapBehind_1", nullptr, {500, 500})->GetComponent<CRenderer>()->SetZOrder(-1);
@@ -238,12 +240,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		//Blast Hornet
 		{
+			//Explosive effect
+			new CAnimation("Blue_explosive", "Blast_Hornet", 29, 8, 50, false);
+			new CAnimation("Red_explosive", "EnemiesAndBosses", 206, 8, 50, false);
+
 			//Add animation
 			new CAnimation("BlastHornet_Flying", "Blast_Hornet", 3, 1);
 			CAnimation* temp = new CAnimation("BlastHornet_StartAttacking", "Blast_Hornet", 3, 13, 100, false);
 			temp->Add("Blast_Hornet", 9, -1, 200);
 			new CAnimation("BlastHornet_Shooting", "Blast_Hornet", 16, 5, 100, false);
-			new CAnimation("BlastHornet_Died", "Blast_Hornet", 21, 1);
+			new CAnimation("BlastHornet_Died", "Blast_Hornet", 21, 1,2000,false);
 			//Setting properties
 			CGameObject* pHornet = new CGameObject("Blast Hornet", Vector2(1840, 461));
 			pHornet->AddComponent<CAnimator>()
@@ -253,26 +259,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				->AddAnimation("BlastHornet_Died")
 				->AddBool("isAttack", false)
 				->AddBool("isShoot", false)
-				->AddBool("isDead", false)
+				->AddBool("isDead", true)
 
 				->AddTransition("BlastHornet_Flying","BlastHornet_StartAttacking",true,"isAttack",true)
-				->AddTransition("BlastHornet_StartAttacking", "BlastHornet_Flying", false, "isAttack", false)
 				->AddTransition("BlastHornet_Flying", "BlastHornet_Shooting", true, "isShoot", true)
-				->AddTransition("BlastHornet_Shooting", "BlastHornet_Flying", false, "isShoot", false)
-				->AddTransition("BlastHornet_Shooting", "BlastHornet_Flying", false, "isShoot", false)
 				->AddTransition("BlastHornet_Flying", "BlastHornet_Died", true, "isDead", true)
+
+				->AddTransition("BlastHornet_StartAttacking", "BlastHornet_Flying", false, "isAttack", false)
 				->AddTransition("BlastHornet_StartAttacking", "BlastHornet_Died", false, "isDead", true)
+
+				->AddTransition("BlastHornet_Shooting", "BlastHornet_Flying", false, "isShoot", false)
+				->AddTransition("BlastHornet_Shooting", "BlastHornet_Flying", false, "isShoot", false)
 				->AddTransition("BlastHornet_Shooting", "BlastHornet_Died", false, "isDead", true)
 			;
 			pHornet->AddComponent<CRenderer>()->SetSprite("Blast_Hornet",3);
 			pHornet->AddComponent<CRigidbody>()->SetGravityScale(0);
 			pHornet->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 			pHornet->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
-			pHornet->GetComponent<CBoxCollider>()->SetIsDebugging(true);
+			// pHornet->GetComponent<CBoxCollider>()->SetIsDebugging(true);
 			pHornet->AddComponent<BlastHornetController>();
 			pHornet->GetComponent<BlastHornetController>()->m_target = pPlayer;
 	
-			//Initatiate Blast Hornet Wing
+			//Blast Hornet Wing
 			new CAnimation("BlastHornet_Wing", "Blast_Hornet", 0, 3, 50,true);
 			Vector2 HornetPos = pHornet->GetComponent<CTransform>()->Get_Position();
 			CGameObject* pHornetWing = new CGameObject("Blast Hornet Wing", Vector2(HornetPos.x, HornetPos.y-30));
@@ -280,29 +288,45 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pHornetWing->AddComponent<CRenderer>();
 			pHornetWing->AddComponent<CAnimator>()
 				->AddAnimation("BlastHornet_Wing");
+			
+
+			 //Blast Hornet Child
+			 new CAnimation("BlastHornetChild_Flying", "Blast_Hornet", 37, 6);
+			 auto childPrefabs = pResourceManager->AddPrefab("BlastHornetChild");
+			 childPrefabs->AddComponent<CRenderer>();
+			 childPrefabs->AddComponent<CRigidbody>();
+			 childPrefabs->AddComponent<CAnimator>()
+			 	->AddAnimation("BlastHornetChild_Flying")
+			 	->AddAnimation("Red_explosive")
+			 	->AddBool("wasHit", false)
+			 	->AddTransition("BlastHornetChild_Flying", "Red_explosive", true, "wasHit", true);
+			 childPrefabs->AddComponent<BlastHornetChildController>();
+			 childPrefabs->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 		}
 
-		CGameObject *pBulletManager = new CGameObject("BulletManager", Vector2(PlayerPos.x, PlayerPos.y));
-		pBulletManager->GetComponent<CTransform>()->SetParent(pPlayer);
-		pBulletManager->AddComponent<BulletController>();
-
+		//Bullet manager
+		{
+			CGameObject *pBulletManager = new CGameObject("BulletManager", Vector2(PlayerPos.x, PlayerPos.y));
+			pBulletManager->GetComponent<CTransform>()->SetParent(pPlayer);
+			pBulletManager->AddComponent<BulletController>();
+		}
+		
 		//Weapons and Items
 		{
 			//Buster Shots
 			{
 				new CAnimation("BusterShot_Init", "WeaponsAndItems", 0, 1, 100, false);
 				new CAnimation("BusterShot_Explosive", "WeaponsAndItems", 1, 3, 100, false);
-				auto pBullet = pResourceManager->AddPrefab("BusterShot");
-				pBullet->AddComponent<CAnimator>()
+				auto pBusterBullet = pResourceManager->AddPrefab("BusterShot");
+				pBusterBullet->AddComponent<CAnimator>()
 					->AddAnimation("BusterShot_Init")
 					->AddAnimation("BusterShot_Explosive")
 					->AddBool("isCollision", false)
 					->AddTransition("BusterShot_Init", "BusterShot_Explosive", true, "isCollision", true);
-				pBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
-				pBullet->AddComponent<CBoxCollider>()->SetSize({ 1,1 });
-				pBullet->AddComponent<BusterShotController>();
-							
-					
+				pBusterBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
+				pBusterBullet->AddComponent<CBoxCollider>()->SetSize({ 1,1 })->SetIsTrigger(true);
+				pBusterBullet->AddComponent<BusterShotController>();
+				
 			}
 		}
 		//Camera

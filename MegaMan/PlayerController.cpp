@@ -23,6 +23,10 @@ PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(game
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
 	//CDebug::Log("Collision ground \n");
+	if(collision->CheckNameInCollision("Bullet"))
+	{
+		m_pGameObject->GetComponent<CAnimator>()->SetBool("isWasHit", true);
+	}
 }
 
 void PlayerController::Update(DWORD dt)

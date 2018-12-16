@@ -1,10 +1,16 @@
 #include "BulletController.h"
 #include "Input.h"
 #include "GameObject.h"
+#include "Animator.h"
 
 
 BulletController::BulletController(CGameObject * gameObject) : CMonoBehavior(gameObject)
 {
+}
+
+void BulletController::OnCollisionEnter(CCollision* collision)
+{
+	//m_pGameObject->GetComponent<CAnimator>()->SetBool("wasHit", true);
 }
 
 void BulletController::Update(DWORD dt)
