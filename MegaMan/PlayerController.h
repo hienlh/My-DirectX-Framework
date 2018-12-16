@@ -6,6 +6,9 @@ using namespace Framework;
 
 class PlayerController : public CMonoBehavior
 {
+public:
+	CGameObject* m_Power = nullptr;
+
 private:
 	float m_speed = 0;
 

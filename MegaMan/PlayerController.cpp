@@ -22,7 +22,16 @@ PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(game
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
-	//CDebug::Log("Collision ground \n");
+	auto anim = m_pGameObject->GetComponent<CAnimator>();
+
+	CDebug::Log("%s - %s\n", collision->GetCollider()->GetName().c_str(),
+	            collision->GetOtherCollider()->GetName().c_str());
+	if(strstr(collision->GetOtherCollider()->GetName().c_str(), std::string("Wall").c_str()))
+	{
+		anim->SetBool("isClinging", true);
+		anim->SetBool("isJump", false);
+	}
+	//m_pGameObject->GetComponent<CAnimator>()->SetBool("isJump", false);
 }
 
 void PlayerController::Update(DWORD dt)
@@ -37,10 +46,10 @@ void PlayerController::Update(DWORD dt)
 	{
 		anim->SetBool("isFall", true);
 		anim->SetBool("isLandfall", false);
-		anim->SetBool("isJump", true);
 	}
 	else if (velocity.y == 0) {
 		if (anim->GetBool("isFall")) anim->SetBool("isLandfall", true);
+		anim->SetBool("isClinging", false);
 		anim->SetBool("isFall", false);
 		anim->SetBool("isJump", false);
 	}
@@ -53,11 +62,6 @@ void PlayerController::Update(DWORD dt)
 
 	if (input->KeyDown(DIK_SPACE)) {
 		anim->SetBool("isShoot", true);
-
-		Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-		pos.x += 50;
-		auto pBullet = CGameObject::Instantiate("BusterShot", nullptr, pos);
-		pBullet->GetComponent<CRigidbody>()->SetVelocity({ .3,0 });
 	}
 	if (input->KeyUp(DIK_SPACE)) {
 		anim->SetBool("isShoot", false);
@@ -118,16 +122,11 @@ void PlayerController::Update(DWORD dt)
 		rigidbody->SetGravityScale(1);
 	}
 
-	if (input->KeyDown(DIK_Q)) {
-		anim->SetBool("isClinging", true);
-	}
-	if (input->KeyUp(DIK_Q)) {
-
-	}
 	if (anim->GetBool("isLandfall") || anim->GetBool("isJump"))
 	{
 		anim->SetBool("isClinging", false);
 	}
+
 	if (anim->GetBool("isClinging") && anim->GetBool("isJump"))
 	{
 		const bool isLeft = renderer->GetFlipX();
@@ -135,7 +134,7 @@ void PlayerController::Update(DWORD dt)
 		anim->SetBool("isClinging", false);
 	}
 
-	if (input->KeyDown(DIK_LEFTARROW) /*|| input->KeyHold(DIK_LEFTARROW)*/) {
+	if (input->KeyDown(DIK_LEFTARROW)) {
 		renderer->SetFlipX(true);
 		anim->SetBool("isRun", true);
 		rigidbody->AddVelocity(Vector2(-m_speed, 0));
@@ -147,7 +146,7 @@ void PlayerController::Update(DWORD dt)
 		}
 	}
 
-	if (input->KeyDown(DIK_RIGHTARROW) /*|| input->KeyHold(DIK_RIGHTARROW)*/) {
+	if (input->KeyDown(DIK_RIGHTARROW)) {
 		renderer->SetFlipX(false);
 		anim->SetBool("isRun", true);
 		rigidbody->AddVelocity(Vector2(m_speed, 0));
@@ -157,6 +156,15 @@ void PlayerController::Update(DWORD dt)
 			anim->SetBool("isRun", false);
 			rigidbody->SetVelocity(Vector2(0, MAX_VELOCITY));
 		}
+	}
+
+	if (input->KeyDown(DIK_E)) {
+		if(m_Power)
+			m_Power->SetIsActive(true);
+	}
+	if (input->KeyUp(DIK_E)) {
+		if (m_Power)
+			m_Power->SetIsActive(false);
 	}
 }
 

@@ -7,7 +7,7 @@ namespace Framework {
 	{
 		// Cons / Des
 	public:
-		CPhysicObserver() = default;
+		CPhysicObserver();
 		virtual ~CPhysicObserver() = default;
 
 		// Observer Method, do not virtual because any child inherited can override or not 

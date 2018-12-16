@@ -20,18 +20,11 @@ void MegaManPowerController::Update(DWORD dt)
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
 	CInput *input = CInput::GetInstance();
 
-	if (input->KeyDown(DIK_E)) 
-	{
+	if (input->KeyDown(DIK_E)) {
 		anim->SetBool("isPowering", true);
 	}
-	if (input->KeyUp(DIK_E)) 
-	{
+	if (input->KeyUp(DIK_E)) {
 		anim->SetBool("isPowering", false);
-		
-		/*Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-		pos.x += 50;
-		auto pBullet = CGameObject::Instantiate("BusterShot", nullptr, pos);
-		pBullet->GetComponent<CRigidbody>()->SetVelocity({ .3,0 });*/
 	}
 	if(anim->GetBool("isPowering"))
 	{

@@ -9,7 +9,7 @@ class NotorBangerEnemyController : public CMonoBehavior
 private:
 	float m_speed = 0;
 	CGameObject* m_target = nullptr;
-
+	
 	// To Clone Function
 private:
 	NotorBangerEnemyController() = default;

@@ -8,10 +8,7 @@
 #include "CameraController.h"
 #include "PlayerController.h"
 #include "ResourceManager.h"
-#include "MegaManPowerController.h"
-#include "BlastHornetController.h"
-#include "BulletManagerController.h"
-#include "BusterShotController.h"
+#include "MachineController.h"
 #include "NotorBangerEnemyController.h"
 #include "HeadGunnerEnemyController.h"
 #pragma comment(lib, "Framework.lib")
@@ -25,8 +22,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	CScene* pScene = new CScene("Main Scene", {8000,8000});
 	pGameManager->SetCurrentScene(pScene);
+	pGameManager->SetIsDebugging(false);
 	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	pScene->GetMainCamera()->AddComponent<CameraController>();
+	pScene->SetIsRenderQuadTree(true);
 
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
 	pResourceManager->AddTexture("Block", ".\\Resources\\Block.png");
@@ -39,9 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture("Stairs", ".\\Resources\\Stairs.png");
 	pResourceManager->AddTexture("MapObjects", ".\\Resources\\Map\\Objects.png", NULL, ".\\Resources\\Map\\Objects.xml");
 	pResourceManager->AddTexture("Map", ".\\Resources\\Map\\Map.png", NULL, ".\\Resources\\Map\\Map.xml");
-	pResourceManager->AddTexture("Blast_Hornet", ".\\Resources\\Blast Hornet\\sprites.png", NULL, ".\\Resources\\Blast Hornet\\sprites.xml");
-	pResourceManager->AddTexture("WeaponsAndItems", ".\\Resources\\Weapons and Items\\Weapons and Items.png", NULL, ".\\Resources\\Weapons and Items\\Weapons and Items.xml");
-	pResourceManager->AddTexture("EnemiesAndBosses", ".\\Resources\\Enemies\\enemies_and_bosses.png", NULL, ".\\Resources\\Enemies\\enemies_and_bosses.xml");
+	pResourceManager->AddTexture("Texture_EnemiesAndBosses", ".\\Resources\\Enemies\\enemies_and_bosses.png", NULL, ".\\Resources\\Enemies\\enemies_and_bosses.xml");
 
 	//From file MegaManXEdited.png
 	new CAnimation("MegaManX Init", "MegaManX", 0, 2, 1000, false);
@@ -76,73 +73,202 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//From file Map/Objects.png
 	new CAnimation("MapBehind_1", "MapObjects", 29, 9, 100, true);
+	new CAnimation("Machine_1_Run", "MapObjects", 25, 3, 50, true);
+	new CAnimation("Machine_1_Idle", "MapObjects", 25, 1, 50, true);
 
 	pResourceManager->AddPrefab("MapBehind_1")
 		->AddComponent<CAnimator>()->AddAnimation("MapBehind_1");
-	
+
+#define Texture_EnemiesAndBosses "Texture_EnemiesAndBosses"
+
 	// Notor Banger
 	{
-		new CAnimation("Notor Banger Idle", "EnemiesAndBosses", 98, 1, 100, true);
-		new CAnimation("Notor Banger Jump", "EnemiesAndBosses", 99, 3, 100, false);
-		
-		new CAnimation("Notor Banger 0", "EnemiesAndBosses", 106, 1);
-		new CAnimation("Notor Banger 30", "EnemiesAndBosses", 107, 1);
-		new CAnimation("Notor Banger 45", "EnemiesAndBosses", 108, 1);
-		new CAnimation("Notor Banger 60", "EnemiesAndBosses", 109, 1);
-		new CAnimation("Notor Banger 90", "EnemiesAndBosses", 110, 1);		
+		// Animations
+		{
+#define Animation_NotorBangerIdle "Animation_NotorBangerIdle"
+#define Animation_NotorBangerJump "Animation_NotorBangerJump"
+
+#define Animation_NotorBanger0 "Animation_NotorBanger0"
+#define Animation_NotorBanger30 "Animation_NotorBanger30"
+#define Animation_NotorBanger45 "Animation_NotorBanger45"
+#define Animation_NotorBanger60 "Animation_NotorBanger60"
+#define Animation_NotorBanger90 "Animation_NotorBanger90"
+
+			new CAnimation(Animation_NotorBangerIdle, Texture_EnemiesAndBosses, 98, 1, 100, false);
+			new CAnimation(Animation_NotorBangerJump, Texture_EnemiesAndBosses, 99, 3, 100, false);
+
+			new CAnimation(Animation_NotorBanger0, Texture_EnemiesAndBosses, 106, 1, 100, false);
+			new CAnimation(Animation_NotorBanger30, Texture_EnemiesAndBosses, 107, 1, 100, false);
+			new CAnimation(Animation_NotorBanger45, Texture_EnemiesAndBosses, 108, 1, 100, false);
+			new CAnimation(Animation_NotorBanger60, Texture_EnemiesAndBosses, 109, 1, 100, false);
+			new CAnimation(Animation_NotorBanger90, Texture_EnemiesAndBosses, 110, 1, 100, false);
+		}
+
+		// Prefab
+		{
+#define Prefab_NotorBanger "Prefab_NotorBanger"
+
+			std::string animationNames[] = { Animation_NotorBangerIdle, Animation_NotorBangerJump, Animation_NotorBanger0, Animation_NotorBanger30,
+				Animation_NotorBanger45, Animation_NotorBanger60, Animation_NotorBanger90 };
+
+#define BoolIdle "isIdle"
+#define BoolJump "isJump"
+#define Bool0 "is0"
+#define Bool30 "is30"
+#define Bool45 "is45"
+#define Bool60 "is60"
+#define Bool90 "is90"
+
+			std::string boolNames[] = { BoolIdle, BoolJump, Bool0, Bool30, Bool45, Bool60, Bool90 };
+
+			auto pPrefab = pResourceManager->AddPrefab(Prefab_NotorBanger);
+			pPrefab->AddComponent<CAnimator>()
+				->AddAnimation(Animation_NotorBangerIdle)
+				->AddAnimation(Animation_NotorBangerJump)
+				->AddAnimation(Animation_NotorBanger0)
+				->AddAnimation(Animation_NotorBanger30)
+				->AddAnimation(Animation_NotorBanger45)
+				->AddAnimation(Animation_NotorBanger60)
+				->AddAnimation(Animation_NotorBanger90)
+
+				->AddBool(BoolIdle, true)
+				->AddBool(BoolJump, false)
+				->AddBool(Bool0, false)
+				->AddBool(Bool30, false)
+				->AddBool(Bool45, false)
+				->AddBool(Bool60, false)
+				->AddBool(Bool90, false)
+
+				->AddTransition(Animation_NotorBangerIdle, Animation_NotorBangerJump, false, BoolJump, true)
+				->AddTransition(Animation_NotorBangerJump, Animation_NotorBangerIdle, true, BoolIdle, true);
+
+			CAnimator* animator = pPrefab->GetComponent<CAnimator>();
+			for (size_t iAnimationSource = 0; iAnimationSource < _countof(animationNames); iAnimationSource++)
+			{
+				for (size_t iAnimationDestination = iAnimationSource + 1; iAnimationDestination < _countof(animationNames); iAnimationDestination++)
+				{
+					animator->AddTransition(animationNames[iAnimationSource], animationNames[iAnimationDestination],
+						false, boolNames[iAnimationDestination], true);
+
+					animator->AddTransition(animationNames[iAnimationDestination], animationNames[iAnimationSource],
+						false, boolNames[iAnimationSource], true);
+				}
+			}
+
+			pPrefab->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
+			pPrefab->GetComponent<CRenderer>()->SetFlipY(false);
+			pPrefab->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+			pPrefab->GetComponent<CRigidbody>()->SetGravityScale(1);
+			pPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+			pPrefab->GetComponent<CBoxCollider>()->SetAutoBoundSize(true);
+			pPrefab->AddComponent<NotorBangerEnemyController>()->SetSpeed(0.1)
+			;			
+		}		
 	}
 
 	// Head Gunner
 	{
-		new CAnimation("Head Gunner Idle", "EnemiesAndBosses", 45, 1, 100, false);
-		new CAnimation("Head Gunner Shoot", "EnemiesAndBosses", 46, 7, 100, true);
+		// Animations
+		{
+#define Animation_HeadGunnerIdle "Animation_HeadGunnerIdle"
+#define Animation_HeadGunnerShoot1 "Animation_HeadGunnerShoot1"
+#define Animation_HeadGunnerShoot2 "Animation_HeadGunnerShoot2"
+#define Animation_HeadGunnerEnd "Animation_HeadGunnerEnd"
+
+
+			new CAnimation(Animation_HeadGunnerIdle, Texture_EnemiesAndBosses, 45, 1, 200, false);
+			new CAnimation(Animation_HeadGunnerShoot1, Texture_EnemiesAndBosses, 46, 3, 200, false);
+			new CAnimation(Animation_HeadGunnerShoot2, Texture_EnemiesAndBosses, 49, 3, 200, false);
+			new CAnimation(Animation_HeadGunnerEnd, Texture_EnemiesAndBosses, 52, 1, 200, false);
+		}
+
+		// Prefab
+		{
+#define Prefab_HeadGunner "Prefab_HeadGunner"
+
+			auto pPrefab = pResourceManager->AddPrefab(Prefab_HeadGunner);
+			pPrefab->AddComponent<CAnimator>()
+				->AddAnimation(Animation_HeadGunnerIdle)
+				->AddAnimation(Animation_HeadGunnerShoot1)
+				->AddAnimation(Animation_HeadGunnerShoot2)
+				->AddAnimation(Animation_HeadGunnerEnd)
+				
+#define BoolShoot "isShoot"
+
+				->AddBool(BoolShoot, false)
+				
+				->AddTransition(Animation_HeadGunnerIdle, Animation_HeadGunnerShoot1, true, BoolShoot, true)
+				->AddTransition(Animation_HeadGunnerShoot1, Animation_HeadGunnerShoot2, true, BoolShoot, true)
+				->AddTransition(Animation_HeadGunnerShoot2, Animation_HeadGunnerEnd, true)
+				->AddTransition(Animation_HeadGunnerEnd, Animation_HeadGunnerIdle, true)
+				;
+
+			pPrefab->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
+			pPrefab->GetComponent<CRenderer>()->SetFlipY(false);
+			pPrefab->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+			pPrefab->GetComponent<CRigidbody>()->SetGravityScale(1);
+			pPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+			pPrefab->GetComponent<CBoxCollider>()->SetAutoBoundSize(true);
+			pPrefab->AddComponent<HeadGunnerEnemyController>()->SetSpeed(0.1)
+			;
+		}
 	}
 
 	do
 	{
 		CGameObject* pBackground = new CGameObject("Map");
 		pBackground->AddComponent<CRenderer>()->SetSprite("Map")
-			->SetZOrder(1)->GetSprite()->SetAnchor(VECTOR2_ZERO);
+			->SetZOrder(10)->GetSprite()->SetAnchor(VECTOR2_ZERO);
 		{
 			//Ground
 			for (int i = 6; i < 6 + 9; i++)
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite("Map", i)->GetSourceRect();
-		
-				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i));
+
+				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i-6));
 				pGround->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pGround->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pGround->AddComponent<CBoxCollider>()->SetIsDebugging(true);
-				pGround->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
+				pGround->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
-		
+
 			//Ceiling
 			for (int i = 0; i < 0 + 6; i++)
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite("Map", i)->GetSourceRect();
-		
+
 				CGameObject* pCeiling = new CGameObject("Ceiling" + std::to_string(i));
 				pCeiling->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pCeiling->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pCeiling->AddComponent<CBoxCollider>()->SetIsDebugging(true);
-				pCeiling->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
+				pCeiling->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
-		
+
 			//Wall
 			for (int i = 15; i < 15 + 8; i++)
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite("Map", i)->GetSourceRect();
-		
-				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i));
+
+				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i-15));
 				pWall->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pWall->AddComponent<CRigidbody>()->SetIsKinematic(true);
-				pWall->AddComponent<CBoxCollider>()->SetIsDebugging(true);
-				pWall->GetComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
+				pWall->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 		}
 
-		CGameObject* pPlayer = new CGameObject("Player", Vector2(45, 875));
-		// CGameObject* pPlayer = new CGameObject("Player", Vector2(1810, 409));
+		CGameObject* pMachine1 = new CGameObject("Machine_1");
+		pMachine1->GetComponent<CTransform>()->Set_Position(Vector2(895, 960));
+		pMachine1->AddComponent<CRenderer>()->SetSprite("MapObjects", 25)->SetZOrder(-1);
+		pMachine1->AddComponent<CAnimator>()
+			->AddAnimation("Machine_1_Idle")
+			->AddAnimation("Machine_1_Run")
+			->AddBool("isRun", false)
+			->AddTransition("Machine_1_Idle", "Machine_1_Run", true, "isRun", true)
+			->AddTransition("Machine_1_Run", "Machine_1_Idle", true, "isRun", false);
+		pMachine1->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+		pMachine1->GetComponent<CBoxCollider>()->PlusSize(Vector2(-6, -20));
+		pMachine1->GetComponent<CRigidbody>()->SetGravityScale(0)->SetLimitedArea(Rect(Vector2(895, 400), Vector2(0, 560)));
+		pMachine1->AddComponent<MachineController>();
+
+		CGameObject* pPlayer = new CGameObject("Player", Vector2(150, 875));
 		pPlayer->AddComponent<CAnimator>()
 			->AddAnimation("MegaManX Init")
 			->AddAnimation("MegaManX InitLand")
@@ -206,8 +332,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			->AddTransition("MegaManX Fall", "MegaManX Landfall", true, "isLandfall", true)
 			->AddTransition("MegaManX Fall", "MegaManX Fall Shoot", true, "isShoot", true, true)
+			->AddTransition("MegaManX Fall", "MegaManX Wall Clinging", true, "isClinging", true)
 			->AddTransition("MegaManX Fall Shoot", "MegaManX Fall", true, "isShoot", false, true)
 			->AddTransition("MegaManX Fall Shoot", "MegaManX Landfall", true, "isLandfall", true)
+			->AddTransition("MegaManX Fall Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
 
 			->AddTransition("MegaManX Landfall", "MegaManX Idle")
 			->AddTransition("MegaManX Landfall", "MegaManX Landfall Shoot", true, "isShoot", true, true)
@@ -226,190 +354,40 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition("MegaManX ClimbLadder", "MegaManX Idle", true, "isClimbLadder", false)
 
 			->AddTransition("MegaManX Wall Clinging", "MegaManX Idle", true, "isClinging", false)
-			->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
+			//->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
 			->AddTransition("MegaManX Wall Clinging", "MegaManX Wall Clinging Shoot", true, "isShoot", true, true)
 			->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
 		;
-		pPlayer->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
 		pPlayer->GetComponent<CRenderer>()->SetFlipY(false);
 		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 		pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
 		pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 		pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
-		pPlayer->GetComponent<CBoxCollider>()->SetIsDebugging(false);
 		pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 		pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
-		
 
-		Vector2 PlayerPos = pPlayer->GetComponent<CTransform>()->Get_Position();
-		CGameObject* pPowerEffect = new CGameObject("Power Effect", Vector2(PlayerPos.x, PlayerPos.y));
-		pPowerEffect->AddComponent<CAnimator>()
-			->AddBool("isPowering", false)
-			->AddAnimation("MegaManX Power");
+		CGameObject* pPowerEffect = new CGameObject("Power Effect", Vector2(800, 875));
+		pPowerEffect->SetIsActive(false);
 		pPowerEffect->GetComponent<CTransform>()->SetParent(pPlayer);
 		pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-1);
-		pPowerEffect->AddComponent<MegaManPowerController>();
+		pPowerEffect->AddComponent<CAnimator>()
+			->AddAnimation("MegaManX Power");
+		pPlayer->GetComponent<PlayerController>()->m_Power = pPowerEffect;
 
-		{
-			auto pNotorBangerEnemyPrefab = pResourceManager->AddPrefab("[Prefab] Notor Banger");
-			//CGameObject* pNotorBangerEnemy = new CGameObject("Notor Banger", Vector2(100, 875));
-			pNotorBangerEnemyPrefab->AddComponent<CAnimator>()
-				->AddAnimation("Notor Banger Idle")
-				->AddAnimation("Notor Banger Jump")
-				->AddAnimation("Notor Banger 0")
-				->AddAnimation("Notor Banger 30")
-				->AddAnimation("Notor Banger 45")
-				->AddAnimation("Notor Banger 60")
-				->AddAnimation("Notor Banger 90")
+		//CGameObject::Instantiate(pPlayer, pPlayer, Vector2(50, 50));
 
-				->AddBool("isIdle", true)
-				->AddBool("isJump", false)
-				->AddBool("is0", false)
-				->AddBool("is30", false)
-				->AddBool("is45", false)
-				->AddBool("is60", false)
-				->AddBool("is90", false)
+		//CGameObject::Instantiate("MapBehind_1", nullptr, {500, 500})->GetComponent<CRenderer>()->SetZOrder(-1);
 
-				->AddTransition("Notor Banger Idle", "Notor Banger Jump", true, "isJump", true)
-				->AddTransition("Notor Banger Jump", "Notor Banger Idle", true, "isIdle", true)
-				->AddTransition("Notor Banger Idle", "Notor Banger 0", true, "is0", true)
-				->AddTransition("Notor Banger 0", "Notor Banger 30", true, "is30", true)
-				->AddTransition("Notor Banger 30", "Notor Banger 45", true, "is45", true)
-				->AddTransition("Notor Banger 45", "Notor Banger 60", true, "is60", true)
-				->AddTransition("Notor Banger 60", "Notor Banger 90", true, "is90", true)
-				->AddTransition("Notor Banger 90", "Notor Banger 60", true, "is60", true)
-				->AddTransition("Notor Banger 60", "Notor Banger 45", true, "is45", true)
-				->AddTransition("Notor Banger 45", "Notor Banger 30", true, "is30", true)
-				->AddTransition("Notor Banger 30", "Notor Banger 0", true, "is0", true)
-				->AddTransition("Notor Banger 0", "Notor Banger Idle", true, "isIdle", true)
-				;
-
-			pNotorBangerEnemyPrefab->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
-			pNotorBangerEnemyPrefab->GetComponent<CRenderer>()->SetFlipY(false);
-			pNotorBangerEnemyPrefab->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
-			pNotorBangerEnemyPrefab->GetComponent<CRigidbody>()->SetGravityScale(1);
-			pNotorBangerEnemyPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-			pNotorBangerEnemyPrefab->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
-			pNotorBangerEnemyPrefab->GetComponent<CBoxCollider>()->SetIsDebugging(false);
-			pNotorBangerEnemyPrefab->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
-			pNotorBangerEnemyPrefab->AddComponent<NotorBangerEnemyController>()->SetSpeed(0.1);
-
-			auto pNotorBangerEnemy = CGameObject::Instantiate("[Prefab] Notor Banger", nullptr, Vector2(200, 875));			
-			pNotorBangerEnemy->GetComponent<NotorBangerEnemyController>()->SetTarget(pPlayer);
-		}
-
-		//{
-		//	auto pHeadGunnerPrefab = pResourceManager->AddPrefab("[Prefab] Head Gunner");
-		//	//CGameObject* pNotorBangerEnemy = new CGameObject("Notor Banger", Vector2(100, 875));
-		//	pHeadGunnerPrefab->AddComponent<CAnimator>()
-		//		->AddAnimation("Head Gunner Idle")
-		//		->AddAnimation("Head Gunner Shoot")
-		//		
-		//		->AddBool("isIdle", true)
-		//		->AddBool("isJump", false)
-		//		
-		//		->AddTransition("Head Gunner Idle", "Head Gunner Shoot", true, "isShoot", true)
-		//		->AddTransition("Head Gunner Shoot", "Head Gunner Idle", true, "isIdle", true)
-		//		;
-
-		//	pHeadGunnerPrefab->GetComponent<CTransform>()->Set_Scale(Vector2(1, 1));
-		//	pHeadGunnerPrefab->GetComponent<CRenderer>()->SetFlipY(false);
-		//	pHeadGunnerPrefab->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
-		//	pHeadGunnerPrefab->GetComponent<CRigidbody>()->SetGravityScale(1);
-		//	pHeadGunnerPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-		//	pHeadGunnerPrefab->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
-		//	pHeadGunnerPrefab->GetComponent<CBoxCollider>()->SetIsDebugging(false);
-		//	pHeadGunnerPrefab->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
-		//	pHeadGunnerPrefab->AddComponent<HeadGunnerEnemyController>()->SetSpeed(0.1);
-
-		//	auto pHeadGunnerEnemy = CGameObject::Instantiate("[Prefab] Notor Banger", nullptr, Vector2(300, 875));
-		//	pHeadGunnerEnemy->GetComponent<HeadGunnerEnemyController>()->SetTarget(pPlayer);
-		//}
-
-		//Blast Hornet
-		{
-			//Add animation
-			new CAnimation("BlastHornet_Flying", "Blast_Hornet", 3, 1);
-			CAnimation* temp = new CAnimation("BlastHornet_StartAttacking", "Blast_Hornet", 3, 13, 100, false);
-			temp->Add("Blast_Hornet", 9, -1, 200);
-			new CAnimation("BlastHornet_Shooting", "Blast_Hornet", 16, 5, 100, false);
-			new CAnimation("BlastHornet_Died", "Blast_Hornet", 21, 1);
-			//Setting properties
-			CGameObject* pHornet = new CGameObject("Blast Hornet", Vector2(1840, 461));
-			pHornet->AddComponent<CAnimator>()
-				->AddAnimation("BlastHornet_Flying")
-				->AddAnimation("BlastHornet_StartAttacking")
-				->AddAnimation("BlastHornet_Shooting")
-				->AddAnimation("BlastHornet_Died")
-				->AddBool("isAttack", false)
-				->AddBool("isShoot", false)
-				->AddBool("isDead", false)
-
-				->AddTransition("BlastHornet_Flying","BlastHornet_StartAttacking",true,"isAttack",true)
-				->AddTransition("BlastHornet_StartAttacking", "BlastHornet_Flying", false, "isAttack", false)
-				->AddTransition("BlastHornet_Flying", "BlastHornet_Shooting", true, "isShoot", true)
-				->AddTransition("BlastHornet_Shooting", "BlastHornet_Flying", false, "isShoot", false)
-				->AddTransition("BlastHornet_Shooting", "BlastHornet_Flying", false, "isShoot", false)
-				->AddTransition("BlastHornet_Flying", "BlastHornet_Died", true, "isDead", true)
-				->AddTransition("BlastHornet_StartAttacking", "BlastHornet_Died", false, "isDead", true)
-				->AddTransition("BlastHornet_Shooting", "BlastHornet_Died", false, "isDead", true)
-			;
-			pHornet->AddComponent<CRenderer>()->SetSprite("Blast_Hornet",3);
-			pHornet->AddComponent<CRigidbody>()->SetGravityScale(0);
-			pHornet->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-			pHornet->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
-			pHornet->GetComponent<CBoxCollider>()->SetIsDebugging(true);
-			pHornet->AddComponent<BlastHornetController>();
-			pHornet->GetComponent<BlastHornetController>()->m_target = pPlayer;
-	
-			//Initatiate Blast Hornet Wing
-			new CAnimation("BlastHornet_Wing", "Blast_Hornet", 0, 3, 50,true);
-			Vector2 HornetPos = pHornet->GetComponent<CTransform>()->Get_Position();
-			CGameObject* pHornetWing = new CGameObject("Blast Hornet Wing", Vector2(HornetPos.x, HornetPos.y-30));
-			pHornetWing->AddComponent<CTransform>()->SetParent(pHornet);
-			pHornetWing->AddComponent<CRenderer>();
-			pHornetWing->AddComponent<CAnimator>()
-				->AddAnimation("BlastHornet_Wing");
-		}
-
-		CGameObject *pBulletManager = new CGameObject("BulletManager", Vector2(PlayerPos.x, PlayerPos.y));
-		pBulletManager->GetComponent<CTransform>()->SetParent(pPlayer);
-		pBulletManager->AddComponent<BulletManagerController>();
-
-		//Weapons and Items
-		{
-			//Buster Shots
-			{
-				new CAnimation("BusterShot_Init", "WeaponsAndItems", 0, 1, 100, false);
-				new CAnimation("BusterShot_Explosive", "WeaponsAndItems", 1, 3, 100, false);
-				auto pBullet = pResourceManager->AddPrefab("BusterShot");
-				pBullet->AddComponent<CAnimator>()
-					->AddAnimation("BusterShot_Init")
-					->AddAnimation("BusterShot_Explosive")
-					->AddBool("isCollision", false)
-					->AddTransition("BusterShot_Init", "BusterShot_Explosive", true, "isCollision", true);
-				pBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
-				pBullet->AddComponent<CBoxCollider>()->SetSize({ 1,1 });
-				pBullet->AddComponent<BusterShotController>();	
-			}
-
-			{
-				/*new CAnimation("BusterShot_Init", "WeaponsAndItems", 0, 1, 100, false);
-				new CAnimation("BusterShot_Explosive", "WeaponsAndItems", 1, 3, 100, false);
-				auto pBullet = pResourceManager->AddPrefab("BusterShot");
-				pBullet->AddComponent<CAnimator>()
-					->AddAnimation("BusterShot_Init")
-					->AddAnimation("BusterShot_Explosive")
-					->AddBool("isCollision", false)
-					->AddTransition("BusterShot_Init", "BusterShot_Explosive", true, "isCollision", true);
-				pBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
-				pBullet->AddComponent<CBoxCollider>()->SetSize({ 1,1 });
-				pBullet->AddComponent<BusterShotController>();*/
-			}
-		}
-		//Camera
+		pMachine1->GetComponent<MachineController>()->m_player = pPlayer;
 		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pPlayer;
 		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
+
+		CGameObject* pNotorBangerEnemy = CGameObject::Instantiate(Prefab_NotorBanger, nullptr, Vector2(200, 875));
+		pNotorBangerEnemy->GetComponent<NotorBangerEnemyController>()->SetTarget(pPlayer);
+		
+		CGameObject* pHeadGunnerEnemy = CGameObject::Instantiate(Prefab_HeadGunner, nullptr, Vector2(450, 875));
+		pHeadGunnerEnemy->GetComponent<HeadGunnerEnemyController>()->SetTarget(pPlayer);
+
 		pGameManager->Run();
 
 	} while (false);

@@ -4,6 +4,7 @@
 #include "Graphic.h"
 #include "Input.h"
 #include "Animator.h"
+#include <math.h>
 
 void HeadGunnerEnemyController::OnCollisionEnter(CCollision * collision)
 {
@@ -17,14 +18,21 @@ void HeadGunnerEnemyController::Update(DWORD dt)
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
 	const Vector2 velocity = rigidbody->GetVelocity();
 
-	//OutputDebugStringA((std::to_string(anim->GetBool("isIdle")) + " " + std::to_string(anim->GetBool("isJump")) + "\n").c_str());
-
-	CInput *input = CInput::GetInstance();
-
-	if (input->KeyDown(DIK_L))
+	if (m_target)
 	{
-		anim->SetBool("isIdle", false);
-		anim->SetBool("isJump", true);
+		Vector2 targetPosition = m_target->GetComponent<CTransform>()->Get_Position();
+		Vector2 currentPosition = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+
+		if (sqrt(pow(targetPosition.x - currentPosition.x, 2)) < 200)
+		{
+			anim->SetBool("isShoot", true);
+		}
+		else
+		{
+			anim->SetBool("isShoot", false);
+		}
+
+		renderer->SetFlipX(targetPosition.x > currentPosition.x);
 	}
 }
 

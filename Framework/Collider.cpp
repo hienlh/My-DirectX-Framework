@@ -9,7 +9,6 @@ CCollider::CCollider(const CCollider& collider) : CComponent(collider)
 	m_Anchor = collider.m_Anchor;
 	m_AutoBoundSize = collider.m_AutoBoundSize;
 	m_Bound = collider.m_Bound;
-	m_IsDebugging = collider.m_IsDebugging;
 	m_IsTrigger = collider.m_IsTrigger;
 	m_Offset = collider.m_Offset;
 	m_UsedByEffector = collider.m_UsedByEffector;
@@ -53,11 +52,6 @@ bool CCollider::GetUsedByEffector() const
 	return m_UsedByEffector;
 }
 
-bool CCollider::GetIsDebugging() const
-{
-	return m_IsDebugging;
-}
-
 bool CCollider::GetAutoBoundSize() const
 {
 	return m_AutoBoundSize;
@@ -86,11 +80,6 @@ void CCollider::SetUsedByEffector(bool usedByEffector)
 void CCollider::SetOffset(Vector2 offset)
 {
 	m_Offset = offset;
-}
-
-void CCollider::SetIsDebugging(bool isDebugging)
-{
-	m_IsDebugging = isDebugging;
 }
 
 void CCollider::SetAutoBoundSize(bool autoBoundSize)

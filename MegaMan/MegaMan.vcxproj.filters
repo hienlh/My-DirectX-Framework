@@ -24,28 +24,16 @@
     <ClCompile Include="GroundController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="MegaManPowerController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="BlastHornetController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="BusterShotController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="BulletManagerController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="ChargedShootController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="NotorBangerEnemyController.cpp">
+    <ClCompile Include="MachineController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="HeadGunnerEnemyController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="NotorBangerEnemyController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,28 +44,16 @@
     <ClInclude Include="GroundController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="MegaManPowerController.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="BlastHornetController.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="BusterShotController.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ChargedShootController.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="BulletManagerController.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="NotorBangerEnemyController.h">
+    <ClInclude Include="MachineController.h">
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="HeadGunnerEnemyController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="NotorBangerEnemyController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

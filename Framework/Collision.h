@@ -8,25 +8,31 @@ namespace Framework {
 	{
 		// Properties
 	private:
-		CCollider *m_pCollider = nullptr;
-		CCollider *m_pOtherCollider = nullptr;
+		CGameObject *m_pCollider = nullptr;
+		CGameObject *m_pOtherCollider = nullptr;
 
 		// Cons / Des
 	public:
-		CCollision(CCollider* collider, CCollider *otherCollider);
+		CCollision(const CCollision& collision, bool swap = false);
 		CCollision(CGameObject* collider, CGameObject *otherCollider);
 		~CCollision();
 
 		//Getter / Setter
 	public:
-		CCollider *GetCollider() const { return m_pCollider; }
-		CCollider *GetOtherCollider() const { return m_pOtherCollider; }
+		CGameObject *GetCollider() const { return m_pCollider; }
+		CGameObject *GetOtherCollider() const { return m_pOtherCollider; }
 
-		std::string GetColliderName() const { return m_pCollider->GetGameObject()->GetName(); }
-		std::string GetOtherColliderName() const { return m_pOtherCollider->GetGameObject()->GetName(); }
+		std::string GetOtherColliderName(std::string name) const;
 		
 		bool CheckNameInCollision(std::string colliderName) const;
 		bool CollisionBetween(std::string name, std::string otherName) const;
+
+	public:
+		friend class CPhysic;
+
+		//Internal
+	private:
+		CCollision* Swap();
 	};
 
 }

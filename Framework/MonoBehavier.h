@@ -11,7 +11,7 @@ namespace Framework {
 		CMonoBehavior() = default;
 	public:
 		CMonoBehavior(const CMonoBehavior &monoBehavior) : CComponent(monoBehavior) {}
-		CMonoBehavior(CGameObject* gameObject) : CComponent(gameObject) { CPhysic::GetInstance()->RegisterObserver(this); }
+		CMonoBehavior(CGameObject* gameObject) : CComponent(gameObject) {}
 		virtual ~CMonoBehavior() = default;
 
 		void Update(DWORD dt) override {}
