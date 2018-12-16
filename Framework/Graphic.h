@@ -41,14 +41,14 @@ namespace Framework
 
 		// Public methods
 	public:
-		bool Render(std::set<CGameObject*> list_game_objects);
+		bool Render(CScene * scene) const;
 		void Draw(Texture* texture, Vector3* position = nullptr, Rect* pSourceRect = nullptr, Vector2* center = nullptr,
 		          float angle = 0, DWORD fillColor = COLOR_WHITE, Vector3 *scale = nullptr, bool flipX = false, bool flipY = false) const;
 		void Draw(CSprite* sprite, Vector3* position = nullptr, float angle = 0, Vector3 *scale = nullptr, 
-				  bool flipX = false, bool flipY = false) const;
+				  bool flipX = false, bool flipY = false, DWORD fillColor = COLOR_WHITE, DWORD alpha = 255) const;
 		void DrawRectangle(Rect rect, DWORD color = NULL);
 		
-		Texture* CreateTexture(CWString texturePath, D3DCOLOR transparentColor = COLOR_BLACK) const;
+		Texture* CreateTexture(std::string texturePath, D3DCOLOR transparentColor = COLOR_BLACK) const;
 			
 		// Static methods
 	public:

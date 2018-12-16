@@ -6,32 +6,30 @@ using namespace Framework;
 
 class PlayerController : public CMonoBehavior
 {
-public:
-	enum State
-	{
-		JUMP = 1,
-		MOVE_RIGHT = 2,
-		MOVE_LEFT = 4,
-		IDLE = 0,
-		MOVE_DOWN = 8,
-	};
-
 private:
-	int m_state;
+	float m_speed = 0;
 
-	//Cons / Des
+	// To Clone Function
 private:
 	PlayerController() = default;
+	PlayerController(const PlayerController &PC);
+	PlayerController* Clone() const override;
+
+	//Cons / Des
 public:
 	PlayerController(CGameObject *gameObject);
 	~PlayerController() = default;
 
-	//int GetState() const { return m_state; }
-	//void SetState(int state);
+	//Getter / Setter
+public:
+	PlayerController* SetSpeed(float speed) { m_speed = speed; return this; }
+
+	float GetSpeed() const { return m_speed; }
 
 	//Override
 private:
 	void OnCollisionEnter(CCollision* collision) override;
 	void Update(DWORD dt) override;
 	void Render() override;
+
 };

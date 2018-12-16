@@ -2,13 +2,29 @@
 #include "Scene.h"
 #include "GameManager.h"
 #include "Camera.h"
+#include "Rigidbody.h"
 
 using namespace Framework;
 
-bool CScene::Init()
+CScene::CScene(std::string name, Vector2 quadTreeSize)
 {
-	InitMainCamera();
-	m_pQuadTree = new CQuadTree(0, 0, Rect(0, 0, 600, 1200));
+	if (!this->Init(name, quadTreeSize))
+		delete this;
+}
+
+bool CScene::Init(std::string name, Vector2 quadTreeSize)
+{
+	if (!InitMainCamera()) return false;
+
+	struct stat buffer;
+	if(stat("QuadTree.xml", &buffer) == 0)
+	{
+		m_loadedQuadTree = true;
+	}
+
+	m_pQuadTree = new CQuadTree(quadTreeSize);
+	m_Name = name;
+
 	return true;
 }
 
@@ -17,9 +33,8 @@ bool CScene::InitMainCamera()
 	bool result = false;
 	do
 	{
-		m_pMainCamera = new CGameObject(L"Main Camera");
+		m_pMainCamera = new CGameObject("Main Camera");
 		m_pMainCamera->AddComponent<CCamera>();
-		const auto camera = m_pMainCamera->GetComponent<CCamera>();
 
 		result = true;
 	} while (false);
@@ -31,7 +46,7 @@ bool CScene::Release()
 {
 	bool result = false;
 	do {
-		for (auto gameObject : m_gameObjectList)
+		for (auto gameObject : GetAllGameObjects())
 		{
 			CGameObject::Destroy(gameObject);
 		}
@@ -48,20 +63,40 @@ std::set<CGameObject*> CScene::GetListGameObject() const
 	return m_gameObjectList;
 }
 
-std::set<CGameObject*> CScene::GetListColliderObject() const
+std::set<CGameObject*> CScene::GetListDynamicGameObject() const
 {
-	return m_colliderObjectList;
+	return m_dynamicObjectList;
 }
 
-CScene* CScene::Instantiate()
+std::set<CGameObject*> CScene::GetListStaticGameObject() const
 {
-	CScene* scene = nullptr;
-	SAFE_ALLOC(scene, CScene);
+	return m_staticObjectList;
+}
 
-	if (!scene->Init())
-		SAFE_DELETE(scene);
+std::set<CGameObject*> CScene::GetListHalfStaticGameObject() const
+{
+	return m_halfStaticObjectList;
+}
 
-	return scene;
+std::set<CGameObject*> CScene::GetAllGameObjects() const
+{
+	std::set<CGameObject*> result = {};
+	result.insert(m_dynamicObjectList.begin(), m_dynamicObjectList.end());
+	result.insert(m_staticObjectList.begin(), m_staticObjectList.end());
+	result.insert(m_gameObjectList.begin(), m_gameObjectList.end());
+	result.insert(m_halfStaticObjectList.begin(), m_halfStaticObjectList.end());
+
+	return result;
+}
+
+std::set<CGameObject*> CScene::GetRenderGameObjects() const
+{
+	std::set<CGameObject*> result = {};
+	result.insert(m_gameObjectList.begin(), m_gameObjectList.end());
+	result.insert(m_dynamicObjectList.begin(), m_dynamicObjectList.end());
+	auto quadTreeList = m_pQuadTree->query(Rect(m_pMainCamera->GetComponent<CTransform>()->Get_Position(), { 256, 256 }, { 0.5,0.5 }));
+	result.insert(quadTreeList.begin(), quadTreeList.end());
+	return result;
 }
 
 bool CScene::Destroy(CScene* scene)
@@ -76,23 +111,15 @@ void CScene::Update(DWORD dt)
 {
 	CInput::GetInstance()->Update();
 
-	m_pQuadTree->clear();
-	for (CGameObject* const object : m_colliderObjectList)
+	for (CGameObject* pGameObject : GetAllGameObjects())
 	{
-		m_pQuadTree->insert(object);
+		if(pGameObject->GetIsActive())
+			pGameObject->Update(dt);
 	}
 
-	for (CGameObject* pGameObject : m_gameObjectList)
-	{
-		pGameObject->Update(dt);
+	if(m_pMainCamera->GetIsActive())
+		m_pMainCamera->Update(dt);
 
-		if (pGameObject->GetName() == L"Player")
-		{
-			auto tmp = m_pQuadTree->query(pGameObject->GetComponent<CCollider>()->GetBoundGlobal());
-		}
-	}
-
-	m_pMainCamera->Update(dt);
 	CGraphic::GetInstance()->SetTransform(m_pMainCamera->GetComponent<CCamera>()->GetOrthographicMatrix(),
 		m_pMainCamera->GetComponent<CCamera>()->GetIdentityMatrix(),
 		m_pMainCamera->GetComponent<CCamera>()->GetViewMatrix());
@@ -100,34 +127,105 @@ void CScene::Update(DWORD dt)
 
 void CScene::Render()
 {
-	std::set<CGameObject*> listRender = m_gameObjectList;
-	listRender.insert(reinterpret_cast<CGameObject*>(m_pQuadTree));
-	CGraphic::GetInstance()->Render(listRender);
+	/*std::set<CGameObject*> listRender = m_dynamicObjectList;
+	listRender.insert(reinterpret_cast<CGameObject*>(m_pQuadTree));*/
+	CGraphic::GetInstance()->Render(this);
 }
 
-void CScene::AddGameObject(CGameObject* gameObject)
+bool CScene::AddGameObject(CGameObject* gameObject)
 {
+	/*const auto name = gameObject->GetName();
+	if (FindGameObject(name))
+	{
+		return false;
+	}*/
+
 	m_gameObjectList.insert(gameObject);
 	gameObject->SetScene(this);
 	AddColliderObject(gameObject);
+	return true;
 }
 
-void CScene::AddGameObjects(int amount, CGameObject* gameObject, ...)
+CGameObject* CScene::FindGameObject(std::string name)
 {
-	va_list args;
-	va_start(args, amount);
-	while (amount > 0) {
-		gameObject = va_arg(args, CGameObject*);
-		AddGameObject(gameObject);
-		amount--;
+	for (CGameObject* const game_object : m_gameObjectList)
+	{
+		if (game_object->GetName() == name)
+			return game_object;
 	}
-	va_end(args);
+
+	return nullptr;
+}
+
+CGameObject* CScene::FindGameObject(DWORD id)
+{
+	for (CGameObject* const game_object : GetAllGameObjects())
+	{
+		if (game_object->GetID() == id)
+			return game_object;
+	}
+
+	return nullptr;
 }
 
 void CScene::AddColliderObject(CGameObject* gameObject)
 {
 	if (gameObject->GetComponent<CCollider>())
 	{
-		m_colliderObjectList.insert(gameObject);
+		const auto rigidBody = gameObject->GetComponent<CRigidbody>();
+		if (rigidBody->GetIsKinematic())
+		{
+			m_staticObjectList.insert(gameObject);
+			m_dynamicObjectList.erase(gameObject);
+			m_gameObjectList.erase(gameObject);
+			m_halfStaticObjectList.erase(gameObject);
+
+			if (!m_loadedQuadTree) {
+				m_pQuadTree->insert_s(gameObject);
+			}
+		}
+		else if (rigidBody->GetLimitedArea() != Rect(0, 0, 0, 0))
+		{
+			m_staticObjectList.erase(gameObject);
+			m_dynamicObjectList.erase(gameObject);
+			m_gameObjectList.erase(gameObject);
+			m_halfStaticObjectList.insert(gameObject);
+
+			if (!m_loadedQuadTree) {
+				m_pQuadTree->insert_s(gameObject);
+			}
+		}
+		else
+		{
+			m_dynamicObjectList.insert(gameObject);
+			m_staticObjectList.erase(gameObject);
+			m_gameObjectList.erase(gameObject);
+			m_halfStaticObjectList.erase(gameObject);
+
+			if (!m_loadedQuadTree)
+				m_pQuadTree->remove(gameObject);
+		}
 	}
+}
+
+void CScene::SaveQuadTree() const
+{
+	m_pQuadTree->SaveToXml("QuadTree.xml");
+}
+
+void CScene::LoadQuadTree() const
+{
+	if (m_loadedQuadTree) 
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile("QuadTree.xml") == tinyxml2::XML_SUCCESS)
+		{
+			tinyxml2::XMLNode* pRoot = doc.FirstChild();
+
+			tinyxml2::XMLElement * pNodeRoot = pRoot->FirstChildElement("Node");
+
+			m_pQuadTree->LoadFromXml(pNodeRoot);
+		}
+	}
+	else SaveQuadTree();
 }

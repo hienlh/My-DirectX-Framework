@@ -94,7 +94,7 @@ void CGraphic::Release()
 		m_pVertexBuffer->Release();
 }
 
-bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
+bool CGraphic::Render(CScene * scene) const
 {
 	bool result = false;
 	do
@@ -107,8 +107,14 @@ bool CGraphic::Render(std::set<CGameObject*> list_game_objects)
 
 		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE); // D3DXSPRITE_SORT_DEPTH_BACKTOFRONT
 
-		for (CGameObject* pGameObject : list_game_objects)
-			pGameObject->Render();
+		for (CGameObject* pGameObject : scene->GetRenderGameObjects())
+			if(pGameObject->GetIsActive())
+				pGameObject->Render();
+
+		if(scene->GetIsRenderQuadTree())
+			scene->GetQuadTree()->Render();
+
+		scene->GetMainCamera()->Render();
 
 		m_pSpriteHandler->End();
 
@@ -158,15 +164,25 @@ void CGraphic::Draw(Texture* texture, Vector3 *position, Rect* pSourceRect, Vect
 
 }
 
-void CGraphic::Draw(CSprite* sprite, Vector3* position, float angle, Vector3 *scale, bool flipX, bool flipY) const
+void CGraphic::Draw(CSprite* sprite, Vector3* position, float angle, Vector3 *scale, bool flipX, bool flipY, DWORD fillColor, DWORD alpha) const
 {
 	Texture* texture = sprite->GetTexture();
-	Vector2 anchor = sprite->GetAnchor();
+	const Vector2 anchor = sprite->GetAnchor();
 	Rect sourceRect = sprite->GetSourceRect();
 	Vector2 center = Vector2(anchor.x * (sourceRect.right - sourceRect.left), 
 							   anchor.y * (sourceRect.bottom - sourceRect.top));
-	
-	Draw(texture, position, &sourceRect, &center, angle, COLOR_WHITE, scale, flipX, flipY);
+	if(fillColor!=COLOR_WHITE)
+	{
+		int a = alpha;
+		int r = COLOR_GET_R(fillColor);
+		int b = COLOR_GET_B(fillColor);
+		int g = COLOR_GET_G(fillColor);
+		CDebug::Log(static_cast<long>(a));
+	}
+
+	const DWORD _fillColor = D3DCOLOR_RGBA(COLOR_GET_R(fillColor), COLOR_GET_G(fillColor), COLOR_GET_B(fillColor), alpha);
+
+	Draw(texture, position, &sourceRect, &center, angle, _fillColor, scale, flipX, flipY);
 }
 
 void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
@@ -221,22 +237,21 @@ void CGraphic::DrawRectangle(Rect rect, DWORD color)
 	m_pDevice->DrawPrimitive(D3DPT_LINESTRIP, 0, 4);
 }
 
-Texture* CGraphic::CreateTexture(CWString texturePath, D3DCOLOR transparentColor) const
+Texture* CGraphic::CreateTexture(std::string texturePath, D3DCOLOR transparentColor) const
 {
 	Texture* m_texture = new Texture();
 	do
 	{
 		D3DXIMAGE_INFO info;
-		HRESULT hr = D3DXGetImageInfoFromFileW(texturePath, &info);
+		HRESULT hr = D3DXGetImageInfoFromFileA(texturePath.c_str(), &info);
 		if (hr != S_OK)
 			break;
 
 		m_texture->width = info.Width;
 		m_texture->height = info.Height;
-
-		hr = D3DXCreateTextureFromFileExW(
+		hr = D3DXCreateTextureFromFileExA(
 			m_pDevice,       // Pointer to Direct3D device object
-			texturePath, // Path to the image to load
+			texturePath.c_str(), // Path to the image to load
 			info.Width,  // CTexture width
 			info.Height, // CTexture height
 			1,

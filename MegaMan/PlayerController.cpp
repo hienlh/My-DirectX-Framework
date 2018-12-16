@@ -2,71 +2,23 @@
 #include "Rigidbody.h"
 #include "CameraController.h"
 #include "Graphic.h"
-#include "BoxCollider.h"
 #include "Input.h"
 #include "Animator.h"
+
+PlayerController::PlayerController(const PlayerController& PC) : CMonoBehavior(PC)
+{
+	m_speed = PC.m_speed;
+}
+
+PlayerController* PlayerController::Clone() const
+{
+	return new PlayerController(*this);
+}
 
 PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(gameObject)
 {
 
 }
-
-//void PlayerController::SetState(int state)
-//{
-//	CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
-//	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
-//	switch (state)
-//	{
-//	case JUMP:
-//		if((m_state & JUMP) != JUMP){
-//			rigidbody->SetVelocity(Vector2(0, -.1));
-//			m_state &= ~State::IDLE;
-//			m_state |= State::JUMP;
-//		}
-//		break; 
-//	case ~JUMP:
-//		rigidbody->SetVelocity(Vector2(NULL, 0));
-//		break;
-//	case MOVE_RIGHT:
-//		rigidbody->SetVelocity(.1, NULL);
-//
-//		m_state &= ~State::MOVE_LEFT;
-//		m_state |= State::MOVE_RIGHT;
-//		break;
-//	case ~MOVE_RIGHT:
-//		rigidbody->SetVelocity(0);
-//		m_state &= ~State::MOVE_RIGHT;
-//		break;
-//	case MOVE_LEFT:
-//		rigidbody->SetVelocity(-.1);
-//
-//		m_state &= ~State::MOVE_RIGHT;
-//		m_state |= State::MOVE_LEFT;
-//		break;
-//	case ~MOVE_LEFT:
-//		rigidbody->SetVelocity(0);
-//		m_state &= ~State::MOVE_LEFT;
-//		break;
-//	case MOVE_DOWN:
-//		rigidbody->SetVelocity(NULL,.1);
-//		break;
-//	case ~MOVE_DOWN:
-//		rigidbody->SetVelocity(NULL, 0);
-//		break;
-//	case IDLE:
-//		if((m_state & MOVE_RIGHT) == MOVE_RIGHT){}
-//		else if((m_state & MOVE_LEFT) == MOVE_LEFT)
-//		rigidbody->SetVelocity(Vector2(0, 0));
-//
-//		m_state &= ~State::JUMP;
-//		m_state &= ~State::MOVE_LEFT;
-//		m_state &= ~State::MOVE_RIGHT;
-//		m_state |= State::IDLE;
-//		break;
-//	}
-//
-//	//CDebug::Log("Current State: %d\n", m_state);
-//}
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
@@ -79,97 +31,132 @@ void PlayerController::Update(DWORD dt)
 	CTransform *transform = m_pGameObject->GetComponent<CTransform>();
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
-	Vector2 velocity = rigidbody->GetVelocity();
+	const Vector2 velocity = rigidbody->GetVelocity();
 
-	if(velocity.y > 0)
+	if (velocity.y > 0)
 	{
-		anim->SetBool(L"isFall", true);
-		anim->SetBool(L"isLandFall", false);
+		anim->SetBool("isFall", true);
+		anim->SetBool("isLandfall", false);
+		anim->SetBool("isJump", true);
 	}
-	else
-	{
-		if (velocity.y == 0 && anim->GetBool(L"isFall")) {
-			anim->SetBool(L"isLandFall", true);
-			anim->SetBool(L"isFall", false);
-		}
-		else {
-			anim->SetBool(L"isFall", false);
-			anim->SetBool(L"isLandFall", false);
-		}
+	else if (velocity.y == 0) {
+		if (anim->GetBool("isFall")) anim->SetBool("isLandfall", true);
+		anim->SetBool("isFall", false);
+		anim->SetBool("isJump", false);
+	}
+	else {
+		anim->SetBool("isFall", false);
+		anim->SetBool("isLandfall", false);
 	}
 
 	CInput *input = CInput::GetInstance();
 
 	if (input->KeyDown(DIK_SPACE)) {
-		anim->SetBool(L"isShoot", true);
+		anim->SetBool("isShoot", true);
+
+		Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+		pos.x += 50;
+		auto pBullet = CGameObject::Instantiate("BusterShot", nullptr, pos);
+		pBullet->GetComponent<CRigidbody>()->SetVelocity({ .3,0 });
 	}
 	if (input->KeyUp(DIK_SPACE)) {
-		anim->SetBool(L"isShoot", false);
+		anim->SetBool("isShoot", false);
+	}
+
+	if (input->KeyDown(DIK_E)) {
+		anim->SetBool("isPowering", true);
+	}
+	if (input->KeyUp(DIK_E)) {
+		anim->SetBool("isPowering", false);
 	}
 
 	if (input->KeyDown(DIK_UPARROW)) {
-		if (!anim->GetBool(L"isJump")) {
-			anim->SetBool(L"isJump", true);
+		if (!anim->GetBool("isJump")) {
+			anim->SetBool("isJump", true);
 			rigidbody->AddVelocity(Vector2(0, -.3));
 		}
 	}
 	if (input->KeyUp(DIK_UPARROW)) {
-		anim->SetBool(L"isJump", false);
 	}
 
-	if (anim->GetBool(L"isDash") && anim->GetCurrentAnimation()->IsLastFrame())
+	if (anim->GetBool("isDash") && anim->GetCurrentAnimation()->IsLastFrame())
+	{
+		if (!anim->GetBool("isRun"))
+		{
+			rigidbody->SetVelocity(Vector2(0, MAX_VELOCITY));
+		}
+		else
+		{
+			const bool isLeft = renderer->GetFlipX();
+			rigidbody->SetVelocity(Vector2(isLeft ? -.2 : .2, MAX_VELOCITY));
+		}
+		anim->SetBool("isDash", false);
+	}
+
+	if (anim->GetBool("isDash") && !anim->GetCurrentAnimation()->IsLastFrame())
 	{
 		const bool isLeft = renderer->GetFlipX();
-		rigidbody->SetVelocity(Vector2(0, MAX_VELOCITY));
-		anim->SetBool(L"isDash", false);
+		rigidbody->SetVelocity(Vector2(isLeft ? -0.2 : 0.2, MAX_VELOCITY));
 	}
 
 	if (input->KeyDown(DIK_Z)) {
-		if (!anim->GetBool(L"isDash")) {
-			const bool isLeft = renderer->GetFlipX();
-			rigidbody->AddVelocity(Vector2(isLeft ? -0.2 : 0.2, 0));
-			anim->SetBool(L"isDash", true);
+		if (!anim->GetBool("isDash")) {
+			anim->SetBool("isDash", true);
 		}
 	}
 	if (input->KeyUp(DIK_Z)) {
 	}
 
-	if (input->KeyDown(DIK_LEFTARROW)) {
+	if (input->KeyDown(DIK_W)) {
+		anim->SetBool("isClimbLadder", true);
+		rigidbody->SetVelocity(MAX_VELOCITY, -m_speed);
+		rigidbody->SetGravityScale(0);
+	}
+	if (input->KeyUp(DIK_W)) {
+		anim->SetBool("isClimbLadder", false);
+		rigidbody->SetVelocity(MAX_VELOCITY, 0);
+		rigidbody->SetGravityScale(1);
+	}
+
+	if (input->KeyDown(DIK_Q)) {
+		anim->SetBool("isClinging", true);
+	}
+	if (input->KeyUp(DIK_Q)) {
+
+	}
+	if (anim->GetBool("isLandfall") || anim->GetBool("isJump"))
+	{
+		anim->SetBool("isClinging", false);
+	}
+	if (anim->GetBool("isClinging") && anim->GetBool("isJump"))
+	{
+		const bool isLeft = renderer->GetFlipX();
+		rigidbody->SetVelocity(Vector2(isLeft ? .3 / 4 : -.3 / 4, -.3 / 2));
+		anim->SetBool("isClinging", false);
+	}
+
+	if (input->KeyDown(DIK_LEFTARROW) /*|| input->KeyHold(DIK_LEFTARROW)*/) {
 		renderer->SetFlipX(true);
-		anim->SetBool(L"isRun", true);
-		rigidbody->AddVelocity(Vector2(-.1, 0));
+		anim->SetBool("isRun", true);
+		rigidbody->AddVelocity(Vector2(-m_speed, 0));
 	}
 	if (input->KeyUp(DIK_LEFTARROW)) {
-		if (anim->GetBool(L"isRun")) {
-			anim->SetBool(L"isRun", false);
+		if (anim->GetBool("isRun")) {
+			anim->SetBool("isRun", false);
 			rigidbody->SetVelocity(Vector2(0, MAX_VELOCITY));
 		}
 	}
 
-	if (input->KeyDown(DIK_RIGHTARROW)) {
+	if (input->KeyDown(DIK_RIGHTARROW) /*|| input->KeyHold(DIK_RIGHTARROW)*/) {
 		renderer->SetFlipX(false);
-		anim->SetBool(L"isRun", true);
-		rigidbody->AddVelocity(Vector2(.1, 0));
+		anim->SetBool("isRun", true);
+		rigidbody->AddVelocity(Vector2(m_speed, 0));
 	}
 	if (input->KeyUp(DIK_RIGHTARROW)) {
-		if (anim->GetBool(L"isRun")) {
-			anim->SetBool(L"isRun", false);
+		if (anim->GetBool("isRun")) {
+			anim->SetBool("isRun", false);
 			rigidbody->SetVelocity(Vector2(0, MAX_VELOCITY));
 		}
-	}
-
-	if(input->KeyDown(DIK_DOWNARROW))
-	{
-		//SetState(MOVE_DOWN);
-	}
-	if (input->KeyUp(DIK_DOWNARROW))
-	{
-		//SetState(~MOVE_DOWN);
-	}
-
-	if (rigidbody->GetVelocity() == Vector2(0, 0) && m_state != IDLE)
-	{
-		//SetState(IDLE);
 	}
 }
 

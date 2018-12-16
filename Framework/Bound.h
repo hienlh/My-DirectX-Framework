@@ -38,6 +38,13 @@ typedef struct Bound
 			top = bottom + size.y;
 		}
 	}
+	Bound(Vector2 position, Vector2 size, Vector2 anchor)
+	{
+		left = position.x - size.x * anchor.x;
+		right = position.x + size.x * anchor.x;
+		top = position.y - size.y * anchor.y;
+		bottom = position.y + size.y * anchor.y;
+	}
 	~Bound() = default;
 
 	Vector2 TopLeft() const { return Vector2(top, left); }
@@ -56,25 +63,33 @@ typedef struct Bound
 
 	bool intersect(Bound other) const
 	{
-		const float m_left = other.left - right;
-		const float m_top = other.bottom - top;
-		const float m_right = other.right - left;
-		const float m_bottom = other.top - bottom;
+		return !(other.left > right || left > other.right || other.top > bottom || top > other.bottom);
+	}
 
-		return !(m_left > 0 || m_right < 0 || m_top < 0 || m_bottom > 0);
+	Bound OverLapBound(Bound other)
+	{
+		const float _top = top > other.top ? top : other.top;
+		const float _bottom = bottom < other.bottom ? bottom : other.bottom;
+		const float _left = left > other.left ? left : other.left;
+		const float _right = right < other.right ? right : other.right;
+
+		if (_top > _bottom || _left > _right) return Bound(0, 0, 0, 0);
+
+		return Bound(_top, _left, _bottom, _right);
+	}
+
+	bool isInside(Vector2 point) const
+	{
+		return !(point.x < left || point.x > right || point.y < top || point.y > bottom);
 	}
 
 	Bound& operator= (const Bound &_bound) = default;
 	bool operator== (const Bound &_bound) const
 	{
-		if (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom)
-			return false;
-		return true;
+		return !(left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom);
 	}
 	bool operator!= (const Bound &_bound) const
 	{
-		if (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom)
-			return true;
-		return false;
+		return (left != _bound.left || right != _bound.right || top != _bound.top || bottom != _bound.bottom);
 	}
 };

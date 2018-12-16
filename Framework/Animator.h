@@ -6,41 +6,60 @@
 namespace Framework
 {
 
-	class CTransition
+	class CTransition : public CObject
 	{
 	private:
-		CWString m_dstAnimationName = L"";
-		std::map<CWString, bool> m_conditions = {};
+		std::string m_dstAnimationName = "";
+		std::map<std::string, bool> m_conditions = {};
 		bool m_hasExitTime = false;
 		bool m_isRelatedTo = false;
 
 	public:
-		CTransition(CWString name) { m_dstAnimationName = name; }
+		CTransition(std::string name) { m_dstAnimationName = name; }
+		CTransition(const CTransition& transition) : CObject(transition)
+		{
+			m_hasExitTime = transition.m_hasExitTime;
+			m_isRelatedTo = transition.m_isRelatedTo;
+			m_dstAnimationName = transition.m_dstAnimationName;
+			m_conditions = transition.m_conditions;
+		}
 
 	public:
-		CTransition* SetCondition(CWString conditionName, bool value) { m_conditions[conditionName] = value; return this; }
+		CTransition* SetCondition(std::string conditionName, bool value) { m_conditions[conditionName] = value; return this; }
 		CTransition* SetHasExitTime(bool hasExitTime) { m_hasExitTime = hasExitTime; return this; };
 		CTransition* SetRelatedTo(bool relatedTo) { m_isRelatedTo = relatedTo; return this; }
 
-		std::map<CWString, bool>& GetConditions() { return m_conditions; }
-		CWString GetDestinationAnimationName() const { return m_dstAnimationName; }
+		std::map<std::string, bool>& GetConditions() { return m_conditions; }
+		std::string GetDestinationAnimationName() const { return m_dstAnimationName; }
 		bool GetHasExitTime() const { return m_hasExitTime; }
 		bool GetRelatedTo() const { return m_isRelatedTo; }
+		bool GetConditionValue(std::string name) { return m_conditions[name]; };
+
+		CTransition* Clone() const override
+		{
+			return new CTransition(*this);
+		}
+
+		// Override
+	private:
+		void Update(DWORD dt) override {};
+		void Render() override {};
 	};
 
 	class CAnimator final : public CComponent
 	{
 		// Properties
 	private:
-		std::map<CWString, CAnimation*> m_Animations = {};
-		std::map<CWString, std::list<CTransition*> > m_transitions = {};
-		std::map<CWString, bool> m_boolConditions = {};
+		std::map<std::string, CAnimation*> m_Animations = {};
+		std::map<std::string, std::list<CTransition*> > m_transitions = {};
+		std::map<std::string, bool> m_boolConditions = {};
 		CAnimation* m_pCurrentAnimation = nullptr;
 		CAnimation* m_pRootAnimation = nullptr;
 
 		// Cons / Des
 	public:
 		CAnimator() = default;
+		CAnimator(const CAnimator& animator);
 		CAnimator(CGameObject* game_object) : CComponent(game_object) {}
 		virtual ~CAnimator() = default;
 
@@ -50,23 +69,27 @@ namespace Framework
 		void Release();
 
 		//Getter / Setter
+	private:
+		CAnimator* AddAnimation(CAnimation* animation);
 	public:
-		CAnimator* AddAnimation(CWString animationName);
-		CAnimator* AddTransition(CWString srcAnimationName, CWString dstAnimationName, bool hasExitTime = false,
-		                         CWString conditionName = L"", bool value = false, bool relatedTo = false);
-		CAnimator* SetRootAnimation(CWString animationName);
+		CAnimator* AddAnimation(std::string animationName);
+		CAnimator* AddTransition(std::string srcAnimationName, std::string dstAnimationName, bool hasExitTime = false,
+				std::string conditionName = "", bool value = false, bool relatedTo = false);
+		CAnimator* SetRootAnimation(std::string animationName);
 
-		CAnimation *GetCurrentAnimation() const;
-		CSprite *GetCurrentSprite() const;
-		CTransition *GetTransition(CWString srcAnimationName, CWString dstAnimationName);
+		CAnimation *GetCurrentAnimation();
+		CSprite *GetCurrentSprite();
+		CTransition *GetTransition(std::string srcAnimationName, std::string dstAnimationName);
 
-		CAnimator* AddBool(CWString name, bool value);
-		CAnimator* SetBool(CWString name, bool value);
-		bool GetBool(CWString name);
+		CAnimator* AddBool(std::string name, bool value);
+		CAnimator* SetBool(std::string name, bool value);
+		bool GetBool(std::string name);
 
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
+
+		CAnimator* Clone() const override;
 
 		// Static methods
 	public:

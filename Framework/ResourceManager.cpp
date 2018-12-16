@@ -44,7 +44,7 @@ CResourceManager* CResourceManager::GetInstance()
 	return __instance;
 }
 
-Texture* CResourceManager::GetTexture(CWString name) const
+Texture* CResourceManager::GetTexture(std::string name) const
 {
 	const auto it = m_pTextures.find(name);
 
@@ -56,7 +56,7 @@ Texture* CResourceManager::GetTexture(CWString name) const
 	return nullptr;
 }
 
-CAnimation* CResourceManager::GetAnimation(CWString name) const
+CAnimation* CResourceManager::GetAnimation(std::string name) const
 {
 	const auto it = m_pAnimations.find(name);
 
@@ -68,7 +68,7 @@ CAnimation* CResourceManager::GetAnimation(CWString name) const
 	return nullptr;
 }
 
-CSprite* CResourceManager::GetSprite(CWString textureName, DWORD index) const
+CSprite* CResourceManager::GetSprite(std::string textureName, DWORD index) const
 {
 	return GetSprite(GetTexture(textureName), index);
 }
@@ -82,7 +82,14 @@ CSprite* CResourceManager::GetSprite(Texture* texture, DWORD index)
 	return texture->m_sprites[index];
 }
 
-bool CResourceManager::AddTexture(CWString name, CWString path, Color transparentColor, const char* xmlPath)
+CGameObject* CResourceManager::GetPrefab(std::string name)
+{
+	if (!m_pPrefabs.count(name)) return nullptr;
+
+	return m_pPrefabs[name];
+}
+
+bool CResourceManager::AddTexture(std::string name, std::string path, Color transparentColor, const char* xmlPath)
 {
 	if(m_pTextures.count(name))
 	{
@@ -110,13 +117,13 @@ bool CResourceManager::AddTexture(CWString name, CWString path, Color transparen
 	return false;
 }
 
-bool CResourceManager::EditTexture(CWString name, CWString path, Color transparentColor, const char* xmlPath)
-{
-	//TODO Edit texture in ResourceManager
-	return false;
-}
+//bool CResourceManager::EditTexture(std::string name, std::string path, Color transparentColor, const char* xmlPath)
+//{
+//	//TODO Edit texture in ResourceManager
+//	return false;
+//}
 
-bool CResourceManager::AddAnimation(CWString name, CAnimation* animation)
+bool CResourceManager::AddAnimation(std::string name, CAnimation* animation)
 {
 	if (m_pAnimations.count(name))
 	{
@@ -126,4 +133,24 @@ bool CResourceManager::AddAnimation(CWString name, CAnimation* animation)
 
 	m_pAnimations.insert({ name, animation });
 	return true;
+}
+
+/**
+ * \brief Add Prefab from an existed GameObject or create new gameObject
+ */
+CGameObject* CResourceManager::AddPrefab(std::string name, CGameObject* gameObject)
+{
+	if (m_pPrefabs.count(name))
+	{
+		CDebug::Log("Prefab '%s' has been added", name);
+		return nullptr;
+	}
+
+	CGameObject* result = nullptr;
+
+	if(gameObject) result = gameObject->Clone();
+	else result = new CGameObject(name, VECTOR2_ZERO, false);
+
+	m_pPrefabs[name] = result;
+	return result;
 }
