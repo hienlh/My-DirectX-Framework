@@ -1,5 +1,5 @@
 #include "BlastHornetChildController.h"
-
+DWORD startTime;
 
 BlastHornetChildController::BlastHornetChildController(CGameObject* gameObject) : CMonoBehavior(gameObject)
 {

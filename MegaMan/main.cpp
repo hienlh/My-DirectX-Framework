@@ -122,8 +122,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 		}
 
-		CGameObject* pPlayer = new CGameObject("Player", Vector2(45, 875));
-		// CGameObject* pPlayer = new CGameObject("Player", Vector2(1810, 409));
+		// CGameObject* pPlayer = new CGameObject("Player", Vector2(45, 875));
+		CGameObject* pPlayer = new CGameObject("Player", Vector2(1840, 461));
 		pPlayer->AddComponent<CAnimator>()
 			->AddAnimation("MegaManX Init")
 			->AddAnimation("MegaManX InitLand")
