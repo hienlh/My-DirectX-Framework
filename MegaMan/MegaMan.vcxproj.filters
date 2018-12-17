@@ -30,6 +30,18 @@
     <ClCompile Include="MachineController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="NotorBangerEnemyController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BusterShotController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="HeadGunnerEnemyController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="GenjiBosController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h">
@@ -42,6 +54,18 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="MachineController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="NotorBangerEnemyController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BusterShotController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="HeadGunnerEnemyController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="GenjiBosController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

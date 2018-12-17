@@ -109,8 +109,9 @@ bool CGraphic::Render(CScene * scene) const
 		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE); // D3DXSPRITE_SORT_DEPTH_BACKTOFRONT
 
 		for (CGameObject* pGameObject : scene->GetRenderGameObjects())
-			if(pGameObject->GetIsActive())
-				pGameObject->Render();
+			if(pGameObject)
+				if(pGameObject->GetIsActive())
+					pGameObject->Render();
 
 		if(scene->GetIsRenderQuadTree())
 			scene->GetQuadTree()->Render();

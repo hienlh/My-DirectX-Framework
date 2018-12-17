@@ -58,6 +58,7 @@ namespace Framework
 		//Method
 	public:
 		bool AddGameObject(Framework::CGameObject* gameObject);
+		void RemoveGameObject(CGameObject* gameObject);
 		CGameObject* FindGameObject(std::string name);
 		CGameObject* FindGameObject(DWORD id);
 		void SaveQuadTree() const;

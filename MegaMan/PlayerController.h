@@ -8,6 +8,7 @@ class PlayerController : public CMonoBehavior
 {
 public:
 	CGameObject* m_Power = nullptr;
+	CGameObject* m_GenjiBos = nullptr;
 
 private:
 	float m_speed = 0;
@@ -34,5 +35,9 @@ private:
 	void OnCollisionEnter(CCollision* collision) override;
 	void Update(DWORD dt) override;
 	void Render() override;
+
+	//Method
+public:
+	void Shoot();
 
 };

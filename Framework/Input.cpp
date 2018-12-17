@@ -111,6 +111,14 @@ InputDevice * Framework::CInput::CreateMouse(Input *dinput)
 
 void CInput::Update()
 {
+	// Fixed can not interact game input after switch window
+	HWND hwnd = CGameManager::GetInstance()->GetWindow()->Get_WindowHandle();
+	m_dikeyboard->SetCooperativeLevel(hwnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+	m_dikeyboard->Acquire();
+	m_dimouse->SetCooperativeLevel(hwnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
+	m_dimouse->Acquire();
+
+	// Update keyboard and mouse
 	PollKeyboard();
 	PollMouse();
 }
@@ -124,13 +132,16 @@ void CInput::PollKeyboard()
 int CInput::KeyDown(int key)
 {
 	return m_keys[key] && !m_prevKeys[key];
-	// KEY_DOWN(m_keys[key]) && !KEY_DOWN(m_prevKeys[key]);
 }
 
 int CInput::KeyUp(int key)
 {
 	return !m_keys[key] && m_prevKeys[key];
-	//return !KEY_DOWN(m_keys[key]) && KEY_DOWN(m_prevKeys[key]);
+}
+
+int CInput::KeyHold(int key)
+{
+	return m_keys[key] && m_prevKeys[key];
 }
 
 void CInput::KillKeyboard()

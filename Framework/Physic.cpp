@@ -192,17 +192,6 @@ bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
 
 void CPhysic::Update(DWORD dt)
 {
-	//Gravity for dynamic gameObjects
-	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetAllGameObjects();
-	for (CGameObject* const game_object : list)
-	{
-		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
-		{
-			if(!rigid->GetIsKinematic())
-				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
-		}
-	}
-
 	// Collision test
 
 	//Dynamic GameObject
@@ -211,6 +200,13 @@ void CPhysic::Update(DWORD dt)
 
 	for (auto i = listDynamicGameObject.begin(); i != listDynamicGameObject.end(); ++i)
 	{
+		//Update Gravity
+		if (CRigidbody* rigid = (*i)->GetComponent<CRigidbody>())
+		{
+			if (!rigid->GetIsKinematic())
+				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+		}
+
 		//test with QuadTree
 		const Bound bound = (*i)->GetComponent<CCollider>()->GetBoundGlobal();
 		std::set<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
@@ -233,6 +229,13 @@ void CPhysic::Update(DWORD dt)
 	auto listHalfStaticGameObject = currentScreen->GetListHalfStaticGameObject();
 	for (auto game_object : listHalfStaticGameObject)
 	{
+		//Update Gravity
+		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
+		{
+			if (!rigid->GetIsKinematic())
+				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+		}
+
 		const Bound bound = game_object->GetComponent<CCollider>()->GetBoundGlobal();
 		std::set<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
 
@@ -291,7 +294,7 @@ float CPhysic::SweptAABBx(const DWORD dt, CGameObject* moveObject, CGameObject* 
 		t, nx, ny
 	);
 
-	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0 && !isTrigger)
+	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t < 0 && !isTrigger)
 	{
 		OverLapResponse(moveObject, staticObject);
 		//deflect

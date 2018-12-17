@@ -19,7 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BusterShotController.cpp" />
+    <ClCompile Include="GenjiBosController.cpp" />
+    <ClCompile Include="HeadGunnerEnemyController.cpp" />
     <ClCompile Include="MachineController.cpp" />
+    <ClCompile Include="NotorBangerEnemyController.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="GroundController.cpp" />
@@ -31,7 +35,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BusterShotController.h" />
+    <ClInclude Include="GenjiBosController.h" />
+    <ClInclude Include="HeadGunnerEnemyController.h" />
     <ClInclude Include="MachineController.h" />
+    <ClInclude Include="NotorBangerEnemyController.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="GroundController.h" />

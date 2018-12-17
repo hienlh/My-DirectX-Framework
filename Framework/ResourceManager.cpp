@@ -53,6 +53,7 @@ Texture* CResourceManager::GetTexture(std::string name) const
 		return it->second;
 	}
 
+	CDebug::Log("GetTexture: No texture name '%s'\n", name.c_str());
 	return nullptr;
 }
 
@@ -65,6 +66,7 @@ CAnimation* CResourceManager::GetAnimation(std::string name) const
 		return it->second;
 	}
 
+	CDebug::Log("GetAnimation: No animation name '%s'\n", name.c_str());
 	return nullptr;
 }
 
@@ -84,7 +86,11 @@ CSprite* CResourceManager::GetSprite(Texture* texture, DWORD index)
 
 CGameObject* CResourceManager::GetPrefab(std::string name)
 {
-	if (!m_pPrefabs.count(name)) return nullptr;
+	if (!m_pPrefabs.count(name))
+	{
+		CDebug::Log("GetPrefab: No prefab name '%s'\n", name.c_str());
+		return nullptr;
+	}
 
 	return m_pPrefabs[name];
 }
@@ -113,7 +119,7 @@ bool CResourceManager::AddTexture(std::string name, std::string path, Color tran
 		return true;
 	}
 
-	CDebug::Log(L"Fail to create texture \"%s\" and add to ResourceManager");
+	CDebug::Log(L"AddTexture: Fail to create texture \"%s\" and add to ResourceManager", name.c_str());
 	return false;
 }
 
@@ -127,7 +133,7 @@ bool CResourceManager::AddAnimation(std::string name, CAnimation* animation)
 {
 	if (m_pAnimations.count(name))
 	{
-		CDebug::Log(L"Animation \"%s\" added! If you want to edit, let use EditAnimation function!\n", name);
+		CDebug::Log(L"AddAnimation: Animation \"%s\" added! If you want to edit, let use EditAnimation function!\n", name.c_str());
 		return false;
 	}
 
@@ -142,7 +148,7 @@ CGameObject* CResourceManager::AddPrefab(std::string name, CGameObject* gameObje
 {
 	if (m_pPrefabs.count(name))
 	{
-		CDebug::Log("Prefab '%s' has been added", name);
+		CDebug::Log("AddPrefab: Prefab '%s' has been added", name.c_str());
 		return nullptr;
 	}
 

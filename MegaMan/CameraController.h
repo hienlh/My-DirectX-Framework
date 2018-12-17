@@ -6,9 +6,10 @@ class CameraController : public Framework::CMonoBehavior
 {
 	//Public Properties
 public:
-	Framework::CGameObject *m_target;
+	Framework::CGameObject *m_target = nullptr;
 private:
-	bool isFollow = false;
+	bool m_isFollow = false;
+	std::vector<Bound> m_limitedBound = {};
 
 private:
 	CameraController() = default;
@@ -17,7 +18,7 @@ public:
 	~CameraController() = default;
 
 public:
-	void SetIsFollow(bool isFollow) { this->isFollow = isFollow; }
+	void SetIsFollow(bool isFollow) { this->m_isFollow = isFollow; }
 
 public:
 	void Update(DWORD dt) override;

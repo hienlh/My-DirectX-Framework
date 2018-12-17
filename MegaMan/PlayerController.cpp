@@ -62,6 +62,7 @@ void PlayerController::Update(DWORD dt)
 
 	if (input->KeyDown(DIK_SPACE)) {
 		anim->SetBool("isShoot", true);
+		Shoot();
 	}
 	if (input->KeyUp(DIK_SPACE)) {
 		anim->SetBool("isShoot", false);
@@ -166,8 +167,23 @@ void PlayerController::Update(DWORD dt)
 		if (m_Power)
 			m_Power->SetIsActive(false);
 	}
+
+	if(transform->Get_Position().x > 2320)
+	{
+		if (m_GenjiBos && !m_GenjiBos->GetIsActive())
+			m_GenjiBos->SetIsActive(true);
+	}
 }
 
 void PlayerController::Render()
 {
+}
+
+void PlayerController::Shoot()
+{
+	const bool isLeft = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
+	Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+	pos.x += (isLeft ? -1 : 1) * 25;
+	auto pBullet = CGameObject::Instantiate("BusterShot", nullptr, pos);
+	pBullet->GetComponent<CRigidbody>()->SetVelocity({static_cast<float>((isLeft ? -1 : 1) * 0.3), 0 });
 }
