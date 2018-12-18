@@ -9,6 +9,7 @@ class HeadGunnerEnemyController : public CMonoBehavior
 private:
 	float m_speed = 0;
 	CGameObject* m_target = nullptr;
+	DWORD m_reloadTime = 0;
 
 	// To Clone Function
 private:

@@ -26,7 +26,8 @@ CBoxCollider* CBoxCollider::SetSize(Vector2 size)
 {
 	m_Size = size;
 	m_Bound = Bound(Vector2(0, 0), m_Size);
-	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
+	if(m_pGameObject->GetScene())
+		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	return this;
 }
 

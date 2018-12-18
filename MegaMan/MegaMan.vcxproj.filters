@@ -36,6 +36,12 @@
     <ClCompile Include="NotorBangerEnemyController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="BulletController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="MegaManPowerController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h">
@@ -54,6 +60,15 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="NotorBangerEnemyController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Header.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MegaManPowerController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Animator.h"
 #include <math.h>
+#include "Header.h"
 
 void HeadGunnerEnemyController::OnCollisionEnter(CCollision * collision)
 {
@@ -26,6 +27,21 @@ void HeadGunnerEnemyController::Update(DWORD dt)
 		if (sqrt(pow(targetPosition.x - currentPosition.x, 2)) < 200)
 		{
 			anim->SetBool("isShoot", true);
+			
+			m_reloadTime += dt;
+			if (m_reloadTime >= RELOAD_TIME)
+			{
+				Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+				bool isFlip = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
+
+				pos.x = (isFlip ? pos.x + 10 : pos.x - 10);
+				pos.y;
+				auto pBullet = CGameObject::Instantiate(Prefab_HeadGunnerBullet, nullptr, pos);
+
+				pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? .3f : -.3f) , 0 });
+
+				m_reloadTime = 0;
+			}
 		}
 		else
 		{

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Macros.h"
+#include "Header.h"
 #include "GameManager.h"
 #include "GameObject.h"
 #include "Rigidbody.h"
@@ -11,6 +12,7 @@
 #include "MachineController.h"
 #include "NotorBangerEnemyController.h"
 #include "HeadGunnerEnemyController.h"
+#include "BulletController.h"
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
@@ -22,7 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	CScene* pScene = new CScene("Main Scene", {8000,8000});
 	pGameManager->SetCurrentScene(pScene);
-	pGameManager->SetIsDebugging(false);
+	pGameManager->SetIsDebugging(true);
 	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	pScene->GetMainCamera()->AddComponent<CameraController>();
 	pScene->SetIsRenderQuadTree(true);
@@ -39,6 +41,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture("MapObjects", ".\\Resources\\Map\\Objects.png", NULL, ".\\Resources\\Map\\Objects.xml");
 	pResourceManager->AddTexture("Map", ".\\Resources\\Map\\Map.png", NULL, ".\\Resources\\Map\\Map.xml");
 	pResourceManager->AddTexture("Texture_EnemiesAndBosses", ".\\Resources\\Enemies\\enemies_and_bosses.png", NULL, ".\\Resources\\Enemies\\enemies_and_bosses.xml");
+	pResourceManager->AddTexture("WeaponsAndItems", ".\\Resources\\Weapons and Items\\Weapons and Items.png", NULL, ".\\Resources\\Weapons and Items\\Weapons and Items.xml");
+
 
 	//From file MegaManXEdited.png
 	new CAnimation("MegaManX Init", "MegaManX", 0, 2, 1000, false);
@@ -60,6 +64,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	new CAnimation("MegaManX Wall Clinging Shoot", "MegaManX", 55, 2, 120, true);
 	anim = new CAnimation("MegaManX ClimbLadder", "MegaManX", 62, 4, 100, true);
 	anim->Add("MegaManX", 64)->Add("MegaManX", 63);
+	anim = new CAnimation("MegaManX WasHit", "MegaManX", 89, 3, 100, false);
+	anim->Add("MegaManX", 90)->Add("MegaManX", 91)->Add("MegaManX", 90)->Add("MegaManX", 91);
 
 	//From file MegaManX-Dash Shoot.png
 	new CAnimation("MegaManX Dash", "MegaManX-Dash", 0, 23, 20, false);
@@ -79,21 +85,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddPrefab("MapBehind_1")
 		->AddComponent<CAnimator>()->AddAnimation("MapBehind_1");
 
-#define Texture_EnemiesAndBosses "Texture_EnemiesAndBosses"
-
 	// Notor Banger
 	{
 		// Animations
 		{
-#define Animation_NotorBangerIdle "Animation_NotorBangerIdle"
-#define Animation_NotorBangerJump "Animation_NotorBangerJump"
-
-#define Animation_NotorBanger0 "Animation_NotorBanger0"
-#define Animation_NotorBanger30 "Animation_NotorBanger30"
-#define Animation_NotorBanger45 "Animation_NotorBanger45"
-#define Animation_NotorBanger60 "Animation_NotorBanger60"
-#define Animation_NotorBanger90 "Animation_NotorBanger90"
-
 			new CAnimation(Animation_NotorBangerIdle, Texture_EnemiesAndBosses, 98, 1, 100, false);
 			new CAnimation(Animation_NotorBangerJump, Texture_EnemiesAndBosses, 99, 3, 100, false);
 
@@ -106,18 +101,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		// Prefab
 		{
-#define Prefab_NotorBanger "Prefab_NotorBanger"
-
 			std::string animationNames[] = { Animation_NotorBangerIdle, Animation_NotorBangerJump, Animation_NotorBanger0, Animation_NotorBanger30,
 				Animation_NotorBanger45, Animation_NotorBanger60, Animation_NotorBanger90 };
-
-#define BoolIdle "isIdle"
-#define BoolJump "isJump"
-#define Bool0 "is0"
-#define Bool30 "is30"
-#define Bool45 "is45"
-#define Bool60 "is60"
-#define Bool90 "is90"
 
 			std::string boolNames[] = { BoolIdle, BoolJump, Bool0, Bool30, Bool45, Bool60, Bool90 };
 
@@ -160,22 +145,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPrefab->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 			pPrefab->GetComponent<CRigidbody>()->SetGravityScale(1);
 			pPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-			pPrefab->GetComponent<CBoxCollider>()->SetAutoBoundSize(true);
+			pPrefab->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 50))->SetAutoBoundSize(false);
 			pPrefab->AddComponent<NotorBangerEnemyController>()->SetSpeed(0.1)
 			;			
 		}		
+
+		// Notor Banger Bullet
+		{
+			new CAnimation(Animation_NotorBangerBulletInit, Texture_EnemiesAndBosses, 111, 1, 100, false);
+			new CAnimation(Animation_NotorBangerBulletExplosive, Texture_EnemiesAndBosses, 111, 1, 100, false);
+			auto pBullet = pResourceManager->AddPrefab(Prefab_NotorBangerBullet);
+			pBullet->AddComponent<CAnimator>()
+				->AddAnimation(Animation_NotorBangerBulletInit)
+				->AddAnimation(Animation_NotorBangerBulletExplosive)
+				->AddBool(BoolCollision, false)
+				->AddTransition(Animation_NotorBangerBulletInit, Animation_NotorBangerBulletExplosive, true, BoolCollision, true);
+			pBullet->AddComponent<CRigidbody>()->SetGravityScale(1);
+			pBullet->AddComponent<CBoxCollider>()->SetSize({ 1, 1 });
+			pBullet->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+			pBullet->AddComponent<BulletController>();
+		}
 	}
 
 	// Head Gunner
 	{
 		// Animations
 		{
-#define Animation_HeadGunnerIdle "Animation_HeadGunnerIdle"
-#define Animation_HeadGunnerShoot1 "Animation_HeadGunnerShoot1"
-#define Animation_HeadGunnerShoot2 "Animation_HeadGunnerShoot2"
-#define Animation_HeadGunnerEnd "Animation_HeadGunnerEnd"
-
-
 			new CAnimation(Animation_HeadGunnerIdle, Texture_EnemiesAndBosses, 45, 1, 200, false);
 			new CAnimation(Animation_HeadGunnerShoot1, Texture_EnemiesAndBosses, 46, 3, 200, false);
 			new CAnimation(Animation_HeadGunnerShoot2, Texture_EnemiesAndBosses, 49, 3, 200, false);
@@ -184,7 +179,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		// Prefab
 		{
-#define Prefab_HeadGunner "Prefab_HeadGunner"
 
 			auto pPrefab = pResourceManager->AddPrefab(Prefab_HeadGunner);
 			pPrefab->AddComponent<CAnimator>()
@@ -193,7 +187,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				->AddAnimation(Animation_HeadGunnerShoot2)
 				->AddAnimation(Animation_HeadGunnerEnd)
 				
-#define BoolShoot "isShoot"
 
 				->AddBool(BoolShoot, false)
 				
@@ -212,6 +205,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPrefab->AddComponent<HeadGunnerEnemyController>()->SetSpeed(0.1)
 			;
 		}
+
+		// Head Gunner Bullet
+		{
+			new CAnimation(Animation_HeadGunnerBulletInit, Texture_EnemiesAndBosses, 53, 1, 100, false);
+			new CAnimation(Animation_HeadGunnerBulletExplosive, Texture_EnemiesAndBosses, 54, 1, 100, false);
+			auto pBullet = pResourceManager->AddPrefab(Prefab_HeadGunnerBullet);
+			pBullet->AddComponent<CAnimator>()
+				->AddAnimation(Animation_HeadGunnerBulletInit)
+				->AddAnimation(Animation_HeadGunnerBulletExplosive)
+				->AddBool(BoolCollision, false)
+				->AddTransition(Animation_HeadGunnerBulletInit, Animation_HeadGunnerBulletExplosive, true, BoolCollision, true);
+			pBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
+			pBullet->AddComponent<CBoxCollider>()->SetSize({ 1, 1 });
+			pBullet->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+			pBullet->AddComponent<BulletController>();
+		}
+	}
+
+	//Buster Shots
+	{
+		new CAnimation(Animation_BusterShotBulletInit, "WeaponsAndItems", 0, 1, 100, false);
+		new CAnimation(Animation_BusterShotBulletExplosive, "WeaponsAndItems", 1, 3, 100, false);
+		auto pBullet = pResourceManager->AddPrefab(Prefab_BusterShotBullet);
+		pBullet->AddComponent<CAnimator>()
+			->AddAnimation(Animation_BusterShotBulletInit)
+			->AddAnimation(Animation_BusterShotBulletExplosive)
+			->AddBool(BoolCollision, false)
+			->AddTransition(Animation_BusterShotBulletInit, Animation_BusterShotBulletExplosive, true, BoolCollision, true);
+		pBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
+		pBullet->AddComponent<CBoxCollider>()->SetSize({ 1, 1 });
+		pBullet->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+		pBullet->AddComponent<BulletController>();
 	}
 
 	do
@@ -288,6 +313,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddAnimation("MegaManX Wall Clinging")
 			->AddAnimation("MegaManX Wall Clinging Shoot")
 			->AddAnimation("MegaManX Power")
+			->AddAnimation("MegaManX WasHit")
 
 			->AddBool("isIdle", false)
 			->AddBool("isJump", false)
@@ -298,6 +324,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddBool("isDash", false)
 			->AddBool("isClimbLadder", false)
 			->AddBool("isClinging", false)
+			->AddBool("isWasHit", false)
 
 			->AddTransition("MegaManX Init", "MegaManX InitLand", true, "isLandfall", true)
 			->AddTransition("MegaManX InitLand", "MegaManX Idle")
@@ -308,55 +335,66 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition("MegaManX Idle", "MegaManX Run", true, "isRun", true)
 			->AddTransition("MegaManX Idle", "MegaManX ClimbLadder", true, "isClimbLadder", true)
 			->AddTransition("MegaManX Idle", "MegaManX Idle Shoot", true, "isShoot", true)
+			->AddTransition("MegaManX Idle", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Idle Shoot", "MegaManX Idle")
 			->AddTransition("MegaManX Idle Shoot", "MegaManX Dash", true, "isDash", true)
 			->AddTransition("MegaManX Idle Shoot", "MegaManX Jump", true, "isJump", true)
 			->AddTransition("MegaManX Idle Shoot", "MegaManX Fall", true, "isFall", true)
 			->AddTransition("MegaManX Idle Shoot", "MegaManX Run", true, "isRun", true)
 			->AddTransition("MegaManX Idle Shoot", "MegaManX ClimbLadder", true, "isClimbLadder", true)
-
+			->AddTransition("MegaManX Idle Shoot", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Dash", "MegaManX Idle", false, "isDash", false)
 			->AddTransition("MegaManX Dash", "MegaManX Dash Shoot", true, "isShoot", true, true)
+			->AddTransition("MegaManX Dash", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Dash Shoot", "MegaManX Dash", true, "isShoot", false, true)
-
+			->AddTransition("MegaManX Dash Shoot", "MegaManX WasHit", true, "isWasHit", true)
 
 			->AddTransition("MegaManX Jump", "MegaManX Fall", true, "isFall", true)
 			->AddTransition("MegaManX Jump", "MegaManX ClimbLadder", true, "isClimbLadder", true)
 			->AddTransition("MegaManX Jump", "MegaManX Wall Clinging", true, "isClinging", true)
 			->AddTransition("MegaManX Jump", "MegaManX Jump Shoot", true, "isShoot", true, true)
+			->AddTransition("MegaManX Jump", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Jump Shoot", "MegaManX Jump", true, "isShoot", false, true)
 			->AddTransition("MegaManX Jump Shoot", "MegaManX Fall", true, "isFall", true)
 			->AddTransition("MegaManX Jump Shoot", "MegaManX ClimbLadder", true, "isClimbLadder", true)
 			->AddTransition("MegaManX Jump Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
-
+			->AddTransition("MegaManX Jump Shoot", "MegaManX WasHit", true, "isWasHit", true)
 
 			->AddTransition("MegaManX Fall", "MegaManX Landfall", true, "isLandfall", true)
 			->AddTransition("MegaManX Fall", "MegaManX Fall Shoot", true, "isShoot", true, true)
-			->AddTransition("MegaManX Fall", "MegaManX Wall Clinging", true, "isClinging", true)
+			->AddTransition("MegaManX Fall", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Fall Shoot", "MegaManX Fall", true, "isShoot", false, true)
 			->AddTransition("MegaManX Fall Shoot", "MegaManX Landfall", true, "isLandfall", true)
-			->AddTransition("MegaManX Fall Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
+			->AddTransition("MegaManX Fall Shoot", "MegaManX WasHit", true, "isWasHit", true)
 
 			->AddTransition("MegaManX Landfall", "MegaManX Idle")
 			->AddTransition("MegaManX Landfall", "MegaManX Landfall Shoot", true, "isShoot", true, true)
+			->AddTransition("MegaManX Landfall", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Landfall Shoot", "MegaManX Landfall", true, "isShoot", false, true)
 			->AddTransition("MegaManX Landfall Shoot", "MegaManX Idle")
-
+			->AddTransition("MegaManX Landfall Shoot", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Run", "MegaManX Idle", true, "isRun", false)
 			->AddTransition("MegaManX Run", "MegaManX Jump", true, "isJump", true)
 			->AddTransition("MegaManX Run", "MegaManX Dash", true, "isDash", true)
 			->AddTransition("MegaManX Run", "MegaManX Run Shoot", true, "isShoot", true, true)
+			->AddTransition("MegaManX Run", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Run Shoot", "MegaManX Run", true, "isShoot", false, true)
 			->AddTransition("MegaManX Run Shoot", "MegaManX Idle", true, "isRun", false)
 			->AddTransition("MegaManX Run Shoot", "MegaManX Jump", true, "isJump", true)
 			->AddTransition("MegaManX Run Shoot", "MegaManX Dash", true, "isDash", true)
+			->AddTransition("MegaManX Run Shoot", "MegaManX WasHit", true, "isWasHit", true)
 
 			->AddTransition("MegaManX ClimbLadder", "MegaManX Idle", true, "isClimbLadder", false)
+			->AddTransition("MegaManX ClimbLadder", "MegaManX WasHit", true, "isWasHit", true)
 
 			->AddTransition("MegaManX Wall Clinging", "MegaManX Idle", true, "isClinging", false)
-			//->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
+			->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
 			->AddTransition("MegaManX Wall Clinging", "MegaManX Wall Clinging Shoot", true, "isShoot", true, true)
+			->AddTransition("MegaManX Wall Clinging", "MegaManX WasHit", true, "isWasHit", true)
 			->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
+			->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX WasHit", true, "isWasHit", true)
+
+			->AddTransition("MegaManX WasHit", "MegaManX Idle")
 		;
 		pPlayer->GetComponent<CRenderer>()->SetFlipY(false);
 		pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
@@ -366,10 +404,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 		pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
 
-		CGameObject* pPowerEffect = new CGameObject("Power Effect", Vector2(800, 875));
+		CGameObject* pPowerEffect = new CGameObject("Power Effect", Vector2(150, 875));
 		pPowerEffect->SetIsActive(false);
 		pPowerEffect->GetComponent<CTransform>()->SetParent(pPlayer);
-		pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-1);
+		pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-10);
 		pPowerEffect->AddComponent<CAnimator>()
 			->AddAnimation("MegaManX Power");
 		pPlayer->GetComponent<PlayerController>()->m_Power = pPowerEffect;

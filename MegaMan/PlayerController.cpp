@@ -4,34 +4,47 @@
 #include "Graphic.h"
 #include "Input.h"
 #include "Animator.h"
-
-PlayerController::PlayerController(const PlayerController& PC) : CMonoBehavior(PC)
-{
-	m_speed = PC.m_speed;
-}
-
-PlayerController* PlayerController::Clone() const
-{
-	return new PlayerController(*this);
-}
-
-PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(gameObject)
-{
-
-}
+#include "Header.h"
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
 	auto anim = m_pGameObject->GetComponent<CAnimator>();
 
-	CDebug::Log("%s - %s\n", collision->GetCollider()->GetName().c_str(),
-	            collision->GetOtherCollider()->GetName().c_str());
+	//CDebug::Log("%s - %s\n", collision->GetCollider()->GetName().c_str(), collision->GetOtherCollider()->GetName().c_str());
 	if(strstr(collision->GetOtherCollider()->GetName().c_str(), std::string("Wall").c_str()))
 	{
 		anim->SetBool("isClinging", true);
 		anim->SetBool("isJump", false);
 	}
-	//m_pGameObject->GetComponent<CAnimator>()->SetBool("isJump", false);
+}
+
+void PlayerController::OnTriggerEnter(CCollision *collision)
+{
+	auto anim = m_pGameObject->GetComponent<CAnimator>();
+
+	std::string otherName = collision->GetOtherCollider()->GetName();
+	CDebug::Log(otherName + "\n");
+	if (strstr(otherName.c_str(), "Bullet"))
+	{
+		anim->SetBool("isWasHit", true);
+	}
+	else
+	{
+		/*anim->SetBool("isWasHit", false);
+		anim->SetBool("isIdle", true);*/
+	}
+}
+
+void PlayerController::OnTriggerExit(CCollision * collision)
+{
+	auto anim = m_pGameObject->GetComponent<CAnimator>();
+
+	std::string otherName = collision->GetOtherCollider()->GetName();
+	CDebug::Log(otherName + "\n");
+	if (strstr(otherName.c_str(), "Bullet"))
+	{
+		anim->SetBool("isWasHit", false);
+	}
 }
 
 void PlayerController::Update(DWORD dt)
@@ -41,6 +54,13 @@ void PlayerController::Update(DWORD dt)
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
 	const Vector2 velocity = rigidbody->GetVelocity();
+
+	m_wasHitTime += dt;
+	if (anim->GetBool("isWasHit") && m_wasHitTime >= WASHIT_TIMEOUT)
+	{
+		anim->SetBool("isWasHit", false);
+		m_wasHitTime = 0;
+	}
 
 	if (velocity.y > 0)
 	{
@@ -62,16 +82,17 @@ void PlayerController::Update(DWORD dt)
 
 	if (input->KeyDown(DIK_SPACE)) {
 		anim->SetBool("isShoot", true);
+		
+		Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+		bool isFlip = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
+
+		pos.x = (isFlip ? pos.x - 10 : pos.x + 10);
+		auto pBullet = CGameObject::Instantiate(Prefab_BusterShotBullet, nullptr, pos);
+		
+		pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? -.3f : .3f) , 0 });
 	}
 	if (input->KeyUp(DIK_SPACE)) {
 		anim->SetBool("isShoot", false);
-	}
-
-	if (input->KeyDown(DIK_E)) {
-		anim->SetBool("isPowering", true);
-	}
-	if (input->KeyUp(DIK_E)) {
-		anim->SetBool("isPowering", false);
 	}
 
 	if (input->KeyDown(DIK_UPARROW)) {

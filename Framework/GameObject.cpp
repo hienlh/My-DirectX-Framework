@@ -36,6 +36,18 @@ CGameObject::CGameObject(std::string name, Vector2 position, bool addIntoCurrent
 	}
 }
 
+CGameObject::~CGameObject()
+{
+	int size = m_pComponents.size();
+	for(auto i=m_pComponents.begin();i!=m_pComponents.end();i++)
+	{
+		SAFE_DELETE((*i).second);
+	}
+
+	if(m_pScene)
+		m_pScene->RemoveGameObject(this);
+}
+
 bool CGameObject::AddComponent(CComponent* component)
 {
 	bool result = false;
@@ -103,8 +115,10 @@ void CGameObject::Update(DWORD dt)
 	const Vector2 prePos = transform->Get_Position();
 
 	for (auto component : m_pComponents)
-		if(component.second->GetIsActive())
+		if (component.second->GetIsActive()) {
 			component.second->Update(dt);
+			if (!component.second->GetGameObject()) return;
+		}
 
 	//Reset position of static gameObjects and half-static gameObjects which is moved
 	Vector2 curPos = transform->Get_Position();

@@ -294,7 +294,7 @@ float CPhysic::SweptAABBx(const DWORD dt, CGameObject* moveObject, CGameObject* 
 		t, nx, ny
 	);
 
-	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0 && !isTrigger)
+	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t < 0 && !isTrigger)
 	{
 		OverLapResponse(moveObject, staticObject);
 		//deflect

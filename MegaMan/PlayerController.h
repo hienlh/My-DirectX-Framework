@@ -11,16 +11,17 @@ public:
 
 private:
 	float m_speed = 0;
+	DWORD m_wasHitTime = 0;
 
 	// To Clone Function
 private:
 	PlayerController() = default;
-	PlayerController(const PlayerController &PC);
-	PlayerController* Clone() const override;
+	PlayerController(const PlayerController &PC) : CMonoBehavior(PC) { m_speed = PC.m_speed; };
+	PlayerController* Clone() const override { return new PlayerController(*this); }
 
 	//Cons / Des
 public:
-	PlayerController(CGameObject *gameObject);
+	PlayerController(CGameObject *gameObject) : CMonoBehavior(gameObject) {};
 	~PlayerController() = default;
 
 	//Getter / Setter
@@ -32,6 +33,8 @@ public:
 	//Override
 private:
 	void OnCollisionEnter(CCollision* collision) override;
+	void OnTriggerEnter(CCollision* collision) override;
+	void OnTriggerExit(CCollision* collision) override;
 	void Update(DWORD dt) override;
 	void Render() override;
 

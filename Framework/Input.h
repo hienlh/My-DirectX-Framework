@@ -41,7 +41,7 @@ namespace Framework
 		void Update();
 		void PollKeyboard();
 		int KeyDown(int key);
-		int KeyUp(int key);
+		int KeyUp(int key); 
 		int KeyHold(int key);
 		void KillKeyboard();
 		void PollMouse();

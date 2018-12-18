@@ -4,6 +4,7 @@
 #include "Graphic.h"
 #include "Input.h"
 #include "Animator.h"
+#include "Header.h"
 
 void NotorBangerEnemyController::OnCollisionEnter(CCollision * collision)
 {
@@ -37,7 +38,7 @@ void NotorBangerEnemyController::Update(DWORD dt)
 			anim->SetBool("isIdle", false);
 
 			DWORD alpha = (float)fabs(currentPosition.x - targetPosition.x) / 3;
-			OutputDebugStringA(((std::to_string(alpha) + "\n").c_str()));
+			//OutputDebugStringA(((std::to_string(alpha) + "\n").c_str()));
 
 			DWORD angles[] = { 0, 30, 45, 60, 90 };
 			std::string names[] = { "is0", "is30", "is45", "is60", "is90" };
@@ -52,9 +53,22 @@ void NotorBangerEnemyController::Update(DWORD dt)
 					selectedAngleIndex = iAngle;
 			}
 			anim->SetBool(names[selectedAngleIndex], true);
-			OutputDebugStringA((names[selectedAngleIndex] + "\n").c_str());
+			//OutputDebugStringA((names[selectedAngleIndex] + "\n").c_str());
+			
+			m_reloadTime += dt;
+			if (m_reloadTime >= RELOAD_TIME)
+			{
+				Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+				bool isFlip = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
 
-			OutputDebugStringA("Shoot");
+				pos.x = (isFlip ? pos.x + 10 : pos.x - 10);
+				pos.y -= 20;
+				auto pBullet = CGameObject::Instantiate(Prefab_NotorBangerBullet, nullptr, pos);
+
+				pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? .3f : -.3f) , -.15f });
+
+				m_reloadTime = 0;
+			}
 		}
 		else if (fabs(targetPosition.x - currentPosition.x) < 300)
 		{
@@ -62,7 +76,7 @@ void NotorBangerEnemyController::Update(DWORD dt)
 			{
 				anim->SetBool("isJump", true);
 				anim->SetBool("isIdle", false);
-				OutputDebugStringA("Jump");
+				//OutputDebugStringA("Jump");
 
 				rigidbody->AddVelocity(Vector2((targetPosition.x > currentPosition.x ? .1 : -.1), -.1));
 			}
@@ -71,7 +85,7 @@ void NotorBangerEnemyController::Update(DWORD dt)
 		{
 			anim->SetBool("isJump", false);
 			anim->SetBool("isIdle", true);
-			OutputDebugStringA("Idle");
+			//OutputDebugStringA("Idle");
 		}
 
 		/*if (input->ButtonDown(DIK_SPACE))

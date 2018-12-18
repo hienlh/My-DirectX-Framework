@@ -42,8 +42,6 @@
 #define MAX_VELOCITY 1e9
 #define EPSILON 1e-9
 
-#define FEQUAL(a, b) (fabs(a - b) < EPSILON)
-
 #define MAX_QUAD_TREE_LEVEL 5
 
 #define COLOR_GET_A( c ) ((c)>>24)
