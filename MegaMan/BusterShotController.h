@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "MonoBehavier.h"
 using namespace Framework;
 class BusterShotController : public Framework::CMonoBehavior
@@ -16,7 +16,7 @@ public:
 
 	//Override
 private:
-	void OnCollisionEnter(CCollision* collision) override;
+	void OnTriggerEnter(CCollision* collision) override;
 	void Update(DWORD dt) override;
 	void Render() override;
 };

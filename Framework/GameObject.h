@@ -27,7 +27,7 @@ namespace Framework
 	public:
 		CGameObject(const CGameObject& gameObject);
 		CGameObject(std::string name, Vector2 position = VECTOR2_ZERO, bool addIntoCurrentScene = true);
-		~CGameObject() = default;
+		~CGameObject();
 
 		// Friends
 	public:
@@ -127,8 +127,8 @@ namespace Framework
 
 		// Override methods
 	public:
-		virtual void Update(DWORD dt);
-		void Render();
+		void Update(DWORD dt) override;
+		void Render() override;
 
 		CGameObject* Clone() const override;
 

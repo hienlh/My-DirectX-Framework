@@ -1,4 +1,4 @@
-#include "GenjiBosController.h"
+﻿#include "GenjiBosController.h"
 
 GenjiBosController::GenjiBosController(CGameObject * gameObject) :CMonoBehavior(gameObject)
 {
@@ -11,17 +11,18 @@ GenjiBosController::~GenjiBosController()
 
 void GenjiBosController::Update(DWORD dt)
 {
+	m_startTime += dt;
 	auto rigidbody = m_pGameObject->GetComponent<CRigidbody>();
 	auto transform = m_pGameObject->GetComponent<CTransform>();
 
-	if (GetTickCount() - m_startTime > 5000) {
-		if(m_shurikein)
+	if (m_startTime > 3000) {
+		if (m_shurikein)
 			m_shurikein->SetIsActive(true);
 	}
 
-	if (GetTickCount() - m_startTime < 7000)
+	if (m_startTime < 5000)
 	{
-		if(m_light)
+		if (m_light)
 			m_light->SetIsActive(false);
 		rigidbody->SetVelocity({ 0,0.1 });
 		if (transform->Get_Position().y > 1140)

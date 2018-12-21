@@ -48,8 +48,10 @@ bool CScene::Release()
 	do {
 		for (auto gameObject : GetAllGameObjects())
 		{
-			CGameObject::Destroy(gameObject);
+			SAFE_DELETE(gameObject)
 		}
+
+		m_pMainCamera->SetScene(nullptr);
 		SAFE_DELETE(m_pMainCamera);
 
 		result = true;
@@ -113,16 +115,18 @@ void CScene::Update(DWORD dt)
 
 	for (CGameObject* pGameObject : GetAllGameObjects())
 	{
-		if(pGameObject->GetIsActive())
-			pGameObject->Update(dt);
+		if (pGameObject&&pGameObject->GetIsActive())
+				pGameObject->Update(dt);
 	}
 
-	if(m_pMainCamera->GetIsActive())
-		m_pMainCamera->Update(dt);
+	if (m_pMainCamera) {
+		if (m_pMainCamera->GetIsActive())
+			m_pMainCamera->Update(dt);
 
-	CGraphic::GetInstance()->SetTransform(m_pMainCamera->GetComponent<CCamera>()->GetOrthographicMatrix(),
-		m_pMainCamera->GetComponent<CCamera>()->GetIdentityMatrix(),
-		m_pMainCamera->GetComponent<CCamera>()->GetViewMatrix());
+		CGraphic::GetInstance()->SetTransform(m_pMainCamera->GetComponent<CCamera>()->GetOrthographicMatrix(),
+			m_pMainCamera->GetComponent<CCamera>()->GetIdentityMatrix(),
+			m_pMainCamera->GetComponent<CCamera>()->GetViewMatrix());
+	}
 }
 
 void CScene::Render()
@@ -134,16 +138,20 @@ void CScene::Render()
 
 bool CScene::AddGameObject(CGameObject* gameObject)
 {
-	/*const auto name = gameObject->GetName();
-	if (FindGameObject(name))
-	{
-		return false;
-	}*/
+	if (!gameObject) return false;
 
 	m_gameObjectList.insert(gameObject);
 	gameObject->SetScene(this);
 	AddColliderObject(gameObject);
 	return true;
+}
+
+void CScene::RemoveGameObject(CGameObject* gameObject)
+{
+	m_dynamicObjectList.erase(gameObject);
+	m_gameObjectList.erase(gameObject);
+	m_halfStaticObjectList.erase(gameObject);
+	m_staticObjectList.erase(gameObject);
 }
 
 CGameObject* CScene::FindGameObject(std::string name)

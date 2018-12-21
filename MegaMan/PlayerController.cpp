@@ -22,7 +22,16 @@ PlayerController::PlayerController(CGameObject* gameObject) : CMonoBehavior(game
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
-	//CDebug::Log("Collision ground \n");
+	auto anim = m_pGameObject->GetComponent<CAnimator>();
+
+	CDebug::Log("%s - %s\n", collision->GetCollider()->GetName().c_str(),
+	            collision->GetOtherCollider()->GetName().c_str());
+	if(strstr(collision->GetOtherCollider()->GetName().c_str(), std::string("Wall").c_str()))
+	{
+		anim->SetBool("isClinging", true);
+		anim->SetBool("isJump", false);
+	}
+	//m_pGameObject->GetComponent<CAnimator>()->SetBool("isJump", false);
 }
 
 void PlayerController::Update(DWORD dt)
@@ -37,10 +46,10 @@ void PlayerController::Update(DWORD dt)
 	{
 		anim->SetBool("isFall", true);
 		anim->SetBool("isLandfall", false);
-		anim->SetBool("isJump", true);
 	}
 	else if (velocity.y == 0) {
 		if (anim->GetBool("isFall")) anim->SetBool("isLandfall", true);
+		anim->SetBool("isClinging", false);
 		anim->SetBool("isFall", false);
 		anim->SetBool("isJump", false);
 	}
@@ -53,6 +62,7 @@ void PlayerController::Update(DWORD dt)
 
 	if (input->KeyDown(DIK_SPACE)) {
 		anim->SetBool("isShoot", true);
+		Shoot();
 	}
 	if (input->KeyUp(DIK_SPACE)) {
 		anim->SetBool("isShoot", false);
@@ -113,16 +123,11 @@ void PlayerController::Update(DWORD dt)
 		rigidbody->SetGravityScale(1);
 	}
 
-	if (input->KeyDown(DIK_Q)) {
-		anim->SetBool("isClinging", true);
-	}
-	if (input->KeyUp(DIK_Q)) {
-
-	}
 	if (anim->GetBool("isLandfall") || anim->GetBool("isJump"))
 	{
 		anim->SetBool("isClinging", false);
 	}
+
 	if (anim->GetBool("isClinging") && anim->GetBool("isJump"))
 	{
 		const bool isLeft = renderer->GetFlipX();
@@ -153,8 +158,32 @@ void PlayerController::Update(DWORD dt)
 			rigidbody->SetVelocity(Vector2(0, MAX_VELOCITY));
 		}
 	}
+
+	if (input->KeyDown(DIK_E)) {
+		if(m_Power)
+			m_Power->SetIsActive(true);
+	}
+	if (input->KeyUp(DIK_E)) {
+		if (m_Power)
+			m_Power->SetIsActive(false);
+	}
+
+	if(transform->Get_Position().x > 2320)
+	{
+		if (m_GenjiBos && !m_GenjiBos->GetIsActive())
+			m_GenjiBos->SetIsActive(true);
+	}
 }
 
 void PlayerController::Render()
 {
+}
+
+void PlayerController::Shoot()
+{
+	const bool isLeft = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
+	Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+	pos.x += (isLeft ? -1 : 1) * 25;
+	auto pBullet = CGameObject::Instantiate("BusterShot", nullptr, pos);
+	pBullet->GetComponent<CRigidbody>()->SetVelocity({static_cast<float>((isLeft ? -1 : 1) * 0.3), 0 });
 }

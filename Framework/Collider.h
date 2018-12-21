@@ -13,7 +13,6 @@ namespace Framework {
 		Bound m_Bound = {};
 		bool m_IsTrigger = false;
 		bool m_UsedByEffector = true;
-		bool m_IsDebugging = false;
 		bool m_AutoBoundSize = false; //Used when animator have a lot of different sizes
 
 		//Cons / Des
@@ -27,7 +26,6 @@ namespace Framework {
 		Bound GetBoundGlobal() const;
 		Rect GetBoundArea() const;
 		bool GetUsedByEffector() const;
-		bool GetIsDebugging() const;
 		bool GetAutoBoundSize() const;
 		bool GetIsTrigger() const;
 		Vector2 GetAnchor() const;
@@ -35,7 +33,6 @@ namespace Framework {
 		void SetUsedByEffector(bool usedByEffector);
 		/*void SetBoundSize(Vector2 size);*/
 		void SetOffset(Vector2 offset);
-		void SetIsDebugging(bool isDebugging);
 		void SetAutoBoundSize(bool autoBoundSize);
 		void SetAnchor(Vector2 anchor);
 		void SetIsTrigger(bool isTrigger);

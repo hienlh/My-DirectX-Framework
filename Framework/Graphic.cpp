@@ -3,6 +3,7 @@
 #include "Graphic.h"
 #include "Macros.h"
 #include "GameObject.h"
+#include "GameManager.h"
 
 using namespace Framework;
 
@@ -108,8 +109,9 @@ bool CGraphic::Render(CScene * scene) const
 		m_pSpriteHandler->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE); // D3DXSPRITE_SORT_DEPTH_BACKTOFRONT
 
 		for (CGameObject* pGameObject : scene->GetRenderGameObjects())
-			if(pGameObject->GetIsActive())
-				pGameObject->Render();
+			if(pGameObject)
+				if(pGameObject->GetIsActive())
+					pGameObject->Render();
 
 		if(scene->GetIsRenderQuadTree())
 			scene->GetQuadTree()->Render();
@@ -205,6 +207,7 @@ void CGraphic::Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices)
 
 void CGraphic::DrawRectangle(Rect rect, DWORD color)
 {
+	if (!CGameManager::GetInstance()->GetIsDebugging()) return;
 	// Refer: http://directxtutorial.com/Lesson.aspx?lessonid=9-4-4
 	// create some vertices using the CUSTOMVERTEX struct built earlier
 	std::vector<CUSTOMVERTEX> vertices;
