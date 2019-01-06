@@ -6,6 +6,7 @@ class BlastHornetChild2Controller : public Framework::CMonoBehavior
 private:
 	CGameObject* m_target;
 	CGameObject* m_parent;
+	int lifeTime;
 	// To Clone Function
 public:
 	BlastHornetChild2Controller() = default;
@@ -16,6 +17,7 @@ public:
 public:
 	void SetTarget(CGameObject* target) { m_target = target; }
 	void SetParent(CGameObject* parent) { m_parent = parent; }
+	void SetAliveTime(int time) { lifeTime = time; }
 	//Cons / Des
 public:
 	BlastHornetChild2Controller(CGameObject* gameObject);

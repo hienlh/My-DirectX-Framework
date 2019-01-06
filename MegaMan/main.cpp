@@ -289,7 +289,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	do
 	{
 		//Player
-		CGameObject* pPlayer = new CGameObject("Player", { 45, 875 });//2160, 1129 || 45, 875 || 7720, 1827
+		CGameObject* pPlayer = new CGameObject("Player", { 7720, 1827 });//2160, 1129 || 45, 875 || 7720, 1827
 		{
 			pPlayer->AddComponent<CAnimator>()
 				->AddAnimation(Animation_MegaManX_Init)
@@ -457,7 +457,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				->AddTransition("BlastHornet_Shooting", "BlastHornet_Died", false, "isDead", true)
 			;
 			pHornet->AddComponent<CRenderer>()->SetSprite(Texture_Blast_Hornet,3);
-			pHornet->AddComponent<CRigidbody>()->SetGravityScale(0)->SetLimitedArea(Rect(1807,7695,1920,7940));
+			pHornet->AddComponent<CRigidbody>()->SetGravityScale(0)->SetLimitedArea(Rect(1807,7695,1970,7940));
 			pHornet->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 			pHornet->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 			pHornet->GetComponent<CBoxCollider>()->SetIsTrigger(true);

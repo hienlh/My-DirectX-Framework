@@ -4,10 +4,6 @@
 #include "BlastHornetChild2Controller.h"
 #include "BlastHornetBulletController.h"
 #include "Renderer.h"
-Vector2 InitPos;
-DWORD waitTime=0;
-int targetTime = 0;
-CGameObject* pBullet=nullptr;
 
 BlastHornetController::BlastHornetController(const BlastHornetController& PC) : CMonoBehavior(PC)
 {
@@ -29,11 +25,23 @@ BlastHornetController::~BlastHornetController()
 {
 }
 
+void BlastHornetController::OnTriggerEnter(CCollision* collision)
+{
+	std::string collisionName = collision->GetOtherCollider()->GetName();
+	
+		if (strstr(collisionName.c_str(), std::string("Wall").c_str()) || strstr(collisionName.c_str(), std::string("Ground").c_str()) || strstr(collisionName.c_str(), std::string("Ceiling").c_str())|| strstr(collisionName.c_str(), std::string("Door").c_str()))
+		{
+			isCollision = true;
+		}
+
+}
+
 void BlastHornetController::Update(DWORD dt)
 {
 	Vector2 targetPos = m_target->GetComponent<CTransform>()->Get_Position();
 	CTransform* transform = m_pGameObject->GetComponent<CTransform>();
 	CRigidbody* rigidbody = m_pGameObject->GetComponent<CRigidbody>();
+	CRenderer* renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator* animator = m_pGameObject->GetComponent<CAnimator>();
 	Bound myBound = m_pGameObject->GetComponent<CCollider>()->GetBoundGlobal();
 	Vector2 veclocity = rigidbody->GetVelocity();
@@ -46,110 +54,65 @@ void BlastHornetController::Update(DWORD dt)
 	//-----------------------------------
 	if (!m_attacking)
 	{
-		if (myBound.intersect(m_topRight))
-		{
-			veclocity = Vector2({ -m_flySpeed,0 });
-		}
-		else if (myBound.intersect(m_topLeft))
-		{
-			veclocity = Vector2({ 0,m_flySpeed });
-		}
-		else if (myBound.intersect(m_bottomLeft))
-		{
-			veclocity = Vector2({ m_flySpeed,0 });
-		}
-		else if (myBound.intersect(m_bottomRight))
-		{
-			veclocity = Vector2({ 0,-m_flySpeed });
-		}
-		rigidbody->SetVelocity(veclocity);
+		startFly += dt;
+		transform->Set_Position(CalculatePosition(startFly, 1, 70));
 	}
+
+	//-----------------------------------
+	//Flip controller
+	//-----------------------------------
+	if (myPos.x < targetPos.x - 5) renderer->SetFlipX(true);
+	else if(myPos.x > targetPos.x + 5) renderer->SetFlipX(false);
 	//-----------------------------------
 	//Child Controller
 	//-----------------------------------
 	
-		waitTime += dt;
+		
 		if (m_startBombing)
 		{
-			if (waitTime >= 2000)
-			{
-				
-				auto pChild1 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
-				auto pChild2 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
-				auto pChild3 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
-				auto pChild4 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
-				auto pChild5 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
-				// auto pChild1 = GetDisactiveChild(); pChild1->SetIsActive(true);
-				// auto pChild2 = GetDisactiveChild();	pChild2->SetIsActive(true);
-				// auto pChild3 = GetDisactiveChild();	pChild3->SetIsActive(true);
-				// auto pChild4 = GetDisactiveChild();	pChild4->SetIsActive(true);
-				// auto pChild5 = GetDisactiveChild();	pChild5->SetIsActive(true);
-				
-				pChild1->GetComponent<CTransform>()->Set_Position(myPos);
-				pChild2->GetComponent<CTransform>()->Set_Position(myPos);
-				pChild3->GetComponent<CTransform>()->Set_Position(myPos);
-				pChild4->GetComponent<CTransform>()->Set_Position(myPos);
-				pChild5->GetComponent<CTransform>()->Set_Position(myPos);
-
-				pChild1->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(30, 30), 0.2)));
-				pChild2->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(15,15), 0.2)));
-				pChild3->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(00,00), 0.2)));
-				pChild4->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-15,-15), 0.2)));
-				pChild5->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-30,-30), 0.2)));
-				
-				
-				pChild1->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
-				pChild2->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
-				pChild3->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
-				pChild4->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
-				pChild5->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
-
-				// m_startBombing = false;
-				waitTime = 0;
-				}
+			Bomb(myPos, targetPos);
+			m_startBombing = false;
 			
 		} 
-	else if(m_targeting)
+		else if(m_targeting)
 		{
-			targetTime += dt;
-			if(targetTime >=7000)
-			{
-				pBullet = CGameObject::Instantiate("BlastHornetBullet", nullptr, myPos);
-				targetTime = 0;
-			}
-			if(waitTime>2000)
-			{
-				if(m_isTargeted)
-				{
-					auto pChild1 = CGameObject::Instantiate("BlastHornetChild2", nullptr, myPos);
-					pChild1->GetComponent<BlastHornetChild2Controller>()->SetTarget(m_target);
-					auto pChild2 = CGameObject::Instantiate("BlastHornetChild2", nullptr, myPos);
-					pChild2->GetComponent<BlastHornetChild2Controller>()->SetTarget(m_target);
-				}
-				
-				waitTime = 0;
-			}
+			Shoot(myPos, targetPos);
 			m_targeting = false;
-			
 		}
-	else if (m_attacking)
+		else if (m_attacking)
 		{
-			
-			if (animator->GetBool("isAttack") == false)
+			Attack(myPos, targetPos);
+		}
+		else
+		{
+			waitTime += dt;
+			if (waitTime > 2000)
 			{
-				m_lastPosition = transform->Get_Position();
-				m_lastVelocity = rigidbody->GetVelocity();
-				animator->SetBool("isAttack", true);
-				rigidbody->SetVelocity({ 0,0 });
-			}
-			else
-			{
-				if (animator->GetCurrentAnimation()->IsLastFrame())
+				attackID = attackID > 10 ? 0 : (attackID+1);
+				waitTime = 0;
+
+				switch (attackID)
 				{
-					rigidbody->SetVelocity(CalculateVelocity(myPos, targetPos, 0.3));
+				case 1:
+				case 5:
+					m_attacking = true;
+					break;
+				case 2:
+				case 3:
+				case 4:
+					m_startBombing = true;
+					break;
+				case 6:
+				case 7:
+				case 8:
+				case 9:
+				case 10:
+					m_targeting = true;
+					break;
+
 				}
-				m_attacking = false;
 			}
+			
 		}
 }
 
@@ -157,9 +120,92 @@ void BlastHornetController::Render()
 {
 }
 
-void BlastHornetController::Shoot(Vector2 targetPos)
+void BlastHornetController::Shoot(Vector2 myPos, Vector2 targetPos)
 {
+	
+	pBullet = CGameObject::Instantiate("BlastHornetBullet", nullptr, myPos);
 
+	auto pChild1 = CGameObject::Instantiate("BlastHornetChild2", nullptr, myPos);
+	auto pChild2 = CGameObject::Instantiate("BlastHornetChild2", nullptr, myPos);
+
+	pChild1->GetComponent<BlastHornetChild2Controller>()->SetAliveTime(5000);
+	pChild2->GetComponent<BlastHornetChild2Controller>()->SetAliveTime(5000);
+
+	pChild1->GetComponent<BlastHornetChild2Controller>()->SetTarget(m_target);
+	pChild2->GetComponent<BlastHornetChild2Controller>()->SetTarget(m_target);
+}
+
+void BlastHornetController::Bomb(Vector2 myPos, Vector2 targetPos)
+{
+	auto pChild1 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
+	auto pChild2 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
+	auto pChild3 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
+	auto pChild4 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
+	auto pChild5 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
+	// auto pChild1 = GetDisactiveChild(); pChild1->SetIsActive(true);
+	// auto pChild2 = GetDisactiveChild();	pChild2->SetIsActive(true);
+	// auto pChild3 = GetDisactiveChild();	pChild3->SetIsActive(true);
+	// auto pChild4 = GetDisactiveChild();	pChild4->SetIsActive(true);
+	// auto pChild5 = GetDisactiveChild();	pChild5->SetIsActive(true);
+
+	pChild1->GetComponent<CTransform>()->Set_Position(myPos);
+	pChild2->GetComponent<CTransform>()->Set_Position(myPos);
+	pChild3->GetComponent<CTransform>()->Set_Position(myPos);
+	pChild4->GetComponent<CTransform>()->Set_Position(myPos);
+	pChild5->GetComponent<CTransform>()->Set_Position(myPos);
+
+	pChild1->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(30, 30), 0.2)));
+	pChild2->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(15, 15), 0.2)));
+	pChild3->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(00, 00), 0.2)));
+	pChild4->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-15, -15), 0.2)));
+	pChild5->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-30, -30), 0.2)));
+
+
+	pChild1->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
+	pChild2->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
+	pChild3->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
+	pChild4->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
+	pChild5->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
+}
+
+void BlastHornetController::Attack(Vector2 myPos, Vector2 targetPos)
+{
+	CAnimator* animator = m_pGameObject->GetComponent<CAnimator>();
+	CTransform* transform = m_pGameObject->GetComponent<CTransform>();
+	CRigidbody* rigidbody = m_pGameObject->GetComponent<CRigidbody>();
+	if (m_startAttack == false)
+	{
+		m_lastPosition = transform->Get_Position();
+		m_lastVelocity = rigidbody->GetVelocity();
+		m_lastStartFly = startFly;
+		animator->SetBool("isAttack", true);
+		rigidbody->SetVelocity({ 0,0 });
+		if (animator->GetCurrentAnimation()->IsLastFrame())
+		{
+			rigidbody->SetVelocity(CalculateVelocity(myPos, targetPos, 0.3));
+			m_startAttack = true;
+		}
+	}
+	else
+	{
+		
+		if (isCollision)
+		{
+			rigidbody->SetVelocity(CalculateVelocity(myPos, m_lastPosition, 0.3));
+			animator->SetBool("isAttack", false);
+			isCollision = false;
+		}
+		Vector2 distance = Vector2(fabs(myPos.x - m_lastPosition.x), fabs(myPos.y - m_lastPosition.y));
+		if(distance.x<10 && distance.y<10 && animator->GetBool("isAttack")==false)
+		{
+			m_attacking = false;
+			m_startAttack = false;
+			transform->Set_Position(m_lastPosition);
+			rigidbody->SetVelocity(m_lastVelocity);
+			startFly = m_lastStartFly;
+		}
+		
+	}
 }
 
 Vector2 BlastHornetController::CalculateVelocity(Vector2 myPos, Vector2 targetPos, float size)
@@ -180,4 +226,16 @@ CGameObject* BlastHornetController::GetDisactiveChild()
 	{
 		if (child1Pool.at(i)->GetIsActive() == false) return child1Pool.at(i);
 	}
+}
+
+Vector2 BlastHornetController::CalculatePosition(float dt, float velocity, float a)
+{
+	Rect limitedArea = m_pGameObject->GetComponent<CRigidbody>()->GetLimitedArea();
+	Vector2 postion;
+	postion.x = (a*sqrt(2)*cos(dt / 1000.0 * velocity)) / (pow(sin(dt / 1000.0 * velocity), 2)+1);
+	postion.y = postion.x*sin(dt / 1000.0 * velocity);
+	postion.x += (limitedArea.left + limitedArea.Size().x / 2);
+	postion.y += (limitedArea.top + limitedArea.Size().y / 2);
+
+	return postion;
 }

@@ -12,6 +12,32 @@ NotorBangerEnemyController::NotorBangerEnemyController(const NotorBangerEnemyCon
 	m_target = PC.m_target;
 }
 
+Vector2 NotorBangerEnemyController::CalculateVeclocity(Vector2 myPosition, Vector2 targetPosition, float gravity, float Vy)
+{
+	Vector2 velocity;
+	velocity.y = Vy;
+	float time = (-velocity.y + sqrt(pow(velocity.y, 2) - 2 * gravity*(myPosition.y - targetPosition.y))) / gravity;
+	velocity.x = (((targetPosition.x - myPosition.x)) / time);
+	return velocity;
+}
+
+std::string NotorBangerEnemyController::CalculateAngelRotation(Vector2 velocity)
+{
+	float alpha = fabs(velocity.y / sqrt(pow(velocity.x, 2) + pow(velocity.y, 2)));
+	float angles[] = { 0, 0.5, 1/sqrt(2), sqrt(3)/2, 1 };
+	std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
+	size_t selectedAngleIndex = 0;
+	// anim->SetBool(names[0], false);
+
+	// Least angle delta
+	for (size_t iAngle = 1; iAngle < _countof(angles); iAngle++)
+	{
+		if (fabs(angles[iAngle] - alpha) < fabs(angles[selectedAngleIndex] - alpha))
+			selectedAngleIndex = iAngle;
+	}
+	return names[selectedAngleIndex];
+}
+
 void NotorBangerEnemyController::OnCollisionEnter(CCollision * collision)
 {
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
@@ -29,26 +55,35 @@ void NotorBangerEnemyController::Update(DWORD dt)
 		const Vector2 targetPosition = m_target->GetComponent<CTransform>()->Get_Position();
 		const Vector2 currentPosition = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 
+		float gravity = 0.001*rigidbody->GetGravityScale();
+		Vector2 velocity = CalculateVeclocity(currentPosition, targetPosition, gravity, -0.3);
+		std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
+		for (size_t iAngle = 0; iAngle < _countof(names); iAngle++)
+		{
+			anim->SetBool(names[iAngle], false);
+		}
+		anim->SetBool(CalculateAngelRotation(velocity), true);
+
 		if (fabs(targetPosition.x - currentPosition.x) < 200)
 		{
 			anim->SetBool(Bool_IsJump, false);
 			anim->SetBool(Bool_IsIdle, false);
 
-			const DWORD alpha = static_cast<float>(fabs(currentPosition.x - targetPosition.x)) / 3;
-
-			DWORD angles[] = { 0, 30, 45, 60, 90 };
-			std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
-			size_t selectedAngleIndex = 0;
-			anim->SetBool(names[0], false);
-
-			// Least angle delta
-			for (size_t iAngle = 1; iAngle < _countof(angles); iAngle++)
-			{
-				anim->SetBool(names[iAngle], false);
-				if (fabs(angles[iAngle] - alpha) < fabs(angles[selectedAngleIndex] - alpha))
-					selectedAngleIndex = iAngle;
-			}
-			anim->SetBool(names[selectedAngleIndex], true);
+			// const DWORD alpha = static_cast<float>(fabs(currentPosition.x - targetPosition.x)) / 3;
+			//
+			// DWORD angles[] = { 0, 30, 45, 60, 90 };
+			// std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
+			// size_t selectedAngleIndex = 0;
+			// anim->SetBool(names[0], false);
+			//
+			// // Least angle delta
+			// for (size_t iAngle = 1; iAngle < _countof(angles); iAngle++)
+			// {
+			// 	anim->SetBool(names[iAngle], false);
+			// 	if (fabs(angles[iAngle] - alpha) < fabs(angles[selectedAngleIndex] - alpha))
+			// 		selectedAngleIndex = iAngle;
+			// }
+			//
 
 			m_reloadTime += dt;
 			if (m_reloadTime >= RELOAD_TIME)
@@ -56,17 +91,12 @@ void NotorBangerEnemyController::Update(DWORD dt)
 				Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 				const bool isFlip = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
 
-				pos.x += isFlip ? 10 : -10;
-				pos.y -= 20;
+				// pos.x += isFlip ? 10 : -10;
+				// pos.y -= 20;
 				auto pBullet = CGameObject::Instantiate(Prefab_NotorBanger_Bullet, nullptr, pos);
-
-				pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? .3f : -.3f) , -.15f });
-
-				float gravity = 0.01*rigidbody->GetGravityScale();
-				Vector2 velocity;
-				velocity.y = -0.1;
-				velocity.x = (((targetPosition.x - currentPosition.x)*gravity) / (-velocity.y + sqrt(pow(velocity.y, 2) - 2 * gravity*(currentPosition.y-targetPosition.y))));
 				pBullet->GetComponent<CRigidbody>()->SetVelocity(velocity);
+
+				
 				m_reloadTime = 0;
 			}
 		}

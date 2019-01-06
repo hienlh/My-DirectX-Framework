@@ -204,7 +204,7 @@ void CPhysic::Update(DWORD dt)
 		if (CRigidbody* rigid = (*i)->GetComponent<CRigidbody>())
 		{
 			if (!rigid->GetIsKinematic())
-				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY*dt;
 		}
 
 		//test with QuadTree
