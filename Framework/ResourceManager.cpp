@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "ResourceManager.h"
 #include "Graphic.h"
+#include "Audio.h"
 
 using namespace Framework;
 
@@ -62,12 +63,19 @@ CAnimation* CResourceManager::GetAnimation(std::string name) const
 	const auto it = m_pAnimations.find(name);
 
 	if (it != m_pAnimations.end())
-	{
 		return it->second;
-	}
+	else
+		return nullptr;
+}
 
-	CDebug::Log("GetAnimation: No animation name '%s'\n", name.c_str());
-	return nullptr;
+CSound * Framework::CResourceManager::GetSound(const std::string & name) const
+{
+	const auto it = m_pSounds.find(name);
+
+	if (it != m_pSounds.end())
+		return it->second;
+	else
+		return nullptr;
 }
 
 CSprite* CResourceManager::GetSprite(std::string textureName, DWORD index) const
@@ -159,4 +167,28 @@ CGameObject* CResourceManager::AddPrefab(std::string name, CGameObject* gameObje
 
 	m_pPrefabs[name] = result;
 	return result;
+}
+
+CResourceManager* CResourceManager::AddSound(const std::string &name, const char* path)
+{
+	bool result = false;
+	do
+	{
+		if (m_pSounds.count(name))
+			break;
+		
+		CAudio* pAudio = CAudio::GetInstance();
+		if (!pAudio)
+			break;
+
+		CSound* sound = pAudio->Load(path);
+		if (!sound)
+			break;
+
+		m_pSounds.insert({ name, sound });
+
+		result = true;
+	} while (false);
+	
+	return (result ? this : nullptr);
 }

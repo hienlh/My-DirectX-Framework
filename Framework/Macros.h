@@ -48,3 +48,8 @@
 #define COLOR_GET_R( c ) (((c)>>16) & 0xFF)
 #define COLOR_GET_G( c ) (((c)>>8)  & 0xFF)
 #define COLOR_GET_B( c ) ((c) & 0xFF)
+
+// New
+#define AUDIO_SOUND_TRACK "Sound Track"
+#define AUDIO_MEGAMAN_SHOOT "Megaman Shoot"
+#define AUDIO_MEGAMAN_POWER_SHOOT "Megaman Power Shoot"

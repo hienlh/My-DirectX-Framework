@@ -1,11 +1,18 @@
 #include "stdafx.h"
 #include "Macros.h"
 #include "Header.h"
+
+#include "Graphic.h"
+#include "Audio.h"
+
 #include "GameManager.h"
 #include "GameObject.h"
 #include "Rigidbody.h"
 #include "BoxCollider.h"
 #include "Animator.h"
+
+#include "AudioSource.h"
+
 #include "CameraController.h"
 #include "PlayerController.h"
 #include "ResourceManager.h"
@@ -13,18 +20,47 @@
 #include "NotorBangerEnemyController.h"
 #include "HeadGunnerEnemyController.h"
 #include "BulletController.h"
+
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	/*CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
+	CGameManager* pGameManager = CGameManager::GetInstance();
+
+	CScene* pScene = new CScene("Main Scene", { 8000, 8000 });
+	pGameManager->SetCurrentScene(pScene);
+	pGameManager->SetIsDebugging(false);
+	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+	
+	CResourceManager *pResourceManager = CResourceManager::GetInstance();
+	pResourceManager->AddTexture("MegaManX", ".\\Resources\\Player\\MegaManXEdited.png", NULL, ".\\Resources\\Player\\MegaManXEdited.xml");
+	
+	CAnimation* anim = new CAnimation("MegaManX Idle", "MegaManX", 8, 2, 100, true);
+	CGameObject* pPlayer = new CGameObject("Player", Vector2(150, 875));
+	pPlayer->AddComponent<CRenderer>();
+	pPlayer->AddComponent<CAnimator>()->AddAnimation("MegaManX Idle");
+	pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
+	pPlayer->GetComponent<CRigidbody>()->SetGravityScale(0);
+	pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
+	pPlayer->AddComponent<CAudioSource>()->SetLoop(true)->SetSound("Sound Track")->Play();
+	
+	pScene->GetMainCamera()->AddComponent<CameraController>()->SetIsFollow(true);
+	pScene->GetMainCamera()->AddComponent<CameraController>()->m_target = pPlayer;
+
+	pGameManager->Run();
+	
+	CGameManager::Destroy();
+	return 0;*/
+
 	CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 	CGameManager* pGameManager = CGameManager::GetInstance();
 
-	CScene* pScene = new CScene("Main Scene", {8000,8000});
+	CScene* pScene = new CScene("Main Scene", {8000, 8000});
 	pGameManager->SetCurrentScene(pScene);
-	pGameManager->SetIsDebugging(true);
+	pGameManager->SetIsDebugging(false);
 	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 	pScene->GetMainCamera()->AddComponent<CameraController>();
 	pScene->SetIsRenderQuadTree(true);
@@ -425,6 +461,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		
 		CGameObject* pHeadGunnerEnemy = CGameObject::Instantiate(Prefab_HeadGunner, nullptr, Vector2(450, 875));
 		pHeadGunnerEnemy->GetComponent<HeadGunnerEnemyController>()->SetTarget(pPlayer);
+
+		/* 
+		 * NEW
+		 */
+		// Sounds
+
+		pResourceManager->AddSound(AUDIO_SOUND_TRACK, ".\\Resources\\Sounds\\BlastHornetSoundTrack.wav")
+			->AddSound(AUDIO_MEGAMAN_SHOOT, ".\\Resources\\Sounds\\SE_0A.wav")
+			->AddSound(AUDIO_MEGAMAN_POWER_SHOOT, ".\\Resources\\Sounds\\SE_3A.wav");
+
+		pPlayer->AddComponent<CAudioSource>();
+		pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_SOUND_TRACK, true);// ->Play(AUDIO_SOUND_TRACK);
+		pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_MEGAMAN_SHOOT, false);
+		pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_MEGAMAN_POWER_SHOOT, false);
 
 		pGameManager->Run();
 

@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Animator.h"
 #include "Header.h"
+#include "AudioSource.h"
 
 void PlayerController::OnCollisionEnter(CCollision* collision)
 {
@@ -90,6 +91,9 @@ void PlayerController::Update(DWORD dt)
 		auto pBullet = CGameObject::Instantiate(Prefab_BusterShotBullet, nullptr, pos);
 		
 		pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? -.3f : .3f) , 0 });
+
+		// New
+		m_pGameObject->GetComponent<CAudioSource>()->Play(AUDIO_MEGAMAN_SHOOT);
 	}
 	if (input->KeyUp(DIK_SPACE)) {
 		anim->SetBool("isShoot", false);
@@ -185,7 +189,10 @@ void PlayerController::Update(DWORD dt)
 	}
 	if (input->KeyUp(DIK_E)) {
 		if (m_Power)
+		{
 			m_Power->SetIsActive(false);
+			m_pGameObject->GetComponent<CAudioSource>()->Play(AUDIO_MEGAMAN_POWER_SHOOT);
+		}
 	}
 }
 
