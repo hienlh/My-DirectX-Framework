@@ -95,7 +95,7 @@ CGameObject* CResourceManager::GetPrefab(std::string name)
 	return m_pPrefabs[name];
 }
 
-bool CResourceManager::AddTexture(std::string name, std::string path, Color transparentColor, const char* xmlPath)
+bool CResourceManager::AddTexture(const std::string &name, const std::string &path, const Color &transparentColor, const char* xmlPath, const Vector2 &defaultAnchor)
 {
 	if(m_pTextures.count(name))
 	{
@@ -110,7 +110,7 @@ bool CResourceManager::AddTexture(std::string name, std::string path, Color tran
 			const DWORD size = rects.size();
 			for (int i = 0; i < size; i++)
 			{
-				tmp->m_sprites.push_back(new CSprite(tmp, rects[i]));
+				tmp->m_sprites.push_back(new CSprite(tmp, rects[i], defaultAnchor));
 			}
 		}
 		else tmp->m_sprites.push_back(new CSprite(tmp)); //Add a only one sprite with size equal texture
@@ -122,12 +122,6 @@ bool CResourceManager::AddTexture(std::string name, std::string path, Color tran
 	CDebug::Log(L"AddTexture: Fail to create texture \"%s\" and add to ResourceManager", name.c_str());
 	return false;
 }
-
-//bool CResourceManager::EditTexture(std::string name, std::string path, Color transparentColor, const char* xmlPath)
-//{
-//	//TODO Edit texture in ResourceManager
-//	return false;
-//}
 
 bool CResourceManager::AddAnimation(std::string name, CAnimation* animation)
 {
@@ -154,7 +148,7 @@ CGameObject* CResourceManager::AddPrefab(std::string name, CGameObject* gameObje
 
 	CGameObject* result = nullptr;
 
-	if(gameObject) result = gameObject->Clone();
+	if(gameObject) result = new CGameObject(*gameObject);
 	else result = new CGameObject(name, VECTOR2_ZERO, false);
 
 	m_pPrefabs[name] = result;

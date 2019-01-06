@@ -5,8 +5,3 @@
 #include "Animator.h"
 
 using namespace Framework;
-
-CComponent::CComponent(const CComponent& component) : CObject(component)
-{
-
-}

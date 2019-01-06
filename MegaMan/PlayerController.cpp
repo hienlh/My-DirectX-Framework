@@ -4,13 +4,14 @@
 #include "Graphic.h"
 #include "Input.h"
 #include "Animator.h"
+#include "../Framework/Renderer.h"
 
 PlayerController::PlayerController(const PlayerController& PC) : CMonoBehavior(PC)
 {
 	m_speed = PC.m_speed;
 }
 
-PlayerController* PlayerController::Clone() const
+PlayerController* PlayerController::Clone()
 {
 	return new PlayerController(*this);
 }

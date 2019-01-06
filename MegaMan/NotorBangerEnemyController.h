@@ -14,7 +14,7 @@ private:
 private:
 	NotorBangerEnemyController() = default;
 	NotorBangerEnemyController(const NotorBangerEnemyController &PC) : CMonoBehavior(PC) { m_speed = PC.m_speed; }
-	NotorBangerEnemyController* Clone() const override { return new NotorBangerEnemyController(*this); }
+	NotorBangerEnemyController* Clone() override { return new NotorBangerEnemyController(*this); }
 
 	//Cons / Des
 public:

@@ -14,6 +14,7 @@
 #include "HeadGunnerEnemyController.h"
 #include "GenjiBosController.h"
 #include "ShurikeinController.h"
+#include "../Framework/Renderer.h"
 #pragma comment(lib, "Framework.lib")
 
 using namespace Framework;
@@ -23,7 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 	CGameManager* pGameManager = CGameManager::GetInstance();
 
-	CScene* pScene = new CScene("Main Scene", {8000,8000});
+	CScene* pScene = new CScene("Main Scene", { 8000,8000 });
 	pGameManager->SetCurrentScene(pScene);
 	pGameManager->SetIsDebugging(true);
 	pScene->GetMainCamera()->GetComponent<CTransform>()->Set_Position(Vector2(128, 896));//128, 896));
@@ -241,7 +242,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite("Map", i)->GetSourceRect();
 
-				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i-13));
+				CGameObject* pGround = new CGameObject("Ground" + std::to_string(i - 13));
 				pGround->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pGround->AddComponent<CRigidbody>()->SetIsKinematic(true);
 				pGround->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
@@ -263,7 +264,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite("Map", i)->GetSourceRect();
 
-				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i-38));
+				CGameObject* pWall = new CGameObject("Wall" + std::to_string(i - 38));
 				pWall->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
 				pWall->AddComponent<CRigidbody>()->SetIsKinematic(true);
 				pWall->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
@@ -285,97 +286,97 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pMachine1->AddComponent<MachineController>();
 
 		//Player
-		CGameObject* pPlayer = new CGameObject("Player", Vector2(45, 875));
-		//CGameObject* pPlayer = new CGameObject("Player", Vector2(2255, 1170));
+		//CGameObject* pPlayer = new CGameObject("Player", Vector2(45, 875));
+		CGameObject* pPlayer = new CGameObject("Player", Vector2(2255, 1170));
 		{
 			pPlayer->AddComponent<CAnimator>()
-			       ->AddAnimation("MegaManX Init")
-			       ->AddAnimation("MegaManX InitLand")
-			       ->AddAnimation("MegaManX Idle")
-			       ->AddAnimation("MegaManX Idle Shoot")
-			       ->AddAnimation("MegaManX Jump")
-			       ->AddAnimation("MegaManX Jump Shoot")
-			       ->AddAnimation("MegaManX Fall")
-			       ->AddAnimation("MegaManX Fall Shoot")
-			       ->AddAnimation("MegaManX Landfall")
-			       ->AddAnimation("MegaManX Landfall Shoot")
-			       ->AddAnimation("MegaManX Run")
-			       ->AddAnimation("MegaManX Dash")
-			       ->AddAnimation("MegaManX Run Shoot")
-			       ->AddAnimation("MegaManX Dash Shoot")
-			       ->AddAnimation("MegaManX ClimbLadder")
-			       ->AddAnimation("MegaManX Wall Clinging")
-			       ->AddAnimation("MegaManX Wall Clinging Shoot")
-			       ->AddAnimation("MegaManX Power")
+				->AddAnimation("MegaManX Init")
+				->AddAnimation("MegaManX InitLand")
+				->AddAnimation("MegaManX Idle")
+				->AddAnimation("MegaManX Idle Shoot")
+				->AddAnimation("MegaManX Jump")
+				->AddAnimation("MegaManX Jump Shoot")
+				->AddAnimation("MegaManX Fall")
+				->AddAnimation("MegaManX Fall Shoot")
+				->AddAnimation("MegaManX Landfall")
+				->AddAnimation("MegaManX Landfall Shoot")
+				->AddAnimation("MegaManX Run")
+				->AddAnimation("MegaManX Dash")
+				->AddAnimation("MegaManX Run Shoot")
+				->AddAnimation("MegaManX Dash Shoot")
+				->AddAnimation("MegaManX ClimbLadder")
+				->AddAnimation("MegaManX Wall Clinging")
+				->AddAnimation("MegaManX Wall Clinging Shoot")
+				->AddAnimation("MegaManX Power")
 
-			       ->AddBool("isIdle", false)
-			       ->AddBool("isJump", false)
-			       ->AddBool("isFall", false)
-			       ->AddBool("isLandfall", false)
-			       ->AddBool("isShoot", false)
-			       ->AddBool("isRun", false)
-			       ->AddBool("isDash", false)
-			       ->AddBool("isClimbLadder", false)
-			       ->AddBool("isClinging", false)
+				->AddBool("isIdle", false)
+				->AddBool("isJump", false)
+				->AddBool("isFall", false)
+				->AddBool("isLandfall", false)
+				->AddBool("isShoot", false)
+				->AddBool("isRun", false)
+				->AddBool("isDash", false)
+				->AddBool("isClimbLadder", false)
+				->AddBool("isClinging", false)
 
-			       ->AddTransition("MegaManX Init", "MegaManX InitLand", true, "isLandfall", true)
-			       ->AddTransition("MegaManX InitLand", "MegaManX Idle")
+				->AddTransition("MegaManX Init", "MegaManX InitLand", true, "isLandfall", true)
+				->AddTransition("MegaManX InitLand", "MegaManX Idle")
 
-			       ->AddTransition("MegaManX Idle", "MegaManX Dash", true, "isDash", true)
-			       ->AddTransition("MegaManX Idle", "MegaManX Jump", true, "isJump", true)
-			       ->AddTransition("MegaManX Idle", "MegaManX Fall", true, "isFall", true)
-			       ->AddTransition("MegaManX Idle", "MegaManX Run", true, "isRun", true)
-			       ->AddTransition("MegaManX Idle", "MegaManX ClimbLadder", true, "isClimbLadder", true)
-			       ->AddTransition("MegaManX Idle", "MegaManX Idle Shoot", true, "isShoot", true)
-			       ->AddTransition("MegaManX Idle Shoot", "MegaManX Idle")
-			       ->AddTransition("MegaManX Idle Shoot", "MegaManX Dash", true, "isDash", true)
-			       ->AddTransition("MegaManX Idle Shoot", "MegaManX Jump", true, "isJump", true)
-			       ->AddTransition("MegaManX Idle Shoot", "MegaManX Fall", true, "isFall", true)
-			       ->AddTransition("MegaManX Idle Shoot", "MegaManX Run", true, "isRun", true)
-			       ->AddTransition("MegaManX Idle Shoot", "MegaManX ClimbLadder", true, "isClimbLadder", true)
+				->AddTransition("MegaManX Idle", "MegaManX Dash", true, "isDash", true)
+				->AddTransition("MegaManX Idle", "MegaManX Jump", true, "isJump", true)
+				->AddTransition("MegaManX Idle", "MegaManX Fall", true, "isFall", true)
+				->AddTransition("MegaManX Idle", "MegaManX Run", true, "isRun", true)
+				->AddTransition("MegaManX Idle", "MegaManX ClimbLadder", true, "isClimbLadder", true)
+				->AddTransition("MegaManX Idle", "MegaManX Idle Shoot", true, "isShoot", true)
+				->AddTransition("MegaManX Idle Shoot", "MegaManX Idle")
+				->AddTransition("MegaManX Idle Shoot", "MegaManX Dash", true, "isDash", true)
+				->AddTransition("MegaManX Idle Shoot", "MegaManX Jump", true, "isJump", true)
+				->AddTransition("MegaManX Idle Shoot", "MegaManX Fall", true, "isFall", true)
+				->AddTransition("MegaManX Idle Shoot", "MegaManX Run", true, "isRun", true)
+				->AddTransition("MegaManX Idle Shoot", "MegaManX ClimbLadder", true, "isClimbLadder", true)
 
-			       ->AddTransition("MegaManX Dash", "MegaManX Idle", false, "isDash", false)
-			       ->AddTransition("MegaManX Dash", "MegaManX Dash Shoot", true, "isShoot", true, true)
-			       ->AddTransition("MegaManX Dash Shoot", "MegaManX Dash", true, "isShoot", false, true)
-
-
-			       ->AddTransition("MegaManX Jump", "MegaManX Fall", true, "isFall", true)
-			       ->AddTransition("MegaManX Jump", "MegaManX ClimbLadder", true, "isClimbLadder", true)
-			       ->AddTransition("MegaManX Jump", "MegaManX Wall Clinging", true, "isClinging", true)
-			       ->AddTransition("MegaManX Jump", "MegaManX Jump Shoot", true, "isShoot", true, true)
-			       ->AddTransition("MegaManX Jump Shoot", "MegaManX Jump", true, "isShoot", false, true)
-			       ->AddTransition("MegaManX Jump Shoot", "MegaManX Fall", true, "isFall", true)
-			       ->AddTransition("MegaManX Jump Shoot", "MegaManX ClimbLadder", true, "isClimbLadder", true)
-			       ->AddTransition("MegaManX Jump Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
+				->AddTransition("MegaManX Dash", "MegaManX Idle", false, "isDash", false)
+				->AddTransition("MegaManX Dash", "MegaManX Dash Shoot", true, "isShoot", true, true)
+				->AddTransition("MegaManX Dash Shoot", "MegaManX Dash", true, "isShoot", false, true)
 
 
-			       ->AddTransition("MegaManX Fall", "MegaManX Landfall", true, "isLandfall", true)
-			       ->AddTransition("MegaManX Fall", "MegaManX Fall Shoot", true, "isShoot", true, true)
-			       ->AddTransition("MegaManX Fall", "MegaManX Wall Clinging", true, "isClinging", true)
-			       ->AddTransition("MegaManX Fall Shoot", "MegaManX Fall", true, "isShoot", false, true)
-			       ->AddTransition("MegaManX Fall Shoot", "MegaManX Landfall", true, "isLandfall", true)
-			       ->AddTransition("MegaManX Fall Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
+				->AddTransition("MegaManX Jump", "MegaManX Fall", true, "isFall", true)
+				->AddTransition("MegaManX Jump", "MegaManX ClimbLadder", true, "isClimbLadder", true)
+				->AddTransition("MegaManX Jump", "MegaManX Wall Clinging", true, "isClinging", true)
+				->AddTransition("MegaManX Jump", "MegaManX Jump Shoot", true, "isShoot", true, true)
+				->AddTransition("MegaManX Jump Shoot", "MegaManX Jump", true, "isShoot", false, true)
+				->AddTransition("MegaManX Jump Shoot", "MegaManX Fall", true, "isFall", true)
+				->AddTransition("MegaManX Jump Shoot", "MegaManX ClimbLadder", true, "isClimbLadder", true)
+				->AddTransition("MegaManX Jump Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
 
-			       ->AddTransition("MegaManX Landfall", "MegaManX Idle")
-			       ->AddTransition("MegaManX Landfall", "MegaManX Landfall Shoot", true, "isShoot", true, true)
-			       ->AddTransition("MegaManX Landfall Shoot", "MegaManX Landfall", true, "isShoot", false, true)
-			       ->AddTransition("MegaManX Landfall Shoot", "MegaManX Idle")
 
-			       ->AddTransition("MegaManX Run", "MegaManX Idle", true, "isRun", false)
-			       ->AddTransition("MegaManX Run", "MegaManX Jump", true, "isJump", true)
-			       ->AddTransition("MegaManX Run", "MegaManX Dash", true, "isDash", true)
-			       ->AddTransition("MegaManX Run", "MegaManX Run Shoot", true, "isShoot", true, true)
-			       ->AddTransition("MegaManX Run Shoot", "MegaManX Run", true, "isShoot", false, true)
-			       ->AddTransition("MegaManX Run Shoot", "MegaManX Idle", true, "isRun", false)
-			       ->AddTransition("MegaManX Run Shoot", "MegaManX Jump", true, "isJump", true)
-			       ->AddTransition("MegaManX Run Shoot", "MegaManX Dash", true, "isDash", true)
+				->AddTransition("MegaManX Fall", "MegaManX Landfall", true, "isLandfall", true)
+				->AddTransition("MegaManX Fall", "MegaManX Fall Shoot", true, "isShoot", true, true)
+				->AddTransition("MegaManX Fall", "MegaManX Wall Clinging", true, "isClinging", true)
+				->AddTransition("MegaManX Fall Shoot", "MegaManX Fall", true, "isShoot", false, true)
+				->AddTransition("MegaManX Fall Shoot", "MegaManX Landfall", true, "isLandfall", true)
+				->AddTransition("MegaManX Fall Shoot", "MegaManX Wall Clinging", true, "isClinging", true)
 
-			       ->AddTransition("MegaManX ClimbLadder", "MegaManX Idle", true, "isClimbLadder", false)
+				->AddTransition("MegaManX Landfall", "MegaManX Idle")
+				->AddTransition("MegaManX Landfall", "MegaManX Landfall Shoot", true, "isShoot", true, true)
+				->AddTransition("MegaManX Landfall Shoot", "MegaManX Landfall", true, "isShoot", false, true)
+				->AddTransition("MegaManX Landfall Shoot", "MegaManX Idle")
 
-			       ->AddTransition("MegaManX Wall Clinging", "MegaManX Idle", true, "isClinging", false)
-			       //->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
-			       ->AddTransition("MegaManX Wall Clinging", "MegaManX Wall Clinging Shoot", true, "isShoot", true, true)
-			       ->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
+				->AddTransition("MegaManX Run", "MegaManX Idle", true, "isRun", false)
+				->AddTransition("MegaManX Run", "MegaManX Jump", true, "isJump", true)
+				->AddTransition("MegaManX Run", "MegaManX Dash", true, "isDash", true)
+				->AddTransition("MegaManX Run", "MegaManX Run Shoot", true, "isShoot", true, true)
+				->AddTransition("MegaManX Run Shoot", "MegaManX Run", true, "isShoot", false, true)
+				->AddTransition("MegaManX Run Shoot", "MegaManX Idle", true, "isRun", false)
+				->AddTransition("MegaManX Run Shoot", "MegaManX Jump", true, "isJump", true)
+				->AddTransition("MegaManX Run Shoot", "MegaManX Dash", true, "isDash", true)
+
+				->AddTransition("MegaManX ClimbLadder", "MegaManX Idle", true, "isClimbLadder", false)
+
+				->AddTransition("MegaManX Wall Clinging", "MegaManX Idle", true, "isClinging", false)
+				//->AddTransition("MegaManX Wall Clinging", "MegaManX Jump", true, "isJump", true)
+				->AddTransition("MegaManX Wall Clinging", "MegaManX Wall Clinging Shoot", true, "isShoot", true, true)
+				->AddTransition("MegaManX Wall Clinging Shoot", "MegaManX Wall Clinging", true, "isShoot", true, true)
 				;
 			pPlayer->GetComponent<CRenderer>()->SetFlipY(false);
 			pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
@@ -390,7 +391,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPowerEffect->GetComponent<CTransform>()->SetParent(pPlayer);
 			pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-1);
 			pPowerEffect->AddComponent<CAnimator>()
-			            ->AddAnimation("MegaManX Power");
+				->AddAnimation("MegaManX Power");
 			pPlayer->GetComponent<PlayerController>()->m_Power = pPowerEffect;
 		}
 
@@ -429,7 +430,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				->AddAnimation("GenjiBos");
 			pGenjiBos->AddComponent<CRigidbody>()->SetGravityScale(0);
 			pGenjiBos->SetIsActive(false);
-			pGenjiBos->AddComponent<GenjiBosController>()->m_target=pPlayer;
+			pGenjiBos->AddComponent<GenjiBosController>()->m_target = pPlayer;
 			pPlayer->GetComponent<PlayerController>()->m_GenjiBos = pGenjiBos;
 
 
@@ -453,37 +454,51 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			//Shurikein
 			new CAnimation("Shurikein_Init", Texture_EnemiesAndBosses, 116, 72, 10, false);
 			new CAnimation("Shurikein_Spinning", Texture_EnemiesAndBosses, 180, 7, 2, true);
-			new CAnimation("Shurikein_WasHit", Texture_EnemiesAndBosses, 186, 19, 100, true);
+			anim= new CAnimation("Shurikein_WasHit", Texture_EnemiesAndBosses, 180, 1, 50, true);
+			anim->Add(Texture_EnemiesAndBosses, 182)
+				->Add(Texture_EnemiesAndBosses, 184)
+				->Add(Texture_EnemiesAndBosses, 186)
+				->Add(Texture_EnemiesAndBosses, 205);
+				
+			anim= new CAnimation("Shurikein_WasHit_3D", Texture_EnemiesAndBosses, 187, 17, 2, true);
+			for (int i = 203; i > 186; --i)
+			{
+				anim->Add(Texture_EnemiesAndBosses, i);
+			}
+			anim->Add(Texture_EnemiesAndBosses, 205)
+				->Add(Texture_EnemiesAndBosses, 205)
+				->Add(Texture_EnemiesAndBosses, 205);
 
 			CGameObject *pShurikein = new CGameObject("Shurikein", Vector2(2477, 1181));
 			pGenjiBos->GetComponent<GenjiBosController>()->m_shurikein = pShurikein;
 			pShurikein->AddComponent<CAnimator>()
 				->AddAnimation("Shurikein_Init")
 				->AddAnimation("Shurikein_WasHit")
+				->AddAnimation("Shurikein_WasHit_3D")
 				->AddAnimation("Shurikein_Spinning")
 
 				->AddBool("isWasHit", false)
-				->AddTransition("Shurikein_Init","Shurikein_Spinning")
-				->AddTransition("Shurikein_WasHit","Shurikein_Spinning")
-				->AddTransition("Shurikein_Spinning","Shurikein_WasHit",true,"isWasHit",true)
+				->AddTransition("Shurikein_Init", "Shurikein_Spinning")
+				->AddTransition("Shurikein_WasHit", "Shurikein_Spinning")
+				->AddTransition("Shurikein_Spinning", "Shurikein_WasHit", true, "isWasHit", true)
 				;
 			pShurikein->AddComponent<ShurikeinController>();
 			pShurikein->AddComponent<CRigidbody>()->SetLimitedArea({ {2320, 1040}, {225, 161} })->SetGravityScale(0);
 			pShurikein->AddComponent<CBoxCollider>()->SetIsTrigger(true);
-			pShurikein->GetComponent<CBoxCollider>()->SetSize(Vector2(47,47));
+			pShurikein->GetComponent<CBoxCollider>()->SetSize(Vector2(47, 47));
 			pShurikein->SetIsActive(false);
-			
-			
+
+
 
 		}
 
-		auto pMapBehind = CGameObject::Instantiate("MapBehind_1", pScene->GetMainCamera(), {0, 0});
+		auto pMapBehind = CGameObject::Instantiate("MapBehind_1", pScene->GetMainCamera(), { 0, 0 });
 		pMapBehind->GetComponent<CRenderer>()->SetZOrder(-1);
 		pMapBehind->AddComponent<CRenderer>()->SetZOrder(20);
 
 		pMachine1->GetComponent<MachineController>()->m_player = pPlayer;
-		pScene->GetMainCamera()->GetComponent<CameraController>()->m_target = pPlayer;
-		pScene->GetMainCamera()->GetComponent<CameraController>()->SetIsFollow(true);
+		pScene->GetMainCamera()->GetComponent<CameraController>()->m_player = pPlayer;
+		pScene->GetMainCamera()->GetComponent<CameraController>()->SetState(CameraState::Following);
 
 		pGameManager->Run();
 
@@ -492,6 +507,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CGameManager::Destroy();
 	CGraphic::Destroy();
 	CInput::Destroy();
-	
+
 	return 0;
 }

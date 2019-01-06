@@ -1,78 +1,110 @@
 ﻿#include "CameraController.h"
 #include "../Framework/GameObject.h"
 #include "Graphic.h"
+#include "Camera.h"
+
+CameraController::CameraController(const CameraController& cc) : CMonoBehavior(cc)
+{
+	m_player = cc.m_player;
+	m_currentBound = cc.m_currentBound;
+	m_state = cc.m_state;
+	m_isFree = cc.m_isFree;
+	m_limitedBounds = cc.m_limitedBounds;
+}
 
 CameraController::CameraController(Framework::CGameObject* game_object) : CMonoBehavior(game_object)
 {
-	m_limitedBound.push_back(Bound(896, 128, 896, 896));
-	m_limitedBound.push_back(Bound(384, 896, 896, 896));
-	m_limitedBound.push_back(Bound(890, 640, 896, 896));
-	m_limitedBound.push_back(Bound({ 896, 384 }, { 1537, 0 }));
-	m_limitedBound.push_back(Bound({ 1350, 128 }, { 1412-1350, 384-128 }));
-	m_limitedBound.push_back(Bound({ 1535+128, 128 }, { 769, 1024 }));
+	m_limitedBounds.push_back({ { 0 + 128,768 + 128 }, { 1024 - 256,256 - 256 } });
+	m_limitedBounds.push_back({ { 768 + 128,256 + 128 }, { 256 - 256,768 - 256 } });
+	m_limitedBounds.push_back({ { 768 + 128,256 + 128 }, { 1536 - 256,256 - 256 } });
+	m_limitedBounds.push_back({ { 1264 + 128,0 + 128 }, { 256 - 256,512 - 256 } });
+	m_limitedBounds.push_back({ { 1536 + 128,256 + 128 }, { 768 - 256,1024 - 256 } });
+	m_limitedBounds.push_back({ { 1536 + 128,256 + 128 }, { 768 - 256,1024 - 256 } });
+	m_limitedBounds.push_back({ { 1536 + 128,1024 + 128 }, { 2000 - 256,256 - 256 } });
+	m_limitedBounds.push_back({ { 2816 + 128,768 + 128 }, { 2816 - 256,512 - 256 } });
+	m_limitedBounds.push_back({ { 5328 + 128,1024 + 128 }, { 816 - 256,256 - 256 } });
+	m_limitedBounds.push_back({ { 5888 + 128,1024 + 128 }, { 256 - 256,1024 - 256 } });
+	m_limitedBounds.push_back({ { 5888 + 128,1792 + 128 }, { 2048 - 256,256 - 256 } });
+
+	m_bossLimitedBounds.push_back({ {2304 + 128,1024 + 128},{0,0} });
+	m_bossLimitedBounds.push_back({ {5634 + 128,1024 + 128},{0,0} });
+	m_bossLimitedBounds.push_back({ {7680 + 128,1792 + 128},{0,0} });
 }
 
 void CameraController::Update(DWORD dt)
 {
-	auto transform = m_pGameObject->GetComponent<Framework::CTransform>();
-
-	if (m_isFollow)
+	switch (m_state)
 	{
-		const Vector2 direction = m_target->GetComponent<Framework::CTransform>()->Get_Position()
-							- m_pGameObject->GetComponent<Framework::CTransform>()->Get_Position();
-		transform->Translate(direction * dt / 500);
-		//m_pGameObject->GetComponent<Framework::CTransform>()->Set_Position(m_target->GetComponent<Framework::CTransform>()->Get_Position());
-	}
-
-	Vector2 position = transform->Get_Position();
-
-	bool insideBound = false;
-	int indexNearestBound = 0;
-
-	const int limitBoundSize = m_limitedBound.size();
-	for(int i = 0 ;i<limitBoundSize;i++)
-	{
-		if (m_limitedBound[i].intersect(Bound(position, { 0,0 })))
+	case CameraState::Following:
+		Follow(dt);
+		break;
+	case CameraState::MeetingBoss: {
+		int minBound = 0;
+		const int limitBoundSize = m_bossLimitedBounds.size();
+		const Vector2 pos = m_pGameObject->GetComponent<Framework::CTransform>()->Get_Position();
+		for (int i = 1; i < limitBoundSize; i++)
 		{
-			insideBound = true;
-			break;
+			if (m_bossLimitedBounds[i].Distance(pos) < m_bossLimitedBounds[minBound].Distance(pos))
+				minBound = i;
 		}
-		
-		if (m_limitedBound[i].Distance(position) < m_limitedBound[indexNearestBound].Distance(position))
-			indexNearestBound = i;
+		MeetBoss(dt, minBound);
+		break; 
 	}
-
-	if (!insideBound) 
-	{
-		if (position.x > m_limitedBound[indexNearestBound].right) position.x = m_limitedBound[indexNearestBound].right;
-		else if (position.x < m_limitedBound[indexNearestBound].left) position.x = m_limitedBound[indexNearestBound].left;
-
-		if (position.y > m_limitedBound[indexNearestBound].bottom) position.y = m_limitedBound[indexNearestBound].bottom;
-		else if (position.y < m_limitedBound[indexNearestBound].top) position.y = m_limitedBound[indexNearestBound].top;
-
-		transform->Set_Position(position);
-		/*const Vector2 direction = position - m_pGameObject->GetComponent<Framework::CTransform>()->Get_Position();
-		transform->Translate(direction * dt / 10);*/
+	default: ;
 	}
 }
 
 void CameraController::Render()
 {
-	for (Bound bound : m_limitedBound)
+	for (const Bound bound : m_limitedBounds)
 	{
 		Framework::CGraphic::GetInstance()->DrawRectangle(bound, D3DCOLOR_XRGB(50, 100, 150));
 	}
 }
 
-CameraController* CameraController::Clone() const
+void CameraController::Follow(DWORD dt)
 {
-	return new CameraController(*this);
+	auto transform = m_pGameObject->GetComponent<Framework::CTransform>();
+
+	if (m_isFree)
+	{
+		transform->Set_Position(m_player->GetComponent<Framework::CTransform>()->Get_Position());
+		return;
+	}
+
+	const Vector2 camPosition = transform->Get_Position();
+	const Vector2 camSize = m_pGameObject->GetComponent<Framework::CCamera>()->GetSize();
+	Bound canViewArea = { m_limitedBounds[m_currentBound].TopLeft() - camSize / 4, m_limitedBounds[m_currentBound].Size() + camSize / 2 };
+	const Vector2 targetPosition = m_player->GetComponent<Framework::CTransform>()->Get_Position();
+
+	const bool canViewTarget(canViewArea.intersect({ targetPosition, {0,0} }));
+
+	if (!canViewTarget) {
+		const int limitBoundSize = m_limitedBounds.size();
+
+		for (int i = 0; i < limitBoundSize; i++)
+		{
+			if (i != m_currentBound)
+				if (m_limitedBounds[i].Distance(targetPosition) < m_limitedBounds[m_currentBound].Distance(targetPosition))
+					m_currentBound = i;
+		}
+	}
+
+	Vector2 newCamPos = targetPosition;
+	if (targetPosition.x > m_limitedBounds[m_currentBound].right) newCamPos.x = m_limitedBounds[m_currentBound].right;
+	else if (targetPosition.x < m_limitedBounds[m_currentBound].left) newCamPos.x = m_limitedBounds[m_currentBound].left;
+
+	if (targetPosition.y > m_limitedBounds[m_currentBound].bottom) newCamPos.y = m_limitedBounds[m_currentBound].bottom;
+	else if (targetPosition.y < m_limitedBounds[m_currentBound].top) newCamPos.y = m_limitedBounds[m_currentBound].top;
+
+	//transform->Set_Position(camPosition);
+	const Vector2 direction = newCamPos - camPosition;
+	transform->Translate(direction * dt / 500);
 }
 
-void CameraController::Following()
+void CameraController::MeetBoss(DWORD dt, int indexMinBound)
 {
-	if(m_target)
-	{
-		m_pGameObject->GetComponent<Framework::CTransform>()->Set_Position(m_target->GetComponent<Framework::CTransform>()->Get_Position());
-	}
+	const Vector2 direction = m_bossLimitedBounds[indexMinBound].TopLeft() - m_pGameObject->GetComponent<Framework::CTransform>()->Get_Position();
+	if(direction != Vector2(0,0))
+		m_pGameObject->GetComponent<Framework::CTransform>()->Translate(direction * dt / 700);
 }

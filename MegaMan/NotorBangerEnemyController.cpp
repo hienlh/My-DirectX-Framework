@@ -4,6 +4,7 @@
 #include "Graphic.h"
 #include "Input.h"
 #include "Animator.h"
+#include "../Framework/Renderer.h"
 
 void NotorBangerEnemyController::OnCollisionEnter(CCollision * collision)
 {

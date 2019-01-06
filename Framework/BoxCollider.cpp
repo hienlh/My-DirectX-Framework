@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Graphic.h"
 #include "GameManager.h"
+#include "Renderer.h"
 
 using namespace Framework;
 
@@ -47,9 +48,3 @@ void CBoxCollider::Render()
 {
 	CGraphic::GetInstance()->DrawRectangle(GetBoundGlobal());
 }
-
-CBoxCollider* CBoxCollider::Clone() const
-{
-	return new CBoxCollider(*this);
-}
-

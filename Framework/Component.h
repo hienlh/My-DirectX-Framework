@@ -14,9 +14,10 @@ namespace Framework
 		// Cons / Des
 	public:
 		CComponent() = default;
-		CComponent(const CComponent& component);
+		CComponent(const CComponent& component) : CObject(component) { };
 		CComponent(CGameObject *game_object) { m_pGameObject = game_object; }
 		virtual ~CComponent() = default;
+		virtual CComponent* Clone() = 0;
 
 		//Getter / Setter
 	public:
@@ -27,8 +28,6 @@ namespace Framework
 		 * \brief Function is limited access from outside, just can access from CGameObject
 		 */
 		void SetGameObject(CGameObject* gameObject) { m_pGameObject = gameObject; }
-
-		virtual CComponent* Clone() const override = 0;
 
 		//Friend
 	public:

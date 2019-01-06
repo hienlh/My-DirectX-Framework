@@ -17,7 +17,7 @@ private:
 private:
 	PlayerController() = default;
 	PlayerController(const PlayerController &PC);
-	PlayerController* Clone() const override;
+	PlayerController* Clone() override;
 
 	//Cons / Des
 public:

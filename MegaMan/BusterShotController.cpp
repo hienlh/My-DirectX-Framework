@@ -9,7 +9,7 @@ BusterShotController::BusterShotController(const BusterShotController& PC) : CMo
 
 }
 
-BusterShotController* BusterShotController::Clone() const
+BusterShotController* BusterShotController::Clone()
 {
 	return new BusterShotController(*this);
 }

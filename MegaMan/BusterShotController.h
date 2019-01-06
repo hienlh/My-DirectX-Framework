@@ -7,7 +7,7 @@ class BusterShotController : public Framework::CMonoBehavior
 private:
 	BusterShotController() = default;
 	BusterShotController(const BusterShotController &PC);
-	BusterShotController* Clone() const override;
+	BusterShotController* Clone() override;
 
 	//Cons / Des
 public:

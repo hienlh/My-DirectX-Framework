@@ -18,7 +18,7 @@ namespace Framework {
 		//Cons / Des
 	public:
 		CCollider(const CCollider& collider);
-		CCollider(CGameObject* gameObject) : CComponent(gameObject){}
+		explicit CCollider(CGameObject* gameObject) : CComponent(gameObject){}
 		virtual ~CCollider() = default;
 
 		//Getter / Setter
@@ -38,6 +38,8 @@ namespace Framework {
 		void SetIsTrigger(bool isTrigger);
 
 	public:
-		virtual CCollider* Clone() const override = 0;
+		void Update(DWORD dt) override = 0;
+		void Render() override = 0;
+		CCollider* Clone() override = 0;
 	};
 }

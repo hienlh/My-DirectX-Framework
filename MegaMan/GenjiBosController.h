@@ -15,5 +15,6 @@ public:
 	//Overide
 	void Update(DWORD dt) override;
 	void Render() override;
+	GenjiBosController* Clone() override { return new GenjiBosController(*this); };
 };
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas createBy="hienlh1298" imagePath="Door.png" width="308" height="108">
+	<SubTexture name="Door1_00"	x="71"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_01"	x="90"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_02"	x="109"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_03"	x="128"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_04"	x="147"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_05"	x="166"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_06"	x="185"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_07"	x="204"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door1_08"	x="223"	y="0"	width="16"	height="48" />
+	<SubTexture name="Door2_00"	x="2"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_01"	x="20"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_02"	x="38"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_03"	x="56"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_04"	x="74"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_05"	x="92"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_06"	x="110"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_07"	x="128"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_08"	x="146"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_09"	x="164"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_10"	x="182"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_11"	x="200"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_12"	x="218"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_13"	x="236"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_14"	x="254"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_15"	x="272"	y="59"	width="16"	height="48" />
+	<SubTexture name="Door2_16"	x="290"	y="59"	width="16"	height="48" />
+</TextureAtlas>

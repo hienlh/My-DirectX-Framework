@@ -23,7 +23,6 @@ namespace Framework {
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
-
-		CBoxCollider* Clone() const override;
+		CBoxCollider* Clone() override { return new CBoxCollider(*this); }
 	};
 }

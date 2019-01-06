@@ -14,6 +14,6 @@ public:
 	void Update(DWORD dt) override;
 	void Render() override;
 
-	GroundController* Clone() const override { return new GroundController(*this); }
+	GroundController* Clone() override { return new GroundController(*this); }
 	
 };

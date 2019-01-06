@@ -59,11 +59,6 @@ void CAnimation::Update(DWORD dt)
 	m_timeElapse += dt * fabs(m_speed);
 }
 
-CAnimation* CAnimation::Clone() const
-{
-	return new CAnimation(*this);
-}
-
 CSprite* CAnimation::GetSprite()
 {
 	return m_frames[m_frameIndex].m_sprite;
@@ -85,10 +80,6 @@ CAnimation* CAnimation::Add(std::string textureName, DWORD indexSprite, DWORD po
 {
 	Add(CResourceManager::GetInstance()->GetSprite(textureName, indexSprite), position, time);
 	return this;
-}
-
-void CAnimation::Render()
-{
 }
 
 CAnimation* CAnimation::Add(SFrame frame)

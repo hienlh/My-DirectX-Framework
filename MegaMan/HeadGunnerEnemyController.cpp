@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Animator.h"
 #include <math.h>
+#include "../Framework//Renderer.h"
 
 void HeadGunnerEnemyController::OnCollisionEnter(CCollision * collision)
 {

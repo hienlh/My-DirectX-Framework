@@ -14,7 +14,7 @@ private:
 private:
 	HeadGunnerEnemyController() = default;
 	HeadGunnerEnemyController(const HeadGunnerEnemyController &PC) : CMonoBehavior(PC) { m_speed = PC.m_speed; }
-	HeadGunnerEnemyController* Clone() const override { return new HeadGunnerEnemyController(*this); }
+	HeadGunnerEnemyController* Clone() override { return new HeadGunnerEnemyController(*this); }
 
 	//Cons / Des
 public:

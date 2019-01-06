@@ -139,8 +139,3 @@ void CTransform::Render()
 {
 }
 
-CTransform* CTransform::Clone() const
-{
-	return new CTransform(*this);
-}
-

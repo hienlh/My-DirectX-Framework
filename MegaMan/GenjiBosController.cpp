@@ -15,12 +15,12 @@ void GenjiBosController::Update(DWORD dt)
 	auto rigidbody = m_pGameObject->GetComponent<CRigidbody>();
 	auto transform = m_pGameObject->GetComponent<CTransform>();
 
-	if (m_startTime > 3000) {
+	if (m_startTime > 2500) {
 		if (m_shurikein)
 			m_shurikein->SetIsActive(true);
 	}
 
-	if (m_startTime < 5000)
+	if (m_startTime < 3000)
 	{
 		if (m_light)
 			m_light->SetIsActive(false);

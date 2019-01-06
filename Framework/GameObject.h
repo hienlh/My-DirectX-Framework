@@ -1,10 +1,8 @@
 #pragma once
 #include "stdafx.h"
-#include "Renderer.h"
 #include "Object.h"
 #include "Transform.h"
 #include "Scene.h"
-#include "Collider.h"
 #include "Rigidbody.h"
 #include "BoxCollider.h"
 
@@ -68,8 +66,6 @@ namespace Framework
 			return nullptr;
 		}
 
-		bool AddComponent(CComponent *component);
-
 		template<class Type>
 		Type* GetComponent()
 		{
@@ -124,15 +120,12 @@ namespace Framework
 		bool Init();
 		void Release();
 		void CheckAfterAddComponent(CComponent *component);
+		bool AddComponent(CComponent *component);
 
 		// Override methods
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
-
-		CGameObject* Clone() const override;
-
-		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;
 
 		// Static methods
 	public:

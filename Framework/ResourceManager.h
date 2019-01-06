@@ -27,7 +27,7 @@ namespace Framework
 
 		//Method
 	public:
-		bool AddTexture(std::string name, std::string path, Color transparentColor = COLOR_BLACK, const char* xmlPath = nullptr);
+		bool AddTexture(const std::string &name, const std::string &path, const Color &transparentColor = COLOR_BLACK, const char* xmlPath = nullptr, const Vector2 &defaultAnchor = { 0.5,0.5 });
 		//static bool EditTexture(std::string name, std::string path, Color transparentColor = COLOR_BLACK, const char* xmlPath = nullptr);
 		
 		CGameObject* AddPrefab(std::string name, CGameObject *gameObject = nullptr);

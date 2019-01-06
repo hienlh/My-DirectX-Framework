@@ -1,9 +1,14 @@
 #include "ShurikeinController.h"
 #include <GameObject.h>
-
+#include <Renderer.h>
+#include <ctime>
+#include <cstdlib>
+bool isHitWall=false;
+bool isHitShot = false;
+int iran = 0;
 ShurikeinController::ShurikeinController(CGameObject * gameObject) : CMonoBehavior(gameObject)
 {
-	
+	srand((int)time(NULL));
 }
 
 
@@ -16,13 +21,32 @@ void ShurikeinController::OnTriggerEnter(CCollision * collision)
 	std::string collisionName = collision->GetOtherCollider()->GetName();
 	if (strstr(collisionName.c_str(), "BusterShot"))
 	{
-		m_pGameObject->GetComponent<CAnimator>()->SetBool("isWasHit",true);
+		//m_pGameObject->GetComponent<CAnimator>()->SetBool("isWasHit",true);
+		isHitShot = true;
+	}
+	if (strstr(collisionName.c_str(), "Ceiling"))
+	{
+		isHitWall = true;
 	}
 }
 
 void ShurikeinController::Update(DWORD dt)
 {
 	m_starttime += dt;
+
+	if (isHitShot)
+	{
+		if(m_waitForChangeColor > 100)
+			if (auto renderer = m_pGameObject->GetComponent<CRenderer>()) {
+				if (renderer->GetFillColor() == D3DCOLOR_XRGB(255, 0, 0)) {
+					renderer->SetFillColor(D3DCOLOR_XRGB(0, 0, 255));
+				}else
+					renderer->SetFillColor(D3DCOLOR_XRGB(255, 0, 0));
+
+				m_waitForChangeColor = 0;
+			}
+		m_waitForChangeColor += dt;
+	}
 	
 	auto rigidbody = m_pGameObject->GetComponent<CRigidbody>();
 	auto transform = m_pGameObject->GetComponent<CTransform>();
@@ -35,29 +59,91 @@ void ShurikeinController::Update(DWORD dt)
 	rectlimit.right += -20;
 	//CDebug::Log("%d %d %d %d \n", rectlimit.top, rectlimit.left, rectlimit.bottom, rectlimit.right);
 	Vector2 shuPos = transform->Get_Position();
-	if (m_starttime > 5000)
+	
+	if (m_starttime > 2500)
 	{
-		if (shuPos.y >= rectlimit.bottom && shuPos.x > rectlimit.left)
+		Vector2 settingPos=shuPos;
+		if (shuPos.y >= rectlimit.bottom )
 		{
-			transform->Set_Position(Vector2(shuPos.x, rectlimit.bottom));
-			rigidbody->SetVelocity({ -0.1,0 });
+			settingPos = Vector2(shuPos.x, rectlimit.bottom);
 		}
-		if (shuPos.x <= rectlimit.left && shuPos.y > rectlimit.top)
+		if (shuPos.x <= rectlimit.left )
 		{
-			rigidbody->SetVelocity({ 0,-0.1 });
-			transform->Set_Position(Vector2(rectlimit.left, shuPos.y));
+			settingPos = Vector2(rectlimit.left, shuPos.y);
 		}
-		if (shuPos.y <= rectlimit.top && shuPos.x < rectlimit.right)
+		if (shuPos.y <= rectlimit.top)
 		{
-			rigidbody->SetVelocity({ 0.1,0 });
-			transform->Set_Position(Vector2(shuPos.x, rectlimit.top));
+
+			settingPos = Vector2(shuPos.x, rectlimit.top);
 		}
-		if(shuPos.x >= rectlimit.right && shuPos.y < rectlimit.bottom)
+		if(shuPos.x >= rectlimit.right )
 		{
-			rigidbody->SetVelocity({ 0,0.1 });
-			transform->Set_Position(Vector2(rectlimit.right, shuPos.y));
+
+			settingPos = Vector2(rectlimit.right, shuPos.y);
+		}
+		transform->Set_Position(settingPos);
+		shuPos = settingPos;
+		if (shuPos.x <= rectlimit.left && shuPos.y >= rectlimit.bottom)
+		{
+			iran = rand() % 2;
+			CDebug::Log("%d \n", iran);
+		}
+		//iran = 1;
+		switch (iran)
+		{
+			case 0:
+			{
+				if (shuPos.y >= rectlimit.bottom && shuPos.x > rectlimit.left)
+				{
+					transform->Set_Position(Vector2(shuPos.x, rectlimit.bottom));
+					rigidbody->SetVelocity({ -0.2,0 });
+				}
+				if (shuPos.x <= rectlimit.left && shuPos.y > rectlimit.top)
+				{
+					rigidbody->SetVelocity({ 0,-0.2 });
+					transform->Set_Position(Vector2(rectlimit.left, shuPos.y));
+				}
+				if (shuPos.y <= rectlimit.top && shuPos.x < rectlimit.right)
+				{
+					rigidbody->SetVelocity({ 0.2,0 });
+					transform->Set_Position(Vector2(shuPos.x, rectlimit.top));
+				}
+				if (shuPos.x >= rectlimit.right && shuPos.y < rectlimit.bottom)
+				{
+					rigidbody->SetVelocity({ 0,0.2 });
+					transform->Set_Position(Vector2(rectlimit.right, shuPos.y));
+				}
+				break;
+			}
+
+			case 1:
+			{
+				Vector2 velocity=rigidbody->GetVelocity();
+				if (isHitShot && !isHitWall) velocity.y = -0.1;
+				else if (isHitShot && isHitWall)
+				{
+					velocity.y = 0.1;
+					isHitWall = false;
+					isHitShot = false;
+					m_pGameObject->GetComponent<CRenderer>()->SetFillColor(D3DCOLOR_XRGB(0,0,255));
+				}
+	
+				if (shuPos.x <= rectlimit.left) velocity.x = +0.2;
+				else if (shuPos.x >= rectlimit.right || velocity == Vector2(0,0)) velocity.x = -0.2;
+				rigidbody->SetVelocity(velocity);
+				break;
+			}
+			/*
+			case 2:
+			{
+				//rigidbody->SetVelocity({ 0,0 });
+				break;
+			}*/
 		}
 	}
+
+	
+
 	
 }
 

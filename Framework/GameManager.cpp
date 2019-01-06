@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Graphic.h"
 #include "Physic.h"
+#include "Time.h"
 
 using namespace Framework;
 
@@ -74,12 +75,13 @@ bool CGameManager::Run()
 		DWORD dt = now - frameStart;
 		dt = 20; // For Debug
 
+		
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
 
 			// process game loop
-
+			
 			CPhysic::GetInstance()->Update(dt);
 
 			if (m_currentScene)

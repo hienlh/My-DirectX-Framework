@@ -28,7 +28,5 @@ namespace Framework
 	public:
 		virtual void Update(DWORD dt) = 0;
 		virtual void Render() = 0;
-
-		virtual CObject* Clone() const = 0;
 	};
 }

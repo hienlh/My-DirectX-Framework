@@ -16,6 +16,6 @@ namespace Framework {
 
 		void Update(DWORD dt) override {}
 		void Render() override {}
-		CMonoBehavior* Clone() const override { return new CMonoBehavior(*this); }
+		CMonoBehavior* Clone() override = 0;
 	};
 }

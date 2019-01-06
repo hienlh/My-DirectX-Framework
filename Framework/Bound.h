@@ -47,7 +47,7 @@ typedef struct Bound
 	}
 	~Bound() = default;
 
-	Vector2 TopLeft() const { return Vector2(top, left); }
+	Vector2 TopLeft() const { return Vector2(left, top); }
 	Vector2 Size() const { return Vector2(right - left, bottom - top); }
 
 	void GetBound(float &t, float &l, float &r, float &b) const

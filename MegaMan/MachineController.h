@@ -20,4 +20,5 @@ public:
 
 public:
 	void Update(DWORD dt) override;
+	MachineController* Clone() override { return new MachineController(*this); };
 };

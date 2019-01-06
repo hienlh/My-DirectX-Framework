@@ -35,7 +35,7 @@ bool CScene::InitMainCamera()
 	{
 		m_pMainCamera = new CGameObject("Main Camera");
 		m_pMainCamera->AddComponent<CCamera>();
-
+		//TODO Check Init Camera
 		result = true;
 	} while (false);
 
@@ -96,8 +96,22 @@ std::set<CGameObject*> CScene::GetRenderGameObjects() const
 	std::set<CGameObject*> result = {};
 	result.insert(m_gameObjectList.begin(), m_gameObjectList.end());
 	result.insert(m_dynamicObjectList.begin(), m_dynamicObjectList.end());
-	auto quadTreeList = m_pQuadTree->query(Rect(m_pMainCamera->GetComponent<CTransform>()->Get_Position(), { 256, 256 }, { 0.5,0.5 }));
+	auto quadTreeList = m_pQuadTree->query(Rect(m_pMainCamera->GetComponent<CTransform>()->Get_Position(), { 512, 512 }, { 0.5,0.5 }));
 	result.insert(quadTreeList.begin(), quadTreeList.end());
+	return result;
+}
+
+std::set<CGameObject*> CScene::GetUpdateGameObjects() const
+{
+	std::set<CGameObject*> result = {};
+	result.insert(m_gameObjectList.begin(), m_gameObjectList.end());
+	result.insert(m_dynamicObjectList.begin(), m_dynamicObjectList.end());
+	result.insert(m_halfStaticObjectList.begin(), m_halfStaticObjectList.end());
+	for (CGameObject* const object : m_staticObjectList)
+	{
+		if (object->GetComponent<CRigidbody>()->GetNeedUpdate())
+			result.insert(object);
+	}
 	return result;
 }
 
@@ -113,7 +127,7 @@ void CScene::Update(DWORD dt)
 {
 	CInput::GetInstance()->Update();
 
-	for (CGameObject* pGameObject : GetAllGameObjects())
+	for (CGameObject* pGameObject : GetUpdateGameObjects())
 	{
 		if (pGameObject&&pGameObject->GetIsActive())
 				pGameObject->Update(dt);
