@@ -6,3 +6,8 @@ Framework::CPhysicObserver::CPhysicObserver()
 {
 	CPhysic::GetInstance()->RegisterObserver(this);
 }
+
+Framework::CPhysicObserver::~CPhysicObserver()
+{
+	CPhysic::GetInstance()->RemoveObserver(this);
+}

@@ -5,6 +5,7 @@
 #include "Animator.h"
 #include "Transform.h"
 #include "ResourceManager.h"
+#include "Renderer.h"
 
 using namespace Framework;
 
@@ -19,6 +20,7 @@ CGameObject::CGameObject(const CGameObject& gameObject) : CObject(gameObject)
 	{
 		AddComponent(component.second->Clone());
 	}
+	CGameManager::GetInstance()->GetCurrentScene()->AddGameObject(this);
 }
 
 CGameObject::CGameObject(std::string name, Vector2 position, bool addIntoCurrentScene)
@@ -34,6 +36,17 @@ CGameObject::CGameObject(std::string name, Vector2 position, bool addIntoCurrent
 		if (pScene)
 			if (!pScene->AddGameObject(this)) delete this;
 	}
+}
+
+CGameObject::~CGameObject()
+{
+	for(auto i=m_pComponents.begin();i!=m_pComponents.end();i++)
+	{
+		SAFE_DELETE((*i).second);
+	}
+
+	if(m_pScene)
+		m_pScene->RemoveGameObject(this);
 }
 
 bool CGameObject::AddComponent(CComponent* component)
@@ -103,8 +116,10 @@ void CGameObject::Update(DWORD dt)
 	const Vector2 prePos = transform->Get_Position();
 
 	for (auto component : m_pComponents)
-		if(component.second->GetIsActive())
+		if (component.second->GetIsActive()) {
 			component.second->Update(dt);
+			if (!component.second->GetGameObject()) return;
+		}
 
 	//Reset position of static gameObjects and half-static gameObjects which is moved
 	Vector2 curPos = transform->Get_Position();
@@ -143,23 +158,6 @@ void CGameObject::Render()
 }
 
 /**
- * \brief Clone GameObject will auto add into the scene
- */
-CGameObject* CGameObject::Clone() const
-{
-	const auto result = new CGameObject(*this);
-	CGameManager::GetInstance()->GetCurrentScene()->AddGameObject(result);
-	return result;
-}
-
-tinyxml2::XMLElement* CGameObject::ToXmlElement(tinyxml2::XMLDocument& doc) const
-{
-	//TODO ToXmlElement GameObject
-	return nullptr;
-}
-
-
-/**
  * \brief Clones the object original and returns the clone.
  * \param gameObject An existing gameObject that you want to make a copy of.
  * \param parent Parent that will be assigned to the new object.
@@ -171,7 +169,7 @@ tinyxml2::XMLElement* CGameObject::ToXmlElement(tinyxml2::XMLDocument& doc) cons
 CGameObject* CGameObject::Instantiate(CGameObject* gameObject, CGameObject* parent, Vector2 position, Vector3 rotation,
 	bool instantiateInWorldSpace)
 {
-	auto *result = gameObject->Clone();
+	auto *result = new CGameObject(*gameObject);
 
 	result->GetComponent<CTransform>()
 		->SetParent(parent)

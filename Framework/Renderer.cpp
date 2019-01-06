@@ -8,7 +8,7 @@
 
 using namespace Framework;
 
-CRenderer* CRenderer::SetSprite(std::string textureName, DWORD index)
+CRenderer* CRenderer::SetSprite(const std::string& textureName, const DWORD& index)
 {
 	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
 	m_pSprite = m_pRootSprite;
@@ -58,11 +58,6 @@ void CRenderer::Render()
 	position3D.z = m_zOrder;
 
 	CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY, m_fillColor, m_alpha);
-}
-
-CRenderer* CRenderer::Clone() const
-{
-	return new CRenderer(*this);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)

@@ -21,8 +21,6 @@ namespace Framework {
 	public:
 		CGameObject *GetCollider() const { return m_pCollider; }
 		CGameObject *GetOtherCollider() const { return m_pOtherCollider; }
-
-		std::string GetOtherColliderName(std::string name) const;
 		
 		bool CheckNameInCollision(std::string colliderName) const;
 		bool CollisionBetween(std::string name, std::string otherName) const;

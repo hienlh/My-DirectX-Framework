@@ -28,9 +28,6 @@ namespace Framework {
 
 		void Render() override;
 
-	private:
-		CObject* Clone() const override { return nullptr; }
-
 		//Method
 	public:
 

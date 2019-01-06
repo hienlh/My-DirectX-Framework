@@ -15,7 +15,6 @@ CCollider::CCollider(const CCollider& collider) : CComponent(collider)
 	m_Name = collider.m_Name;
 }
 
-
 /**
  * \brief Main function to calculate the bound for handling collision
  * \return The global bound

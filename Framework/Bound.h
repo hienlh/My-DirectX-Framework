@@ -47,7 +47,7 @@ typedef struct Bound
 	}
 	~Bound() = default;
 
-	Vector2 TopLeft() const { return Vector2(top, left); }
+	Vector2 TopLeft() const { return Vector2(left, top); }
 	Vector2 Size() const { return Vector2(right - left, bottom - top); }
 
 	void GetBound(float &t, float &l, float &r, float &b) const
@@ -76,6 +76,21 @@ typedef struct Bound
 		if (_top > _bottom || _left > _right) return Bound(0, 0, 0, 0);
 
 		return Bound(_top, _left, _bottom, _right);
+	}
+
+	float Distance(Bound other) const
+	{
+		if (this->intersect(other)) return 0;
+
+		const float _hor = other.left > right || left > other.right ? min(fabs(right - other.left), fabs(left - other.right)) : 0;
+		const float _ver = other.top > bottom || top > other.bottom ? min(fabs(top - other.bottom), fabs(bottom - other.top)) : 0;
+
+		return sqrt(pow(_hor, 2) + pow(_ver, 2));
+	}
+
+	float Distance(Vector2 point) const
+	{
+		return Distance(Bound(point, {0,0}));
 	}
 
 	bool isInside(Vector2 point) const

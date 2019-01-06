@@ -29,16 +29,6 @@ CCollision::~CCollision()
 	SAFE_DELETE(m_pOtherCollider);
 }
 
-std::string CCollision::GetOtherColliderName(std::string name) const
-{
-	const std::string colliderName = m_pCollider->GetName();
-	const std::string otherColliderName = m_pOtherCollider->GetName();
-
-	if (otherColliderName == name) return colliderName;
-	if (colliderName == name) return otherColliderName;
-	return "";
-}
-
 bool CCollision::CheckNameInCollision(std::string colliderName) const
 {
 	return m_pCollider->GetName() == colliderName || 

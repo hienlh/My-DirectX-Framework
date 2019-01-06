@@ -1,17 +1,14 @@
-#include "BusterShotController.h"
+﻿#include "BusterShotController.h"
 #include "Animation.h"
 #include "GameObject.h"
 #include "Animator.h"
+#include "Macros.h"
 
 
-BusterShotController::BusterShotController(const BusterShotController& PC) : CMonoBehavior(PC)
+BusterShotController::BusterShotController(const BusterShotController& BC) : CMonoBehavior(BC)
 {
-
-}
-
-BusterShotController* BusterShotController::Clone() const
-{
-	return new BusterShotController(*this);
+	m_liveTime = BC.m_liveTime;
+	m_destroyTime = BC.m_destroyTime;
 }
 
 BusterShotController::BusterShotController(CGameObject* gameObject) : CMonoBehavior(gameObject)
@@ -21,27 +18,26 @@ BusterShotController::BusterShotController(CGameObject* gameObject) : CMonoBehav
 
 void BusterShotController::OnTriggerEnter(CCollision* collision)
 {
-	m_pGameObject->GetComponent<CAnimator>()->SetBool("isCollision", true);
+	m_pGameObject->GetComponent<CAnimator>()->SetBool(Bool_IsCollision, true);
 	m_pGameObject->GetComponent<CRigidbody>()->SetVelocity({ 0,0 });
-}
-
-void BusterShotController::OnCollisionEnter(CCollision* collision)
-{
-	// CDebug::Log(collision->GetColliderName());
-	// CDebug::Log(collision->GetOtherColliderName());
-	// CDebug::Log(m_pGameObject->GetName());
-	// CDebug::Log("\n");
-	m_pGameObject->GetComponent<CAnimator>()->SetBool("isCollision", true);
-	m_pGameObject->GetComponent<CRigidbody>()->SetVelocity({ 0,0 });
-		
+	m_pGameObject->GetComponent<CCollider>()->SetIsActive(false);
 }
 
 void BusterShotController::Update(DWORD dt)
 {
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
-	if (anim->GetBool("isCollision") && anim->GetCurrentAnimation()->IsLastFrame())
+	if (anim->GetBool(Bool_IsCollision) && anim->GetCurrentAnimation()->IsLastFrame())
 	{
-		m_pGameObject->SetIsActive(false);
+		SAFE_DELETE(m_pGameObject);
+		return;
+	}
+
+	m_liveTime += dt;
+	if (m_liveTime > m_destroyTime)
+	{
+		m_pGameObject->GetComponent<CAnimator>()->SetBool(Bool_IsCollision, true);
+		m_pGameObject->GetComponent<CRigidbody>()->SetVelocity({ 0,0 });
+		m_pGameObject->GetComponent<CCollider>()->SetIsActive(false);
 	}
 }
 

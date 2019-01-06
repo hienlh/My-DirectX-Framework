@@ -13,13 +13,10 @@ CRigidbody::CRigidbody(const CRigidbody& rigidbody) : CComponent(rigidbody)
 	m_mass = rigidbody.m_mass;
 	m_velocity = rigidbody.m_velocity;
 	m_limitedArea = rigidbody.m_limitedArea;
+	m_needUpdate = rigidbody.m_needUpdate;
 }
 
-CRigidbody::CRigidbody(CGameObject * gameObject) : CComponent(gameObject)
-{
-}
-
-CRigidbody* CRigidbody::SetVelocity(float x, float y)
+CRigidbody* CRigidbody::SetVelocity(const float &x, const float &y)
 {
 	if (fabs(x - MAX_VELOCITY) > EPSILON)
 		m_velocity.x = x;
@@ -28,18 +25,18 @@ CRigidbody* CRigidbody::SetVelocity(float x, float y)
 	return this;
 }
 
-CRigidbody* CRigidbody::SetIsKinematic(bool isKinematic)
+CRigidbody* CRigidbody::SetIsKinematic(const bool& isKinematic)
 {
 	m_isKinematic = isKinematic;
 	if(isKinematic)
 	{
-		//Add to scene to change quadTree
+		//Add into the scene to change quadTree
 		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	}
 	return this;
 }
 
-CRigidbody* CRigidbody::SetLimitedArea(Rect limitedArea)
+CRigidbody* CRigidbody::SetLimitedArea(const Rect& limitedArea)
 {
 	//If object is static, not update limited area
 	if (!m_isKinematic) {
@@ -68,9 +65,4 @@ void CRigidbody::Render()
 		 	CGraphic::GetInstance()->DrawRectangle(m_pGameObject->GetComponent<CCollider>()->GetBoundArea(), D3DCOLOR_XRGB(0, 0, 255));
 		else CGraphic::GetInstance()->DrawRectangle(m_limitedArea, D3DCOLOR_XRGB(0, 0, 255));
 	}
-}
-
-CRigidbody* CRigidbody::Clone() const
-{
-	return new CRigidbody(*this);
 }

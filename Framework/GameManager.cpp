@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "Graphic.h"
 #include "Physic.h"
+#include "Time.h"
 
 using namespace Framework;
 
@@ -79,11 +80,11 @@ bool CGameManager::Run()
 			frameStart = now;
 
 			// process game loop
+			
+			CPhysic::GetInstance()->Update(dt);
 
 			if (m_currentScene)
 				m_currentScene->Update(dt);
-
-			CPhysic::GetInstance()->Update(dt);
 
 			m_currentScene->Render();
 		}

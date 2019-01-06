@@ -1,31 +1,38 @@
-#include "BulletController.h"
-#include "Input.h"
+﻿#include "BulletController.h"
+#include "Animation.h"
 #include "GameObject.h"
 #include "Animator.h"
+#include "Macros.h"
+#include "PlayerController.h"
 
-
-BulletController::BulletController(CGameObject * gameObject) : CMonoBehavior(gameObject)
+BulletController::BulletController(const BulletController& BC) : CMonoBehavior(BC)
 {
+	m_liveTime = BC.m_liveTime;
 }
 
-void BulletController::OnCollisionEnter(CCollision* collision)
+void BulletController::OnTriggerEnter(CCollision * collision)
 {
-	//m_pGameObject->GetComponent<CAnimator>()->SetBool("wasHit", true);
+	m_pGameObject->GetComponent<CAnimator>()->SetBool(Bool_IsCollision, true);
+	m_pGameObject->GetComponent<CRigidbody>()->SetVelocity({ 0,0 });
 }
 
 void BulletController::Update(DWORD dt)
 {
-	CInput *input = CInput::GetInstance();
-	if (input->KeyDown(DIK_E))
-	{		
-		Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-		pos.x += 50;
-		auto pBullet = CGameObject::Instantiate("BusterShot", nullptr, pos);
-		pBullet->GetComponent<CRigidbody>()->SetVelocity({ .3,0 });
+	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
+	if (anim->GetBool(Bool_IsCollision) && anim->GetCurrentAnimation()->IsLastFrame()) {
+		SAFE_DELETE(m_pGameObject);
+		return;
+	}
+
+	m_liveTime += dt;
+	if (m_liveTime > DESTROY_TIME)
+	{
+		anim->SetBool(Bool_IsCollision, true);
+		m_pGameObject->GetComponent<CRigidbody>()->SetVelocity(VECTOR2_ZERO);
+		m_liveTime = 0;
 	}
 }
 
 void BulletController::Render()
 {
 }
-

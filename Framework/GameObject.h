@@ -1,10 +1,8 @@
 #pragma once
 #include "stdafx.h"
-#include "Renderer.h"
 #include "Object.h"
 #include "Transform.h"
 #include "Scene.h"
-#include "Collider.h"
 #include "Rigidbody.h"
 #include "BoxCollider.h"
 
@@ -27,7 +25,7 @@ namespace Framework
 	public:
 		CGameObject(const CGameObject& gameObject);
 		CGameObject(std::string name, Vector2 position = VECTOR2_ZERO, bool addIntoCurrentScene = true);
-		~CGameObject() = default;
+		~CGameObject();
 
 		// Friends
 	public:
@@ -67,8 +65,6 @@ namespace Framework
 			}
 			return nullptr;
 		}
-
-		bool AddComponent(CComponent *component);
 
 		template<class Type>
 		Type* GetComponent()
@@ -124,15 +120,12 @@ namespace Framework
 		bool Init();
 		void Release();
 		void CheckAfterAddComponent(CComponent *component);
+		bool AddComponent(CComponent *component);
 
 		// Override methods
 	public:
-		virtual void Update(DWORD dt);
-		void Render();
-
-		CGameObject* Clone() const override;
-
-		tinyxml2::XMLElement* ToXmlElement(tinyxml2::XMLDocument &doc) const;
+		void Update(DWORD dt) override;
+		void Render() override;
 
 		// Static methods
 	public:

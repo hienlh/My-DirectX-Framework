@@ -54,12 +54,10 @@ namespace Framework
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
-
-		CTransform* Clone() const override;
+		CTransform* Clone() override { return new CTransform(*this); }
 
 		//Methods
 	public:
 		CTransform* Translate(Vector2 translate) { m_position += translate;  return this; }
-
 	};
 }

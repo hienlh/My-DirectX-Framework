@@ -36,6 +36,7 @@ namespace Framework
 		std::set<CGameObject*> GetListHalfStaticGameObject() const;
 		std::set<CGameObject*> GetAllGameObjects() const;
 		std::set<CGameObject*> GetRenderGameObjects() const;
+		std::set<CGameObject*> GetUpdateGameObjects() const;
 		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 		CQuadTree* GetQuadTree() const { return m_pQuadTree; }
 		bool GetIsRenderQuadTree() const { return m_isRenderQuadTree; }
@@ -48,9 +49,6 @@ namespace Framework
 		void Update(DWORD dt) override;
 		void Render() override;
 
-	private:
-		CScene* Clone() const override { return nullptr; }
-
 		//Internal Method
 	private:
 		void AddColliderObject(CGameObject* gameObject);
@@ -58,6 +56,7 @@ namespace Framework
 		//Method
 	public:
 		bool AddGameObject(Framework::CGameObject* gameObject);
+		void RemoveGameObject(CGameObject* gameObject);
 		CGameObject* FindGameObject(std::string name);
 		CGameObject* FindGameObject(DWORD id);
 		void SaveQuadTree() const;

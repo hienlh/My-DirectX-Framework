@@ -192,17 +192,6 @@ bool CPhysic::IsOverlapping(const Bound& object, const Bound& other)
 
 void CPhysic::Update(DWORD dt)
 {
-	//Gravity for dynamic gameObjects
-	auto list = CGameManager::GetInstance()->GetCurrentScene()->GetAllGameObjects();
-	for (CGameObject* const game_object : list)
-	{
-		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
-		{
-			if(!rigid->GetIsKinematic())
-				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
-		}
-	}
-
 	// Collision test
 
 	//Dynamic GameObject
@@ -211,6 +200,13 @@ void CPhysic::Update(DWORD dt)
 
 	for (auto i = listDynamicGameObject.begin(); i != listDynamicGameObject.end(); ++i)
 	{
+		//Update Gravity
+		if (CRigidbody* rigid = (*i)->GetComponent<CRigidbody>())
+		{
+			if (!rigid->GetIsKinematic())
+				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+		}
+
 		//test with QuadTree
 		const Bound bound = (*i)->GetComponent<CCollider>()->GetBoundGlobal();
 		std::set<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
@@ -233,6 +229,13 @@ void CPhysic::Update(DWORD dt)
 	auto listHalfStaticGameObject = currentScreen->GetListHalfStaticGameObject();
 	for (auto game_object : listHalfStaticGameObject)
 	{
+		//Update Gravity
+		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
+		{
+			if (!rigid->GetIsKinematic())
+				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+		}
+
 		const Bound bound = game_object->GetComponent<CCollider>()->GetBoundGlobal();
 		std::set<CGameObject*> listReturnByQuadTree = currentScreen->GetQuadTree()->query(bound);
 
@@ -252,6 +255,10 @@ float CPhysic::SweptAABBx(const DWORD dt, CGameObject* moveObject, CGameObject* 
 	float ml, mt, mr, mb;		// moving object bbox
 	float t, nx, ny;
 
+	if(strstr(moveObject->GetName().c_str(), std::string("Bullet").c_str()) && strstr(staticObject->GetName().c_str(), std::string("Bullet").c_str()))
+	{
+  		int a = 10;
+	}
 	if (!moveObject->GetIsActive() || !staticObject->GetIsActive()) return -1;
 
 	staticObject->GetComponent<CCollider>()->GetBoundGlobal().GetBound(st, sl, sr, sb);
@@ -291,15 +298,16 @@ float CPhysic::SweptAABBx(const DWORD dt, CGameObject* moveObject, CGameObject* 
 		t, nx, ny
 	);
 
-	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t != 0 && !isTrigger)
+	if (IsOverlapping(Bound(mt, ml, mb, mr), Bound(st, sl, sb, sr)) && t < 0 && !isTrigger)
 	{
-		OverLapResponse(moveObject, staticObject);
+		OverLapResponse(moveObject, staticObject, nx, ny);
+
 		//deflect
-		if (nx != 0) {
+		if (nx > 0 && dx < 0 || nx < 0 && dx > 0) {
 			mv = Vector2(0, mv.y);
 			sv = Vector2(0, sv.y);
 		}
-		if (ny != 0) {
+		if (ny > 0 && dy < 0 || ny < 0 && dy > 0) {
 			mv = Vector2(mv.x, 0);
 			sv = Vector2(sv.x, 0);
 		}
@@ -422,16 +430,21 @@ void CPhysic::SweptAABB(
 	if (tx_entry > ty_entry)
 	{
 		ny = 0.0f;
-		dx > 0 ? nx = -1.0f : nx = 1.0f;
+		dx > 0 ? nx = -1.0f : nx = 1.0f; //-1 left, 1 right
 	}
 	else
 	{
 		nx = 0.0f;
-		dy > 0 ? ny = -1.0f : ny = 1.0f;
+		dy > 0 ? ny = -1.0f : ny = 1.0f; // -1 top, 1 bottom
 	}
 }
 
-void CPhysic::OverLapResponse(CGameObject* object, CGameObject* other)
+/**
+ * \brief Separate objects from one another
+ * \param nx Direction of overlap of Object (1 left, -1 right)
+ * \param ny Direction of overlap of Object (1 top, -1 bottom)
+ */
+void CPhysic::OverLapResponse(CGameObject* object, CGameObject* other, float &nx, float &ny)
 {
 	CBoxCollider *objectCollider = object->GetComponent<CBoxCollider>();
 	CBoxCollider *otherCollider = other->GetComponent<CBoxCollider>();
@@ -444,7 +457,7 @@ void CPhysic::OverLapResponse(CGameObject* object, CGameObject* other)
 
 	if (objectKinematic && otherKinematic) return;
 
-	float ratio = 0.5;
+	float ratio = 0.5; //Use 0.5 for 2 movable objects, 1 for only one movable object 
 
 	if (objectKinematic || otherKinematic) ratio = 1;
 
@@ -452,27 +465,83 @@ void CPhysic::OverLapResponse(CGameObject* object, CGameObject* other)
 
 	if (overLapBound == Rect(0, 0, 0, 0)) return;
 
-	if(fabs(objectCollider->GetBoundGlobal().top - overLapBound.top) > fabs(objectCollider->GetBoundGlobal().bottom - overLapBound.bottom))
+	const Bound ObjectColliderBound = objectCollider->GetBoundGlobal();
+	const float _distanceTop = fabs(ObjectColliderBound.top - overLapBound.top);
+	const float _distanceBottom = fabs(ObjectColliderBound.bottom - overLapBound.bottom);
+	const float _distanceLeft = fabs(ObjectColliderBound.left - overLapBound.left);
+	const float _distanceRight = fabs(ObjectColliderBound.right - overLapBound.right);
+
+	if (_distanceTop < 0.0001 && _distanceBottom < 0.0001) ny = 0;
+	else if (_distanceTop < 0.0001) ny = 1;
+	else if (_distanceBottom < 0.0001) ny = -1;
+
+	if (_distanceLeft < 0.0001 && _distanceRight < 0.0001) nx = 0;
+	else if (_distanceLeft < 0.0001) nx = 1;
+	else if (_distanceRight < 0.0001) nx = -1;
+
+	if(overLapBound.Size().x > overLapBound.Size().y)
 	{
-		if (!objectKinematic) objectTransform->PlusPosition(Vector2(0, - ratio * overLapBound.Size().y));
-		if (!otherKinematic) otherTransform->PlusPosition(Vector2(0, ratio * overLapBound.Size().y));
-	}
-	else if(fabs(objectCollider->GetBoundGlobal().top - overLapBound.top) < fabs(objectCollider->GetBoundGlobal().bottom - overLapBound.bottom))
-	{
-		if (!objectKinematic) objectTransform->PlusPosition(Vector2(0, ratio * overLapBound.Size().y));
-		if (!otherKinematic) otherTransform->PlusPosition(Vector2(0, -ratio * overLapBound.Size().y));
+		if(_distanceBottom < 0.0001)
+		{
+			if (!objectKinematic) objectTransform->PlusPosition(Vector2(0, -ratio * overLapBound.Size().y));
+			if (!otherKinematic) otherTransform->PlusPosition(Vector2(0, ratio * overLapBound.Size().y));
+			nx = 0;
+			return;
+		}
+		if(_distanceTop<0.0001)
+		{
+			if (!objectKinematic) objectTransform->PlusPosition(Vector2(0, ratio * overLapBound.Size().y));
+			if (!otherKinematic) otherTransform->PlusPosition(Vector2(0, -ratio * overLapBound.Size().y));
+			nx = 0;
+			return;
+		}
 	}
 	else
 	{
-		if (fabs(objectCollider->GetBoundGlobal().left - overLapBound.left) > fabs(objectCollider->GetBoundGlobal().right - overLapBound.right))
+		if (_distanceRight < 0.0001)
 		{
 			if (!objectKinematic) objectTransform->PlusPosition(Vector2(-ratio * overLapBound.Size().x, 0));
 			if (!otherKinematic) otherTransform->PlusPosition(Vector2(ratio * overLapBound.Size().x, 0));
+			ny = 0;
+			return;
 		}
-		else
+		if (_distanceLeft < 0.0001)
 		{
 			if (!objectKinematic) objectTransform->PlusPosition(Vector2(ratio * overLapBound.Size().x, 0));
-			if (!otherKinematic) otherTransform->PlusPosition(Vector2(- ratio * overLapBound.Size().x, 0));
+			if (!otherKinematic) otherTransform->PlusPosition(Vector2(-ratio * overLapBound.Size().x, 0));
+			ny = 0;
+			return;
+		}
+
+		const float _maxDistance = max(max(_distanceTop, _distanceBottom), max(_distanceLeft, _distanceRight));
+
+		if (fabs(_maxDistance - _distanceTop) < 0.0001)
+		{
+			if (!objectKinematic) objectTransform->PlusPosition(Vector2(0, -ratio * overLapBound.Size().y));
+			if (!otherKinematic) otherTransform->PlusPosition(Vector2(0, ratio * overLapBound.Size().y));
+			nx = 0;
+			return;
+		}
+		if (fabs(_maxDistance - _distanceBottom) < 0.0001)
+		{
+			if (!objectKinematic) objectTransform->PlusPosition(Vector2(0, ratio * overLapBound.Size().y));
+			if (!otherKinematic) otherTransform->PlusPosition(Vector2(0, -ratio * overLapBound.Size().y));
+			nx = 0;
+			return;
+		}
+		if (fabs(_maxDistance - _distanceLeft) < 0.0001)
+		{
+			if (!objectKinematic) objectTransform->PlusPosition(Vector2(-ratio * overLapBound.Size().x, 0));
+			if (!otherKinematic) otherTransform->PlusPosition(Vector2(ratio * overLapBound.Size().x, 0));
+			ny = 0;
+			return;
+		}
+		if (fabs(_maxDistance - _distanceRight) < 0.0001)
+		{
+			if (!objectKinematic) objectTransform->PlusPosition(Vector2(ratio * overLapBound.Size().x, 0));
+			if (!otherKinematic) otherTransform->PlusPosition(Vector2(-ratio * overLapBound.Size().x, 0));
+			ny = 0;
+			return;
 		}
 	}
 }

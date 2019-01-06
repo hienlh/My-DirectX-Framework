@@ -5,13 +5,22 @@
 
 using namespace Framework;
 
+CTransition::CTransition(const CTransition& transition)
+	: CObject(transition)
+{
+	m_hasExitTime = transition.m_hasExitTime;
+	m_isRelatedTo = transition.m_isRelatedTo;
+	m_dstAnimationName = transition.m_dstAnimationName;
+	m_conditions = transition.m_conditions;
+}
+
 CAnimator::CAnimator(const CAnimator& animator) : CComponent(animator)
 {
 	m_Name = animator.m_Name;
 	m_boolConditions = animator.m_boolConditions;
 	for (const std::pair<const std::basic_string<char>, CAnimation*> animation : animator.m_Animations)
 	{
-		const auto clone = animation.second->Clone();
+		const auto clone = new CAnimation(*animation.second);
 		AddAnimation(clone);
 
 		if (animator.m_pRootAnimation == animation.second)
@@ -24,7 +33,7 @@ CAnimator::CAnimator(const CAnimator& animator) : CComponent(animator)
 		std::list<CTransition*> cloneList = {};
 		for (CTransition* transition : listTransition.second)
 		{
-			cloneList.push_back(transition->Clone());
+			cloneList.push_back(new CTransition(*transition));
 		}
 		m_transitions[listTransition.first] = cloneList;
 	}
@@ -52,7 +61,7 @@ CAnimator* CAnimator::AddAnimation(std::string animationName)
 
 	if (anim) {
 		if (m_Animations.size() <= 0) m_pCurrentAnimation = anim;
-		m_Animations[animationName] = anim->Clone();
+		m_Animations[animationName] = new CAnimation(*anim);
 	}
 
 	if (!m_pRootAnimation) m_pRootAnimation = m_Animations[animationName];
@@ -158,7 +167,7 @@ CTransition* CAnimator::GetTransition(std::string srcAnimationName, std::string 
 		if (transition->GetDestinationAnimationName() == dstAnimationName) return transition;
 	}
 
-	CDebug::Log("Warning GetTransition: Transition '%s' to '%s' is not in animator", srcAnimationName, dstAnimationName);
+	CDebug::Log("Warning GetTransition: Transition '%s' to '%s' is not in animator", srcAnimationName.c_str(), dstAnimationName.c_str());
 	return nullptr;
 }
 
@@ -173,7 +182,7 @@ CAnimator* CAnimator::AddBool(std::string name, bool value)
 		}
 	} while (false);
 
-	if (!result) CDebug::Log("Error AddBool: Bool '%s' has been added before", name);
+	if (!result) CDebug::Log("Error AddBool: Bool '%s' has been added before", name.c_str());
 	return result ? this : nullptr;
 }
 
@@ -188,18 +197,19 @@ CAnimator* CAnimator::SetBool(std::string name, bool value)
 		}
 	} while (false);
 
+	if (!result) CDebug::Log("SetBool '%s' in '%s' fail!", name.c_str(), m_pGameObject->GetName().c_str());
 	return result ? this : nullptr;
 }
 
-bool CAnimator::GetBool(std::string name)
+bool CAnimator::GetBool(std::string name, bool defaultValue)
 {
 	if (m_boolConditions.count(name))
 	{
 		return m_boolConditions[name];
 	}
 
-	CDebug::Log("Error GetBool: Bool '%s' is not in Animator", name);
-	return false;
+	CDebug::Log("Error GetBool: Bool '%s' is not in '%s'", name.c_str(), m_pGameObject->GetName().c_str());
+	return defaultValue;
 }
 
 void CAnimator::Update(DWORD dt)
@@ -258,11 +268,6 @@ void CAnimator::Render()
 	//position3D.z = 0;
 
 	//CGraphic::GetInstance()->Draw(sprite, &position3D);
-}
-
-CAnimator* CAnimator::Clone() const
-{
-	return new CAnimator(*this);
 }
 
 CAnimator* CAnimator::Instantiate()

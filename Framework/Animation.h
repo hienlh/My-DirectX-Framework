@@ -30,12 +30,9 @@ namespace Framework {
 		~CAnimation() = default;
 
 	private:
-		bool Init(std::string textureName, DWORD defaultTime);
-		void Render() override;
+		void Render() override {};
 	public:
 		void Update(DWORD dt) override;
-
-		CAnimation* Clone() const override;
 
 		// Getter / Setter
 	public:

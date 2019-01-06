@@ -240,12 +240,22 @@ std::set<CGameObject*> CQuadTree::query(Rect rectangle)
 
 	if(m_pNodes[0])
 	{
-		for (CQuadTree* node : m_pNodes)
-		{
-			if (rectangle.intersect(node->m_bounds)) {
-				auto nodeResult = node->query(rectangle);
-				result.insert(nodeResult.begin(), nodeResult.end());
-			}
+		//Optimized Code
+		if (rectangle.intersect(m_pNodes[0]->m_bounds)) {
+			auto nodeResult = m_pNodes[0]->query(rectangle);
+			result.insert(nodeResult.begin(), nodeResult.end());
+		}
+		if (rectangle.intersect(m_pNodes[1]->m_bounds)) {
+			auto nodeResult = m_pNodes[1]->query(rectangle);
+			result.insert(nodeResult.begin(), nodeResult.end());
+		}
+		if (rectangle.intersect(m_pNodes[2]->m_bounds)) {
+			auto nodeResult = m_pNodes[2]->query(rectangle);
+			result.insert(nodeResult.begin(), nodeResult.end());
+		}
+		if (rectangle.intersect(m_pNodes[3]->m_bounds)) {
+			auto nodeResult = m_pNodes[3]->query(rectangle);
+			result.insert(nodeResult.begin(), nodeResult.end());
 		}
 	}
 	else

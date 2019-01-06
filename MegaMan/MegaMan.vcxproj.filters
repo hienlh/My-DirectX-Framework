@@ -13,6 +13,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{1fd4fdca-01db-4f15-8fdb-5fc8ad85745e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,22 +27,49 @@
     <ClCompile Include="GroundController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="MegaManPowerController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="BlastHornetController.cpp">
+    <ClCompile Include="MachineController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="NotorBangerEnemyController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="BusterShotController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="HeadGunnerEnemyController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="GenjiBosController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
     <ClCompile Include="BulletController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="CanBeAttacked.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CanAttacked.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthValueController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="DoorController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetBulletController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetChild2Controller.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
     <ClCompile Include="BlastHornetChildController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,22 +80,52 @@
     <ClInclude Include="GroundController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="MegaManPowerController.h">
-      <Filter>Controller</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="BlastHornetController.h">
+    <ClInclude Include="MachineController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="NotorBangerEnemyController.h">
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="BusterShotController.h">
       <Filter>Controller</Filter>
     </ClInclude>
+    <ClInclude Include="HeadGunnerEnemyController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="GenjiBosController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
     <ClInclude Include="BulletController.h">
       <Filter>Controller</Filter>
     </ClInclude>
+    <ClInclude Include="Macros.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="CanBeAttacked.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CanAttacked.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthValueController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="DoorController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetBulletController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetChild2Controller.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
     <ClInclude Include="BlastHornetChildController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

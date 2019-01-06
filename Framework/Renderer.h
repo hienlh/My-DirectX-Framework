@@ -35,12 +35,13 @@ namespace Framework
 		bool GetFlipX() const { return m_flipX; }
 		bool GetFlipY() const { return m_flipY; }
 
-		CRenderer* SetSprite(std::string textureName, DWORD index = -1);
-		CRenderer* SetAlpha(DWORD alpha) { m_alpha = alpha > 255 ? 255 : alpha;  return this; }
-		CRenderer* SetFillColor(DWORD color) { m_fillColor = color;  return this; }
-		CRenderer* SetZOrder(int zOrder) { m_zOrder = zOrder; return this; }
-		CRenderer* SetFlipX(bool flipX) { m_flipX = flipX; return this; }
-		CRenderer* SetFlipY(bool flipY) { m_flipY = flipY; return this; }
+		CRenderer* SetSprite(const std::string& textureName, const DWORD &index = -1);
+		CRenderer* SetAlpha(const DWORD &alpha) { m_alpha = alpha > 255 ? 255 : alpha;  return this; }
+		CRenderer* SetFillColor(const DWORD &color) { m_fillColor = color;  return this; }
+		CRenderer* SetZOrder(const int &zOrder) { m_zOrder = zOrder; return this; }
+		CRenderer* SetFlipX(const bool &flipX) { m_flipX = flipX; return this; }
+		CRenderer* SetFlipY(const bool &flipY) { m_flipY = flipY; return this; }
+		CRenderer* SetAnchor(const Vector2 &anchor) { m_pRootSprite->SetAnchor(anchor); return this; };
 
 		// Cons / Des
 	public:
@@ -58,14 +59,11 @@ namespace Framework
 	public:
 		void Update(DWORD dt) override;
 		void Render() override;
-
-		CRenderer* Clone() const override;
+		CRenderer* Clone() override { return new CRenderer(*this); }
 
 		// Static methods
 	public:
 		static void Destroy(CRenderer* &instance);
-
 		// Friend
-	public:
 	};
 }
