@@ -7,8 +7,8 @@ class BlastHornetBulletController : public Framework::CMonoBehavior
 private:
 	CGameObject* m_target;
 	CGameObject* m_parent;
-	int m_flyTime = 5000;
-	int m_targetTime = 3000;
+	int m_flyTime = 2000;
+	int m_targetTime = 1000;
 	// To Clone Function
 public:
 	BlastHornetBulletController() = default;

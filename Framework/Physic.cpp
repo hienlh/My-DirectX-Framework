@@ -204,7 +204,7 @@ void CPhysic::Update(DWORD dt)
 		if (CRigidbody* rigid = (*i)->GetComponent<CRigidbody>())
 		{
 			if (!rigid->GetIsKinematic())
-				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY*dt;
+				rigid->m_velocity.y += (rigid->GetGravityScale() * GRAVITY * dt);
 		}
 
 		//test with QuadTree
@@ -233,7 +233,7 @@ void CPhysic::Update(DWORD dt)
 		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
 		{
 			if (!rigid->GetIsKinematic())
-				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+				rigid->m_velocity.y += (rigid->GetGravityScale() * GRAVITY * dt);
 		}
 
 		const Bound bound = game_object->GetComponent<CCollider>()->GetBoundGlobal();

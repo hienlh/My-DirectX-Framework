@@ -55,7 +55,7 @@ void BlastHornetController::Update(DWORD dt)
 	if (!m_attacking)
 	{
 		startFly += dt;
-		transform->Set_Position(CalculatePosition(startFly, 1, 70));
+		transform->Set_Position(CalculatePosition(startFly, 2, 70));
 	}
 
 	//-----------------------------------
@@ -72,16 +72,18 @@ void BlastHornetController::Update(DWORD dt)
 		{
 			Bomb(myPos, targetPos);
 			m_startBombing = false;
-			
+			animator->SetBool("isShoot", false);
 		} 
 		else if(m_targeting)
 		{
+			animator->SetBool("isShoot", true);
 			Shoot(myPos, targetPos);
 			m_targeting = false;
 		}
 		else if (m_attacking)
 		{
 			Attack(myPos, targetPos);
+			animator->SetBool("isShoot", false);
 		}
 		else
 		{
@@ -137,6 +139,7 @@ void BlastHornetController::Shoot(Vector2 myPos, Vector2 targetPos)
 
 void BlastHornetController::Bomb(Vector2 myPos, Vector2 targetPos)
 {
+	Vector2 distance = targetPos - myPos;
 	auto pChild1 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
 	auto pChild2 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
 	auto pChild3 = CGameObject::Instantiate("BlastHornetChild", nullptr, myPos);
@@ -154,18 +157,28 @@ void BlastHornetController::Bomb(Vector2 myPos, Vector2 targetPos)
 	pChild4->GetComponent<CTransform>()->Set_Position(myPos);
 	pChild5->GetComponent<CTransform>()->Set_Position(myPos);
 
-	pChild1->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(30, 30), 0.2)));
-	pChild2->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(15, 15), 0.2)));
-	pChild3->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(00, 00), 0.2)));
-	pChild4->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-15, -15), 0.2)));
-	pChild5->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-30, -30), 0.2)));
-
-
 	pChild1->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
 	pChild2->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
 	pChild3->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
 	pChild4->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
 	pChild5->GetComponent<BlastHornetChildController>()->SetAliveTime((rand() % 1000) + 1000);
+	if(distance.x*distance.y  > 0 )
+	{
+		pChild1->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(30, -30), 0.1)));
+		pChild2->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(15, -15), 0.1)));
+		pChild3->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(00, 00), 0.1)));
+		pChild4->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-15, 15), 0.1)));
+		pChild5->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-30, 30), 0.1)));
+	}
+	else
+	{
+		pChild1->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(30, 30), 0.1)));
+		pChild2->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(15, 15), 0.1)));
+		pChild3->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(00, 00), 0.1)));
+		pChild4->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-15, -15), 0.1)));
+		pChild5->GetComponent<CRigidbody>()->SetVelocity(Vector2(CalculateVelocity(myPos, targetPos + Vector2(-30, -30), 0.1)));
+	}
+	
 }
 
 void BlastHornetController::Attack(Vector2 myPos, Vector2 targetPos)
@@ -182,7 +195,7 @@ void BlastHornetController::Attack(Vector2 myPos, Vector2 targetPos)
 		rigidbody->SetVelocity({ 0,0 });
 		if (animator->GetCurrentAnimation()->IsLastFrame())
 		{
-			rigidbody->SetVelocity(CalculateVelocity(myPos, targetPos, 0.3));
+			rigidbody->SetVelocity(CalculateVelocity(myPos, targetPos, 0.2));
 			m_startAttack = true;
 		}
 	}
@@ -191,7 +204,7 @@ void BlastHornetController::Attack(Vector2 myPos, Vector2 targetPos)
 		
 		if (isCollision)
 		{
-			rigidbody->SetVelocity(CalculateVelocity(myPos, m_lastPosition, 0.3));
+			rigidbody->SetVelocity(CalculateVelocity(myPos, m_lastPosition, 0.2));
 			animator->SetBool("isAttack", false);
 			isCollision = false;
 		}

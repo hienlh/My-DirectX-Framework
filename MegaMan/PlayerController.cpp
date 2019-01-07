@@ -179,18 +179,18 @@ void PlayerController::Move() const
 	if (input->KeyDown(DIK_UPARROW)) {
 		if (!anim->GetBool(Bool_IsJump)) {
 			anim->SetBool(Bool_IsJump, true);
-			rigidBody->AddVelocity(Vector2(0, -Jump_Velocity));
+			rigidBody->SetVelocity(Vector2(m_pGameObject->GetComponent<CRigidbody>()->GetVelocity().x, -Jump_Velocity));
 		}
 		else
 		{
 			anim->SetBool(Bool_IsSkyWalk, true);
-			rigidBody->AddVelocity(Vector2(0, -Jump_Velocity));
+			rigidBody->SetVelocity(Vector2(m_pGameObject->GetComponent<CRigidbody>()->GetVelocity().x, -Jump_Velocity));
 		}
 
 		if (anim->GetBool(Bool_IsFall))
 		{
 			anim->SetBool(Bool_IsSkyWalk, true);
-			rigidBody->AddVelocity(Vector2(0, -Jump_Velocity));
+			rigidBody->AddVelocity(Vector2(m_pGameObject->GetComponent<CRigidbody>()->GetVelocity().x, -Jump_Velocity));
 		}
 
 		if (anim->GetBool(Bool_IsClinging)) {

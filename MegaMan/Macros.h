@@ -49,6 +49,9 @@
 #define Animation_Notor_Banger_60												"Animation_Notor_Banger_60"
 #define Animation_Notor_Banger_90												"Animation_Notor_Banger_90"
 
+#define Animation_Helit_Fly														"Animation_Helit_Fly"
+#define Animation_Helit_Missle													"Animation_Helit_Missle"
+
 #define Animation_Genjibo														"Animation_Genjibo"
 #define Animation_Genjibo_Missle_Down											"Animation_Genjibo_Missle_Down"
 
@@ -94,6 +97,7 @@
 #define Texture_Door															"Texture_Door"
 #define Texture_Health_Bar														"Texture_Health_Bar"
 #define Texture_Blast_Hornet													"Texture_Blast_Hornet"
+#define Texture_Helit															"Texture_Helit"
 
 #define Prefab_NotorBanger														"Prefab_NotorBanger"
 #define Prefab_NotorBanger_Bullet												"Prefab_NotorBanger_Bullet"
@@ -108,6 +112,8 @@
 #define Prefab_BrokenWall_Right													"Prefab_BrokenWall_Right"
 #define Prefab_Door1															"Prefab_Door1"
 #define Prefab_Door2															"Prefab_Door2"
+#define Prefab_Helit															"Prefab_Helit"
+#define Prefab_Helit_Missle														"Prefab_Helit_Missle"
 
 #define DESTROY_TIME															3000
 #define RELOAD_TIME																2000

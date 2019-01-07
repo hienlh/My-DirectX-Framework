@@ -58,7 +58,7 @@ public:
 	void Update(DWORD dt) override;
 	void Render() override;
 	
-	//function
+	//Function
 	void Shoot(Vector2 myPos, Vector2 targetPos);
 	void Bomb(Vector2 myPos, Vector2 targetPos);
 	void Attack(Vector2 myPos, Vector2 targetPos);

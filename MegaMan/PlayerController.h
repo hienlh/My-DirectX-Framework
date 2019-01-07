@@ -7,7 +7,7 @@
 
 using namespace Framework;
 
-#define Jump_Velocity .25
+#define Jump_Velocity 0.2
 
 class PlayerController : public CMonoBehavior
 {

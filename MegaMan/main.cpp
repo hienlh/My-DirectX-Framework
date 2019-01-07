@@ -26,6 +26,10 @@
 #include "BlastHornetChildController.h"
 #include "BlastHornetChild2Controller.h"
 #include "BlastHornetBulletController.h"
+#include "Macros.h"
+#include "Macros.h"
+#include "HelitController.h"
+#include "HelitMissleController.h"
 
 #pragma comment(lib, "Framework.lib")
 
@@ -59,6 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture(Texture_Door, ".\\Resources\\Map\\Door.png", NULL, ".\\Resources\\Map\\Door.xml", VECTOR2_ZERO);
 	pResourceManager->AddTexture(Texture_Health_Bar, ".\\Resources\\UI\\Health_Bar.png", NULL, ".\\Resources\\UI\\Health_Bar.xml", {0,1});
 	pResourceManager->AddTexture(Texture_Blast_Hornet, ".\\Resources\\Blast Hornet\\sprites.png", NULL, ".\\Resources\\Blast Hornet\\sprites.xml");
+	pResourceManager->AddTexture(Texture_Helit, ".\\Resources\\Enemies\\x3_helit.png", NULL, ".\\Resources\\Enemies\\x3_helit.xml");
 
 	//From file MegaManXEdited.png
 	new CAnimation(Animation_MegaManX_Init, Texture_MegaManX, 0, 2, 1000, false);
@@ -106,6 +111,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		new CAnimation(Animation_Notor_Banger_45, Texture_EnemiesAndBosses, 108, 1);
 		new CAnimation(Animation_Notor_Banger_60, Texture_EnemiesAndBosses, 109, 1);
 		new CAnimation(Animation_Notor_Banger_90, Texture_EnemiesAndBosses, 110, 1);
+	}
+
+	//Helit
+	{
+		new CAnimation(Animation_Helit_Fly, Texture_Helit, 0, 5, 100, true);
+		auto helitPrefab = pResourceManager->AddPrefab(Prefab_Helit);
+		helitPrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
+		helitPrefab->AddComponent<CRenderer>();
+		helitPrefab->AddComponent<CAnimator>()->AddAnimation(Animation_Helit_Fly);
+		helitPrefab->AddComponent<HelitController>();
+		helitPrefab->AddComponent<CBoxCollider>();
+
+		helitPrefab = CGameObject::Instantiate(Prefab_Helit, nullptr, { 100, 875 });
+		
+
+		new CAnimation(Animation_Helit_Missle, Texture_Helit, 7, 1, 1000, false);
+		auto helitMisslePrefab = pResourceManager->AddPrefab(Prefab_Helit_Missle);
+		helitMisslePrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
+		helitMisslePrefab->AddComponent<CBoxCollider>()->SetIsTrigger(true);
+		helitMisslePrefab->AddComponent<CRenderer>();
+		helitMisslePrefab->AddComponent<HelitMissleController>();
+		helitMisslePrefab->AddComponent<CAnimator>()->AddAnimation(Animation_Helit_Missle);
 	}
 
 	//Door
@@ -289,7 +316,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	do
 	{
 		//Player
-		CGameObject* pPlayer = new CGameObject("Player", { 7720, 1827 });//2160, 1129 || 45, 875 || 7720, 1827
+		CGameObject* pPlayer = new CGameObject("Player", { 45, 875 });//2160, 1129 || 45, 875 || 7720, 1827
 		{
 			pPlayer->AddComponent<CAnimator>()
 				->AddAnimation(Animation_MegaManX_Init)
@@ -405,7 +432,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				;
 			pPlayer->GetComponent<CRenderer>()->SetFlipY(false);
 			pPlayer->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
-			pPlayer->GetComponent<CRigidbody>()->SetGravityScale(1);
+			pPlayer->GetComponent<CRigidbody>()->SetGravityScale(0.1);
 			pPlayer->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 			pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
 			pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
@@ -430,7 +457,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 			//Add animation
 			new CAnimation("BlastHornet_Flying", Texture_Blast_Hornet, 3, 1);
-			CAnimation* temp = new CAnimation("BlastHornet_StartAttacking", Texture_Blast_Hornet, 3, 13, 100, false);
+			CAnimation* temp = new CAnimation("BlastHornet_StartAttacking", Texture_Blast_Hornet, 3, 13, 200, false);
 			temp->Add(Texture_Blast_Hornet, 9, -1, 200);
 			new CAnimation("BlastHornet_Shooting", Texture_Blast_Hornet, 16, 5, 100, false);
 			new CAnimation("BlastHornet_Died", Texture_Blast_Hornet, 21, 1,2000,false);
@@ -474,7 +501,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				->AddAnimation("BlastHornet_Wing");
 			
 			 //Blast Hornet Child
-			new CAnimation("BlastHornetChild_Flying", Texture_Blast_Hornet, 37, 6, 10);
+			new CAnimation("BlastHornetChild_Flying", Texture_Blast_Hornet, 37, 6, 50);
 		
 			auto childPrefabs = pResourceManager->AddPrefab("BlastHornetChild");
 			// auto childPrefabs = new CGameObject("BlastHornetChild");
