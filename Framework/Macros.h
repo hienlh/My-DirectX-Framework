@@ -52,3 +52,7 @@
 #define DIRECTION_RIGHT 01
 #define DIRECTION_TOP 10
 #define DIRECTION_BOTTOM 11
+
+#define AUDIO_SOUND_TRACK "Sound Track"
+#define AUDIO_MEGAMAN_SHOOT "Megaman Shoot"
+#define AUDIO_MEGAMAN_POWER_SHOOT "Megaman Power Shoot"

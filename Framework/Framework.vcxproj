@@ -153,6 +153,8 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Animator.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="AudioSource.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
@@ -160,6 +162,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="dsutil.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObserver.h" />
@@ -191,12 +194,15 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="AudioSource.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="dsutil.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObserver.cpp" />

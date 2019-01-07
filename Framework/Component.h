@@ -36,6 +36,8 @@ namespace Framework
 		void SetGameObject(CGameObject* gameObject) { m_pGameObject = gameObject; }
 
 	public:
+		virtual void Update(const DWORD& dt) override {};
+		virtual void Render() override {};
 		//Friend
 		friend class CPhysic;
 		friend class CGameObject;

@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "ResourceManager.h"
 #include "Graphic.h"
+#include "Audio.h"
 
 using namespace Framework;
 
@@ -67,6 +68,17 @@ CAnimation* CResourceManager::GetAnimation(const std::string &name) const
 	}
 
 	CDebug::Log("GetAnimation: No animation name '%s'\n", name.c_str());
+	return nullptr;
+}
+
+CSound* CResourceManager::GetSound(const std::string& name) const
+{
+	const auto it = m_pSounds.find(name);
+
+	if (it != m_pSounds.end())
+		return it->second;
+
+	CDebug::Log("GetSound: No sound name '%s'\n", name.c_str());
 	return nullptr;
 }
 
@@ -153,4 +165,30 @@ CGameObject* CResourceManager::AddPrefab(const std::string& name, CGameObject* g
 
 	m_pPrefabs[name] = result;
 	return result;
+}
+
+CResourceManager* CResourceManager::AddSound(const std::string& name, const char* path)
+{
+	bool result = false;
+	do
+	{
+		if (m_pSounds.count(name))
+			break;
+
+		CAudio* pAudio = CAudio::GetInstance();
+		if (!pAudio)
+			break;
+
+		CSound* sound = pAudio->Load(path);
+		if (!sound)
+			break;
+
+		m_pSounds.insert({ name, sound });
+
+		result = true;
+	} while (false);
+
+	if (!result) CDebug::Log("Fail to load '%s' sound.\n", name.c_str());
+
+	return (result ? this : nullptr);
 }

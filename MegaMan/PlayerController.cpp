@@ -11,6 +11,7 @@
 #include "BulletPool.h"
 #include "Camera.h"
 #include "BuildingController.h"
+#include "AudioSource.h"
 
 PlayerController::PlayerController(const PlayerController& PC) : CMonoBehavior(PC)
 {
@@ -177,8 +178,10 @@ void PlayerController::Action()
 	}
 
 	if (input->KeyDown(DIK_E)) {
-		if (m_Power)
+		if (m_Power) {
 			m_Power->SetIsActive(true);
+			m_pGameObject->GetComponent<CAudioSource>()->Play(AUDIO_MEGAMAN_POWER_SHOOT);
+		}
 	}
 	if (input->KeyUp(DIK_E)) {
 		if (m_Power)
@@ -280,6 +283,7 @@ void PlayerController::Dash(bool isLeft) const
 
 void PlayerController::Shoot() const
 {
+	m_pGameObject->GetComponent<CAudioSource>()->Play(AUDIO_MEGAMAN_SHOOT);
 	const bool isLeft = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
 	Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 	pos.x += (isLeft ? -1 : 1) * 15;

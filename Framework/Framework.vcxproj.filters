@@ -153,6 +153,15 @@
     <ClInclude Include="PhysicSubject.h">
       <Filter>Framework\Subjects</Filter>
     </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Framework\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="dsutil.h">
+      <Filter>Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSource.h">
+      <Filter>Framework\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -247,6 +256,15 @@
     </ClCompile>
     <ClCompile Include="PhysicSubject.cpp">
       <Filter>Framework\Subjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Framework\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="dsutil.cpp">
+      <Filter>Extends</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSource.cpp">
+      <Filter>Framework\Component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

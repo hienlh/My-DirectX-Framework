@@ -36,6 +36,7 @@
 #include "BlastHornetChild2Controller.h"
 #include "BlastHornetBulletController.h"
 #include "ShurikeinController.h"
+#include "AudioSource.h"
 
 #pragma comment(lib, "Framework.lib")
 
@@ -71,6 +72,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture(Texture_Door, ".\\Resources\\Map\\Door.png", NULL, ".\\Resources\\Map\\Door.xml", VECTOR2_ZERO);
 	pResourceManager->AddTexture(Texture_Health_Bar, ".\\Resources\\UI\\Health_Bar.png", NULL, ".\\Resources\\UI\\Health_Bar.xml", {0,1}); 
 	pResourceManager->AddTexture(Texture_Blast_Hornet, ".\\Resources\\Blast Hornet\\sprites.png", NULL, ".\\Resources\\Blast Hornet\\sprites.xml");
+
+	pResourceManager->AddSound(AUDIO_SOUND_TRACK, ".\\Resources\\Sounds\\BlastHornetSoundTrack.wav")
+		->AddSound(AUDIO_MEGAMAN_SHOOT, ".\\Resources\\Sounds\\SE_0A.wav")
+		->AddSound(AUDIO_MEGAMAN_POWER_SHOOT, ".\\Resources\\Sounds\\SE_3A.wav");
 
 	//From file MegaManXEdited.png
 	new CAnimation(Animation_MegaManX_Init, Texture_MegaManX, 0, 2, 1000, false);
@@ -608,7 +613,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
 			pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 			pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
-			pPlayer->AddComponent<CanBeAttacked>()->InitHealth(1000);
+			pPlayer->AddComponent<CanBeAttacked>()->InitHealth(1000); 
+			pPlayer->AddComponent<CAudioSource>();
+			pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_SOUND_TRACK, true);// ->Play(AUDIO_SOUND_TRACK);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_MEGAMAN_SHOOT, false);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_MEGAMAN_POWER_SHOOT, false);
 
 			CGameObject* pPowerEffect = new CGameObject("Power Effect");
 			pPowerEffect->SetIsActive(false);
