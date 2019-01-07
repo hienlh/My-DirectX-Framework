@@ -15,35 +15,25 @@ namespace Framework
 		bool m_isRelatedTo = false;
 
 	public:
-		CTransition(std::string name) { m_dstAnimationName = name; }
-		CTransition(const CTransition& transition) : CObject(transition)
-		{
-			m_hasExitTime = transition.m_hasExitTime;
-			m_isRelatedTo = transition.m_isRelatedTo;
-			m_dstAnimationName = transition.m_dstAnimationName;
-			m_conditions = transition.m_conditions;
-		}
+		explicit CTransition(const std::string &name) { m_dstAnimationName = name; }
+		CTransition(const CTransition& transition);
+		~CTransition() override = default;
 
 	public:
-		CTransition* SetCondition(std::string conditionName, bool value) { m_conditions[conditionName] = value; return this; }
-		CTransition* SetHasExitTime(bool hasExitTime) { m_hasExitTime = hasExitTime; return this; };
-		CTransition* SetRelatedTo(bool relatedTo) { m_isRelatedTo = relatedTo; return this; }
+		CTransition* SetCondition(const std::string &conditionName, const bool &value) { m_conditions[conditionName] = value; return this; }
+		CTransition* SetHasExitTime(const bool &hasExitTime) { m_hasExitTime = hasExitTime; return this; };
+		CTransition* SetRelatedTo(const bool &relatedTo) { m_isRelatedTo = relatedTo; return this; }
 
-		std::map<std::string, bool>& GetConditions() { return m_conditions; }
-		std::string GetDestinationAnimationName() const { return m_dstAnimationName; }
-		bool GetHasExitTime() const { return m_hasExitTime; }
-		bool GetRelatedTo() const { return m_isRelatedTo; }
-		bool GetConditionValue(std::string name) { return m_conditions[name]; };
-
-		CTransition* Clone() const override
-		{
-			return new CTransition(*this);
-		}
+		const std::map<std::string, bool>& GetConditions() const { return m_conditions; }
+		const std::string& GetDestinationAnimationName() const { return m_dstAnimationName; }
+		const bool& GetHasExitTime() const { return m_hasExitTime; }
+		const bool& GetRelatedTo() const { return m_isRelatedTo; }
+		const bool& GetConditionValue(const std::string& name) { return m_conditions[name]; };
 
 		// Override
 	private:
-		void Update(DWORD dt) override {};
-		void Render() override {};
+		void Update(const DWORD &dt) override {}
+		void Render() override {}
 	};
 
 	class CAnimator final : public CComponent
@@ -60,7 +50,7 @@ namespace Framework
 	public:
 		CAnimator() = default;
 		CAnimator(const CAnimator& animator);
-		CAnimator(CGameObject* game_object) : CComponent(game_object) {}
+		explicit CAnimator(CGameObject* game_object) : CComponent(game_object) {}
 		virtual ~CAnimator() = default;
 
 		// Internal methods
@@ -72,29 +62,30 @@ namespace Framework
 	private:
 		CAnimator* AddAnimation(CAnimation* animation);
 	public:
-		CAnimator* AddAnimation(std::string animationName);
-		CAnimator* AddTransition(std::string srcAnimationName, std::string dstAnimationName, bool hasExitTime = false,
-				std::string conditionName = "", bool value = false, bool relatedTo = false);
-		CAnimator* SetRootAnimation(std::string animationName);
+		CAnimator* AddAnimation(const std::string &animationName);
+		CAnimator* AddTransition(const std::string& srcAnimationName, const std::string& dstAnimationName,
+		                         const bool& hasExitTime = false, const std::string& conditionName = "",
+		                         const bool& value = false, const bool& relatedTo = false);
+		CAnimator* SetRootAnimation(const std::string &animationName);
 
 		CAnimation *GetCurrentAnimation();
 		CSprite *GetCurrentSprite();
-		CTransition *GetTransition(std::string srcAnimationName, std::string dstAnimationName);
+		CTransition *GetTransition(const std::string& srcAnimationName, const std::string& dstAnimationName);
 
-		CAnimator* AddBool(std::string name, bool value);
-		CAnimator* SetBool(std::string name, bool value);
-		bool GetBool(std::string name);
+		CAnimator* AddBool(const std::string& name, const bool& value);
+		CAnimator* SetBool(const std::string& name, const bool& value);
+		bool GetBool(std::string name, bool defaultValue = false);
 
 	public:
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 		void Render() override;
+		CAnimator* Clone() override { return new CAnimator(*this); }
 
-		CAnimator* Clone() const override;
+		CAnimator& operator=(const CComponent& component) override;
 
 		// Static methods
 	public:
 		static CAnimator* Instantiate();
 		static void Destroy(CAnimator* &instance);
-
 	};
 }

@@ -6,11 +6,30 @@
 
 using namespace Framework;
 
+CCamera* CCamera::SetScale(const Vector2 &scale)
+{
+	m_scale = scale;
+
+	m_scaleFactors = Vector3(m_scale.x, m_scale.y, 1);
+
+	D3DXMatrixOrthoLH(&m_orthographicMatrix, m_size.x * m_scale.x, -m_size.y * m_scale.y, -100, 100);
+
+	return this;
+}
+
+CCamera* CCamera::SetSize(const Vector2& size)
+{
+	m_size = size;
+	
+	D3DXMatrixOrthoLH(&m_orthographicMatrix, m_size.x * m_scale.x, -m_size.y * m_scale.y, -100, 100);
+
+	return this;
+}
+
 CCamera::CCamera(const CCamera &camera) : CComponent(camera)
 {
 	m_Name = camera.m_Name;
-	m_width = camera.m_width;
-	m_height = camera.m_height;
+	m_size = camera.m_size;
 	m_angle = camera.m_angle;
 	m_identityMatrix = camera.m_identityMatrix;
 	m_orthographicMatrix = camera.m_orthographicMatrix;
@@ -20,25 +39,13 @@ CCamera::CCamera(const CCamera &camera) : CComponent(camera)
 
 Framework::CCamera::CCamera(CGameObject* gameObject) : CComponent(gameObject)
 {
-	m_width = SCREEN_WIDTH;
-	m_height = SCREEN_HEIGHT;
 	m_angle = 0;
-	m_scaleFactors = Vector3(1, 1, 1);
-	D3DXMatrixOrthoLH(&m_orthographicMatrix, m_width, -m_height, -100, 100);
+	SetSize({ SCREEN_WIDTH, SCREEN_HEIGHT });
+	SetScale(VECTOR2_ONE);
 	D3DXMatrixIdentity(&m_identityMatrix);
 }
 
-Framework::CCamera::CCamera(CGameObject* gameObject, int width, int height, float angle, Vector3 scaleFactors) : CComponent(gameObject)
-{
-	m_width = width;
-	m_height = height;
-	m_angle = angle;
-	m_scaleFactors = scaleFactors;
-	D3DXMatrixOrthoLH(&m_orthographicMatrix, width, -height, -100, 100);
-	D3DXMatrixIdentity(&m_identityMatrix);
-}
-
-void Framework::CCamera::Update(DWORD dt)
+void Framework::CCamera::Update(const DWORD &dt)
 {
 	auto pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 
@@ -55,7 +62,20 @@ void Framework::CCamera::Render()
 	CGraphic::GetInstance()->DrawRectangle(Rect(m_pGameObject->GetComponent<CTransform>()->Get_Position(), { 256, 256 }, { 0.5,0.5 }), D3DCOLOR_XRGB(100, 100, 100));
 }
 
-CCamera* CCamera::Clone() const
+CCamera& CCamera::operator=(const CComponent& component)
 {
-	return new CCamera(*this);
+	(*this).CComponent::operator=(component);
+
+	if(const auto pCam = dynamic_cast<const CCamera*>(&component))
+	{
+		m_angle = pCam->m_angle;
+		m_identityMatrix = pCam->m_identityMatrix;
+		m_orthographicMatrix = pCam->m_orthographicMatrix;
+		m_scale = pCam->m_scale;
+		m_scaleFactors = pCam->m_scaleFactors;
+		m_size = pCam->m_size;
+		m_viewMatrix = pCam->m_viewMatrix;
+	}
+
+	return *this;
 }

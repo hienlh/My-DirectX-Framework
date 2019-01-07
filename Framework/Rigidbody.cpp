@@ -13,13 +13,10 @@ CRigidbody::CRigidbody(const CRigidbody& rigidbody) : CComponent(rigidbody)
 	m_mass = rigidbody.m_mass;
 	m_velocity = rigidbody.m_velocity;
 	m_limitedArea = rigidbody.m_limitedArea;
+	m_needUpdate = rigidbody.m_needUpdate;
 }
 
-CRigidbody::CRigidbody(CGameObject * gameObject) : CComponent(gameObject)
-{
-}
-
-CRigidbody* CRigidbody::SetVelocity(float x, float y)
+CRigidbody* CRigidbody::SetVelocity(const float &x, const float &y)
 {
 	if (fabs(x - MAX_VELOCITY) > EPSILON)
 		m_velocity.x = x;
@@ -28,18 +25,18 @@ CRigidbody* CRigidbody::SetVelocity(float x, float y)
 	return this;
 }
 
-CRigidbody* CRigidbody::SetIsKinematic(bool isKinematic)
+CRigidbody* CRigidbody::SetIsKinematic(const bool& isKinematic)
 {
 	m_isKinematic = isKinematic;
 	if(isKinematic)
 	{
-		//Add to scene to change quadTree
+		//Add into the scene to change quadTree
 		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 	}
 	return this;
 }
 
-CRigidbody* CRigidbody::SetLimitedArea(Rect limitedArea)
+CRigidbody* CRigidbody::SetLimitedArea(const Rect& limitedArea)
 {
 	//If object is static, not update limited area
 	if (!m_isKinematic) {
@@ -51,7 +48,7 @@ CRigidbody* CRigidbody::SetLimitedArea(Rect limitedArea)
 	return this;
 }
 
-void CRigidbody::Update(DWORD dt)
+void CRigidbody::Update(const DWORD &dt)
 {
 	if (m_isKinematic) return;
 
@@ -70,7 +67,18 @@ void CRigidbody::Render()
 	}
 }
 
-CRigidbody* CRigidbody::Clone() const
+CRigidbody& CRigidbody::operator=(const CComponent& component)
 {
-	return new CRigidbody(*this);
+	(*this).CComponent::operator=(component);
+
+	if (const auto pRigid = dynamic_cast<const CRigidbody*>(&component)) {
+		m_gravityScale = pRigid->m_gravityScale;
+		m_isKinematic = pRigid->m_isKinematic;
+		m_limitedArea = pRigid->m_limitedArea;
+		m_mass = pRigid->m_mass;
+		m_needUpdate = pRigid->m_needUpdate;
+		m_velocity = pRigid->m_velocity;
+	}
+
+	return *this;
 }

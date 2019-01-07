@@ -153,7 +153,6 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Animator.h" />
-    <ClInclude Include="Behavior.h" />
     <ClInclude Include="Bound.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
@@ -163,13 +162,16 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameObserver.h" />
     <ClInclude Include="Graphic.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Macros.h" />
     <ClInclude Include="MonoBehavier.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="Physic.h" />
     <ClInclude Include="PhysicObserver.h" />
+    <ClInclude Include="PhysicSubject.h" />
     <ClInclude Include="QuadTree.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -177,6 +179,8 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="GameSubject.h" />
+    <ClInclude Include="Subject.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="Texture.h" />
@@ -187,7 +191,6 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animator.cpp" />
-    <ClCompile Include="Behavior.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -196,12 +199,15 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObserver.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="MonoBehavier.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Physic.cpp" />
     <ClCompile Include="PhysicObserver.cpp" />
+    <ClCompile Include="PhysicSubject.cpp" />
     <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -214,6 +220,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="GameSubject.cpp" />
+    <ClCompile Include="Subject.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />

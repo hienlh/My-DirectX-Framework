@@ -19,15 +19,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BlastHornetBulletController.cpp" />
+    <ClCompile Include="BlastHornetChild2Controller.cpp" />
+    <ClCompile Include="BlastHornetChildController.cpp" />
+    <ClCompile Include="BlastHornetController.cpp" />
+    <ClCompile Include="BoxController.cpp" />
+    <ClCompile Include="BuildingController.cpp" />
+    <ClCompile Include="BulletController.cpp" />
+    <ClCompile Include="BulletPool.cpp" />
     <ClCompile Include="BusterShotController.cpp" />
+    <ClCompile Include="CanAttacked.cpp" />
+    <ClCompile Include="CanBeAttacked.cpp" />
+    <ClCompile Include="CarryAimController.cpp" />
+    <ClCompile Include="DashFullEffect.cpp" />
+    <ClCompile Include="DoorController.cpp" />
+    <ClCompile Include="EffectAutoRemove.cpp" />
+    <ClCompile Include="EffectPool.cpp" />
     <ClCompile Include="GenjiBosController.cpp" />
     <ClCompile Include="HeadGunnerEnemyController.cpp" />
+    <ClCompile Include="HealthValueController.cpp" />
     <ClCompile Include="MachineController.cpp" />
+    <ClCompile Include="MetaCapsuleController.cpp" />
     <ClCompile Include="NotorBangerEnemyController.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="GroundController.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ShurikeinController.cpp" />
+    <ClCompile Include="Template.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.vcxproj">
@@ -35,14 +54,34 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlastHornetBulletController.h" />
+    <ClInclude Include="BlastHornetChild2Controller.h" />
+    <ClInclude Include="BlastHornetChildController.h" />
+    <ClInclude Include="BlastHornetController.h" />
+    <ClInclude Include="BoxController.h" />
+    <ClInclude Include="BuildingController.h" />
+    <ClInclude Include="BulletController.h" />
+    <ClInclude Include="BulletPool.h" />
     <ClInclude Include="BusterShotController.h" />
+    <ClInclude Include="CanAttacked.h" />
+    <ClInclude Include="CanBeAttacked.h" />
+    <ClInclude Include="CarryAimController.h" />
+    <ClInclude Include="DashFullEffect.h" />
+    <ClInclude Include="DoorController.h" />
+    <ClInclude Include="EffectAutoRemove.h" />
+    <ClInclude Include="EffectPool.h" />
     <ClInclude Include="GenjiBosController.h" />
     <ClInclude Include="HeadGunnerEnemyController.h" />
+    <ClInclude Include="HealthValueController.h" />
     <ClInclude Include="MachineController.h" />
+    <ClInclude Include="Macros.h" />
+    <ClInclude Include="MetaCapsuleController.h" />
     <ClInclude Include="NotorBangerEnemyController.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="GroundController.h" />
+    <ClInclude Include="ShurikeinController.h" />
+    <ClInclude Include="Template.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -110,6 +149,9 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

@@ -1,21 +1,32 @@
 ﻿#pragma once
 #include "Component.h"
 #include "PhysicObserver.h"
-#include "Physic.h"
+#include "GameObserver.h"
+#include "GameManager.h"
 
 namespace Framework {
-	class CMonoBehavior : public CComponent, public CPhysicObserver
+	class CMonoBehavior : public CComponent, public CPhysicObserver, public CGameObserver
 	{
 
 	private:
 		CMonoBehavior() = default;
 	public:
-		CMonoBehavior(const CMonoBehavior &monoBehavior) : CComponent(monoBehavior) {}
-		CMonoBehavior(CGameObject* gameObject) : CComponent(gameObject) {}
+		CMonoBehavior(const CMonoBehavior &monoBehavior) : CComponent(monoBehavior), CGameObserver(monoBehavior)
+		{
+			CGameObserver::WakeUp();
+		}
+
+		explicit CMonoBehavior(CGameObject* gameObject) : CComponent(gameObject), CGameObserver(CGameManager::GetInstance())
+		{
+			CGameObserver::WakeUp();
+		}
+
 		virtual ~CMonoBehavior() = default;
 
-		void Update(DWORD dt) override {}
+		void Update(const DWORD &dt) override {}
 		void Render() override {}
-		CMonoBehavior* Clone() const override { return new CMonoBehavior(*this); }
+		CMonoBehavior* Clone() override = 0;
+
+		virtual CMonoBehavior& operator=(const CComponent& component) override { (*this).CComponent::operator=(component); return *this; }
 	};
 }

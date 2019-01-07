@@ -40,13 +40,13 @@ namespace Framework
 
 		void Update();
 		void PollKeyboard();
-		int KeyDown(int key);
-		int KeyUp(int key); 
-		int KeyHold(int key);
+		int KeyDown(const int &key);
+		int KeyUp(const int &key); 
+		int KeyHold(const int &key);
 		void KillKeyboard();
 		void PollMouse();
-		int ButtonDown(int button);
-		int ButtonUp(int button);
+		int ButtonDown(const int &button);
+		int ButtonUp(const int &button);
 		int Mouse_X();
 		int Mouse_Y();
 		void KillMouse();

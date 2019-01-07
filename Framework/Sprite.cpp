@@ -8,6 +8,7 @@ CSprite::CSprite(Texture *texture, Rect sourceRect, Vector2 anchor)
 {
 	m_pTexture = texture;
 	m_sourceRect = sourceRect != Rect(0,0,0,0) ? sourceRect : Rect(0, 0, m_pTexture->height, m_pTexture->width);
+	m_rootSourceRect = m_sourceRect;
 	m_anchor = anchor;
 }
 

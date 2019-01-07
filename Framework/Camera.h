@@ -10,9 +10,9 @@ namespace Framework
 	{
 		//Properties
 	private:
-		int m_width = 0;
-		int m_height = 0;
+		Vector2 m_size = { 0,0 };
 		float m_angle = 0;
+		Vector2 m_scale = { 1,1 };
 		Vector3 m_scaleFactors = VECTOR3_ZERO;
 		Matrix m_orthographicMatrix = {};
 		Matrix m_identityMatrix = {};
@@ -23,20 +23,24 @@ namespace Framework
 		Matrix &GetOrthographicMatrix() { return m_orthographicMatrix; }
 		Matrix &GetIdentityMatrix() { return m_identityMatrix; }
 		Matrix &GetViewMatrix() { return m_viewMatrix; }
+		const Vector2 &GetScale() const { return m_scale; }
+		const Vector2 &GetSize() const { return m_size; }
+
+		CCamera* SetScale(const Vector2 &scale);
+		CCamera* SetSize(const Vector2 &size);
 
 		// Cons / Des
 	public:
 		CCamera(const CCamera &camera);
-		CCamera(CGameObject* gameObject);
-		CCamera(CGameObject* gameObject, int width, int height, float angle, Vector3 scaleFactors);
+		explicit CCamera(CGameObject* gameObject);
 		~CCamera() = default;
 
 		//Override
 	public:
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 		void Render() override;
-
-		CCamera* Clone() const override;
+		CComponent* Clone() override { return new CCamera(*this); }
+		CCamera& operator=(const CComponent& component) override;
 	};
 	
 }

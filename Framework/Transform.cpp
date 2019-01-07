@@ -6,7 +6,7 @@ using namespace Framework;
 
 CTransform::CTransform(const CTransform& transform) : CComponent(transform)
 {
-	m_pParent = transform.m_pParent;
+	SetParent(transform.m_pParent);
 	m_position = transform.m_position;
 	m_rotation = transform.m_rotation;
 	m_scale = transform.m_scale;
@@ -20,6 +20,21 @@ CTransform::CTransform(CGameObject* game_object, Vector2 position, Vector3 rotat
 	this->m_scale = scale;
 }
 
+
+CTransform& CTransform::operator=(const CComponent& component)
+{
+	(*this).CComponent::operator=(component);
+
+	/*if (const auto pTran = dynamic_cast<const CTransform*>(&component)) {
+		SetParent(pTran->m_pParent);
+		m_position = pTran->m_position;
+		m_rotation = pTran->m_rotation;
+		m_scale = pTran->m_scale;
+		m_Name = pTran->m_Name;
+	}*/
+
+	return *this;
+}
 
 /**
  * \brief Get Position
@@ -58,7 +73,7 @@ Vector2 CTransform::Get_Scale() const
  * \param position Value of position
  * \param inWorldSpace this value of position is in world space or local
  */
-CTransform* CTransform::Set_Position(Vector2 position, bool inWorldSpace)
+CTransform* CTransform::Set_Position(const Vector2 &position, const bool &inWorldSpace)
 {
 	m_position = position;
 	if (inWorldSpace)
@@ -69,13 +84,13 @@ CTransform* CTransform::Set_Position(Vector2 position, bool inWorldSpace)
 	return this;
 }
 
-CTransform* CTransform::Set_Rotation(Vector3 rotation)
+CTransform* CTransform::Set_Rotation(const Vector3 &rotation)
 {
 	m_rotation = rotation - (m_pParent ? m_pParent->Get_Rotation() : Vector3(0, 0, 0));
 	return this;
 }
 
-CTransform* CTransform::Set_Scale(Vector2 scale)
+CTransform* CTransform::Set_Scale(const Vector2 &scale)
 {
 	m_scale = scale;
 	return this;
@@ -83,9 +98,18 @@ CTransform* CTransform::Set_Scale(Vector2 scale)
 
 CTransform* CTransform::SetParent(CTransform* parent)
 {
-	m_position = m_position + (m_pParent ? m_pParent->Get_Position() - parent->Get_Position() : -parent->Get_Position());
-	m_rotation = m_rotation + (m_pParent ? m_pParent->Get_Rotation() - parent->Get_Rotation() : -parent->Get_Rotation());
+	if (m_pParent) {
+		m_pParent->m_pChildren.erase(this); //Erase this in child list of parent
+		m_position += m_pParent->Get_Position();
+		m_rotation += m_pParent->Get_Rotation();
+	}
 
+	if(parent)
+	{
+		m_position -= parent->Get_Position();
+		m_rotation -= parent->Get_Rotation();
+		parent->m_pChildren.insert(this);
+	}
 	m_pParent = parent;
 	return this;
 }
@@ -130,17 +154,3 @@ void CTransform::Destroy(CTransform *instance)
 		SAFE_DELETE(instance);
 	}
 }
-
-void CTransform::Update(DWORD dt)
-{
-}
-
-void CTransform::Render()
-{
-}
-
-CTransform* CTransform::Clone() const
-{
-	return new CTransform(*this);
-}
-

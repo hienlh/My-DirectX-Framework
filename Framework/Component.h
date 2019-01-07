@@ -14,9 +14,16 @@ namespace Framework
 		// Cons / Des
 	public:
 		CComponent() = default;
-		CComponent(const CComponent& component);
-		CComponent(CGameObject *game_object) { m_pGameObject = game_object; }
+		CComponent(const CComponent& component) : CObject(component) { };
+		explicit CComponent(CGameObject *game_object) { m_pGameObject = game_object; }
 		virtual ~CComponent() = default;
+
+		virtual CComponent* Clone() = 0;
+		virtual CComponent& operator=(const CComponent& component)
+		{
+			(*this).CObject::operator=(component); 
+			return *this;
+		}
 
 		//Getter / Setter
 	public:
@@ -28,10 +35,8 @@ namespace Framework
 		 */
 		void SetGameObject(CGameObject* gameObject) { m_pGameObject = gameObject; }
 
-		virtual CComponent* Clone() const override = 0;
-
-		//Friend
 	public:
+		//Friend
 		friend class CPhysic;
 		friend class CGameObject;
 	};

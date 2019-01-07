@@ -9,12 +9,15 @@ class HeadGunnerEnemyController : public CMonoBehavior
 private:
 	float m_speed = 0;
 	CGameObject* m_target = nullptr;
+	DWORD m_reloadTime = 0;
 
 	// To Clone Function
 private:
 	HeadGunnerEnemyController() = default;
-	HeadGunnerEnemyController(const HeadGunnerEnemyController &PC) : CMonoBehavior(PC) { m_speed = PC.m_speed; }
-	HeadGunnerEnemyController* Clone() const override { return new HeadGunnerEnemyController(*this); }
+	HeadGunnerEnemyController(const HeadGunnerEnemyController &PC);
+	HeadGunnerEnemyController* Clone() override { return new HeadGunnerEnemyController(*this); }
+
+	HeadGunnerEnemyController& operator=(const CComponent& component) override;
 
 	//Cons / Des
 public:
@@ -31,7 +34,7 @@ public:
 	//Override
 private:
 	void OnCollisionEnter(CCollision* collision) override;
-	void Update(DWORD dt) override;
+	void Update(const DWORD &dt) override;
 	void Render() override;
 
 };

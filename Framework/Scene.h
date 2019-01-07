@@ -32,10 +32,13 @@ namespace Framework
 	public:
 		std::set<CGameObject*> GetListGameObject() const;
 		std::set<CGameObject*> GetListDynamicGameObject() const;
+		std::set<CGameObject*> GetActiveDynamicGameObject() const;
 		std::set<CGameObject*> GetListStaticGameObject() const;
 		std::set<CGameObject*> GetListHalfStaticGameObject() const;
+		std::set<CGameObject*> GetActiveHalfStaticGameObject() const;
 		std::set<CGameObject*> GetAllGameObjects() const;
 		std::set<CGameObject*> GetRenderGameObjects() const;
+		std::set<CGameObject*> GetUpdateGameObjects() const;
 		CGameObject* GetMainCamera() const { return m_pMainCamera; }
 		CQuadTree* GetQuadTree() const { return m_pQuadTree; }
 		bool GetIsRenderQuadTree() const { return m_isRenderQuadTree; }
@@ -45,11 +48,8 @@ namespace Framework
 	public:
 		static bool Destroy(CScene* scene);
 
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 		void Render() override;
-
-	private:
-		CScene* Clone() const override { return nullptr; }
 
 		//Internal Method
 	private:

@@ -1,14 +1,13 @@
 #pragma once
 #include "GameObject.h"
 #include "Window.h"
-#include "Graphic.h"
 #include "Scene.h"
-#include "Input.h"
+#include "GameSubject.h"
 
 namespace Framework
 {
 	// Game Manager Interface
-	class CGameManager final
+	class CGameManager final : public CGameSubject
 	{
 		// Used for singleton pattern
 	private:
@@ -17,6 +16,7 @@ namespace Framework
 		// Cons / Des
 	private:
 		CGameManager() = default;
+		CGameManager(const CGameManager& game_manager) : CGameSubject(game_manager){}
 		~CGameManager() = default;
 
 		// Properties
@@ -28,19 +28,20 @@ namespace Framework
 
 		// Internal methods
 	private:
-		bool Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		bool Init(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth, const int& screenHeight,
+		          const bool& fullscreen);
 		void Release();
 
 		// Getters / Setters
 	public:
 		CGameManager* SetCurrentScene(CScene* scene) { m_currentScene = scene; return this; }
-		CGameManager* SetIsDebugging(bool isDebugging) { m_isDebugging = isDebugging; return this; }
+		CGameManager* SetIsDebugging(const bool &isDebugging) { m_isDebugging = isDebugging; return this; }
 
 		CScene* GetCurrentScene() const { return m_currentScene; }
 		CWindow* GetWindow() const { return m_pWindow; }
-		bool GetIsDebugging() const { return m_isDebugging; }
+		const bool &GetIsDebugging() const { return m_isDebugging; }
 
-		bool IsRunning() const { return m_isRunning; }
+		const bool &IsRunning() const { return m_isRunning; }
 		
 		// Public methods
 	public:
@@ -48,7 +49,8 @@ namespace Framework
 
 		// Instantiate method
 	public:
-		static void Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		static void Instantiate(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth,
+		                        const int& screenHeight, const bool& fullscreen);
 		static void Destroy();
 		static CGameManager* GetInstance();
 	};

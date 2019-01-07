@@ -8,8 +8,8 @@
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
 #define BUTTON_DOWN(obj, button) ((obj.rgbButtons[button] &0x80)? 1: 0)
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 512
+#define SCREEN_HEIGHT 512
 
 #define FULL_SCREEN false
 
@@ -42,9 +42,13 @@
 #define MAX_VELOCITY 1e9
 #define EPSILON 1e-9
 
-#define MAX_QUAD_TREE_LEVEL 5
-
+#define MAX_QUAD_TREE_LEVEL 6
 #define COLOR_GET_A( c ) ((c)>>24)
 #define COLOR_GET_R( c ) (((c)>>16) & 0xFF)
 #define COLOR_GET_G( c ) (((c)>>8)  & 0xFF)
 #define COLOR_GET_B( c ) ((c) & 0xFF)
+
+#define DIRECTION_LEFT 00
+#define DIRECTION_RIGHT 01
+#define DIRECTION_TOP 10
+#define DIRECTION_BOTTOM 11
