@@ -24,7 +24,7 @@ CGameObject::CGameObject(const CGameObject& gameObject) : CObject(gameObject)
 	CGameManager::GetInstance()->GetCurrentScene()->AddGameObject(this);
 }
 
-CGameObject::CGameObject(const std::string& name, const Vector2& position, const bool& addIntoCurrentScene)
+CGameObject::CGameObject(const bool& addIntoCurrentScene, const std::string& name, const Vector2& position)
 {
 	if (!this->Init())
 		delete this;
@@ -232,11 +232,12 @@ CGameObject* CGameObject::Instantiate(CGameObject* gameObject, CGameObject* pare
 		->Set_Position(position, instantiateInWorldSpace)
 		->Set_Rotation(rotation);
 
-	for (auto component : result->m_pComponents)
-	{
-		if (auto mono = dynamic_cast<CMonoBehavior*>(component.second))
-			mono->Start();
-	}
+	if(CGameManager::GetInstance()->IsRunning())
+		for (auto component : result->m_pComponents)
+		{
+			if (auto mono = dynamic_cast<CMonoBehavior*>(component.second))
+				mono->Start();
+		}
 
 	return result;
 }

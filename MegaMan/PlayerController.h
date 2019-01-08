@@ -25,12 +25,23 @@ public:
 	CGameObject* pBlastHornet = nullptr;
 
 private:
+	CGameObject* m_pNotors[14] = {};
+	CGameObject* m_pHeads[8] = {};
+	CGameObject* m_pHelits[4] = {};
+
+	CGameObject* m_pNotorPrefab = nullptr;
+	CGameObject* m_pHeadPrefab = nullptr;
+	CGameObject* m_pHelitPrefab = nullptr;
+
 	float m_speed = 0;
 	bool m_onMachine = false;
 	bool m_canMove = true;
 	bool m_canAction = true;
 	bool m_isAlive = true;
 	bool m_isFightingBoss = false;
+	DWORD m_pressTime = 0;
+	bool m_skyWalked = false;
+	int m_waitDie = 1000;
 
 	CAnimator * anim = nullptr;
 	CTransform * transform = nullptr;
@@ -71,11 +82,11 @@ private:
 
 	//Method
 public:
-	void Action();
-	void Move() const;
+	void Action(const DWORD &dt);
+	void Move();
 	void Dash(bool isLeft) const;
 	void Shoot() const;
 	void CheckFightBoss();
-	void PassBuilding();
+	void CheckEnemies();
 
 };

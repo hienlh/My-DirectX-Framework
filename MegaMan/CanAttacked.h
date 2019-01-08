@@ -7,6 +7,7 @@ class CanAttacked : public Framework::CMonoBehavior
 {
 private:
 	int m_damage = 0;
+	std::vector<std::string> m_targetName = {};
 
 public:
 	explicit CanAttacked(Framework::CGameObject *gameObject) : CMonoBehavior(gameObject) {}
@@ -21,8 +22,13 @@ public:
 public:
 	int GetDamage() const { return m_damage; }
 
-	void InitDamage(const int &damage) { m_damage = damage; }
+	CanAttacked* AddTargetName(const std::string &name);
+
+	CanAttacked* InitDamage(const int &damage) { m_damage = damage; return this; }
 
 	void OnCollisionEnter(Framework::CCollision* collision) override;
 	void OnTriggerEnter(Framework::CCollision* collision) override;
+
+private:
+	void CheckCanAttack(Framework::CCollision* collision);
 };

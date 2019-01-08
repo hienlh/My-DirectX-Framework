@@ -21,6 +21,8 @@ void CarryAimController::Start()
 
 	m_pBox = CGameObject::Instantiate(Prefab_Box, m_pGameObject, { 0,59 + 24 });
 	m_pBox->GetComponent<CRigidbody>()->SetLimitedArea({ {4673, 930}, {256,350} });
+	auto scene = m_pGameObject->GetScene()->GetAllGameObjects();
+	auto a = 1;
 }
 
 void CarryAimController::Update(const DWORD& dt)
@@ -41,7 +43,7 @@ void CarryAimController::Update(const DWORD& dt)
 	{
 		const auto curPos = transform->GetLocalPosition();
 
-		if (curPos.x - m_destination.x >= 0 && curPos.y - m_destination.y >= 0)
+		if (curPos.x - m_destination.x >= 0 && curPos.y - m_destination.y >= 0) // Moved to destination
 		{
 			m_pBox->GetComponent<CTransform>()->SetParent(parent);
 			parent->GetComponent<BuildingController>()->DeliverySuccess(m_pBox, m_destination);
@@ -82,7 +84,9 @@ void CarryAimController::MoveIn(const Vector2& destination)
 	this->m_destination = destination;
 }
 
-bool CarryAimController::haveBox()
+bool CarryAimController::haveBox() const
 {
+	if (!m_pBox) return false;
+
 	return m_pBox->GetParent() == m_pGameObject || m_pBox->GetIsActive();
 }

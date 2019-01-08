@@ -28,6 +28,11 @@ void CanBeAttacked::Heal(const unsigned int& health)
 		m_health = m_maxHealth;
 }
 
+void CanBeAttacked::ForceDie()
+{
+	m_health = 0;
+}
+
 /**
  * \brief Can not use when the game is running
  * \param health If larger than Max Health, auto init Max health equal this

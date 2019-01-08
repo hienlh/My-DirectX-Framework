@@ -17,6 +17,8 @@ private:
 	NotorBangerEnemyController(const NotorBangerEnemyController &PC);
 	NotorBangerEnemyController* Clone() override { return new NotorBangerEnemyController(*this); }
 
+	NotorBangerEnemyController& operator=(const CComponent& component) override;
+
 	//Cons / Des
 public:
 	NotorBangerEnemyController(CGameObject *gameObject) : CMonoBehavior(gameObject) {};
@@ -35,6 +37,5 @@ public:
 private:
 	void OnCollisionEnter(CCollision* collision) override;
 	void Update(const DWORD &dt) override;
-
 };
 

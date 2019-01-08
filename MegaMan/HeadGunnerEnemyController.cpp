@@ -5,6 +5,8 @@
 #include "Macros.h"
 #include "Renderer.h"
 #include "BulletPool.h"
+#include "CanBeAttacked.h"
+#include "EffectPool.h"
 
 HeadGunnerEnemyController::HeadGunnerEnemyController(const HeadGunnerEnemyController& PC) : CMonoBehavior(PC)
 {
@@ -33,6 +35,12 @@ void HeadGunnerEnemyController::OnCollisionEnter(CCollision * collision)
 
 void HeadGunnerEnemyController::Update(const DWORD &dt)
 {
+	if (!m_pGameObject->GetComponent<CanBeAttacked>()->IsAlive())
+	{
+		m_pGameObject->SetIsActive(false);
+		EffectPool::GetInstance()->CreateMultiEffect(Prefab_Effect_Explode, m_pGameObject->GetPosition(), 20, 2);
+	}
+
 	CTransform *transform = m_pGameObject->GetComponent<CTransform>();
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();

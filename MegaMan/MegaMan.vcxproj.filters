@@ -84,9 +84,6 @@
     <ClCompile Include="BoxController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="MetaCapsuleController.cpp">
-      <Filter>Classes</Filter>
-    </ClCompile>
     <ClCompile Include="BlastHornetController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
@@ -106,6 +103,27 @@
       <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="HelitMissleController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaCapsuleController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxEndController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxEndController2.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnEndBoxController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ChargeShotController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="HealItemController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,9 +194,6 @@
     <ClInclude Include="BoxController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="MetaCapsuleController.h">
-      <Filter>Classes</Filter>
-    </ClInclude>
     <ClInclude Include="BlastHornetController.h">
       <Filter>Controller</Filter>
     </ClInclude>
@@ -198,6 +213,27 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="HelitMissleController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaCapsuleController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxEndController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxEndController2.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnEndBoxController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ChargeShotController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="HealItemController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

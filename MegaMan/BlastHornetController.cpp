@@ -5,6 +5,8 @@
 #include "Renderer.h"
 #include "Animator.h"
 #include "Macros.h"
+#include "CanBeAttacked.h"
+#include "EffectPool.h"
 
 BlastHornetController::BlastHornetController(const BlastHornetController& PC) : CMonoBehavior(PC)
 {
@@ -35,6 +37,7 @@ void BlastHornetController::OnTriggerEnter(CCollision* collision)
 
 	if (strstr(collisionName.c_str(), std::string("Wall").c_str()) || strstr(collisionName.c_str(), std::string("Ground").c_str()) || strstr(collisionName.c_str(), std::string("Ceiling").c_str()) || strstr(collisionName.c_str(), std::string("Door").c_str()))
 	{
+		anim->SetBool(Bool_IsTargeted, true);
 		isCollision = true;
 	}
 
@@ -42,6 +45,17 @@ void BlastHornetController::OnTriggerEnter(CCollision* collision)
 
 void BlastHornetController::Update(const DWORD& dt)
 {
+	if(!m_pGameObject->GetComponent<CanBeAttacked>()->IsAlive())
+	{
+		EffectPool::GetInstance()->CreateMultiEffect(Prefab_Effect_Explode_Blue, m_pGameObject->GetPosition(), 20, 6);
+
+		waitTimeWhenDie -= dt;
+		if (waitTimeWhenDie < 0)
+			m_pGameObject->SetIsActive(false);
+
+		return;
+	}
+
 	const Vector2 targetPos = m_target->GetPosition();
 
 	const Vector2 myPos = transform->Get_Position();

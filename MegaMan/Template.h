@@ -18,6 +18,10 @@ public:
 	{
 		(*this).CMonoBehavior::operator=(component);
 
+		if (const auto pMet = dynamic_cast<const Template*>(&component))
+		{
+		}
+
 		return *this;
 	}
 

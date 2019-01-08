@@ -22,12 +22,20 @@ private:
 	DWORD m_currentBound = 0;
 	bool m_blockChangeBound = false;
 
+	Framework::CTransform* transform = nullptr;
+
 private:
 	CameraController() = default;
 public:
 	CameraController(const CameraController& cc);
 	CameraController(Framework::CGameObject *game_object);
 	~CameraController() = default;
+	CameraController& operator=(const CComponent& component) override
+	{
+		(*this).CMonoBehavior::operator=(component);
+
+		return *this;
+	}
 
 public:
 	CameraController* SetState(const CameraState& state) { m_state = state; return this; }

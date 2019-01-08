@@ -39,6 +39,12 @@
 #include "AudioSource.h"
 #include "HelitController.h"
 #include "HelitMissleController.h"
+#include "ScrollController.h"
+#include "BoxEndController.h"
+#include "BoxEndController2.h"
+#include "SpawnEndBoxController.h"
+#include "ChargeShotController.h"
+#include "HealItemController.h"
 
 #pragma comment(lib, "Framework.lib")
 
@@ -47,16 +53,15 @@ using namespace Framework;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	srand(time(0));
-	CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH + 300, SCREEN_HEIGHT + 300, FULL_SCREEN);
+	CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
 	CGameManager* pGameManager = CGameManager::GetInstance();
 
 	CScene* pScene = new CScene("Main Scene", {8000,8000});
 	pGameManager->SetCurrentScene(pScene);
 	pGameManager->SetIsDebugging(false);
 	CGameObject* pMainCamera = pScene->GetMainCamera();
-	pMainCamera->GetComponent<CTransform>()->Set_Position(Vector2(128, 896));
 	pMainCamera->AddComponent<CameraController>()->SetIsFree(false);
-	pMainCamera->GetComponent<CCamera>()->SetScale({ 2,2 })->SetSize({ SCREEN_WIDTH *2,SCREEN_HEIGHT*2 });
+	pMainCamera->GetComponent<CCamera>()->SetScale({ 2,2 })->SetSize({ SCREEN_WIDTH  /2,SCREEN_HEIGHT /2  });
 
 
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
@@ -76,6 +81,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture(Texture_Blast_Hornet, ".\\Resources\\Blast Hornet\\sprites.png", NULL, ".\\Resources\\Blast Hornet\\sprites.xml");
 	pResourceManager->AddTexture(Texture_Helit, ".\\Resources\\Enemies\\x3_helit.png", NULL, ".\\Resources\\Enemies\\x3_helit.xml");
 	pResourceManager->AddTexture(Texture_Ready, ".\\Resources\\Map\\Ready.png", NULL, ".\\Resources\\Map\\Ready.xml", { 0,0 });
+	pResourceManager->AddTexture(Texture_Scroll, ".\\Resources\\Map\\Scroll.png", NULL, ".\\Resources\\Map\\Scroll.xml");
+	pResourceManager->AddTexture(Texture_BoxEnd, ".\\Resources\\Map\\BoxEnd.png", NULL, ".\\Resources\\Map\\BoxEnd.xml");
 
 	pResourceManager->AddSound(Audio_Sound_Track, ".\\Resources\\Sounds\\BlastHornetSoundTrack.wav")
 		->AddSound(Audio_MegaMan_Shoot, ".\\Resources\\Sounds\\SE_0A.wav")
@@ -118,6 +125,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	new CAnimation(Animation_MapBehind_1, Texture_Map_Objects, 32, 9, 100, true);
 	new CAnimation(Animation_Machine_1_Run, Texture_Map_Objects, 28, 3, 50, true);
 	new CAnimation(Animation_Machine_1_Idle, Texture_Map_Objects, 28, 1, 50, true);
+	new CAnimation(Animation_Scroll1, Texture_Scroll, 0, 4, 100, true);
+	new CAnimation(Animation_Scroll2, Texture_Scroll, 4, 4, 100, true);
+	new CAnimation(Animation_Scroll3, Texture_Scroll, 8, 4, 100, true);
 
 	//Animation Effect
 	new CAnimation(Animation_Effect_BluePower, Texture_MegaManX_Effect, 0, 11, 50, true);
@@ -191,6 +201,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		effectPool->AddNewEffect(Prefab_Effect_Explode_Blue);
 	}
 
+
+
+	//Item Prefabs
+	{
+		new CAnimation(Animation_SmallHeath_Item, Texture_WeaponsAndItems, 450, 1);
+		new CAnimation(Animation_BigHeath_Item, Texture_WeaponsAndItems, 474, 1);
+		auto pPrefabs = pResourceManager->AddPrefab(Prefab_SmallHeath_Item);
+		pPrefabs->AddComponent<CBoxCollider>()->SetSize({ 10,8 })->SetUsedByEffector(false);
+		pPrefabs->GetComponent<CBoxCollider>();
+		pPrefabs->AddComponent<CRenderer>()->SetSprite(Texture_WeaponsAndItems, 450);
+		pPrefabs->GetComponent<CRenderer>()->SetZOrder(-5);
+		pPrefabs->AddComponent<CRigidbody>()->SetGravityScale(1);
+		pPrefabs->AddComponent<HealItemController>()->SetHealValue(SMALL_HEAL_VALUE);
+
+		pPrefabs = pResourceManager->AddPrefab(Prefab_BigHeath_Item);
+		pPrefabs->AddComponent<CBoxCollider>()->SetSize({ 16,12 })->SetUsedByEffector(false);
+		pPrefabs->GetComponent<CBoxCollider>();
+		pPrefabs->AddComponent<CRenderer>()->SetSprite(Texture_WeaponsAndItems, 474);
+		pPrefabs->GetComponent<CRenderer>()->SetZOrder(-5);
+		pPrefabs->AddComponent<CRigidbody>()->SetGravityScale(1);
+		pPrefabs->AddComponent<HealItemController>()->SetHealValue(BIG_HEAL_VALUE);
+
+		// pPrefabs = CGameObject::Instantiate(Prefab_BigHeath_Item, nullptr, { 100, 875 });
+	}
+
 	//Bullet Prefabs
 	{
 		auto bulletPool = BulletPool::GetInstance();
@@ -204,7 +239,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
 			pBullet->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 			pBullet->AddComponent<BulletController>();
-			pBullet->AddComponent<CanAttacked>()->InitDamage(10);
+			pBullet->AddComponent<CanAttacked>()->InitDamage(10)->AddTargetName(Player);
 
 			bulletPool->AddNewTypeBullet(Prefab_BusterShot_Bullet);
 		}
@@ -216,11 +251,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pBullet->AddComponent<CRigidbody>()->SetGravityScale(1);
 			pBullet->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 			pBullet->AddComponent<BulletController>();
-			pBullet->AddComponent<CanAttacked>()->InitDamage(20);
+			pBullet->AddComponent<CanAttacked>()->InitDamage(20)->AddTargetName(Player);
 
 			bulletPool->AddNewTypeBullet(Prefab_NotorBanger_Bullet);
 		}
-
 
 		//Buster Shots
 		{
@@ -239,6 +273,71 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pBusterBullet->AddComponent<CanAttacked>()->InitDamage(20);
 
 			bulletPool->AddNewTypeBullet(Prefab_BusterShot);
+		}
+
+		//Helit missle
+		{
+			new CAnimation(Animation_Helit_Missle, Texture_Helit, 7, 1, 1000, false);
+			auto helitMisslePrefab = pResourceManager->AddPrefab(Prefab_Helit_Missle);
+			helitMisslePrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
+			helitMisslePrefab->AddComponent<CRenderer>()->SetSprite(Texture_Helit, 7);
+			helitMisslePrefab->AddComponent<CBoxCollider>()->SetIsTrigger(true);
+			helitMisslePrefab->AddComponent<CRenderer>();
+			helitMisslePrefab->AddComponent<HelitMissleController>();
+		}
+
+		//ChargeShotLV1
+		{
+			new CAnimation(Animation_ChargeShotLV1_Bullet_Init, Texture_WeaponsAndItems, 715, 2, 10, false);
+			auto anim = new CAnimation(Animation_ChargeShotLV1_Bullet_Fly, Texture_WeaponsAndItems, 717, 4, 100, true);
+			anim->Add(Texture_WeaponsAndItems, 722)
+				->Add(Texture_WeaponsAndItems, 723);
+			new CAnimation(Animation_ChargeShotLV1_Bullet_Explosive, Texture_WeaponsAndItems, 724, 7, 10, false);
+
+			auto pChargeShotLV1 = pResourceManager->AddPrefab(Prefab_ChargeShotLV1);
+			pChargeShotLV1->AddComponent<CAnimator>()
+				->AddAnimation(Animation_ChargeShotLV1_Bullet_Init)
+				->AddAnimation(Animation_ChargeShotLV1_Bullet_Fly)
+				->AddAnimation(Animation_ChargeShotLV1_Bullet_Explosive)
+				->AddTransition(Animation_ChargeShotLV1_Bullet_Init, Animation_ChargeShotLV1_Bullet_Fly)
+				->AddBool(Bool_IsCollision, false)
+				->AddTransition(Animation_ChargeShotLV1_Bullet_Fly, Animation_ChargeShotLV1_Bullet_Explosive, true, Bool_IsCollision, true)
+				->AddTransition(Animation_ChargeShotLV1_Bullet_Init, Animation_ChargeShotLV1_Bullet_Explosive, true, Bool_IsCollision, true);
+			;
+			pChargeShotLV1->GetComponent<CRenderer>()->SetZOrder(-10);
+			pChargeShotLV1->AddComponent<CRigidbody>()->SetGravityScale(0);
+			pChargeShotLV1->AddComponent<CBoxCollider>()->SetSize({ 16,16 })->SetIsTrigger(true);
+			pChargeShotLV1->GetComponent<CBoxCollider>()->SetOffset(Vector2(8, 0));
+			pChargeShotLV1->AddComponent<CanAttacked>()->InitDamage(20);
+			pChargeShotLV1->AddComponent<ChargeShotController>();
+
+			bulletPool->AddNewTypeBullet(Prefab_ChargeShotLV1);
+
+		}
+
+		//ChargeShotLV2
+		{
+			new CAnimation(Animation_ChargeShotLV2_Bullet_Init, Texture_WeaponsAndItems, 4, 2, 10, false);
+			new CAnimation(Animation_ChargeShotLV2_Bullet_Fly, Texture_WeaponsAndItems, 6, 3, 100, true);
+			new CAnimation(Animation_ChargeShotLV2_Bullet_Explosive, Texture_WeaponsAndItems, 9, 8, 10, false);
+
+			auto pChargeShotLV2 = pResourceManager->AddPrefab(Prefab_ChargeShotLV2);
+			pChargeShotLV2->AddComponent<CAnimator>()
+				->AddAnimation(Animation_ChargeShotLV2_Bullet_Init)
+				->AddAnimation(Animation_ChargeShotLV2_Bullet_Fly)
+				->AddAnimation(Animation_ChargeShotLV2_Bullet_Explosive)
+				->AddTransition(Animation_ChargeShotLV2_Bullet_Init, Animation_ChargeShotLV2_Bullet_Fly)
+				->AddBool(Bool_IsCollision, false)
+				->AddTransition(Animation_ChargeShotLV2_Bullet_Fly, Animation_ChargeShotLV2_Bullet_Explosive, true, Bool_IsCollision, true)
+				->AddTransition(Animation_ChargeShotLV2_Bullet_Init, Animation_ChargeShotLV2_Bullet_Explosive, true, Bool_IsCollision, true);
+			pChargeShotLV2->GetComponent<CRenderer>()->SetZOrder(-10);
+			pChargeShotLV2->AddComponent<CRigidbody>()->SetGravityScale(0);
+			pChargeShotLV2->AddComponent<CBoxCollider>()->SetSize({ 31,31 })->SetIsTrigger(true);
+			pChargeShotLV2->GetComponent<CBoxCollider>()->SetOffset(Vector2(8, 0));
+			pChargeShotLV2->AddComponent<CanAttacked>()->InitDamage(50);
+			pChargeShotLV2->AddComponent<ChargeShotController>();
+
+			bulletPool->AddNewTypeBullet(Prefab_ChargeShotLV2);
 		}
 	}
 
@@ -394,11 +493,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPrefab->GetComponent<CRenderer>()->SetFlipY(false);
 			pPrefab->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 			pPrefab->GetComponent<CRigidbody>()->SetGravityScale(1);
-			pPrefab->GetComponent<CRigidbody>()->SetLimitedArea({ {120,880}, {200,50} });
 			pPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
 			pPrefab->GetComponent<CBoxCollider>()->SetOffset({ 0,5 });
-			pPrefab->AddComponent<NotorBangerEnemyController>()->SetSpeed(0.1)
-				;
+			pPrefab->AddComponent<NotorBangerEnemyController>()->SetSpeed(0.1);
+			pPrefab->AddComponent<CanBeAttacked>()->InitHealth(Notor_Health);
+			pPrefab->AddComponent<CanAttacked>()->InitDamage(Notor_Damage)->AddTargetName(Player);
 		}
 	}
 
@@ -437,9 +536,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPrefab->AddComponent<CRigidbody>()->SetVelocity(Vector2(0, 0));
 			pPrefab->GetComponent<CRigidbody>()->SetGravityScale(1);
 			pPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
-			pPrefab->AddComponent<HeadGunnerEnemyController>()->SetSpeed(0.1)
-				;
+			pPrefab->AddComponent<HeadGunnerEnemyController>()->SetSpeed(0.1);
+			pPrefab->AddComponent<CanBeAttacked>()->InitHealth(Head_Health);
+			pPrefab->AddComponent<CanAttacked>()->InitDamage(Head_Damage)->AddTargetName(Player);
 		}
+	}
+
+	//Helit Prefab
+	{
+		new CAnimation(Animation_Helit_Fly, Texture_Helit, 0, 5, 100, true);
+		auto helitPrefab = pResourceManager->AddPrefab(Prefab_Helit);
+		helitPrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
+		helitPrefab->AddComponent<CRenderer>();
+		helitPrefab->AddComponent<CAnimator>()->AddAnimation(Animation_Helit_Fly);
+		helitPrefab->AddComponent<HelitController>();
+		helitPrefab->AddComponent<CBoxCollider>()->SetSize({27,37})->SetIsTrigger(true);
+		helitPrefab->AddComponent<CanBeAttacked>()->InitHealth(Helit_Health);
+		helitPrefab->AddComponent<CanAttacked>()->InitDamage(Helit_Damage)->AddTargetName(Player);
 	}
 
 	//MetaCapsule prefab
@@ -491,7 +604,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pMetaCapsuleBullet->AddComponent<CRigidbody>()->SetGravityScale(0);
 			pMetaCapsuleBullet->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 			pMetaCapsuleBullet->AddComponent<BulletController>();
-			pMetaCapsuleBullet->AddComponent<CanAttacked>()->InitDamage(25);
+			pMetaCapsuleBullet->AddComponent<CanAttacked>()->InitDamage(25)->AddTargetName(Player);
 			pMetaCapsuleBullet->SetIsActive(false);
 		}
 	}
@@ -499,7 +612,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	do
 	{
 		//Player
-		CGameObject* pPlayer = new CGameObject("Player", { 2160, 1129 });//2160, 1129 Suriken || 45, 875 Start || 4370, 1100 Building || 7720, 1827 Blast
+		CGameObject* pPlayer = new CGameObject("Player", { 1792, 458 });//2160, 1129 Suriken || 128, 875 Start || 4450, 1100 Building || 7350, 1827 Blast
 		{
 			pPlayer->AddComponent<CAnimator>()
 				->AddAnimation(Animation_MegaManX_Init)
@@ -630,7 +743,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPowerEffect->GetComponent<CTransform>()->SetParent(pPlayer)->Set_Position({ 0,0 }, false);
 			pPowerEffect->AddComponent<CRenderer>()->SetZOrder(-1);
 			pPowerEffect->AddComponent<CAnimator>()
-				->AddAnimation(Animation_Effect_Dash);
+				->AddAnimation(Animation_Effect_BluePower)
+				->AddAnimation(Animation_Effect_OrangePower)
+				->AddBool(Bool_IsChargeFull, false)
+				->AddTransition(Animation_Effect_BluePower, Animation_Effect_OrangePower, true, Bool_IsChargeFull, true)
+				->AddTransition(Animation_Effect_OrangePower, Animation_Effect_BluePower, true, Bool_IsChargeFull, false);
 			pPlayer->GetComponent<PlayerController>()->m_Power = pPowerEffect;
 
 			CGameObject* pDieEffect = new CGameObject("Die Effect");
@@ -647,6 +764,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPlayer->GetComponent<PlayerController>()->m_DashFullEffectEffect = pDashFullEffect;
 		}
 
+		//Map
 		CGameObject* pBackground = new CGameObject("Map");
 		pBackground->AddComponent<CRenderer>()->SetSprite(Texture_Map)
 			->SetZOrder(10)->SetAnchor(VECTOR2_ZERO);
@@ -665,7 +783,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPrefabs->AddComponent<CRenderer>()->SetSprite(Texture_Map_Objects, 1)->SetAnchor({ 0,0 });
 
 			//Ground
-			for (int i = 31; i < 31 + 40; ++i)
+			for (int i = 36; i < 36 + 40; ++i)
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite(Texture_Map, i)->GetSourceRect();
 
@@ -676,7 +794,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 
 			//Ceiling
-			for (int i = 0; i < 0 + 27; ++i)
+			for (int i = 0; i < 0 + 30; ++i)
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite(Texture_Map, i)->GetSourceRect();
 
@@ -686,8 +804,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				pCeiling->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
 			}
 
+			//DeadHole
+			for (int i = 30; i < 30 + 6; ++i)
+			{
+				Rect spriteRect = CResourceManager::GetInstance()->GetSprite(Texture_Map, i)->GetSourceRect();
+
+				CGameObject* pCeiling = new CGameObject("DeadHole" + std::to_string(i));
+				pCeiling->GetComponent<CTransform>()->SetParent(pBackground)->Set_Position({ spriteRect.left, spriteRect.top }, false);
+				pCeiling->AddComponent<CRigidbody>()->SetIsKinematic(true);
+				pCeiling->AddComponent<CBoxCollider>()->SetSize(spriteRect.Size())->SetAnchor({ 0,0 });
+				pCeiling->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+			}
+
 			//Wall
-			for (int i = 71; i < 71 + 26; ++i)
+			for (int i = 76; i < 76 + 26; ++i)
 			{
 				Rect spriteRect = CResourceManager::GetInstance()->GetSprite(Texture_Map, i)->GetSourceRect();
 
@@ -720,12 +850,130 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pTwoBox->AddComponent<CRenderer>()->SetSprite(Texture_Map_Objects, 56)->SetAnchor({0,0});
 			pTwoBox->AddComponent<CRigidbody>()->SetIsKinematic(true);
 			pTwoBox->AddComponent<CBoxCollider>()->SetAnchor({0,0});
+			pTwoBox->AddComponent<CanBeAttacked>()->InitHealth(50);
+			pTwoBox->AddComponent<BoxEndController>();
 
 			CGameObject* pRoofBrokenBoxs = new CGameObject("RoofBrokenBoxs");
 			pRoofBrokenBoxs->GetComponent<CTransform>()->Set_Position({ 3840, 944 });
 			pRoofBrokenBoxs->AddComponent<CRenderer>()->SetSprite(Texture_Map_Objects, 42)->SetAnchor({ 0,0 });
 			pRoofBrokenBoxs->AddComponent<CRigidbody>()->SetIsKinematic(true);
 			pRoofBrokenBoxs->AddComponent<CBoxCollider>()->SetAnchor({ 0,0 });
+			pRoofBrokenBoxs->AddComponent<CanBeAttacked>()->InitHealth(50);
+			pRoofBrokenBoxs->AddComponent<BoxEndController>();
+
+			//Scroll
+			{
+				CGameObject* scroll = new CGameObject("Scroll1");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1);
+				scroll->GetComponent<CTransform>()->Set_Position({ 1693 + 153, 688 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll1);
+				scroll->AddComponent<CBoxCollider>()->SetSize({153*2, 16})->SetOffset({0,-8});
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(true);
+
+				scroll = new CGameObject("Scroll2");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1)->SetFlipX(true);
+				scroll->GetComponent<CTransform>()->Set_Position({ 1568 + 153, 816 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll1);
+				scroll->AddComponent<CBoxCollider>()->SetSize({ 153 * 2, 16 })->SetOffset({ 0,-8 });
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(false);
+
+				scroll = new CGameObject("Scroll3");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1);
+				scroll->GetComponent<CTransform>()->Set_Position({ 1711 + 153, 944 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll1);
+				scroll->AddComponent<CBoxCollider>()->SetSize({ 153 * 2, 16 })->SetOffset({ 0,-8 });
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(true);    
+
+				scroll = new CGameObject("Scroll4");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1);
+				scroll->GetComponent<CTransform>()->Set_Position({ 5951 + 159/2, 1376 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll2);
+				scroll->AddComponent<CBoxCollider>()->SetSize({ 159, 16 })->SetOffset({ 0,-8 });
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(true);
+
+				scroll = new CGameObject("Scroll5");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1)->SetFlipX(true);
+				scroll->GetComponent<CTransform>()->Set_Position({ 5936 + 128 / 2, 1472 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll3);
+				scroll->AddComponent<CBoxCollider>()->SetSize({ 128, 16 })->SetOffset({ 0,-8 });
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(false);
+
+				scroll = new CGameObject("Scroll6");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1);
+				scroll->GetComponent<CTransform>()->Set_Position({ 5968 + 128 / 2, 1568 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll3);
+				scroll->AddComponent<CBoxCollider>()->SetSize({ 128, 16 })->SetOffset({ 0,-8 });
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(true);
+
+				scroll = new CGameObject("Scroll7");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1)->SetFlipX(true);
+				scroll->GetComponent<CTransform>()->Set_Position({ 5905 + 159 / 2, 1664 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll2);
+				scroll->AddComponent<CBoxCollider>()->SetSize({ 159, 16 })->SetOffset({ 0,-8 });
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(false);
+
+				scroll = new CGameObject("Scroll8");
+				scroll->AddComponent<CRenderer>()->SetZOrder(1);
+				scroll->GetComponent<CTransform>()->Set_Position({ 5984 + 159 / 2, 1760 + 16 });
+				scroll->AddComponent<CAnimator>()->AddAnimation(Animation_Scroll2);
+				scroll->AddComponent<CBoxCollider>()->SetSize({ 159, 16 })->SetOffset({ 0,-8 });
+				scroll->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				scroll->GetComponent<CRigidbody>()->SetGravityScale(0);
+				scroll->AddComponent<ScrollController>()->SetMoveLeft(true);
+			}
+
+			//BoxEnd
+			{
+				CGameObject* pBoxEnd = new CGameObject("BoxEnd1");
+				pBoxEnd->GetComponent<CTransform>()->Set_Position({ 6512 +24, 1808 +120 });
+				pBoxEnd->AddComponent<CRenderer>()->SetSprite(Texture_BoxEnd, 1);
+				pBoxEnd->AddComponent<CRigidbody>()->SetGravityScale(0);
+				pBoxEnd->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+				pBoxEnd->AddComponent<CanBeAttacked>()->InitHealth(20);
+				pBoxEnd->AddComponent<BoxEndController>();
+
+				CGameObject* pBoxEnd2 = new CGameObject("BoxEnd2");
+				pBoxEnd2->GetComponent<CTransform>()->Set_Position({ 6718 + 24, 1777 +192/2 });
+				pBoxEnd2->AddComponent<CRenderer>()->SetSprite(Texture_BoxEnd, 0);
+				pBoxEnd2->AddComponent<CRigidbody>()->SetGravityScale(0);
+				pBoxEnd2->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+				pBoxEnd2->AddComponent<CanBeAttacked>()->InitHealth(20);
+				pBoxEnd2->AddComponent<BoxEndController>();
+
+				CGameObject* pPrefab = pResourceManager->AddPrefab(Prefab_BoxEnd);
+				pPrefab->AddComponent<CRenderer>()->SetSprite(Texture_EnemiesAndBosses, 2);
+				pPrefab->AddComponent<CRigidbody>();
+				pPrefab->AddComponent<CBoxCollider>()->SetUsedByEffector(false);
+				pPrefab->GetComponent<CBoxCollider>()->SetIsTrigger(true);
+				pPrefab->AddComponent<CanBeAttacked>()->InitHealth(20);
+				pPrefab->AddComponent<CanAttacked>()->InitDamage(20);
+				pPrefab->AddComponent<BoxEndController2>();
+
+				CGameObject* pSpawn = new CGameObject("BoxSpawn1");
+				pSpawn->GetComponent<CTransform>()->Set_Position({ 6512 + 24, 1727 + 24 });
+				pSpawn->AddComponent<CanAttacked>()->InitDamage(20);
+				pSpawn->AddComponent<SpawnEndBoxController>()->target = pBoxEnd;
+
+				pSpawn = new CGameObject("BoxSpawn2");
+				pSpawn->GetComponent<CTransform>()->Set_Position({ 6718 + 24, 1704 + 24 });
+				pSpawn->AddComponent<CanAttacked>()->InitDamage(20);
+				pSpawn->AddComponent<SpawnEndBoxController>()->target = pBoxEnd2;
+
+			}
 		}
 
 		//UI
@@ -787,6 +1035,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		//Blast Hornet
 		CGameObject* pHornet = new CGameObject("Blast Hornet", Vector2(7890, 1827));
 		{
+			pPlayer->GetComponent<PlayerController>()->pBlastHornet = pHornet;
+			pHornet->SetIsActive(false);
+
 			//Animation
 			{
 				new CAnimation(Animation_BlastHornet_Flying, Texture_Blast_Hornet, 3, 1);
@@ -824,7 +1075,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				pHornet->GetComponent<CBoxCollider>()->SetIsTrigger(true);
 				pHornet->AddComponent<BlastHornetController>();
 				pHornet->GetComponent<BlastHornetController>()->m_target = pPlayer;
-				pHornet->AddComponent<CanAttacked>()->InitDamage(20);
+				pHornet->AddComponent<CanAttacked>()->InitDamage(Blast_Honest_Damage)->AddTargetName(Player);
+				pHornet->AddComponent<CanBeAttacked>()->InitHealth(Blast_Honest_Health);
 			}
 
 			//Blast Hornet Wing
@@ -849,7 +1101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			childPrefabs->AddComponent<BlastHornetChildController>();
 			childPrefabs->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 			childPrefabs->GetComponent<CBoxCollider>()->SetSize({ 10,10 });
-			childPrefabs->AddComponent<CanAttacked>()->InitDamage(20);
+			childPrefabs->AddComponent<CanAttacked>()->InitDamage(20)->AddTargetName(Player);
 			childPrefabs->SetIsActive(true);
 			for (int i = 0; i < 12; i++)
 			{
@@ -866,7 +1118,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			childPrefabs->AddComponent<BlastHornetChild2Controller>()->SetParent(pHornet);
 			childPrefabs->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 			childPrefabs->GetComponent<CBoxCollider>()->SetSize({ 10,10 });
-			childPrefabs->AddComponent<CanAttacked>()->InitDamage(20);
+			childPrefabs->AddComponent<CanAttacked>()->InitDamage(20)->AddTargetName(Player);
 
 			//Blast Hornet bullet
 			new CAnimation(Animation_BlastHornet_Bullet_flying, Texture_Blast_Hornet, 43, 2, 50);
@@ -904,39 +1156,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pMachine1->GetComponent<MachineController>()->m_player = pPlayer;
 		}
 
-		//Helit
-		{
-			new CAnimation(Animation_Helit_Fly, Texture_Helit, 0, 5, 100, true);
-			auto helitPrefab = pResourceManager->AddPrefab(Prefab_Helit);
-			helitPrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
-			helitPrefab->AddComponent<CRenderer>();
-			helitPrefab->AddComponent<CAnimator>()->AddAnimation(Animation_Helit_Fly);
-			helitPrefab->AddComponent<HelitController>();
-			helitPrefab->AddComponent<CBoxCollider>();
-
-			CGameObject::Instantiate(Prefab_Helit, nullptr, { 100, 875 });
-
-			new CAnimation(Animation_Helit_Missle, Texture_Helit, 7, 1, 1000, false);
-			auto helitMisslePrefab = pResourceManager->AddPrefab(Prefab_Helit_Missle);
-			helitMisslePrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
-			helitMisslePrefab->AddComponent<CBoxCollider>()->SetIsTrigger(true);
-			helitMisslePrefab->AddComponent<CRenderer>();
-			helitMisslePrefab->AddComponent<HelitMissleController>();
-			helitMisslePrefab->AddComponent<CAnimator>()->AddAnimation(Animation_Helit_Missle);
-		}
-
-		//NotorBangers
-		{
-			CGameObject* pNotorBangerEnemy = CGameObject::Instantiate(Prefab_NotorBanger, nullptr, Vector2(200, 875));
-			pNotorBangerEnemy->GetComponent<NotorBangerEnemyController>()->SetTarget(pPlayer); 
-		}
-
-		//HeadGunners
-		{
-			CGameObject* pHeadGunnerEnemy = CGameObject::Instantiate(Prefab_HeadGunner, nullptr, Vector2(450, 875));
-			pHeadGunnerEnemy->GetComponent<HeadGunnerEnemyController>()->SetTarget(pPlayer);
-		}
-
 		//Genjibo
 		CGameObject* pGenjiBos = new CGameObject("Genjibo", { 2477,980 });
 		{
@@ -960,7 +1179,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				->AddAnimation(Animation_Genjibo_Missle_Down);
 
 			//Right Missle
-			new CAnimation(Animation_Genjibo_Missle_Down, Texture_EnemiesAndBosses, 38, 2, 50);
 			CGameObject* pGenjiRightMissle = new CGameObject("Genjibo Missle", Vector2(GenjiPos.x + 10, GenjiPos.y + 6));
 			pGenjiRightMissle->AddComponent<CTransform>()->SetParent(pGenjiBos);
 			pGenjiRightMissle->AddComponent<CRenderer>();
@@ -1012,17 +1230,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pShurikein->AddComponent<CRigidbody>()->SetLimitedArea({ {2320, 1040}, {225, 161} })->SetGravityScale(0);
 			pShurikein->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 			pShurikein->GetComponent<CBoxCollider>()->SetSize(Vector2(40, 40));
-			pShurikein->AddComponent<CanAttacked>()->InitDamage(20);
+			pShurikein->AddComponent<CanAttacked>()->InitDamage(20)->AddTargetName(Player);
 			pShurikein->AddComponent<CanBeAttacked>()->InitHealth(20);
 			pShurikein->SetIsActive(false);
 		}
 
 		//Door
 		{
-			auto pDoor = CGameObject::Instantiate(Prefab_Door2, pBackground, { 2303,1153 });
-			pDoor = CGameObject::Instantiate(Prefab_Door2, pBackground, { 2544,1153 });
+			CGameObject::Instantiate(Prefab_Door2, pBackground, { 2303,1153 });
+			auto pDoor = CGameObject::Instantiate(Prefab_Door2, pBackground, { 2544,1153 });
 			pDoor->GetComponent<CBoxCollider>()->SetIsTrigger(false);
 			pDoor->GetComponent<DoorController>()->pBoss = pShurikein;
+
 			CGameObject::Instantiate(Prefab_Door2, pBackground, { 5632,1152 });
 			CGameObject::Instantiate(Prefab_Door2, pBackground, { 5872,1152 });
 

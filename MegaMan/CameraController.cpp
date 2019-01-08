@@ -38,7 +38,30 @@ CameraController::CameraController(Framework::CGameObject* game_object) : CMonoB
 
 void CameraController::Start()
 {
-	CDebug::Log("\n\nHello Camera Start\n\n");
+	transform = m_pGameObject->GetComponent<Framework::CTransform>();
+
+	const auto playerPos = m_player->GetPosition();
+	Vector2 pos;
+	for (Bound bound : m_limitedBounds)
+	{
+		if(bound.isInside(playerPos))
+		{
+			pos = playerPos;
+			break;
+		}
+
+		if(bound.Distance(playerPos) < Bound(pos, {0,0}).Distance(playerPos))
+		{
+			pos = playerPos;
+			if (playerPos.x > bound.right) pos.x = bound.right;
+			else if (playerPos.x < bound.left) pos.x = bound.left;
+
+			if (playerPos.y > bound.bottom) pos.y = bound.bottom;
+			else if (playerPos.y < bound.top) pos.y = bound.top;
+		}
+	}
+
+	transform->Set_Position(pos);
 }
 
 void CameraController::Update(const DWORD &dt)

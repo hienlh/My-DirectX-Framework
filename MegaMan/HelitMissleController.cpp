@@ -38,5 +38,7 @@ void HelitMissleController::OnTriggerEnter(CCollision* collision)
 void HelitMissleController::Update(const DWORD &dt)
 {
 	m_lifeTime -= dt;
-	if (m_lifeTime <= 0) m_pGameObject->SetIsActive(false);
+	if (m_lifeTime <= 0)
+		m_pGameObject->SetIsActive(false);
+		//SAFE_DELETE(m_pGameObject);
 }

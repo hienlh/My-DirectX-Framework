@@ -23,6 +23,7 @@ public:
 	int GetCurrentHealth() const { return m_health; }
 	int GetMaxHealth() const { return m_maxHealth; }
 	bool IsAlive() const { return m_health > 0; }
+	void ForceDie();
 
 	void InitHealth(const int &health);
 	void InitMaxHealth(const int &maxHealth);

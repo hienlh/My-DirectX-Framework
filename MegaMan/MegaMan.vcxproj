@@ -24,6 +24,8 @@
     <ClCompile Include="BlastHornetChildController.cpp" />
     <ClCompile Include="BlastHornetController.cpp" />
     <ClCompile Include="BoxController.cpp" />
+    <ClCompile Include="BoxEndController.cpp" />
+    <ClCompile Include="BoxEndController2.cpp" />
     <ClCompile Include="BuildingController.cpp" />
     <ClCompile Include="BulletController.cpp" />
     <ClCompile Include="BulletPool.cpp" />
@@ -31,12 +33,14 @@
     <ClCompile Include="CanAttacked.cpp" />
     <ClCompile Include="CanBeAttacked.cpp" />
     <ClCompile Include="CarryAimController.cpp" />
+    <ClCompile Include="ChargeShotController.cpp" />
     <ClCompile Include="DashFullEffect.cpp" />
     <ClCompile Include="DoorController.cpp" />
     <ClCompile Include="EffectAutoRemove.cpp" />
     <ClCompile Include="EffectPool.cpp" />
     <ClCompile Include="GenjiBosController.cpp" />
     <ClCompile Include="HeadGunnerEnemyController.cpp" />
+    <ClCompile Include="HealItemController.cpp" />
     <ClCompile Include="HealthValueController.cpp" />
     <ClCompile Include="HelitController.cpp" />
     <ClCompile Include="HelitMissleController.cpp" />
@@ -47,7 +51,9 @@
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="GroundController.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ScrollController.cpp" />
     <ClCompile Include="ShurikeinController.cpp" />
+    <ClCompile Include="SpawnEndBoxController.cpp" />
     <ClCompile Include="Template.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +67,8 @@
     <ClInclude Include="BlastHornetChildController.h" />
     <ClInclude Include="BlastHornetController.h" />
     <ClInclude Include="BoxController.h" />
+    <ClInclude Include="BoxEndController.h" />
+    <ClInclude Include="BoxEndController2.h" />
     <ClInclude Include="BuildingController.h" />
     <ClInclude Include="BulletController.h" />
     <ClInclude Include="BulletPool.h" />
@@ -68,12 +76,14 @@
     <ClInclude Include="CanAttacked.h" />
     <ClInclude Include="CanBeAttacked.h" />
     <ClInclude Include="CarryAimController.h" />
+    <ClInclude Include="ChargeShotController.h" />
     <ClInclude Include="DashFullEffect.h" />
     <ClInclude Include="DoorController.h" />
     <ClInclude Include="EffectAutoRemove.h" />
     <ClInclude Include="EffectPool.h" />
     <ClInclude Include="GenjiBosController.h" />
     <ClInclude Include="HeadGunnerEnemyController.h" />
+    <ClInclude Include="HealItemController.h" />
     <ClInclude Include="HealthValueController.h" />
     <ClInclude Include="HelitController.h" />
     <ClInclude Include="HelitMissleController.h" />
@@ -84,7 +94,9 @@
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="GroundController.h" />
+    <ClInclude Include="ScrollController.h" />
     <ClInclude Include="ShurikeinController.h" />
+    <ClInclude Include="SpawnEndBoxController.h" />
     <ClInclude Include="Template.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

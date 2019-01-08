@@ -2,6 +2,12 @@
 
 #define Animation_BusterShot_Bullet_Init										"Animation_BusterShot_Bullet_Init"
 #define Animation_BusterShot_Bullet_Explosive									"Animation_BusterShot_Bullet_Explosive"
+#define Animation_ChargeShotLV1_Bullet_Init										"Animation_ChargeShotLV1_Bullet_Init"
+#define Animation_ChargeShotLV1_Bullet_Fly										"Animation_ChargeShotLV1_Bullet_Fly"
+#define Animation_ChargeShotLV1_Bullet_Explosive								"Animation_ChargeShotLV1_Bullet_Explosive"
+#define Animation_ChargeShotLV2_Bullet_Init										"Animation_ChargeShotLV2_Bullet_Init"
+#define Animation_ChargeShotLV2_Bullet_Fly										"Animation_ChargeShotLV2_Bullet_Fly"
+#define Animation_ChargeShotLV2_Bullet_Explosive								"Animation_ChargeShotLV2_Bullet_Explosive"
 
 #define Animation_HeadGunner_Bullet												"Animation_HeadGunner_Bullet"
 
@@ -77,6 +83,10 @@
 #define Animation_Effect_Explode												"Animation_Effect_Explode"
 #define Animation_Effect_Explode_Blue											"Animation_Effect_Explode_Blue"
 
+#define Animation_Scroll1														"Animation_Scroll1"
+#define Animation_Scroll2														"Animation_Scroll2"
+#define Animation_Scroll3														"Animation_Scroll3"s
+
 #define Animation_Carry_Aim_Fly													"Animation_Carry_Aim_Fly"
 #define Animation_Carry_Aim_Fly_Explode											"Animation_Carry_Aim_Fly_Explode"
 	
@@ -86,6 +96,9 @@
 
 #define Animation_Helit_Fly														"Animation_Helit_Fly"
 #define Animation_Helit_Missle													"Animation_Helit_Missle"
+
+#define Animation_SmallHeath_Item												"Animation_SmallHeath_Item"
+#define Animation_BigHeath_Item													"Animation_BigHeath_Item"
 
 #define Bool_IsIdle																"Bool_IsIdle"
 #define Bool_IsJump																"Bool_IsJump"
@@ -109,6 +122,7 @@
 #define Bool_IsAttack															"Bool_IsAttack"
 #define Bool_IsDead																"Bool_IsDead"
 #define Bool_IsTargeted															"Bool_IsTargeted"
+#define Bool_IsChargeFull														"Bool_IsChargeFull"
 
 #define Texture_EnemiesAndBosses												"Texture_EnemiesAndBosses"
 #define Texture_EnemiesAndBosses												"Texture_EnemiesAndBosses"
@@ -127,6 +141,8 @@
 #define Texture_Blast_Hornet													"Texture_Blast_Hornet"
 #define Texture_Helit															"Texture_Helit"
 #define Texture_Ready															"Texture_Ready"
+#define Texture_Scroll															"Texture_Scroll"
+#define Texture_BoxEnd															"Texture_BoxEnd"
 
 #define Prefab_NotorBanger														"Prefab_NotorBanger"
 #define Prefab_NotorBanger_Bullet												"Prefab_NotorBanger_Bullet"
@@ -135,6 +151,8 @@
 #define Prefab_MapBehind_1														"Prefab_MapBehind_1"
 #define Prefab_BusterShot_Bullet												"Prefab_BusterShot_Bullet"
 #define Prefab_BusterShot														"Prefab_BusterShot"
+#define Prefab_ChargeShotLV1													"Prefab_ChargeShotLV1"														
+#define Prefab_ChargeShotLV2													"Prefab_ChargeShotLV2"	
 #define Prefab_Ladder1															"Prefab_Ladder1"
 #define Prefab_Ladder2															"Prefab_Ladder2"
 #define Prefab_BrokenWall_Left													"Prefab_BrokenWall_Left"
@@ -150,6 +168,9 @@
 #define Prefab_BlastHornet_Bullet												"Prefab_BlastHornet_Bullet"
 #define Prefab_Helit															"Prefab_Helit"
 #define Prefab_Helit_Missle														"Prefab_Helit_Missle"
+#define Prefab_BoxEnd															"Prefab_BoxEnd"
+#define Prefab_SmallHeath_Item													"Prefab_SmallHeath_Item"
+#define Prefab_BigHeath_Item													"Prefab_BigHeath_Item"
 
 #define Prefab_Effect_Dash														"Prefab_Effect_Dash"
 #define Prefab_Effect_SmokeDash													"Prefab_Effect_SmokeDash"
@@ -169,3 +190,20 @@
 
 #define EFFECT_POOL_SIZE														20
 #define BULLET_POOL_SIZE														20
+
+#define CHARGELV1_TIME															200
+#define CHARGELV2_TIME															2000
+
+#define Blast_Honest_Health														20
+#define Blast_Honest_Damage														20
+#define Notor_Health															20
+#define Notor_Damage															20
+#define Head_Health																20
+#define Head_Damage																20
+#define Helit_Health															20
+#define Helit_Damage															20
+
+#define SMALL_HEAL_VALUE														60
+#define BIG_HEAL_VALUE															120
+
+#define Player																	"Player"

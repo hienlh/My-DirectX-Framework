@@ -5,12 +5,29 @@
 #include "Macros.h"
 #include "Renderer.h"
 #include "BulletPool.h"
+#include "CanBeAttacked.h"
+#include "EffectPool.h"
 
 NotorBangerEnemyController::NotorBangerEnemyController(const NotorBangerEnemyController& PC) : CMonoBehavior(PC)
 {
 	m_speed = PC.m_speed;
 	m_reloadTime = PC.m_reloadTime;
 	m_target = PC.m_target;
+}
+
+NotorBangerEnemyController& NotorBangerEnemyController::operator=(const CComponent& component)
+
+{
+	(*this).CMonoBehavior::operator=(component);
+
+	if (const auto pNotor = dynamic_cast<const NotorBangerEnemyController*>(&component))
+	{
+		m_speed = pNotor->m_speed;
+		m_reloadTime = pNotor->m_reloadTime;
+		m_target = pNotor->m_target;
+	}
+
+	return *this;
 }
 
 Vector2 NotorBangerEnemyController::CalculateVelocity(const Vector2& myPosition, const Vector2& targetPosition,
@@ -47,6 +64,13 @@ void NotorBangerEnemyController::OnCollisionEnter(CCollision * collision)
 
 void NotorBangerEnemyController::Update(const DWORD &dt)
 {
+	if (!m_pGameObject->GetComponent<CanBeAttacked>()->IsAlive())
+	{
+		m_pGameObject->SetIsActive(false);
+		EffectPool::GetInstance()->CreateMultiEffect(Prefab_Effect_Explode, m_pGameObject->GetPosition(), 20, 2);
+		CGameObject::Instantiate(Prefab_SmallHeath_Item, nullptr, m_pGameObject->GetPosition());
+	}
+
 	CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();

@@ -23,6 +23,7 @@ public:
 
 	Vector2 InitPos = {};
 	DWORD waitTime = 0;
+	int waitTimeWhenDie = 1000;
 	DWORD startFly = 0;
 	int targetTime = 0;
 	CGameObject* pBullet = nullptr;

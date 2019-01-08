@@ -3,7 +3,7 @@
 #include "Renderer.h"
 using namespace Framework;
 
-class HelitController : public Framework::CMonoBehavior
+class HelitController : public CMonoBehavior
 {
 private:
 	int m_reloadTime = 2000;
@@ -11,6 +11,12 @@ private:
 
 	CTransform* transform = nullptr;
 	CRenderer* renderer = nullptr;
+	CRigidbody* rigid = nullptr;
+
+	CGameObject* m_target = nullptr;
+
+	float m_limitTop = 0;
+	float m_limitBottom = 0;
 
 	// To Clone Function
 public:
@@ -19,10 +25,14 @@ public:
 	HelitController* Clone()  override;
 	HelitController& operator=(const CComponent& component) override;
 
+	HelitController* SetLimitDistance(const int& distance = 20);
+
 	//Cons / Des
 public:
 	HelitController(CGameObject* gameObject);
 	~HelitController() = default;
+
+	HelitController* SetTarget(CGameObject* target) { m_target = target; return this; }
 
 	//Override
 public:

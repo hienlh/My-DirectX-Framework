@@ -41,7 +41,8 @@ void BuildingController::Update(const DWORD& dt)
 				outriggerTransform->Translate(Vector2(0, 0.05)*dt);
 			}
 			else { //Complete TurnOn
-				m_isTurnOn = false;
+				m_isTurnOn = false; 
+				m_TurnedOn = true;
 				TurnOnSpawn();
 			}
 		}
@@ -61,7 +62,6 @@ void BuildingController::Update(const DWORD& dt)
 			}
 			else {
 				m_isTurnOff = false;
-				player->GetComponent<PlayerController>()->PassBuilding();
 				m_pGameObject->SetIsActive(false);
 			}
 		}
@@ -100,7 +100,9 @@ void BuildingController::Update(const DWORD& dt)
 
 void BuildingController::TurnOn()
 {
-	m_isTurnOn = true;
+	if (!m_TurnedOn) {
+		m_isTurnOn = true;
+	}
 }
 
 void BuildingController::TurnOff()
