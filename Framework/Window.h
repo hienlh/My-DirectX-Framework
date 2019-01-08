@@ -16,16 +16,18 @@ namespace Framework
 
 		// Getters / Setters
 	public:
-		HWND Get_WindowHandle() const { return m_hWnd; };
+		const HWND& Get_WindowHandle() const { return m_hWnd; };
 
 		// Internal methods
 	private:
-		bool Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		bool Init(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth, const int& screenHeight,
+		          const bool& fullscreen);
 		void Release();
 
 		// Pattern
 	public:
-		static CWindow* Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen);
+		static CWindow* Instantiate(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth,
+		                            const int& screenHeight, const bool& fullscreen);
 		static void Destroy(CWindow* instance);
 	};
 }

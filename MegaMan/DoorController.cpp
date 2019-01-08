@@ -27,7 +27,7 @@ void DoorController::OnTriggerEnter(Framework::CCollision* collision)
 	}
 }
 
-void DoorController::Update(DWORD dt)
+void DoorController::Update(const DWORD &dt)
 {
 	if(m_target)
 	{

@@ -9,20 +9,21 @@ namespace Framework {
 		Vector2 m_Size = VECTOR2_ZERO;
 	public:
 		CBoxCollider(const CBoxCollider &boxCollider);
-		CBoxCollider(CGameObject* gameObject);
+		explicit CBoxCollider(CGameObject* gameObject);
 		~CBoxCollider() = default;
 
 		//Getter / Setter
 	public:
-		Vector2 GetSize() const { return m_Size; }
+		const Vector2& GetSize() const { return m_Size; }
 
-		CBoxCollider* SetSize(Vector2 size);
-		CBoxCollider* PlusSize(Vector2 size);
+		CBoxCollider* SetSize(const Vector2 &size);
+		CBoxCollider* PlusSize(const Vector2 &size);
 
 		//Override
 	public:
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 		void Render() override;
 		CBoxCollider* Clone() override { return new CBoxCollider(*this); }
+		CBoxCollider& operator=(const CComponent& component) override;
 	};
 }

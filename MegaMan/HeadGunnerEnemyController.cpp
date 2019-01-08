@@ -4,6 +4,7 @@
 #include "Animator.h"
 #include "Macros.h"
 #include "Renderer.h"
+#include "BulletPool.h"
 
 HeadGunnerEnemyController::HeadGunnerEnemyController(const HeadGunnerEnemyController& PC) : CMonoBehavior(PC)
 {
@@ -12,11 +13,25 @@ HeadGunnerEnemyController::HeadGunnerEnemyController(const HeadGunnerEnemyContro
 	m_target = PC.m_target;
 }
 
+HeadGunnerEnemyController& HeadGunnerEnemyController::operator=(const CComponent& component)
+{
+	(*this).CComponent::operator=(component);
+
+	if(const auto pHead = dynamic_cast<const HeadGunnerEnemyController*>(&component))
+	{
+		m_speed = pHead->m_speed;
+		m_reloadTime = pHead->m_reloadTime;
+		m_target = pHead->m_target;
+	}
+
+	return *this;
+}
+
 void HeadGunnerEnemyController::OnCollisionEnter(CCollision * collision)
 {
 }
 
-void HeadGunnerEnemyController::Update(DWORD dt)
+void HeadGunnerEnemyController::Update(const DWORD &dt)
 {
 	CTransform *transform = m_pGameObject->GetComponent<CTransform>();
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
@@ -40,8 +55,8 @@ void HeadGunnerEnemyController::Update(DWORD dt)
 				const bool isFlip = renderer->GetFlipX();
 
 				pos.x += isFlip ? 10 : -10;
-				auto pBullet = CGameObject::Instantiate(Prefab_BusterShot_Bullet, nullptr, pos);
-
+				//auto pBullet = CGameObject::Instantiate(Prefab_BusterShot_Bullet, nullptr, pos);
+				auto pBullet = BulletPool::GetInstance()->CreateBullet(Prefab_BusterShot_Bullet, pos);
 				pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? .3f : -.3f) , 0 });
 
 				m_reloadTime = 0;

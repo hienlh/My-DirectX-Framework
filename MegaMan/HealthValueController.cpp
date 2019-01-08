@@ -8,7 +8,7 @@ HealthValueController::HealthValueController(const HealthValueController& hv)
 	m_preRatio = hv.m_preRatio;
 }
 
-void HealthValueController::Update(DWORD dt)
+void HealthValueController::Update(const DWORD &dt)
 {
 	if(m_target)
 		if(const auto canBeAttacked = m_target->GetComponent<CanBeAttacked>())

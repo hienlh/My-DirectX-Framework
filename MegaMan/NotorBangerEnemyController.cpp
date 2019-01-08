@@ -4,6 +4,7 @@
 #include "Animator.h"
 #include "Macros.h"
 #include "Renderer.h"
+#include "BulletPool.h"
 
 NotorBangerEnemyController::NotorBangerEnemyController(const NotorBangerEnemyController& PC) : CMonoBehavior(PC)
 {
@@ -12,22 +13,22 @@ NotorBangerEnemyController::NotorBangerEnemyController(const NotorBangerEnemyCon
 	m_target = PC.m_target;
 }
 
-Vector2 NotorBangerEnemyController::CalculateVeclocity(Vector2 myPosition, Vector2 targetPosition, float gravity, float Vy)
+Vector2 NotorBangerEnemyController::CalculateVelocity(const Vector2& myPosition, const Vector2& targetPosition,
+	const float& gravity, const float& vy) const
 {
 	Vector2 velocity;
-	velocity.y = Vy;
+	velocity.y = vy;
 	float time = (-velocity.y + sqrt(pow(velocity.y, 2) - 2 * gravity*(myPosition.y - targetPosition.y))) / gravity;
 	velocity.x = (((targetPosition.x - myPosition.x)) / time);
 	return velocity;
 }
 
-std::string NotorBangerEnemyController::CalculateAngelRotation(Vector2 velocity)
+std::string NotorBangerEnemyController::CalculateAngelRotation(const Vector2& velocity) const
 {
-	float alpha = fabs(velocity.y / sqrt(pow(velocity.x, 2) + pow(velocity.y, 2)));
-	float angles[] = { 0, 0.5, 1/sqrt(2), sqrt(3)/2, 1 };
+	const float alpha = fabs(velocity.y / sqrt(pow(velocity.x, 2) + pow(velocity.y, 2)));
+	float angles[] = { 0, 0.5, 1 / sqrt(2), sqrt(3) / 2, 1 };
 	std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
 	size_t selectedAngleIndex = 0;
-	// anim->SetBool(names[0], false);
 
 	// Least angle delta
 	for (size_t iAngle = 1; iAngle < _countof(angles); iAngle++)
@@ -44,7 +45,7 @@ void NotorBangerEnemyController::OnCollisionEnter(CCollision * collision)
 	anim->SetBool(Bool_IsJump, false);
 }
 
-void NotorBangerEnemyController::Update(DWORD dt)
+void NotorBangerEnemyController::Update(const DWORD &dt)
 {
 	CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
@@ -55,8 +56,8 @@ void NotorBangerEnemyController::Update(DWORD dt)
 		const Vector2 targetPosition = m_target->GetComponent<CTransform>()->Get_Position();
 		const Vector2 currentPosition = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 
-		float gravity = 0.001*rigidbody->GetGravityScale();
-		Vector2 velocity = CalculateVeclocity(currentPosition, targetPosition, gravity, -0.3);
+		const float gravity = 0.001*rigidbody->GetGravityScale();
+		const Vector2 velocity = CalculateVelocity(currentPosition, targetPosition, gravity, -0.3);
 		std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
 		for (size_t iAngle = 0; iAngle < _countof(names); iAngle++)
 		{
@@ -96,7 +97,7 @@ void NotorBangerEnemyController::Update(DWORD dt)
 				auto pBullet = CGameObject::Instantiate(Prefab_NotorBanger_Bullet, nullptr, pos);
 				pBullet->GetComponent<CRigidbody>()->SetVelocity(velocity);
 
-				
+
 				m_reloadTime = 0;
 			}
 		}
@@ -117,10 +118,6 @@ void NotorBangerEnemyController::Update(DWORD dt)
 		}
 
 		renderer->SetFlipX(targetPosition.x > currentPosition.x);
-		
-	}
-}
 
-void NotorBangerEnemyController::Render()
-{
+	}
 }

@@ -10,7 +10,8 @@ using namespace Framework;
 
 CGameManager* CGameManager::__instance = nullptr;
 
-bool CGameManager::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+bool CGameManager::Init(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth,
+	const int& screenHeight, const bool& fullscreen)
 {
 	bool result = false;
 	do
@@ -47,6 +48,8 @@ void CGameManager::Release()
 
 bool CGameManager::Run()
 {
+	NotifyStart(); //Notify to observer when game start
+
 	m_isRunning = true;
 
 	DWORD frameStart = GetTickCount();
@@ -80,13 +83,18 @@ bool CGameManager::Run()
 			frameStart = now;
 
 			// process game loop
-			
+
 			CPhysic::GetInstance()->Update(dt);
+
+			//CDebug::Log("Physic time: %d \n", GetTickCount() - frameStart);
 
 			if (m_currentScene)
 				m_currentScene->Update(dt);
 
+			//CDebug::Log("Update time: %d \n", GetTickCount() - frameStart);
+
 			m_currentScene->Render();
+			//CDebug::Log("Render time: %d \n", GetTickCount() - frameStart);
 		}
 		else
 			Sleep(tickPerFrame - dt);
@@ -101,7 +109,9 @@ bool CGameManager::Run()
 //	m_gameObjectList.push_back(pGameObject);
 //}
 
-void CGameManager::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+
+void CGameManager::Instantiate(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth,
+	const int& screenHeight, const bool& fullscreen)
 {
 	if (!__instance)
 	{

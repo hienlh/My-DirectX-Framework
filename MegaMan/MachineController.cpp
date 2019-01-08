@@ -14,7 +14,7 @@ void MachineController::OnCollisionEnter(Framework::CCollision* collision)
 	}
 }
 
-void MachineController::Update(DWORD dt)
+void MachineController::Update(const DWORD &dt)
 {
 	auto anim = m_pGameObject->GetComponent<Framework::CAnimator>();
 	auto transform = m_pGameObject->GetComponent<Framework::CTransform>();

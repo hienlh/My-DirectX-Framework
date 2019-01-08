@@ -45,7 +45,7 @@ Framework::CCamera::CCamera(CGameObject* gameObject) : CComponent(gameObject)
 	D3DXMatrixIdentity(&m_identityMatrix);
 }
 
-void Framework::CCamera::Update(DWORD dt)
+void Framework::CCamera::Update(const DWORD &dt)
 {
 	auto pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 
@@ -60,4 +60,22 @@ void Framework::CCamera::Update(DWORD dt)
 void Framework::CCamera::Render()
 {
 	CGraphic::GetInstance()->DrawRectangle(Rect(m_pGameObject->GetComponent<CTransform>()->Get_Position(), { 256, 256 }, { 0.5,0.5 }), D3DCOLOR_XRGB(100, 100, 100));
+}
+
+CCamera& CCamera::operator=(const CComponent& component)
+{
+	(*this).CComponent::operator=(component);
+
+	if(const auto pCam = dynamic_cast<const CCamera*>(&component))
+	{
+		m_angle = pCam->m_angle;
+		m_identityMatrix = pCam->m_identityMatrix;
+		m_orthographicMatrix = pCam->m_orthographicMatrix;
+		m_scale = pCam->m_scale;
+		m_scaleFactors = pCam->m_scaleFactors;
+		m_size = pCam->m_size;
+		m_viewMatrix = pCam->m_viewMatrix;
+	}
+
+	return *this;
 }

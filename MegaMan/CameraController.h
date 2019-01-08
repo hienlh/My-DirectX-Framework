@@ -20,6 +20,7 @@ private:
 	std::vector<Bound> m_bossLimitedBounds = {};
 	bool m_isFree = false;
 	DWORD m_currentBound = 0;
+	bool m_blockChangeBound = false;
 
 private:
 	CameraController() = default;
@@ -31,11 +32,14 @@ public:
 public:
 	CameraController* SetState(const CameraState& state) { m_state = state; return this; }
 	CameraController* SetIsFree(const bool &isFree) { this->m_isFree = isFree; return this; }
+	CameraController* SetBlockChangeBound(const bool &blockChangeBound) { m_blockChangeBound = blockChangeBound; return this; }
 
 	CameraState GetState() const { return m_state; }
+	bool GetBlockChangeBound() const { return m_blockChangeBound; }
 
 public:
-	void Update(DWORD dt) override;
+	void Start() override;
+	void Update(const DWORD &dt) override;
 	void Render() override;
 
 	CameraController* Clone() override { return new CameraController(*this); }

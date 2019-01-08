@@ -1,20 +1,22 @@
 ﻿#include "CanBeAttacked.h"
 #include "GameManager.h"
 #include "CanAttacked.h"
+#include "EffectPool.h"
+#include "Macros.h"
 
 CanBeAttacked::CanBeAttacked(const CanBeAttacked& object) : CMonoBehavior(object)
 {
-	m_alive = object.m_alive;
 	m_health = object.m_health;
 	m_maxHealth = object.m_maxHealth;
 }
 
 void CanBeAttacked::BeAttacked(const CanAttacked *damage)
 {
-	m_health -= damage->GetDamage();
-	if (m_health < 0) {
-		m_health = 0;
-		m_alive = false;
+	if (m_health > 0) {
+		m_health -= damage->GetDamage();
+		if (m_health < 0) {
+			m_health = 0;
+		}
 	}
 	//CDebug::Log("CanBeAttacked.cpp:12 - Be Attacked (Current Health: %d)\n", m_health);
 }

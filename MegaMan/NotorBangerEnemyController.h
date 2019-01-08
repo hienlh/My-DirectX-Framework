@@ -28,13 +28,13 @@ public:
 
 	float GetSpeed() const { return m_speed; }
 	void SetTarget(CGameObject* targer) { m_target = targer; }
-	Vector2 CalculateVeclocity(Vector2 myPosition, Vector2 targetPosition,float gravity, float Vy);
-	std::string CalculateAngelRotation(Vector2 velocity);
+	Vector2 CalculateVelocity(const Vector2 &myPosition, const Vector2 &targetPosition, const float &gravity, const float &vy) const;
+	std::string CalculateAngelRotation(const Vector2 &velocity) const;
+
 	//Override
 private:
 	void OnCollisionEnter(CCollision* collision) override;
-	void Update(DWORD dt) override;
-	void Render() override;
+	void Update(const DWORD &dt) override;
 
 };
 

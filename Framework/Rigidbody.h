@@ -16,18 +16,18 @@ namespace Framework {
 
 	public:
 		CRigidbody(const CRigidbody &rigidbody);
-		CRigidbody(CGameObject* gameObject) : CComponent(gameObject) { };
+		explicit CRigidbody(CGameObject* gameObject) : CComponent(gameObject) { };
 		~CRigidbody() = default;
 
 
 		// Getter / Setter
 	public:
-		inline Vector2 GetVelocity() const { return m_velocity; }
-		float GetGravityScale() const { return m_gravityScale; }
-		float GetMass() const { return m_mass; }
-		bool GetIsKinematic() const { return m_isKinematic; }
-		Rect GetLimitedArea() const { return m_limitedArea; }
-		bool GetNeedUpdate() const { return m_needUpdate; }
+		const Vector2 &GetVelocity() const { return m_velocity; }
+		const float &GetGravityScale() const { return m_gravityScale; }
+		const float &GetMass() const { return m_mass; }
+		const bool &GetIsKinematic() const { return m_isKinematic; }
+		const Rect &GetLimitedArea() const { return m_limitedArea; }
+		const bool &GetNeedUpdate() const { return m_needUpdate; }
 
 		CRigidbody* SetVelocity(const Vector2 &velocity) { SetVelocity(velocity.x, velocity.y); return this; }
 		CRigidbody* SetVelocity(const float &x = MAX_VELOCITY, const float &y = MAX_VELOCITY);
@@ -40,9 +40,10 @@ namespace Framework {
 
 		// Override
 	public:
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 		void Render() override;
 		CRigidbody* Clone() override { return new CRigidbody(*this); }
+		CRigidbody& operator=(const CComponent& component) override;
 		//Friend
 		friend class CPhysic;
 	};

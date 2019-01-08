@@ -15,7 +15,7 @@ public:
 		: CMonoBehavior(gameObject) {}
 
 public:
-	void Update(DWORD dt) override;
+	void Update(const DWORD &dt) override;
 	HealthValueController* Clone() override { return new HealthValueController(*this); }
 
 public:

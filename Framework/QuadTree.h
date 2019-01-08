@@ -18,13 +18,13 @@ namespace Framework {
 		CQuadTree* m_pNodes[4] = {};
 
 	public:
-		CQuadTree(Vector2 size = { 1000,1000 });
+		explicit CQuadTree(Vector2 size = { 1000,1000 });
 		CQuadTree(int id, int level, Rect bounds);
 		~CQuadTree();
 
 		//Override
 	public:
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 
 		void Render() override;
 
@@ -47,6 +47,6 @@ namespace Framework {
 
 		void insert_s(CGameObject *gameObject);
 
-		std::set <CGameObject*> query(Rect rectangle);
+		std::set <CGameObject*> query(const Rect &rectangle);
 	};
 }

@@ -1,14 +1,15 @@
 ﻿#pragma once
 #include "Collision.h"
-#include "Collider.h"
+#include "Observer.h"
 
 namespace Framework {
-	class CPhysicObserver
+	class CPhysicObserver : public CObserver
 	{
 		// Cons / Des
 	public:
 		CPhysicObserver();
-		virtual ~CPhysicObserver();
+		CPhysicObserver(const CPhysicObserver& po) = default;
+		virtual ~CPhysicObserver() = default;
 
 		// Observer Method, do not virtual because any child inherited can override or not 
 	public:

@@ -21,7 +21,7 @@ public:
 	void OnCollisionEnter(Framework::CCollision* collision) override;
 
 public:
-	void Update(DWORD dt) override;
+	void Update(const DWORD &dt) override;
 
 	MachineController* Clone() override { return new MachineController(*this); }
 };

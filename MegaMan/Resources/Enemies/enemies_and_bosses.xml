@@ -10,7 +10,7 @@
 	<SubTexture name="Bulding_7"	x="2588"	y="94"	width="48"	height="48" />
 	<SubTexture name="CarryArm_00"	x="2652"	y="106"	width="36"	height="59" />
 	<SubTexture name="CarryArm_01"	x="2692"	y="106"	width="36"	height="59" />
-	<SubTexture name="CarryArm_02"	x="2732"	y="105"	width="36"	height="60" />
+	<SubTexture name="CarryArm_02"	x="2732"	y="106"	width="36"	height="59" />
 	<SubTexture name="CarryArm_03"	x="2772"	y="106"	width="36"	height="59" />
 	<SubTexture name="CarryArm_04"	x="2822"	y="106"	width="32"	height="41" />
 	<SubTexture name="CarryArm_05"	x="2864"	y="106"	width="32"	height="41" />

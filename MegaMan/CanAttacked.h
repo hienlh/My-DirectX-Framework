@@ -13,6 +13,7 @@ public:
 	CanAttacked(const CanAttacked& object);
 	CanAttacked* Clone() override { return new CanAttacked(*this); }
 	~CanAttacked() = default;
+	CanAttacked& operator=(const CComponent& component) override;
 
 public:
 	void Attack(CanBeAttacked* beAttacked) const;

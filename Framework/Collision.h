@@ -13,7 +13,7 @@ namespace Framework {
 
 		// Cons / Des
 	public:
-		CCollision(const CCollision& collision, bool swap = false);
+		CCollision(const CCollision& collision, const bool &swap = false);
 		CCollision(CGameObject* collider, CGameObject *otherCollider);
 		~CCollision();
 
@@ -22,8 +22,8 @@ namespace Framework {
 		CGameObject *GetCollider() const { return m_pCollider; }
 		CGameObject *GetOtherCollider() const { return m_pOtherCollider; }
 		
-		bool CheckNameInCollision(std::string colliderName) const;
-		bool CollisionBetween(std::string name, std::string otherName) const;
+		const bool& CheckNameInCollision(const std::string& colliderName) const;
+		const bool& CollisionBetween(const std::string& name, const std::string& otherName) const;
 
 	public:
 		friend class CPhysic;

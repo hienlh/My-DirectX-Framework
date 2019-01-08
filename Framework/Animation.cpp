@@ -42,7 +42,7 @@ CAnimation::CAnimation(std::string name, std::string textureName, DWORD startSpr
 	if(!result) delete this;
 }
 
-void CAnimation::Update(DWORD dt)
+void CAnimation::Update(const DWORD &dt)
 {
 	const DWORD delayTime = m_frames[m_frameIndex].m_delay == 0 ? m_defaultTime : m_frames[m_frameIndex].m_delay;
 
@@ -64,21 +64,16 @@ CSprite* CAnimation::GetSprite()
 	return m_frames[m_frameIndex].m_sprite;
 }
 
-bool CAnimation::IsLastFrame() const
+const bool &CAnimation::IsLastFrame() const
 {
 	const DWORD delayTime = m_frames[m_frameIndex].m_delay == 0 ? m_defaultTime : m_frames[m_frameIndex].m_delay;
 	return m_frameIndex == m_frames.size() - 1 && m_timeElapse >= delayTime;
 }
 
-CAnimation* CAnimation::SetIndexCurrentFrame(int index)
+CAnimation* CAnimation::Add(const std::string& textureName, const DWORD& indexSprite, const DWORD& pos,
+	const DWORD& time)
 {
-	m_frameIndex = index;
-	return this;
-}
-
-CAnimation* CAnimation::Add(std::string textureName, DWORD indexSprite, DWORD position, DWORD time)
-{
-	Add(CResourceManager::GetInstance()->GetSprite(textureName, indexSprite), position, time);
+	Add(CResourceManager::GetInstance()->GetSprite(textureName, indexSprite), pos, time);
 	return this;
 }
 
@@ -93,12 +88,12 @@ CAnimation* CAnimation::Add(SFrame frame)
 //	Add({ rect, time });
 //}
 
-CAnimation* CAnimation::Add(CSprite* sprite, DWORD position, DWORD time)
+CAnimation* CAnimation::Add(CSprite* sprite, const DWORD& pos, const DWORD& time)
 {
-	time = time != 0 ? time : m_defaultTime;
+	const auto _time = time != 0 ? time : m_defaultTime;
 
-	if (position == -1) Add({ sprite, time });
-	else m_frames.insert(m_frames.begin() + position, 1, { sprite, time });
+	if (pos == -1) Add({ sprite, time });
+	else m_frames.insert(m_frames.begin() + pos, 1, { sprite, _time });
 
 	return this;
 }

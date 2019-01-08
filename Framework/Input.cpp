@@ -129,17 +129,17 @@ void CInput::PollKeyboard()
 	m_dikeyboard->GetDeviceState(sizeof(m_keys), reinterpret_cast<LPVOID>(m_keys));
 }
 
-int CInput::KeyDown(int key)
+int CInput::KeyDown(const int &key)
 {
 	return m_keys[key] && !m_prevKeys[key];
 }
 
-int CInput::KeyUp(int key)
+int CInput::KeyUp(const int &key)
 {
 	return !m_keys[key] && m_prevKeys[key];
 }
 
-int CInput::KeyHold(int key)
+int CInput::KeyHold(const int &key)
 {
 	return m_keys[key] && m_prevKeys[key];
 }
@@ -160,13 +160,13 @@ void CInput::PollMouse()
 	m_dimouse->GetDeviceState(sizeof(m_mouseState), reinterpret_cast<LPVOID>(&m_mouseState));
 }
 
-int CInput::ButtonDown(int button)
+int CInput::ButtonDown(const int &button)
 {
 	return m_mouseState.rgbButtons[button] && !m_prevMouseState.rgbButtons[button];
 	//return BUTTON_DOWN(m_mouseState, button) && !BUTTON_DOWN(m_prevMouseState, button);
 }
 
-int CInput::ButtonUp(int button)
+int CInput::ButtonUp(const int &button)
 {
 	return !m_mouseState.rgbButtons[button] && m_prevMouseState.rgbButtons[button];
 	//return !BUTTON_DOWN(m_mouseState, button) && BUTTON_DOWN(m_prevMouseState, button);

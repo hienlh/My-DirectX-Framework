@@ -46,17 +46,17 @@ Rect CCollider::GetBoundArea() const
 	return Rect(top, left, bottom, right);
 }
 
-bool CCollider::GetUsedByEffector() const
+const bool& CCollider::GetUsedByEffector() const
 {
 	return m_UsedByEffector;
 }
 
-bool CCollider::GetAutoBoundSize() const
+const bool &CCollider::GetAutoBoundSize() const
 {
 	return m_AutoBoundSize;
 }
 
-bool CCollider::GetIsTrigger() const
+const bool &CCollider::GetIsTrigger() const
 {
 	return m_IsTrigger;
 }
@@ -66,7 +66,7 @@ Vector2 CCollider::GetAnchor() const
 	return m_Anchor;
 }
 
-void CCollider::SetUsedByEffector(bool usedByEffector)
+void CCollider::SetUsedByEffector(const bool &usedByEffector)
 {
 	m_UsedByEffector = usedByEffector;
 }
@@ -76,25 +76,42 @@ void CCollider::SetUsedByEffector(bool usedByEffector)
 //	m_Bound = Bound(Vector2(0, 0), size);
 //}
 
-void CCollider::SetOffset(Vector2 offset)
+void CCollider::SetOffset(const Vector2 &offset)
 {
 	m_Offset = offset;
 }
 
-void CCollider::SetAutoBoundSize(bool autoBoundSize)
+void CCollider::SetAutoBoundSize(const bool &autoBoundSize)
 {
 	if (m_pGameObject->GetComponent<CRigidbody>()->GetIsKinematic() && autoBoundSize) return;
 	
 	m_AutoBoundSize = autoBoundSize;
 }
 
-void CCollider::SetAnchor(Vector2 anchor)
+void CCollider::SetAnchor(const Vector2 &anchor)
 {
 	m_Anchor = anchor;
-	m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
+	if(m_pGameObject->GetScene())
+		m_pGameObject->GetScene()->AddColliderObject(m_pGameObject);
 }
 
-void CCollider::SetIsTrigger(bool isTrigger)
+void CCollider::SetIsTrigger(const bool &isTrigger)
 {
 	m_IsTrigger = isTrigger;
+}
+
+CCollider& CCollider::operator=(const CComponent& component)
+{
+	(*this).CComponent::operator=(component);
+
+	if (const auto pCol = dynamic_cast<const CCollider*>(&component)) {
+		m_Anchor = pCol->m_Anchor;
+		m_AutoBoundSize = pCol->m_AutoBoundSize;
+		m_Bound = pCol->m_Bound;
+		m_IsTrigger = pCol->m_IsTrigger;
+		m_Offset = pCol->m_Offset;
+		m_UsedByEffector = pCol->m_UsedByEffector;
+	}
+
+	return *this;
 }

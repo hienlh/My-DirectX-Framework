@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <MonoBehavier.h>
 #include <time.h>
 using namespace Framework;
@@ -15,13 +15,13 @@ public:
 	explicit BlastHornetChildController(const CMonoBehavior& monoBehavior)
 		: CMonoBehavior(monoBehavior)
 	{
-	
+
 	}
 
 	explicit BlastHornetChildController(CGameObject* gameObject)
 		: CMonoBehavior(gameObject)
 	{
-		
+
 	}
 
 	BlastHornetChildController* Clone()  override { return new BlastHornetChildController(*this); }
@@ -29,7 +29,7 @@ public:
 	// override
 public:
 	void OnTriggerEnter(CCollision* collision) override;
-	void Update(DWORD dt) override;
+	void Update(const DWORD& dt) override;
 	void Render() override;
 	//
 public:

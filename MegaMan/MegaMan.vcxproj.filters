@@ -60,22 +60,58 @@
     <ClCompile Include="DoorController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="BlastHornetBulletController.cpp">
+    <ClCompile Include="EffectAutoRemove.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="BlastHornetChild2Controller.cpp">
+    <ClCompile Include="DashFullEffect.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectPool.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletPool.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildingController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="CarryAimController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Template.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaCapsuleController.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="BlastHornetChildController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="BlastHornetController.cpp">
+    <ClCompile Include="BlastHornetChild2Controller.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="HelitController.cpp">
+    <ClCompile Include="BlastHornetBulletController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="HelitMissleController.cpp">
+    <ClCompile Include="ShurikeinController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ChargeShotController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollingWheelController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="CanHeal.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="HealItemController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,22 +158,58 @@
     <ClInclude Include="DoorController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="BlastHornetBulletController.h">
+    <ClInclude Include="EffectAutoRemove.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="BlastHornetChild2Controller.h">
+    <ClInclude Include="DashFullEffect.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectPool.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletPool.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="CarryAimController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Template.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaCapsuleController.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetController.h">
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="BlastHornetChildController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="BlastHornetController.h">
+    <ClInclude Include="BlastHornetChild2Controller.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="HelitController.h">
+    <ClInclude Include="BlastHornetBulletController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="HelitMissleController.h">
+    <ClInclude Include="ShurikeinController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ChargeShotController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollingWheelController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="CanHeal.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="HealItemController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

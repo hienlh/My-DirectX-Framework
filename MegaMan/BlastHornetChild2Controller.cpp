@@ -2,6 +2,8 @@
 #include "Animator.h"
 #include "Renderer.h"
 #include "BlastHornetController.h"
+#include "Macros.h"
+#include "EffectPool.h"
 
 BlastHornetChild2Controller::BlastHornetChild2Controller(const BlastHornetChild2Controller& PC) : CMonoBehavior(PC)
 {
@@ -9,17 +11,21 @@ BlastHornetChild2Controller::BlastHornetChild2Controller(const BlastHornetChild2
 	m_parent = PC.m_parent;
 }
 
-BlastHornetChild2Controller* BlastHornetChild2Controller::Clone() 
+BlastHornetChild2Controller* BlastHornetChild2Controller::Clone()
 {
 	return new BlastHornetChild2Controller(*this);
 }
 
-BlastHornetChild2Controller::BlastHornetChild2Controller(CGameObject* gameObject) :CMonoBehavior( gameObject)
+BlastHornetChild2Controller::BlastHornetChild2Controller(CGameObject* gameObject) :CMonoBehavior(gameObject)
 {
 }
 
-BlastHornetChild2Controller::~BlastHornetChild2Controller()
+void BlastHornetChild2Controller::Start()
 {
+	anim = m_pGameObject->GetComponent <CAnimator>();
+	transform = m_pGameObject->GetComponent <CTransform>();
+	rigid = m_pGameObject->GetComponent <CRigidbody>();
+	renderer = m_pGameObject->GetComponent <CRenderer>();
 }
 
 void BlastHornetChild2Controller::OnTriggerEnter(CCollision* collision)
@@ -31,57 +37,41 @@ void BlastHornetChild2Controller::OnTriggerEnter(CCollision* collision)
 	}
 }
 
-void BlastHornetChild2Controller::Update(DWORD dt)
+void BlastHornetChild2Controller::Update(const DWORD& dt)
 {
 	lifeTime -= dt;
-	auto animator = m_pGameObject->GetComponent<CAnimator>();
 	if (lifeTime <= 0)
 	{
 		Explosive();
 	}
 	else
 	{
-		Vector2 targetPos = m_target->GetComponent<CTransform>()->Get_Position();
-		Vector2 parentPos = m_parent->GetComponent<CTransform>()->Get_Position();
-		auto transform = m_pGameObject->GetComponent<CTransform>();
-		auto rigidbody = m_pGameObject->GetComponent<CRigidbody>();
-		auto renderer = m_pGameObject->GetComponent<CRenderer>();
-		Vector2 myPos = transform->Get_Position();
+		const Vector2 targetPos = m_target->GetPosition();
+		const Vector2 parentPos = m_parent->GetPosition();
+
+		const Vector2 myPos = transform->Get_Position();
+
 		Vector2 distance;
-		Vector2 velocity = rigidbody->GetVelocity();
-		if (!animator->GetBool("wasHit"))
-		{
-			if (m_parent->GetComponent<BlastHornetController>()->m_isTargeted) {
-				distance = targetPos - myPos;
-				if (distance.x < 0) velocity.x = -0.05; else if (distance.x > 0) velocity.x = 0.05; else velocity.x = 0;
-				if (distance.y < 0) velocity.y = -0.05; else if (distance.y > 0) velocity.y = 0.05; else velocity.y = 0;
-				if (distance.x + 5 < 0) renderer->SetFlipX(false); else if (distance.x - 5 > 0) renderer->SetFlipX(true);
-			}
-			else
-			{
-				distance = parentPos - myPos;
-				if (distance.x < -25) velocity.x = -0.05; else if (distance.x > 25) velocity.x = 0.05; else velocity.x = 0;
-				if (distance.y < -31) velocity.y = -0.05; else if (distance.y > 31) velocity.y = 0.05; else velocity.y = 0;
-				if (distance.x + 5 < 0) renderer->SetFlipX(false); else if (distance.x - 5 > 0) renderer->SetFlipX(true);
-			}
+		Vector2 velocity;
+		if (m_parent->GetComponent<BlastHornetController>()->m_isTargeted) {
+			distance = targetPos - myPos;
+			if (distance.x < 0) velocity.x = -0.05; else if (distance.x > 0) velocity.x = 0.05; else velocity.x = 0;
+			if (distance.y < 0) velocity.y = -0.05; else if (distance.y > 0) velocity.y = 0.05; else velocity.y = 0;
+			if (distance.x + 5 < 0) renderer->SetFlipX(false); else if (distance.x - 5 > 0) renderer->SetFlipX(true);
 		}
-		else velocity = Vector2({ 0,0 });
-		rigidbody->SetVelocity(velocity);
-	}
-	//delete child
-	if (animator->GetBool("wasHit") && animator->GetCurrentAnimation()->IsLastFrame())
-	{
-		SAFE_DELETE(m_pGameObject);
+		else
+		{
+			distance = parentPos - myPos;
+			if (distance.x < -25) velocity.x = -0.05; else if (distance.x > 25) velocity.x = 0.05; else velocity.x = 0;
+			if (distance.y < -31) velocity.y = -0.05; else if (distance.y > 31) velocity.y = 0.05; else velocity.y = 0;
+			if (distance.x + 5 < 0) renderer->SetFlipX(false); else if (distance.x - 5 > 0) renderer->SetFlipX(true);
+		}
+		rigid->SetVelocity(velocity);
 	}
 }
 
-void BlastHornetChild2Controller::Render()
+void BlastHornetChild2Controller::Explosive() const
 {
-}
-
-void BlastHornetChild2Controller::Explosive()
-{
-	m_pGameObject->GetComponent<CAnimator>()->SetBool("wasHit", true);
-	m_pGameObject->GetComponent<CRigidbody>()->SetVelocity({ 0,0 })->SetGravityScale(0);
-
+	EffectPool::GetInstance()->CreateEffect(Prefab_Effect_Explode, transform->Get_Position());
+	m_pGameObject->SetIsActive(false);
 }

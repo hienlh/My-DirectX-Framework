@@ -24,7 +24,7 @@ namespace Framework
 		CGameObject() = default;
 	public:
 		CGameObject(const CGameObject& gameObject);
-		CGameObject(std::string name, Vector2 position = VECTOR2_ZERO, bool addIntoCurrentScene = true);
+		explicit CGameObject(const std::string &name, const Vector2 &position = VECTOR2_ZERO, const bool& addIntoCurrentScene = true);
 		~CGameObject();
 
 		// Friends
@@ -113,7 +113,12 @@ namespace Framework
 		void SetScene(CScene *scene) { m_pScene = scene; }
 	public:
 		CScene* GetScene() const { return m_pScene; }
-		DWORD GetID() const { return m_id; }
+		const DWORD& GetID() const { return m_id; }
+		CGameObject* GetParent();
+		Vector2 GetPosition();
+		bool IsInCurrentScene() const;
+
+		CGameObject* SetParent(CGameObject* parent);
 
 		// Internal methods
 	private:
@@ -124,17 +129,21 @@ namespace Framework
 
 		// Override methods
 	public:
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 		void Render() override;
+		void CopyValue(const CGameObject& object);
+		bool GetIsActive() override;
+
+		CGameObject& operator=(const CGameObject& gameObject);
 
 		// Static methods
 	public:
 		static CGameObject* Instantiate(CGameObject* gameObject, CGameObject* parent = nullptr,
-		                                Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO,
-		                                bool instantiateInWorldSpace = false);
-		static CGameObject* Instantiate(std::string prefabName, CGameObject* parent = nullptr,
-										Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO,
-										bool instantiateInWorldSpace = false);
+		                                const Vector2 &position = VECTOR2_ZERO, const Vector3 &rotation = VECTOR3_ZERO,
+		                                const bool &instantiateInWorldSpace = false);
+		static CGameObject* Instantiate(const std::string &prefabName, CGameObject* parent = nullptr,
+										const Vector2 &position = VECTOR2_ZERO, const Vector3 &rotation = VECTOR3_ZERO,
+										const bool &instantiateInWorldSpace = false);
 		static void Destroy(CGameObject* &instance);
 	};
 }

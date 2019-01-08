@@ -2,12 +2,6 @@
 #include "PhysicObserver.h"
 #include "Physic.h"
 
-Framework::CPhysicObserver::CPhysicObserver()
+Framework::CPhysicObserver::CPhysicObserver() : CObserver(CPhysic::GetInstance())
 {
-	CPhysic::GetInstance()->RegisterObserver(this);
-}
-
-Framework::CPhysicObserver::~CPhysicObserver()
-{
-	CPhysic::GetInstance()->RemoveObserver(this);
 }

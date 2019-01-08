@@ -14,15 +14,17 @@ CameraController::CameraController(const CameraController& cc) : CMonoBehavior(c
 
 CameraController::CameraController(Framework::CGameObject* game_object) : CMonoBehavior(game_object)
 {
-	m_limitedBounds.push_back({ { 0 + 128,768 + 128 }, { 1024 - 256,256 - 256 } });
-	m_limitedBounds.push_back({ { 768 + 128,256 + 128 }, { 256 - 256,768 - 256 } });
-	m_limitedBounds.push_back({ { 768 + 128,256 + 128 }, { 1536 - 256,256 - 256 } });
-	m_limitedBounds.push_back({ { 1264 + 128,0 + 128 }, { 256 - 256,512 - 256 } });
+	m_limitedBounds.push_back({ { 0 + 128,768 + 128 }, { 1024 - 256,0 } });
+	m_limitedBounds.push_back({ { 768 + 128,256 + 128 }, { 0,768 - 256 } });
+	m_limitedBounds.push_back({ { 768 + 128,256 + 128 }, { 1536 - 256,0 } });
+	m_limitedBounds.push_back({ { 1264 + 128,0 + 128 }, { 0,256 } });
 	m_limitedBounds.push_back({ { 1536 + 128,256 + 128 }, { 768 - 256,1024 - 256 } });
 	m_limitedBounds.push_back({ { 1536 + 128,1024 + 128 }, { 784 - 256,0 } });
 	m_limitedBounds.push_back({ { 2304 + 128,1024 + 128 }, { 0,0 } });
 	m_limitedBounds.push_back({ { 2560 + 128,1024 + 128 }, { 976 - 256,0 } });
-	m_limitedBounds.push_back({ { 2816 + 128,768 + 128 }, { 2816 - 256,512 - 256 } });
+	m_limitedBounds.push_back({ { 2816 + 128,768 + 128 }, { 1857 - 256,512 - 256 } });
+	m_limitedBounds.push_back({ { 4673 + 128,1024 + 128 }, { 0,0 } }); //Building
+	m_limitedBounds.push_back({ { 4800 + 128+128,768 + 128 }, { 830-256,512-256 } });
 	m_limitedBounds.push_back({ { 5632 + 128,1024 + 128 }, { 0,0 } });
 	m_limitedBounds.push_back({ { 5888 + 128,1024 + 128 }, { 0,1024 -256 } });
 	m_limitedBounds.push_back({ { 5888 + 128,1792 + 128 }, { 1566 - 256,0 } });
@@ -34,7 +36,12 @@ CameraController::CameraController(Framework::CGameObject* game_object) : CMonoB
 	m_bossLimitedBounds.push_back({ {7680 + 128,1792 + 128},{0,0} });*/
 }
 
-void CameraController::Update(DWORD dt)
+void CameraController::Start()
+{
+	CDebug::Log("\n\nHello Camera Start\n\n");
+}
+
+void CameraController::Update(const DWORD &dt)
 {
 	switch (m_state)
 	{
@@ -84,14 +91,18 @@ void CameraController::Follow(DWORD dt)
 
 	const bool canViewTarget(canViewArea.intersect({ targetPosition, {0,0} }));
 
-	if (!canViewTarget) {
+	bool changeBound = false;
+
+	if (!canViewTarget && !m_blockChangeBound) {
 		const int limitBoundSize = m_limitedBounds.size();
 
 		for (int i = 0; i < limitBoundSize; i++)
 		{
 			if (i != m_currentBound)
-				if (m_limitedBounds[i].Distance(targetPosition) < m_limitedBounds[m_currentBound].Distance(targetPosition))
+				if (m_limitedBounds[i].Distance(targetPosition) < m_limitedBounds[m_currentBound].Distance(targetPosition)) {
 					m_currentBound = i;
+					changeBound = true;
+				}
 		}
 	}
 
@@ -104,7 +115,7 @@ void CameraController::Follow(DWORD dt)
 
 	//transform->Set_Position(camPosition);
 	const Vector2 direction = newCamPos - camPosition;
-	transform->Translate(direction * dt / 500);
+	transform->Translate(direction * dt / (changeBound ? 500 : 300));
 }
 
 void CameraController::MeetBoss(DWORD dt, int indexMinBound)

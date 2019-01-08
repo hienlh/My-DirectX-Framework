@@ -7,7 +7,7 @@ void GroundController::OnCollisionEnter(Framework::CCollision* collision)
 {
 }
 
-void GroundController::Update(DWORD dt)
+void GroundController::Update(const DWORD &dt)
 {
 	Framework::CRigidbody *rigidbody = m_pGameObject->GetComponent<Framework::CRigidbody>();
 	Framework::CInput *input = Framework::CInput::GetInstance();

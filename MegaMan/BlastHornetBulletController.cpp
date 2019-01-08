@@ -1,5 +1,6 @@
 ﻿#include "BlastHornetBulletController.h"
 #include "BlastHornetController.h"
+#include "Macros.h"
 
 BlastHornetBulletController::BlastHornetBulletController(const BlastHornetBulletController& PC) : CMonoBehavior(PC)
 {
@@ -9,7 +10,7 @@ BlastHornetBulletController::BlastHornetBulletController(const BlastHornetBullet
 	m_parent = PC.m_parent;
 }
 
-BlastHornetBulletController* BlastHornetBulletController::Clone() 
+BlastHornetBulletController* BlastHornetBulletController::Clone()
 {
 	return new BlastHornetBulletController(*this);
 }
@@ -18,8 +19,11 @@ BlastHornetBulletController::BlastHornetBulletController(CGameObject * gameObjec
 {
 }
 
-BlastHornetBulletController::~BlastHornetBulletController()
+void BlastHornetBulletController::Start()
 {
+	rigid = m_pGameObject->GetComponent<CRigidbody>();
+	transform = m_pGameObject->GetComponent<CTransform>();
+	anim = m_pGameObject->GetComponent<CAnimator>();
 }
 
 void BlastHornetBulletController::OnTriggerEnter(Framework::CCollision* collision)
@@ -27,21 +31,18 @@ void BlastHornetBulletController::OnTriggerEnter(Framework::CCollision* collisio
 	std::string collisionName = collision->GetOtherCollider()->GetName();
 	if (strstr(collisionName.c_str(), "Player"))
 	{
-		m_pGameObject->GetComponent<CAnimator>()->SetBool("isTargeted", true);
+		anim->SetBool(Bool_IsTargeted, true);
 		m_parent->GetComponent<BlastHornetController>()->m_isTargeted = true;
 	}
 }
 
 
-void BlastHornetBulletController::Update(DWORD dt)
+void BlastHornetBulletController::Update(const DWORD& dt)
 {
-	Vector2 targetPos = m_target->GetComponent<CTransform>()->Get_Position();
-	auto rigidbody = m_pGameObject->GetComponent<CRigidbody>();
-	auto transform = m_pGameObject->GetComponent<CTransform>();
-	auto animator = m_pGameObject->GetComponent<CAnimator>();
+	const Vector2 targetPos = m_target->GetPosition();
 
 	m_flyTime -= dt;
-	if(animator->GetBool("isTargeted"))
+	if (anim->GetBool(Bool_IsTargeted))
 	{
 		transform->Set_Position(targetPos);
 		m_flyTime = 5000;
@@ -50,18 +51,15 @@ void BlastHornetBulletController::Update(DWORD dt)
 	else
 	{
 		Vector2 velocity;
-		Vector2 distance = targetPos - transform->Get_Position();
+		const Vector2 distance = targetPos - transform->Get_Position();
 		if (distance.x < 0) velocity.x = -0.05; else if (distance.x > 0) velocity.x = 0.05; else if (distance.x == 0) velocity.x = 0;
 		if (distance.y < 0) velocity.y = -0.05; else if (distance.y > 0) velocity.y = 0.05; else if (distance.y == 0) velocity.y = 0;
-		rigidbody->SetVelocity(velocity);
+		rigid->SetVelocity(velocity);
 	}
+
 	if (m_flyTime <= 0 || m_targetTime <= 0)
 	{
 		m_parent->GetComponent<BlastHornetController>()->m_isTargeted = false;
-		SAFE_DELETE(m_pGameObject);
+		m_pGameObject->SetIsActive(false);
 	}
-}
-
-void BlastHornetBulletController::Render()
-{
 }

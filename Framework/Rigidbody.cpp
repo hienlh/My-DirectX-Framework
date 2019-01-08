@@ -48,7 +48,7 @@ CRigidbody* CRigidbody::SetLimitedArea(const Rect& limitedArea)
 	return this;
 }
 
-void CRigidbody::Update(DWORD dt)
+void CRigidbody::Update(const DWORD &dt)
 {
 	if (m_isKinematic) return;
 
@@ -65,4 +65,20 @@ void CRigidbody::Render()
 		 	CGraphic::GetInstance()->DrawRectangle(m_pGameObject->GetComponent<CCollider>()->GetBoundArea(), D3DCOLOR_XRGB(0, 0, 255));
 		else CGraphic::GetInstance()->DrawRectangle(m_limitedArea, D3DCOLOR_XRGB(0, 0, 255));
 	}
+}
+
+CRigidbody& CRigidbody::operator=(const CComponent& component)
+{
+	(*this).CComponent::operator=(component);
+
+	if (const auto pRigid = dynamic_cast<const CRigidbody*>(&component)) {
+		m_gravityScale = pRigid->m_gravityScale;
+		m_isKinematic = pRigid->m_isKinematic;
+		m_limitedArea = pRigid->m_limitedArea;
+		m_mass = pRigid->m_mass;
+		m_needUpdate = pRigid->m_needUpdate;
+		m_velocity = pRigid->m_velocity;
+	}
+
+	return *this;
 }

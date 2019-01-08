@@ -19,7 +19,7 @@ public:
 	}
 
 	void OnTriggerEnter(Framework::CCollision* collision) override;
-	void Update(DWORD dt) override;
+	void Update(const DWORD &dt) override;
 
 	DoorController* Clone() override { return new DoorController(*this); }
 };

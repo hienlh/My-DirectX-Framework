@@ -1,12 +1,20 @@
 ﻿#pragma once
 #include "MonoBehavier.h"
+#include "Animator.h"
+#include "Renderer.h"
 using namespace Framework;
 class BlastHornetChild2Controller : public Framework::CMonoBehavior
 {
 private:
-	CGameObject* m_target;
-	CGameObject* m_parent;
-	int lifeTime;
+	CGameObject* m_target = nullptr;
+	CGameObject* m_parent = nullptr;
+	int lifeTime = 0;
+
+	CAnimator* anim = nullptr;
+	CTransform* transform = nullptr;
+	CRigidbody* rigid = nullptr;
+	CRenderer* renderer = nullptr;
+
 	// To Clone Function
 public:
 	BlastHornetChild2Controller() = default;
@@ -21,15 +29,15 @@ public:
 	//Cons / Des
 public:
 	BlastHornetChild2Controller(CGameObject* gameObject);
-	~BlastHornetChild2Controller();
 
 	//Override
 public:
+	void Start() override;
 	void OnTriggerEnter(CCollision* collision) override;
-	void Update(DWORD dt) override;
-	void Render() override;
+	void Update(const DWORD &dt) override;
+
 	//
 public:
-	void Explosive();
+	void Explosive() const;
 };
 

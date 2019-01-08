@@ -26,7 +26,25 @@ CRenderer::CRenderer(const CRenderer &renderer) : CComponent(renderer)
 	m_Name = renderer.m_Name;
 }
 
-bool CRenderer::Init(std::string textureName, DWORD index)
+CRenderer& CRenderer::operator=(const CComponent& component)
+{
+	(*this).CComponent::operator=(component);
+
+	if(const auto pRen = dynamic_cast<const CRenderer*>(&component))
+	{
+		m_alpha = pRen->m_alpha;
+		m_fillColor = pRen->m_fillColor;
+		m_flipX = pRen->m_flipX;
+		m_flipY = pRen->m_flipY;
+		m_pRootSprite = pRen->m_pRootSprite;
+		m_pSprite = pRen->m_pSprite;
+		m_zOrder = pRen->m_zOrder;
+	}
+
+	return *this;
+}
+
+bool CRenderer::Init(const std::string& textureName, const DWORD& index)
 {
 	m_pRootSprite = CResourceManager::GetInstance()->GetSprite(textureName, index);
 	m_pSprite = m_pRootSprite;
@@ -39,7 +57,7 @@ void CRenderer::Release() const
 	delete m_pRootSprite;
 }
 
-void CRenderer::Update(DWORD dt)
+void CRenderer::Update(const DWORD &dt)
 {
 	if (CAnimator* anim = m_pGameObject->GetComponent<CAnimator>())
 		m_pSprite = anim->GetCurrentSprite();
@@ -52,7 +70,7 @@ void CRenderer::Render()
 	const auto transform = m_pGameObject->GetComponent<CTransform>();
 	if (!m_pSprite || !transform) return;
 
-	Vector3 scale = Vector3(transform->Get_Scale());
+	auto scale = transform->Get_Scale();
 
 	Vector3 position3D = Vector3(transform->Get_Position());
 	position3D.z = m_zOrder;

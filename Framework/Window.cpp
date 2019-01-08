@@ -20,7 +20,8 @@ LRESULT WINAPI WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return result;
 }
 
-bool CWindow::Init(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+bool CWindow::Init(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth, const int& screenHeight,
+	const bool& fullscreen)
 {
 	// Start initialization
 	bool result = false;
@@ -83,7 +84,8 @@ void CWindow::Release()
 	DestroyWindow(m_hWnd);
 }
 
-CWindow* CWindow::Instantiate(HINSTANCE hInstance, int nShowCmd, int screenWidth, int screenHeight, bool fullscreen)
+CWindow* CWindow::Instantiate(const HINSTANCE& hInstance, const int& nShowCmd, const int& screenWidth,
+	const int& screenHeight, const bool& fullscreen)
 {
 	CWindow* instance = nullptr;
 	SAFE_ALLOC(instance, CWindow);

@@ -32,8 +32,10 @@ namespace Framework
 	public:
 		std::set<CGameObject*> GetListGameObject() const;
 		std::set<CGameObject*> GetListDynamicGameObject() const;
+		std::set<CGameObject*> GetActiveDynamicGameObject() const;
 		std::set<CGameObject*> GetListStaticGameObject() const;
 		std::set<CGameObject*> GetListHalfStaticGameObject() const;
+		std::set<CGameObject*> GetActiveHalfStaticGameObject() const;
 		std::set<CGameObject*> GetAllGameObjects() const;
 		std::set<CGameObject*> GetRenderGameObjects() const;
 		std::set<CGameObject*> GetUpdateGameObjects() const;
@@ -46,7 +48,7 @@ namespace Framework
 	public:
 		static bool Destroy(CScene* scene);
 
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 		void Render() override;
 
 		//Internal Method

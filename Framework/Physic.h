@@ -1,11 +1,12 @@
 ﻿#pragma once
 #include "PhysicObserver.h"
+#include "PhysicSubject.h"
 
 namespace Framework {
 	class CScene;
 	class CGameObject;
 
-	class CPhysic
+	class CPhysic : public CPhysicSubject
 	{
 	private:
 		static CPhysic* __instance;
@@ -17,30 +18,30 @@ namespace Framework {
 		~CPhysic() = default;
 
 		// Observer Pattern
-	private:
+	/*private:
 		std::vector <CPhysicObserver *> m_observers;
 	public:
 		void RegisterObserver(CPhysicObserver *observer);
-		void RemoveObserver(CPhysicObserver *observer);
+		void RemoveObserver(CPhysicObserver *observer);*/
 	private:
-		void NotifyCollisionEnter(CCollision* collision);
-		void NotifyCollisionExit(CCollision* collision);
-		void NotifyCollisionStay(CCollision* collision);
-		void NotifyTriggerEnter(CCollision* collision);
-		void NotifyTriggerExit(CCollision* collision);
-		void NotifyTriggerStay(CCollision* collision);
+		void NotifyCollisionEnter(CCollision* collision) override;
+		void NotifyCollisionExit(CCollision* collision) override;
+		void NotifyCollisionStay(CCollision* collision) override;
+		void NotifyTriggerEnter(CCollision* collision) override;
+		void NotifyTriggerExit(CCollision* collision) override;
+		void NotifyTriggerStay(CCollision* collision) override;
 
 	public:
 		static CPhysic* GetInstance();
 		static void Destroy();
 		static bool IsOverlapping(const Bound& object, const Bound& other);
 
-		void Update(DWORD dt);
+		void Update(const DWORD &dt);
 
 		//Internal
 	private:
 		/*Return time collision and output vector2 normal*/
-		float SweptAABBx(DWORD dt, CGameObject *moveObject, CGameObject *staticObject);
+		void SweptAABBx(const DWORD &dt, CGameObject *moveObject, CGameObject *staticObject);
 		static void SweptAABB(
 			float ml, float mt, float mr, float mb,
 			float dx, float dy,

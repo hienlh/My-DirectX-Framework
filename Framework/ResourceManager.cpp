@@ -44,7 +44,7 @@ CResourceManager* CResourceManager::GetInstance()
 	return __instance;
 }
 
-Texture* CResourceManager::GetTexture(std::string name) const
+Texture* CResourceManager::GetTexture(const std::string &name) const
 {
 	const auto it = m_pTextures.find(name);
 
@@ -57,7 +57,7 @@ Texture* CResourceManager::GetTexture(std::string name) const
 	return nullptr;
 }
 
-CAnimation* CResourceManager::GetAnimation(std::string name) const
+CAnimation* CResourceManager::GetAnimation(const std::string &name) const
 {
 	const auto it = m_pAnimations.find(name);
 
@@ -70,12 +70,12 @@ CAnimation* CResourceManager::GetAnimation(std::string name) const
 	return nullptr;
 }
 
-CSprite* CResourceManager::GetSprite(std::string textureName, DWORD index) const
+CSprite* CResourceManager::GetSprite(const std::string &textureName, const DWORD &index) const
 {
 	return GetSprite(GetTexture(textureName), index);
 }
 
-CSprite* CResourceManager::GetSprite(Texture* texture, DWORD index)
+CSprite* CResourceManager::GetSprite(Texture* texture, const DWORD &index)
 {
 	if (index == -1)
 	{
@@ -84,7 +84,7 @@ CSprite* CResourceManager::GetSprite(Texture* texture, DWORD index)
 	return texture->m_sprites[index];
 }
 
-CGameObject* CResourceManager::GetPrefab(std::string name)
+CGameObject* CResourceManager::GetPrefab(const std::string &name)
 {
 	if (!m_pPrefabs.count(name))
 	{
@@ -123,7 +123,7 @@ bool CResourceManager::AddTexture(const std::string &name, const std::string &pa
 	return false;
 }
 
-bool CResourceManager::AddAnimation(std::string name, CAnimation* animation)
+bool CResourceManager::AddAnimation(const std::string& name, CAnimation* animation)
 {
 	if (m_pAnimations.count(name))
 	{
@@ -138,7 +138,7 @@ bool CResourceManager::AddAnimation(std::string name, CAnimation* animation)
 /**
  * \brief Add Prefab from an existed GameObject or create new gameObject
  */
-CGameObject* CResourceManager::AddPrefab(std::string name, CGameObject* gameObject)
+CGameObject* CResourceManager::AddPrefab(const std::string& name, CGameObject* gameObject)
 {
 	if (m_pPrefabs.count(name))
 	{

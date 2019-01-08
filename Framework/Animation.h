@@ -32,22 +32,24 @@ namespace Framework {
 	private:
 		void Render() override {};
 	public:
-		void Update(DWORD dt) override;
+		void Update(const DWORD &dt) override;
 
 		// Getter / Setter
 	public:
 		CSprite* GetSprite();
-		bool IsLastFrame() const;
-		bool GetIndexCurrentFrame() const { return m_frameIndex; }
-		DWORD GetSpeed() const { return m_speed; }
+		const bool &IsLastFrame() const;
+		const bool &GetIndexCurrentFrame() const { return m_frameIndex; }
+		const DWORD &GetSpeed() const { return m_speed; }
+		const std::vector<SFrame> &GetFrames() const { return m_frames; }
 
-		CAnimation* SetIndexCurrentFrame(int index);
-		CAnimation* SetSpeed(DWORD speed) { m_speed = speed; return this; }
+		CAnimation* SetIndexCurrentFrame(const int &index){	m_frameIndex = index; return this; }
+		CAnimation* SetSpeed(const DWORD &speed) { m_speed = speed; return this; }
 
 		//Method
 	public:
-		CAnimation* Add(std::string textureName, DWORD indexSprite, DWORD pos = -1, DWORD time = 0);
-		CAnimation* Add(CSprite* sprite, DWORD pos = -1, DWORD time = 0);
+		CAnimation* Add(const std::string& textureName, const DWORD& indexSprite, const DWORD& pos = -1,
+		                const DWORD& time = 0);
+		CAnimation* Add(CSprite* sprite, const DWORD &pos = -1, const DWORD &time = 0);
 		void Refresh() { m_frameIndex = 0; }
 	private:
 		CAnimation* Add(SFrame frame);

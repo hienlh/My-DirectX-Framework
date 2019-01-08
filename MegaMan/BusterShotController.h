@@ -3,7 +3,7 @@
 using namespace Framework;
 class BusterShotController : public Framework::CMonoBehavior
 {
-	float m_destroyTime = 1000;
+	float m_destroyTime = 2000;
 	float m_liveTime = 0;
 
 	// To Clone Function
@@ -11,6 +11,8 @@ private:
 	BusterShotController() = default;
 	BusterShotController(const BusterShotController &BC);
 	BusterShotController* Clone() override { return new BusterShotController(*this); }
+
+	BusterShotController& operator=(const CComponent& component) override;
 
 	//Getter / Setter
 public:
@@ -26,7 +28,8 @@ public:
 	//Override
 private:
 	void OnTriggerEnter(CCollision* collision) override;
-	void Update(DWORD dt) override;
+	void Update(const DWORD &dt) override;
 	void Render() override;
+public:
 };
 
