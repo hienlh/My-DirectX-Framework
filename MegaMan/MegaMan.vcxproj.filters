@@ -102,6 +102,12 @@
     <ClCompile Include="ShurikeinController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="HelitController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="HelitMissleController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraController.h">
@@ -186,6 +192,12 @@
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="ShurikeinController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="HelitController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="HelitMissleController.h">
       <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>

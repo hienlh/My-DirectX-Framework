@@ -32,6 +32,7 @@
 #define Animation_MegaManX_WasHit												"Animation_MegaManX_WasHit"
 
 #define Animation_MapBehind_1													"Animation_MapBehind_1"
+#define Animation_Ready															"Animation_Ready"
 
 #define Animation_Machine_1_Run													"Animation_Machine_1_Run"
 #define Animation_Machine_1_Idle												"Animation_Machine_1_Idle"
@@ -83,6 +84,9 @@
 #define Animation_MetaCapsule_Close												"Animation_MetaCapsule_Close"
 #define Animation_MetaCapsule_Bullet											"Animation_MetaCapsule_Bullet"
 
+#define Animation_Helit_Fly														"Animation_Helit_Fly"
+#define Animation_Helit_Missle													"Animation_Helit_Missle"
+
 #define Bool_IsIdle																"Bool_IsIdle"
 #define Bool_IsJump																"Bool_IsJump"
 #define Bool_Is0																"Bool_Is0"
@@ -121,6 +125,8 @@
 #define Texture_MegaManX_Effect													"Texture_MegaManX_Effect"
 #define Texture_MegaManX_Explosions_Effect										"Texture_MegaManX_Explosions_Effect"
 #define Texture_Blast_Hornet													"Texture_Blast_Hornet"
+#define Texture_Helit															"Texture_Helit"
+#define Texture_Ready															"Texture_Ready"
 
 #define Prefab_NotorBanger														"Prefab_NotorBanger"
 #define Prefab_NotorBanger_Bullet												"Prefab_NotorBanger_Bullet"
@@ -142,6 +148,8 @@
 #define Prefab_BlastHornet_Child												"Prefab_BlastHornet_Child"
 #define Prefab_BlastHornet_Child2												"Prefab_BlastHornet_Child2"
 #define Prefab_BlastHornet_Bullet												"Prefab_BlastHornet_Bullet"
+#define Prefab_Helit															"Prefab_Helit"
+#define Prefab_Helit_Missle														"Prefab_Helit_Missle"
 
 #define Prefab_Effect_Dash														"Prefab_Effect_Dash"
 #define Prefab_Effect_SmokeDash													"Prefab_Effect_SmokeDash"
@@ -150,6 +158,10 @@
 #define Prefab_Effect_Die														"Prefab_Effect_Die"
 #define Prefab_Effect_Explode													"Prefab_Effect_Explode"
 #define Prefab_Effect_Explode_Blue												"Prefab_Effect_Explode_Blue"
+
+#define Audio_Sound_Track														"Audio_Sound_Track"
+#define Audio_MegaMan_Shoot														"Audio_MegaMan_Shoot"
+#define Audio_MegaMan_Power_Shoot												"Audio_MegaMan_Power_Shoot"
 
 #define DESTROY_TIME															3000
 #define RELOAD_TIME																2000

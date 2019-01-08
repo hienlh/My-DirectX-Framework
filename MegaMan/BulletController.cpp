@@ -5,7 +5,6 @@
 #include "Macros.h"
 #include "PlayerController.h"
 #include "EffectPool.h"
-#include "Macros.h"
 
 BulletController::BulletController(const BulletController& BC) : CMonoBehavior(BC)
 {

@@ -17,10 +17,11 @@ public:
 	CGameObject* m_DieEffect = nullptr;
 	CGameObject* m_DashFullEffectEffect = nullptr;
 	CGameObject* m_DashEffect = nullptr;
-	CGameObject* m_GenjiBos = nullptr;
 	CGameObject* m_DoubleJumpEffect = nullptr;
 
 	CGameObject* pBuilding = nullptr;
+	CGameObject* pGenjibo = nullptr;
+	CGameObject* pShurikein = nullptr;
 	CGameObject* pBlastHornet = nullptr;
 
 private:

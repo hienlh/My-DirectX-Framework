@@ -37,6 +37,8 @@
 #include "BlastHornetBulletController.h"
 #include "ShurikeinController.h"
 #include "AudioSource.h"
+#include "HelitController.h"
+#include "HelitMissleController.h"
 
 #pragma comment(lib, "Framework.lib")
 
@@ -45,7 +47,7 @@ using namespace Framework;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	srand(time(0));
-	CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH, SCREEN_HEIGHT, FULL_SCREEN);
+	CGameManager::Instantiate(hInstance, nShowCmd, SCREEN_WIDTH + 300, SCREEN_HEIGHT + 300, FULL_SCREEN);
 	CGameManager* pGameManager = CGameManager::GetInstance();
 
 	CScene* pScene = new CScene("Main Scene", {8000,8000});
@@ -54,7 +56,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	CGameObject* pMainCamera = pScene->GetMainCamera();
 	pMainCamera->GetComponent<CTransform>()->Set_Position(Vector2(128, 896));
 	pMainCamera->AddComponent<CameraController>()->SetIsFree(false);
-	pMainCamera->GetComponent<CCamera>()->SetScale({ 2,2 })->SetSize({ SCREEN_WIDTH,SCREEN_HEIGHT });
+	pMainCamera->GetComponent<CCamera>()->SetScale({ 2,2 })->SetSize({ SCREEN_WIDTH *2,SCREEN_HEIGHT*2 });
 
 
 	CResourceManager *pResourceManager = CResourceManager::GetInstance();
@@ -72,10 +74,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture(Texture_Door, ".\\Resources\\Map\\Door.png", NULL, ".\\Resources\\Map\\Door.xml", VECTOR2_ZERO);
 	pResourceManager->AddTexture(Texture_Health_Bar, ".\\Resources\\UI\\Health_Bar.png", NULL, ".\\Resources\\UI\\Health_Bar.xml", {0,1}); 
 	pResourceManager->AddTexture(Texture_Blast_Hornet, ".\\Resources\\Blast Hornet\\sprites.png", NULL, ".\\Resources\\Blast Hornet\\sprites.xml");
+	pResourceManager->AddTexture(Texture_Helit, ".\\Resources\\Enemies\\x3_helit.png", NULL, ".\\Resources\\Enemies\\x3_helit.xml");
+	pResourceManager->AddTexture(Texture_Ready, ".\\Resources\\Map\\Ready.png", NULL, ".\\Resources\\Map\\Ready.xml", { 0,0 });
 
-	pResourceManager->AddSound(AUDIO_SOUND_TRACK, ".\\Resources\\Sounds\\BlastHornetSoundTrack.wav")
-		->AddSound(AUDIO_MEGAMAN_SHOOT, ".\\Resources\\Sounds\\SE_0A.wav")
-		->AddSound(AUDIO_MEGAMAN_POWER_SHOOT, ".\\Resources\\Sounds\\SE_3A.wav");
+	pResourceManager->AddSound(Audio_Sound_Track, ".\\Resources\\Sounds\\BlastHornetSoundTrack.wav")
+		->AddSound(Audio_MegaMan_Shoot, ".\\Resources\\Sounds\\SE_0A.wav")
+		->AddSound(Audio_MegaMan_Power_Shoot, ".\\Resources\\Sounds\\SE_3A.wav");
 
 	//From file MegaManXEdited.png
 	new CAnimation(Animation_MegaManX_Init, Texture_MegaManX, 0, 2, 1000, false);
@@ -250,7 +254,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		new CAnimation(Animation_Notor_Banger_90, Texture_EnemiesAndBosses, 110, 1);
 	}
 
-	//Door
+	//Door Prefab
 	{
 		new CAnimation(Animation_Door1_Close, Texture_Door, 0, 9, 50, false);
 		new CAnimation(Animation_Door2_Close, Texture_Door, 9, 17, 50, false);
@@ -276,6 +280,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition(Animation_Door1_Open, Animation_Door1_Close, false, Bool_IsOpen, false);
 		pPrefab->AddComponent<CRigidbody>()->SetIsKinematic(true)->SetNeedUpdate(true);
 		pPrefab->AddComponent<CBoxCollider>()->SetIsTrigger(true);
+		pPrefab->GetComponent<CBoxCollider>()->SetAnchor({0,0});
 		pPrefab->AddComponent<DoorController>();
 
 
@@ -289,6 +294,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			->AddTransition(Animation_Door2_Open, Animation_Door2_Close, false, Bool_IsOpen, false);
 		pPrefab->AddComponent<CRigidbody>()->SetIsKinematic(true)->SetNeedUpdate(true);
 		pPrefab->AddComponent<CBoxCollider>()->SetIsTrigger(true);
+		pPrefab->GetComponent<CBoxCollider>()->SetAnchor({ 0,0 });
 		pPrefab->AddComponent<DoorController>();
 	}
 
@@ -615,9 +621,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
 			pPlayer->AddComponent<CanBeAttacked>()->InitHealth(1000); 
 			pPlayer->AddComponent<CAudioSource>();
-			pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_SOUND_TRACK, true);// ->Play(AUDIO_SOUND_TRACK);
-			pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_MEGAMAN_SHOOT, false);
-			pPlayer->GetComponent<CAudioSource>()->AddSound(AUDIO_MEGAMAN_POWER_SHOOT, false);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_Sound_Track, true);// ->Play(AUDIO_SOUND_TRACK);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_MegaMan_Shoot, false);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_MegaMan_Power_Shoot, false);
 
 			CGameObject* pPowerEffect = new CGameObject("Power Effect");
 			pPowerEffect->SetIsActive(false);
@@ -720,20 +726,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pRoofBrokenBoxs->AddComponent<CRenderer>()->SetSprite(Texture_Map_Objects, 42)->SetAnchor({ 0,0 });
 			pRoofBrokenBoxs->AddComponent<CRigidbody>()->SetIsKinematic(true);
 			pRoofBrokenBoxs->AddComponent<CBoxCollider>()->SetAnchor({ 0,0 });
-
-			//Door
-			CGameObject::Instantiate(Prefab_Door2, pBackground, { 2303,1153 });
-			CGameObject::Instantiate(Prefab_Door2, pBackground, { 2544,1153 });
-			CGameObject::Instantiate(Prefab_Door2, pBackground, { 5632,1152 });
-			CGameObject::Instantiate(Prefab_Door2, pBackground, { 5872,1152 });
-
-			CGameObject::Instantiate(Prefab_Door1, pBackground, { 7391,1920 });
-			CGameObject::Instantiate(Prefab_Door1, pBackground, { 7680,1920 });
 		}
 
 		//UI
 		{
-			Vector2 camSize = pMainCamera->GetComponent<CCamera>()->GetSize();
+			const Vector2 camSize = pMainCamera->GetComponent<CCamera>()->GetSize();
 			CGameObject* pHealthBar = new CGameObject("Health Bar");
 			pHealthBar->GetComponent<CTransform>()->SetParent(pMainCamera)->Set_Position({
 				10 - camSize.x / 2, 80 - camSize.y / 2
@@ -760,6 +757,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			//	pManaBarValue->GetComponent<CTransform>()->SetParent(pManaBar)->Set_Position({ 0, -16 }, false);
 			//	pManaBarValue->AddComponent<CRenderer>()->SetSprite(Texture_Health_Bar, 3)->SetZOrder(-100);
 			//}
+
+			//Ready
+			CGameObject* pReady = new CGameObject("Ready Title");
+			{
+				anim = new CAnimation(Animation_Ready, Texture_Ready, 0, 11, 100, false);
+				anim->Add(Texture_Ready, 11, -1, 500);
+				{
+					for (int i = 10; i >= 0; --i)
+					{
+						anim->Add(Texture_Ready, i);
+					}
+				}
+
+				pReady->GetComponent<CTransform>()->SetParent(pMainCamera)->Set_Position({ -39/2,-13/2 }, false);
+				pReady->AddComponent<CAnimator>()->AddAnimation(Animation_Ready);
+				pReady->AddComponent<EffectAutoRemove>();
+			}
 		}
 
 		//Building
@@ -776,7 +790,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			//Animation
 			{
 				new CAnimation(Animation_BlastHornet_Flying, Texture_Blast_Hornet, 3, 1);
-				anim = new CAnimation(Animation_BlastHornet_StartAttacking, Texture_Blast_Hornet, 3, 13, 100, false);
+				anim = new CAnimation(Animation_BlastHornet_StartAttacking, Texture_Blast_Hornet, 3, 13, 200, false);
 				anim->Add(Texture_Blast_Hornet, 9, -1, 200);
 				new CAnimation(Animation_BlastHornet_Shooting, Texture_Blast_Hornet, 16, 5, 100, false);
 				new CAnimation(Animation_BlastHornet_Died, Texture_Blast_Hornet, 21, 1, 2000, false);
@@ -825,7 +839,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			}
 
 			//Blast Hornet Child
-			new CAnimation(Animation_BlastHornet_Child_Flying, Texture_Blast_Hornet, 37, 6, 10);
+			new CAnimation(Animation_BlastHornet_Child_Flying, Texture_Blast_Hornet, 37, 6, 50);
 
 			auto childPrefabs = pResourceManager->AddPrefab(Prefab_BlastHornet_Child);
 			childPrefabs->AddComponent<CRenderer>();
@@ -890,6 +904,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pMachine1->GetComponent<MachineController>()->m_player = pPlayer;
 		}
 
+		//Helit
+		{
+			new CAnimation(Animation_Helit_Fly, Texture_Helit, 0, 5, 100, true);
+			auto helitPrefab = pResourceManager->AddPrefab(Prefab_Helit);
+			helitPrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
+			helitPrefab->AddComponent<CRenderer>();
+			helitPrefab->AddComponent<CAnimator>()->AddAnimation(Animation_Helit_Fly);
+			helitPrefab->AddComponent<HelitController>();
+			helitPrefab->AddComponent<CBoxCollider>();
+
+			CGameObject::Instantiate(Prefab_Helit, nullptr, { 100, 875 });
+
+			new CAnimation(Animation_Helit_Missle, Texture_Helit, 7, 1, 1000, false);
+			auto helitMisslePrefab = pResourceManager->AddPrefab(Prefab_Helit_Missle);
+			helitMisslePrefab->AddComponent<CRigidbody>()->SetGravityScale(0);
+			helitMisslePrefab->AddComponent<CBoxCollider>()->SetIsTrigger(true);
+			helitMisslePrefab->AddComponent<CRenderer>();
+			helitMisslePrefab->AddComponent<HelitMissleController>();
+			helitMisslePrefab->AddComponent<CAnimator>()->AddAnimation(Animation_Helit_Missle);
+		}
+
 		//NotorBangers
 		{
 			CGameObject* pNotorBangerEnemy = CGameObject::Instantiate(Prefab_NotorBanger, nullptr, Vector2(200, 875));
@@ -903,16 +938,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 
 		//Genjibo
+		CGameObject* pGenjiBos = new CGameObject("Genjibo", { 2477,980 });
 		{
 			//Add Animation
 			new CAnimation(Animation_Genjibo, Texture_EnemiesAndBosses, 33, 4, 100, true);
-			CGameObject* pGenjiBos = new CGameObject("Genjibo", { 2477,980 });
 			pGenjiBos->AddComponent<CRenderer>();
 			pGenjiBos->AddComponent<CAnimator>()
 				->AddAnimation(Animation_Genjibo);
 			pGenjiBos->AddComponent<CRigidbody>()->SetGravityScale(0);
 			pGenjiBos->SetIsActive(false);
-			pPlayer->GetComponent<PlayerController>()->m_GenjiBos = pGenjiBos;
+			pPlayer->GetComponent<PlayerController>()->pGenjibo = pGenjiBos;
 
 
 			//Left Missle
@@ -924,14 +959,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pGenjiLeftMissle->AddComponent<CAnimator>()
 				->AddAnimation(Animation_Genjibo_Missle_Down);
 
-			//Bottom led
+			//Right Missle
+			new CAnimation(Animation_Genjibo_Missle_Down, Texture_EnemiesAndBosses, 38, 2, 50);
+			CGameObject* pGenjiRightMissle = new CGameObject("Genjibo Missle", Vector2(GenjiPos.x + 10, GenjiPos.y + 6));
+			pGenjiRightMissle->AddComponent<CTransform>()->SetParent(pGenjiBos);
+			pGenjiRightMissle->AddComponent<CRenderer>();
+			pGenjiRightMissle->AddComponent<CAnimator>()
+				->AddAnimation(Animation_Genjibo_Missle_Down);
+
+			//Genjibo Light
 			CGameObject *pGenjiLight = new CGameObject("Genjibo Light", Vector2(GenjiPos.x, GenjiPos.y + 40));
 			pGenjiLight->AddComponent<CTransform>()->SetParent(pGenjiBos);
 			pGenjiLight->AddComponent<CRenderer>()->SetSprite(Texture_EnemiesAndBosses, 44);
 			pGenjiLight->SetIsActive(false);
 			pGenjiBos->AddComponent<GenjiBosController>()->m_light = pGenjiLight;
 
-			//Shurikein
+		}
+
+		//Shurikein
+		CGameObject *pShurikein = new CGameObject("Shurikein", Vector2(2477, 1181));
+		{
 			new CAnimation(Animation_Shurikein_Init, Texture_EnemiesAndBosses, 116, 72, 10, false);
 			new CAnimation(Animation_Shurikein_Spinning, Texture_EnemiesAndBosses, 180, 7, 2, true);
 			anim = new CAnimation(Animation_Shurikein_WasHit, Texture_EnemiesAndBosses, 180, 1, 50, true);
@@ -949,8 +996,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				->Add(Texture_EnemiesAndBosses, 205)
 				->Add(Texture_EnemiesAndBosses, 205);
 
-			CGameObject *pShurikein = new CGameObject("Shurikein", Vector2(2477, 1181));
 			pGenjiBos->GetComponent<GenjiBosController>()->m_shurikein = pShurikein;
+			pPlayer->GetComponent<PlayerController>()->pShurikein = pShurikein;
 			pShurikein->AddComponent<CAnimator>()
 				->AddAnimation(Animation_Shurikein_Init)
 				->AddAnimation(Animation_Shurikein_WasHit)
@@ -964,9 +1011,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pShurikein->AddComponent<ShurikeinController>();
 			pShurikein->AddComponent<CRigidbody>()->SetLimitedArea({ {2320, 1040}, {225, 161} })->SetGravityScale(0);
 			pShurikein->AddComponent<CBoxCollider>()->SetIsTrigger(true);
-			pShurikein->GetComponent<CBoxCollider>()->SetSize(Vector2(47, 47));
+			pShurikein->GetComponent<CBoxCollider>()->SetSize(Vector2(40, 40));
+			pShurikein->AddComponent<CanAttacked>()->InitDamage(20);
+			pShurikein->AddComponent<CanBeAttacked>()->InitHealth(20);
 			pShurikein->SetIsActive(false);
+		}
 
+		//Door
+		{
+			auto pDoor = CGameObject::Instantiate(Prefab_Door2, pBackground, { 2303,1153 });
+			pDoor = CGameObject::Instantiate(Prefab_Door2, pBackground, { 2544,1153 });
+			pDoor->GetComponent<CBoxCollider>()->SetIsTrigger(false);
+			pDoor->GetComponent<DoorController>()->pBoss = pShurikein;
+			CGameObject::Instantiate(Prefab_Door2, pBackground, { 5632,1152 });
+			CGameObject::Instantiate(Prefab_Door2, pBackground, { 5872,1152 });
+
+			CGameObject::Instantiate(Prefab_Door1, pBackground, { 7391,1920 });
+			CGameObject::Instantiate(Prefab_Door1, pBackground, { 7680,1920 });
 		}
 
 		//Map Behind

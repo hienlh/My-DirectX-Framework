@@ -6,17 +6,17 @@
 #include "Macros.h"
 #include "Renderer.h"
 #include "CanBeAttacked.h"
+#include "CanAttacked.h"
 #include "ResourceManager.h"
 #include "DashFullEffect.h"
 #include "BulletPool.h"
 #include "Camera.h"
-#include "BuildingController.h"
 #include "AudioSource.h"
 
 PlayerController::PlayerController(const PlayerController& PC) : CMonoBehavior(PC)
 {
 	m_speed = PC.m_speed;
-	m_GenjiBos = PC.m_GenjiBos;
+	pGenjibo = PC.pGenjibo;
 	m_Power = PC.m_Power;
 	m_canMove = PC.m_canMove;
 	m_onMachine = PC.m_onMachine;
@@ -58,7 +58,7 @@ void PlayerController::OnCollisionEnter(CCollision* collision)
 
 void PlayerController::OnTriggerEnter(CCollision* collision)
 {
-	if (strstr(collision->GetOtherCollider()->GetName().c_str(), "Bullet"))
+	if (collision->GetOtherCollider()->GetComponent<CanAttacked>())
 	{
 		m_pGameObject->GetComponent<CAnimator>()->SetBool(Bool_IsWasHit, true);
 		m_canMove = false;
@@ -180,18 +180,12 @@ void PlayerController::Action()
 	if (input->KeyDown(DIK_E)) {
 		if (m_Power) {
 			m_Power->SetIsActive(true);
-			m_pGameObject->GetComponent<CAudioSource>()->Play(AUDIO_MEGAMAN_POWER_SHOOT);
+			m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_MegaMan_Power_Shoot);
 		}
 	}
 	if (input->KeyUp(DIK_E)) {
 		if (m_Power)
 			m_Power->SetIsActive(false);
-	}
-
-	if (transform->Get_Position().x > 2320)
-	{
-		if (m_GenjiBos && !m_GenjiBos->GetIsActive())
-			m_GenjiBos->SetIsActive(true);
 	}
 }
 
@@ -283,7 +277,7 @@ void PlayerController::Dash(bool isLeft) const
 
 void PlayerController::Shoot() const
 {
-	m_pGameObject->GetComponent<CAudioSource>()->Play(AUDIO_MEGAMAN_SHOOT);
+	m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_MegaMan_Shoot);
 	const bool isLeft = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
 	Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 	pos.x += (isLeft ? -1 : 1) * 15;
@@ -308,6 +302,12 @@ void PlayerController::CheckFightBoss()
 		}
 		if(mainCamera->GetBlockChangeBound())
 			mainCamera->SetBlockChangeBound(false);*/
+
+		if (transform->Get_Position().x > 2320 && !pShurikein->GetIsActive())
+		{
+			if (pGenjibo && !pGenjibo->GetIsActive())
+				pGenjibo->SetIsActive(true);
+		}
 	}
 }
 

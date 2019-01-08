@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="Ready.png">
+	<SubTexture name="00.png"	x="0"	y="65"	width="8"	height="5" frameX="-0" frameY="-0" frameWidth="8" frameHeight="5"/>
+	<SubTexture name="01.png"	x="39"	y="52"	width="16"	height="7" frameX="-0" frameY="-0" frameWidth="16" frameHeight="7"/>
+	<SubTexture name="02.png"	x="39"	y="59"	width="16"	height="10" frameX="-0" frameY="-0" frameWidth="16" frameHeight="10"/>
+	<SubTexture name="03.png"	x="39"	y="39"	width="24"	height="13" frameX="-0" frameY="-0" frameWidth="24" frameHeight="13"/>
+	<SubTexture name="04.png"	x="39"	y="26"	width="24"	height="13" frameX="-0" frameY="-0" frameWidth="24" frameHeight="13"/>
+	<SubTexture name="05.png"	x="39"	y="0"	width="31"	height="13" frameX="-0" frameY="-0" frameWidth="31" frameHeight="13"/>
+	<SubTexture name="06.png"	x="39"	y="13"	width="30"	height="13" frameX="-0" frameY="-0" frameWidth="30" frameHeight="13"/>
+	<SubTexture name="07.png"	x="0"	y="39"	width="39"	height="13" frameX="-0" frameY="-0" frameWidth="39" frameHeight="13"/>
+	<SubTexture name="08.png"	x="0"	y="52"	width="39"	height="13" frameX="-0" frameY="-0" frameWidth="39" frameHeight="13"/>
+	<SubTexture name="09.png"	x="0"	y="13"	width="39"	height="13" frameX="-0" frameY="-0" frameWidth="39" frameHeight="13"/>
+	<SubTexture name="10.png"	x="0"	y="0"	width="39"	height="13" frameX="-0" frameY="-0" frameWidth="39" frameHeight="13"/>
+	<SubTexture name="11.png"	x="0"	y="26"	width="39"	height="13" frameX="-0" frameY="-0" frameWidth="39" frameHeight="13"/>
+</TextureAtlas>

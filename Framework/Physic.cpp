@@ -204,7 +204,7 @@ void CPhysic::Update(const DWORD &dt)
 		if (CRigidbody* rigid = (*i)->GetComponent<CRigidbody>())
 		{
 			if (rigid->GetIsActive() && !rigid->GetIsKinematic())
-				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+				rigid->m_velocity.y += (rigid->GetGravityScale() * GRAVITY * dt);
 		}
 
 		if (!(*i)->GetComponent<CCollider>()->GetIsActive()) continue;
@@ -237,7 +237,7 @@ void CPhysic::Update(const DWORD &dt)
 		if (CRigidbody* rigid = game_object->GetComponent<CRigidbody>())
 		{
 			if (rigid->GetIsActive() && !rigid->GetIsKinematic())
-				rigid->m_velocity.y += rigid->GetGravityScale() * GRAVITY;
+				rigid->m_velocity.y += (rigid->GetGravityScale() * GRAVITY * dt);
 		}
 
 		if (!game_object->GetComponent<CCollider>()->GetIsActive()) continue;

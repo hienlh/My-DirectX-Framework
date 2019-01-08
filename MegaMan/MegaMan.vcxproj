@@ -38,6 +38,8 @@
     <ClCompile Include="GenjiBosController.cpp" />
     <ClCompile Include="HeadGunnerEnemyController.cpp" />
     <ClCompile Include="HealthValueController.cpp" />
+    <ClCompile Include="HelitController.cpp" />
+    <ClCompile Include="HelitMissleController.cpp" />
     <ClCompile Include="MachineController.cpp" />
     <ClCompile Include="MetaCapsuleController.cpp" />
     <ClCompile Include="NotorBangerEnemyController.cpp" />
@@ -73,6 +75,8 @@
     <ClInclude Include="GenjiBosController.h" />
     <ClInclude Include="HeadGunnerEnemyController.h" />
     <ClInclude Include="HealthValueController.h" />
+    <ClInclude Include="HelitController.h" />
+    <ClInclude Include="HelitMissleController.h" />
     <ClInclude Include="MachineController.h" />
     <ClInclude Include="Macros.h" />
     <ClInclude Include="MetaCapsuleController.h" />

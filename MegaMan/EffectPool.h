@@ -14,6 +14,7 @@ private:
 public:
 	void AddNewEffect(const std::string &prefabName);
 	Framework::CGameObject* CreateEffect(const std::string &prefabName, const Vector2& position);
+	Framework::CGameObject* CreateMultiEffect(const std::string &prefabName, const Vector2& position, const int &radius, const int &amount);
 
 public:
 	static EffectPool* GetInstance() { if(!__instance) __instance = new EffectPool(); return __instance; }

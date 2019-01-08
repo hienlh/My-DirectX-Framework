@@ -36,3 +36,16 @@ Framework::CGameObject* EffectPool::CreateEffect(const std::string& prefabName, 
 
 	return nullptr;
 }
+
+Framework::CGameObject* EffectPool::CreateMultiEffect(const std::string& prefabName, const Vector2& position,
+                                                      const int& radius, const int& amount)
+{
+	for(int i = 0; i<amount; ++i)
+	{
+		const float x = rand() % (radius * 2) + (position.x - radius);
+		const float y = rand() % (radius * 2) + (position.y - radius);
+		CreateEffect(prefabName, Vector2(x,y));
+	}
+
+	return nullptr;
+}
