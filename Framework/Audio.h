@@ -1,8 +1,6 @@
-#pragma once
+﻿#pragma once
 #include "stdafx.h"
-#include "GameManager.h"
 #include "dsutil.h"
-//#include "dxutil.h"
 
 namespace Framework
 {
@@ -13,13 +11,13 @@ namespace Framework
 
 		// Primary DirectSound object 
 		CSoundManager *m_soundManager = nullptr;
-		
+
 	public:
-		CSound* Load(CString fileName);
+		CSound* Load(CString fileName) const;
 		void Play(CSound* pSound);
-		void PlayLoop(CSound* pSound); 
+		void PlayLoop(CSound* pSound);
 		void Stop(CSound* pSound);
-		
+
 	public:
 		static CAudio* GetInstance();
 
@@ -35,7 +33,5 @@ namespace Framework
 	public:
 		static void Instantiate();
 		static void Destroy();
-
-		void Update();
 	};
 }

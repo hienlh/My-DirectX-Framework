@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "stdafx.h"
 #include "Component.h"
 #include "Audio.h"
@@ -9,9 +9,9 @@ namespace Framework
 	{
 	public:
 		CAudioClip() = default;
-		~CAudioClip() = default; 
+		~CAudioClip() = default;
 		CAudioClip(const CAudioClip& audioClip);
-		
+
 	private:
 		CSound* m_pSound = nullptr;
 		bool m_isLoop = false;
@@ -24,35 +24,29 @@ namespace Framework
 		bool Stop() const;
 
 	public:
-		void Update(DWORD dt) override;
-		void Render() override;
-
-		CAudioClip* Clone() const override;
+		void Update(const DWORD &dt) override {};
+		void Render() override {};
 	};
 
 	class CAudioSource final : public CComponent
 	{
 		// Properties
 	private:
-		std::map<std::string, CAudioClip*> m_pAudioClips;
+		std::map<std::string, CAudioClip*> m_pAudioClips = {};
 
 		// Cons / Des
 	public:
 		CAudioSource() = default;
 		CAudioSource(const CAudioSource& audioSource);
 		CAudioSource(CGameObject* gameObject) : CComponent(gameObject) {}
-		
-	public:
-		void Update(DWORD dt) override;
-		void Render() override;
-
-		CAudioSource* Clone() const override;
+		~CAudioSource() = default;
+		CAudioSource& operator=(const CComponent& component) override;
+		CAudioSource* Clone() override;
 
 	public:
 		CAudioSource* AddSound(CString name, bool isLoop);
 
 		bool Play(CString name) const;
 		bool Stop(CString name) const;
-
 	};
 }

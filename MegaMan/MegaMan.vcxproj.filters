@@ -13,6 +13,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{1fd4fdca-01db-4f15-8fdb-5fc8ad85745e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -30,16 +33,79 @@
     <ClCompile Include="MachineController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="NotorBangerEnemyController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BusterShotController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
     <ClCompile Include="HeadGunnerEnemyController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="NotorBangerEnemyController.cpp">
+    <ClCompile Include="GenjiBosController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="BulletController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="MegaManPowerController.cpp">
+    <ClCompile Include="CanBeAttacked.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CanAttacked.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthValueController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="DoorController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectAutoRemove.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="DashFullEffect.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectPool.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletPool.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildingController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="CarryAimController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Template.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetChildController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetChild2Controller.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BlastHornetBulletController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ShurikeinController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLogicController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLogic.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaCapsuleController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,20 +122,83 @@
     <ClInclude Include="MachineController.h">
       <Filter>Controller</Filter>
     </ClInclude>
+    <ClInclude Include="NotorBangerEnemyController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BusterShotController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
     <ClInclude Include="HeadGunnerEnemyController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="NotorBangerEnemyController.h">
+    <ClInclude Include="GenjiBosController.h">
       <Filter>Controller</Filter>
     </ClInclude>
     <ClInclude Include="BulletController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
+    <ClInclude Include="CanBeAttacked.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CanAttacked.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthValueController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="MegaManPowerController.h">
+    <ClInclude Include="DoorController.h">
       <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectAutoRemove.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="DashFullEffect.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectPool.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletPool.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="BuildingController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="CarryAimController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Template.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetChildController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetChild2Controller.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BlastHornetBulletController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ShurikeinController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogicController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogic.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaCapsuleController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Macros.h">
+      <Filter>Classes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

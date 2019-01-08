@@ -1,106 +1,123 @@
-#include "NotorBangerEnemyController.h"
+﻿#include "NotorBangerEnemyController.h"
 #include "Rigidbody.h"
 #include "CameraController.h"
-#include "Graphic.h"
-#include "Input.h"
 #include "Animator.h"
-#include "Header.h"
+#include "Macros.h"
+#include "Renderer.h"
+#include "BulletPool.h"
+
+NotorBangerEnemyController::NotorBangerEnemyController(const NotorBangerEnemyController& PC) : CMonoBehavior(PC)
+{
+	m_speed = PC.m_speed;
+	m_reloadTime = PC.m_reloadTime;
+	m_target = PC.m_target;
+}
+
+Vector2 NotorBangerEnemyController::CalculateVelocity(const Vector2& myPosition, const Vector2& targetPosition,
+	const float& gravity, const float& vy) const
+{
+	Vector2 velocity;
+	velocity.y = vy;
+	float time = (-velocity.y + sqrt(pow(velocity.y, 2) - 2 * gravity*(myPosition.y - targetPosition.y))) / gravity;
+	velocity.x = (((targetPosition.x - myPosition.x)) / time);
+	return velocity;
+}
+
+std::string NotorBangerEnemyController::CalculateAngelRotation(const Vector2& velocity) const
+{
+	const float alpha = fabs(velocity.y / sqrt(pow(velocity.x, 2) + pow(velocity.y, 2)));
+	float angles[] = { 0, 0.5, 1 / sqrt(2), sqrt(3) / 2, 1 };
+	std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
+	size_t selectedAngleIndex = 0;
+
+	// Least angle delta
+	for (size_t iAngle = 1; iAngle < _countof(angles); iAngle++)
+	{
+		if (fabs(angles[iAngle] - alpha) < fabs(angles[selectedAngleIndex] - alpha))
+			selectedAngleIndex = iAngle;
+	}
+	return names[selectedAngleIndex];
+}
 
 void NotorBangerEnemyController::OnCollisionEnter(CCollision * collision)
 {
-	/*CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
-	rigidbody->AddVelocity(Vector2(0, 0));*/
-
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
-	anim->SetBool("isJump", false);
+	anim->SetBool(Bool_IsJump, false);
 }
 
-void NotorBangerEnemyController::Update(DWORD dt)
+void NotorBangerEnemyController::Update(const DWORD &dt)
 {
 	CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
-	CTransform *transform = m_pGameObject->GetComponent<CTransform>();
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
-	const Vector2 velocity = rigidbody->GetVelocity();
-
-	//OutputDebugStringA((std::to_string(anim->GetBool("isIdle")) + " " + std::to_string(anim->GetBool("isJump")) + "\n").c_str());
-	
-	CInput *input = CInput::GetInstance();
 
 	if (m_target)
 	{
-		Vector2 targetPosition = m_target->GetComponent<CTransform>()->Get_Position();
-		Vector2 currentPosition = m_pGameObject->GetComponent<CTransform>()->Get_Position();		
-		
+		const Vector2 targetPosition = m_target->GetComponent<CTransform>()->Get_Position();
+		const Vector2 currentPosition = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+
+		const float gravity = 0.001*rigidbody->GetGravityScale();
+		const Vector2 velocity = CalculateVelocity(currentPosition, targetPosition, gravity, -0.3);
+		std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
+		for (size_t iAngle = 0; iAngle < _countof(names); iAngle++)
+		{
+			anim->SetBool(names[iAngle], false);
+		}
+		anim->SetBool(CalculateAngelRotation(velocity), true);
+
 		if (fabs(targetPosition.x - currentPosition.x) < 200)
 		{
-			anim->SetBool("isJump", false);
-			anim->SetBool("isIdle", false);
+			anim->SetBool(Bool_IsJump, false);
+			anim->SetBool(Bool_IsIdle, false);
 
-			DWORD alpha = (float)fabs(currentPosition.x - targetPosition.x) / 3;
-			//OutputDebugStringA(((std::to_string(alpha) + "\n").c_str()));
+			// const DWORD alpha = static_cast<float>(fabs(currentPosition.x - targetPosition.x)) / 3;
+			//
+			// DWORD angles[] = { 0, 30, 45, 60, 90 };
+			// std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
+			// size_t selectedAngleIndex = 0;
+			// anim->SetBool(names[0], false);
+			//
+			// // Least angle delta
+			// for (size_t iAngle = 1; iAngle < _countof(angles); iAngle++)
+			// {
+			// 	anim->SetBool(names[iAngle], false);
+			// 	if (fabs(angles[iAngle] - alpha) < fabs(angles[selectedAngleIndex] - alpha))
+			// 		selectedAngleIndex = iAngle;
+			// }
+			//
 
-			DWORD angles[] = { 0, 30, 45, 60, 90 };
-			std::string names[] = { "is0", "is30", "is45", "is60", "is90" };
-			size_t selectedAngleIndex = 0;
-			anim->SetBool(names[0], false);
-
-			// Least angle delta
-			for (size_t iAngle = 1; iAngle < _countof(angles); iAngle++)
-			{
-				anim->SetBool(names[iAngle], false);
-				if (fabs(angles[iAngle] - alpha) < fabs(angles[selectedAngleIndex] - alpha))
-					selectedAngleIndex = iAngle;
-			}
-			anim->SetBool(names[selectedAngleIndex], true);
-			//OutputDebugStringA((names[selectedAngleIndex] + "\n").c_str());
-			
 			m_reloadTime += dt;
 			if (m_reloadTime >= RELOAD_TIME)
 			{
 				Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-				bool isFlip = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
+				const bool isFlip = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
 
-				pos.x = (isFlip ? pos.x + 10 : pos.x - 10);
-				pos.y -= 20;
-				auto pBullet = CGameObject::Instantiate(Prefab_NotorBangerBullet, nullptr, pos);
+				// pos.x += isFlip ? 10 : -10;
+				// pos.y -= 20;
+				auto pBullet = CGameObject::Instantiate(Prefab_NotorBanger_Bullet, nullptr, pos);
+				pBullet->GetComponent<CRigidbody>()->SetVelocity(velocity);
 
-				pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? .3f : -.3f) , -.15f });
 
 				m_reloadTime = 0;
 			}
 		}
 		else if (fabs(targetPosition.x - currentPosition.x) < 300)
 		{
-			if (!anim->GetBool("isJump"))
+			if (!anim->GetBool(Bool_IsJump))
 			{
-				anim->SetBool("isJump", true);
-				anim->SetBool("isIdle", false);
-				//OutputDebugStringA("Jump");
+				anim->SetBool(Bool_IsJump, true);
+				anim->SetBool(Bool_IsIdle, false);
 
 				rigidbody->AddVelocity(Vector2((targetPosition.x > currentPosition.x ? .1 : -.1), -.1));
 			}
 		}
 		else
 		{
-			anim->SetBool("isJump", false);
-			anim->SetBool("isIdle", true);
-			//OutputDebugStringA("Idle");
+			anim->SetBool(Bool_IsJump, false);
+			anim->SetBool(Bool_IsIdle, true);
 		}
 
-		/*if (input->ButtonDown(DIK_SPACE))
-		{
-			anim->SetBool("isJump", true);
-			anim->SetBool("isIdle", false);
-			OutputDebugStringA("Jump");
-
-			rigidbody->AddVelocity(Vector2(.1, -.3));
-		}*/
-
 		renderer->SetFlipX(targetPosition.x > currentPosition.x);
-	}
-}
 
-void NotorBangerEnemyController::Render()
-{
+	}
 }

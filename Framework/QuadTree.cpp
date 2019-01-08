@@ -27,7 +27,7 @@ CQuadTree::~CQuadTree()
 		SAFE_DELETE(m_pNodes[i]);
 }
 
-void CQuadTree::Update(DWORD dt)
+void CQuadTree::Update(const DWORD &dt)
 {
 }
 
@@ -234,23 +234,58 @@ void CQuadTree::insert_s(CGameObject* gameObject)
 	insert(gameObject);
 }
 
-std::set<CGameObject*> CQuadTree::query(Rect rectangle)
+std::set<CGameObject*> CQuadTree::query(const Rect &rectangle)
 {
 	std::set<CGameObject*> result = {};
 
 	if(m_pNodes[0])
 	{
-		for (CQuadTree* node : m_pNodes)
-		{
-			if (rectangle.intersect(node->m_bounds)) {
-				auto nodeResult = node->query(rectangle);
-				result.insert(nodeResult.begin(), nodeResult.end());
+		//Optimized Code
+		if (rectangle.intersect(m_pNodes[0]->m_bounds)) {
+			auto nodeResult = m_pNodes[0]->query(rectangle);
+			//result.insert(nodeResult.begin(), nodeResult.end());
+			for (auto game_object : nodeResult)
+			{
+				if (game_object && game_object->GetIsActive())
+					result.insert(game_object);
+			}
+		}
+		if (rectangle.intersect(m_pNodes[1]->m_bounds)) {
+			auto nodeResult = m_pNodes[1]->query(rectangle);
+			//result.insert(nodeResult.begin(), nodeResult.end());
+			for (auto game_object : nodeResult)
+			{
+				if (game_object && game_object->GetIsActive())
+					result.insert(game_object);
+			}
+		}
+		if (rectangle.intersect(m_pNodes[2]->m_bounds)) {
+			auto nodeResult = m_pNodes[2]->query(rectangle);
+			//result.insert(nodeResult.begin(), nodeResult.end());
+			for (auto game_object : nodeResult)
+			{
+				if (game_object && game_object->GetIsActive())
+					result.insert(game_object);
+			}
+		}
+		if (rectangle.intersect(m_pNodes[3]->m_bounds)) {
+			auto nodeResult = m_pNodes[3]->query(rectangle);
+			//result.insert(nodeResult.begin(), nodeResult.end());
+			for (auto game_object : nodeResult)
+			{
+				if (game_object && game_object->GetIsActive())
+					result.insert(game_object);
 			}
 		}
 	}
 	else
 	{
-		result.insert(m_pObjects.begin(), m_pObjects.end());
+		for (auto game_object : m_pObjects)
+		{
+			if (game_object && game_object->GetIsActive())
+				result.insert(game_object);
+		}
+		//result.insert(m_pObjects.begin(), m_pObjects.end());
 	}
 
 	return result;

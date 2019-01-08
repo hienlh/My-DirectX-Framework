@@ -1,54 +1,70 @@
-#include "HeadGunnerEnemyController.h"
+﻿#include "HeadGunnerEnemyController.h"
 #include "Rigidbody.h"
 #include "CameraController.h"
-#include "Graphic.h"
-#include "Input.h"
 #include "Animator.h"
-#include <math.h>
-#include "Header.h"
+#include "Macros.h"
+#include "Renderer.h"
+#include "BulletPool.h"
+
+HeadGunnerEnemyController::HeadGunnerEnemyController(const HeadGunnerEnemyController& PC) : CMonoBehavior(PC)
+{
+	m_speed = PC.m_speed;
+	m_reloadTime = PC.m_reloadTime;
+	m_target = PC.m_target;
+}
+
+HeadGunnerEnemyController& HeadGunnerEnemyController::operator=(const CComponent& component)
+{
+	(*this).CComponent::operator=(component);
+
+	if(const auto pHead = dynamic_cast<const HeadGunnerEnemyController*>(&component))
+	{
+		m_speed = pHead->m_speed;
+		m_reloadTime = pHead->m_reloadTime;
+		m_target = pHead->m_target;
+	}
+
+	return *this;
+}
 
 void HeadGunnerEnemyController::OnCollisionEnter(CCollision * collision)
 {
 }
 
-void HeadGunnerEnemyController::Update(DWORD dt)
+void HeadGunnerEnemyController::Update(const DWORD &dt)
 {
-	CRigidbody *rigidbody = m_pGameObject->GetComponent<CRigidbody>();
 	CTransform *transform = m_pGameObject->GetComponent<CTransform>();
 	CRenderer *renderer = m_pGameObject->GetComponent<CRenderer>();
 	CAnimator *anim = m_pGameObject->GetComponent<CAnimator>();
-	const Vector2 velocity = rigidbody->GetVelocity();
 
 	if (m_target)
 	{
-		Vector2 targetPosition = m_target->GetComponent<CTransform>()->Get_Position();
-		Vector2 currentPosition = m_pGameObject->GetComponent<CTransform>()->Get_Position();
+		const Vector2 targetPosition = m_target->GetComponent<CTransform>()->Get_Position();
+		const Vector2 currentPosition = transform->Get_Position();
 
 		if (sqrt(pow(targetPosition.x - currentPosition.x, 2)) < 200)
 		{
-			anim->SetBool("isShoot", true);
-			
+			renderer->SetFlipX(targetPosition.x > currentPosition.x);
+
 			m_reloadTime += dt;
 			if (m_reloadTime >= RELOAD_TIME)
 			{
-				Vector2 pos = m_pGameObject->GetComponent<CTransform>()->Get_Position();
-				bool isFlip = m_pGameObject->GetComponent<CRenderer>()->GetFlipX();
+				anim->SetBool(Bool_IsShoot, true);
 
-				pos.x = (isFlip ? pos.x + 10 : pos.x - 10);
-				pos.y;
-				auto pBullet = CGameObject::Instantiate(Prefab_HeadGunnerBullet, nullptr, pos);
+				Vector2 pos = currentPosition;
+				const bool isFlip = renderer->GetFlipX();
 
+				pos.x += isFlip ? 10 : -10;
+				//auto pBullet = CGameObject::Instantiate(Prefab_BusterShot_Bullet, nullptr, pos);
+				auto pBullet = BulletPool::GetInstance()->CreateBullet(Prefab_BusterShot_Bullet, pos);
 				pBullet->GetComponent<CRigidbody>()->SetVelocity({ (isFlip ? .3f : -.3f) , 0 });
 
 				m_reloadTime = 0;
 			}
 		}
-		else
-		{
-			anim->SetBool("isShoot", false);
-		}
 
-		renderer->SetFlipX(targetPosition.x > currentPosition.x);
+		if(anim->GetBool(Bool_IsShoot) && anim->GetCurrentAnimation()->IsLastFrame())
+			anim->SetBool(Bool_IsShoot, false);
 	}
 }
 

@@ -35,24 +35,25 @@ namespace Framework
 
 		// Internal methods
 	private:
-		bool Init(HWND hWind, bool fullscreen);
-		void Init_VertexGraphic(std::vector<CUSTOMVERTEX> vertices);
+		bool Init(const HWND& hWind, const bool &fullscreen);
+		void Init_VertexGraphic(const std::vector<CUSTOMVERTEX> &vertices);
 		void Release();
 
 		// Public methods
 	public:
 		bool Render(CScene * scene) const;
 		void Draw(Texture* texture, Vector3* position = nullptr, Rect* pSourceRect = nullptr, Vector2* center = nullptr,
-		          float angle = 0, DWORD fillColor = COLOR_WHITE, Vector3 *scale = nullptr, bool flipX = false, bool flipY = false) const;
-		void Draw(CSprite* sprite, Vector3* position = nullptr, float angle = 0, Vector3 *scale = nullptr, 
-				  bool flipX = false, bool flipY = false, DWORD fillColor = COLOR_WHITE, DWORD alpha = 255) const;
-		void DrawRectangle(Rect rect, DWORD color = NULL);
+		          const float& angle = 0, const DWORD& fillColor = COLOR_WHITE, Vector2* scale = nullptr,
+		          const bool& flipX = false, const bool& flipY = false) const;
+		void Draw(CSprite* sprite, Vector3* position = nullptr, const float& angle = 0, Vector2 *scale = nullptr, 
+				  const bool &flipX = false, const bool &flipY = false, const DWORD &fillColor = COLOR_WHITE, const DWORD &alpha = 255) const;
+		void DrawRectangle(const Rect &rect, const DWORD &color = NULL);
 		
-		Texture* CreateTexture(std::string texturePath, D3DCOLOR transparentColor = COLOR_BLACK) const;
+		Texture* CreateTexture(const std::string &texturePath, const D3DCOLOR &transparentColor = COLOR_BLACK) const;
 			
 		// Static methods
 	public:
-		static void Instantiate(HWND hWnd, bool fullscreen);
+		static void Instantiate(const HWND &hWnd, const bool &fullscreen);
 		static void Destroy();
 		static CGraphic* GetInstance();
 	};	

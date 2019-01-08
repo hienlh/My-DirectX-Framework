@@ -1,11 +1,11 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Macros.h"
 #include "AudioSource.h"
 #include "ResourceManager.h"
 
 using namespace Framework;
 
-CAudioClip::CAudioClip(const CAudioClip& audioClip)
+CAudioClip::CAudioClip(const CAudioClip& audioClip) : CObject(audioClip)
 {
 	m_pSound = audioClip.m_pSound;
 	m_isLoop = audioClip.m_isLoop;
@@ -24,12 +24,11 @@ CAudioClip* CAudioClip::SetSound(const std::string& name)
 
 bool CAudioClip::Play() const
 {
-	CAudio* pAudio = nullptr;
 	bool result = false;
 
 	do
 	{
-		pAudio = CAudio::GetInstance();
+		CAudio* pAudio = CAudio::GetInstance();
 		if (!pAudio)
 			break;
 
@@ -49,12 +48,11 @@ bool CAudioClip::Play() const
 
 bool CAudioClip::Stop() const
 {
-	CAudio* pAudio = nullptr;
 	bool result = false;
 
 	do
 	{
-		pAudio = CAudio::GetInstance();
+		CAudio* pAudio = CAudio::GetInstance();
 		if (!pAudio)
 			break;
 
@@ -69,37 +67,34 @@ bool CAudioClip::Stop() const
 	return result;
 }
 
-void CAudioClip::Update(DWORD dt)
-{
-}
-
-void CAudioClip::Render()
-{
-}
-
-CAudioClip * CAudioClip::Clone() const
-{
-	return new CAudioClip(*this);
-}
-
 /*
  * End of AudioClip
  */
 
-CAudioSource::CAudioSource(const CAudioSource & audioSource)
+CAudioSource::CAudioSource(const CAudioSource & audioSource) : CComponent(audioSource)
 {
 	m_pAudioClips = audioSource.m_pAudioClips;
 }
 
-void CAudioSource::Update(DWORD dt)
+CAudioSource& CAudioSource::operator=(const CComponent& component)
 {
+	(*this).CComponent::operator=(component);
+
+	if(const auto pAudi = dynamic_cast<const CAudioSource*>(&component))
+	{
+		for (auto audio_clip : pAudi->m_pAudioClips)
+		{
+			if(m_pAudioClips.count(audio_clip.first))
+			{
+				*m_pAudioClips[audio_clip.first] = *audio_clip.second;
+			}
+		}
+	}
+
+	return *this;
 }
 
-void CAudioSource::Render()
-{
-}
-
-CAudioSource * CAudioSource::Clone() const
+CAudioSource * CAudioSource::Clone()
 {
 	return new CAudioSource(*this);
 }
@@ -121,7 +116,7 @@ CAudioSource* CAudioSource::AddSound(CString name, bool isLoop)
 		result = true;
 	} while (false);
 
-	return (result ? this : nullptr);	
+	return (result ? this : nullptr);
 }
 
 bool CAudioSource::Play(CString name) const

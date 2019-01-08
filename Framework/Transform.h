@@ -7,6 +7,7 @@ namespace Framework
 	{
 	private:
 		CTransform* m_pParent = nullptr;
+		std::set<CTransform*> m_pChildren = {};
 		Vector2 m_position = VECTOR2_ZERO;
 		Vector3 m_rotation = VECTOR3_ZERO;
 		Vector2 m_scale = VECTOR2_ONE;
@@ -15,8 +16,10 @@ namespace Framework
 	public:
 		CTransform() = default;
 		CTransform(const CTransform &transform);
-		CTransform(CGameObject* game_object, Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO, Vector2 scale = VECTOR2_ONE);
+		explicit CTransform(CGameObject* game_object, Vector2 position = VECTOR2_ZERO, Vector3 rotation = VECTOR3_ZERO, Vector2 scale = VECTOR2_ONE);
 		virtual ~CTransform() = default;
+
+		CTransform& operator=(const CComponent& component) override;
 
 		// Getters / Setters
 	public:
@@ -28,9 +31,9 @@ namespace Framework
 		Vector2 GetLocalScale() const { return m_scale; }
 		CTransform* GetParent() const { return m_pParent; }
 
-		CTransform* Set_Position(Vector2 position, bool inWorldSpace = true);
-		CTransform* Set_Rotation(Vector3 rotation);
-		CTransform* Set_Scale(Vector2 scale);
+		CTransform* Set_Position(const Vector2 &position, const bool &inWorldSpace = true);
+		CTransform* Set_Rotation(const Vector3 &rotation);
+		CTransform* Set_Scale(const Vector2 &scale);
 		CTransform* SetParent(CTransform *parent);
 		CTransform* SetParent(CGameObject *parentGameObject);
 
@@ -52,14 +55,12 @@ namespace Framework
 
 		// Override methods
 	public:
-		void Update(DWORD dt) override;
-		void Render() override;
-
-		CTransform* Clone() const override;
+		void Update(const DWORD &dt) override {}
+		void Render() override {}
+		CTransform* Clone() override { return new CTransform(*this); }
 
 		//Methods
 	public:
-		CTransform* Translate(Vector2 translate) { m_position += translate;  return this; }
-
+		CTransform* Translate(const Vector2 &translate) { m_position += translate;  return this; }
 	};
 }

@@ -1,11 +1,52 @@
-<!DOCTYPE SpriteDecomposer>
-<sprites image="Effect.png" transparentColor="">
- <animation title="Default animation" delay="150">
-  <cut w="10" x="0" y="226" h="12" row="1" col="1"/>
-  <cut w="14" x="10" y="226" h="13" row="1" col="1"/>
-  <cut w="21" x="24" y="226" h="13" row="1" col="1"/>
-  <cut w="20" x="45" y="226" h="15" row="1" col="1"/>
-  <cut w="23" x="65" y="226" h="15" row="1" col="1"/>
-  <cut w="20" x="88" y="226" h="15" row="1" col="1"/>
- </animation>
-</sprites>
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas createBy="hienlh1298" imagePath="MegaManX-Effect.png" width="528" height="241">
+	<SubTexture name="MegaManX-Effect_00"	x="19"	y="8"	width="10"	height="50" />
+	<SubTexture name="MegaManX-Effect_01"	x="50"	y="12"	width="44"	height="42" />
+	<SubTexture name="MegaManX-Effect_02"	x="100"	y="14"	width="41"	height="38" />
+	<SubTexture name="MegaManX-Effect_03"	x="151"	y="17"	width="34"	height="32" />
+	<SubTexture name="MegaManX-Effect_04"	x="201"	y="13"	width="30"	height="40" />
+	<SubTexture name="MegaManX-Effect_05"	x="244"	y="15"	width="40"	height="29" />
+	<SubTexture name="MegaManX-Effect_06"	x="294"	y="13"	width="36"	height="40" />
+	<SubTexture name="MegaManX-Effect_07"	x="340"	y="15"	width="40"	height="36" />
+	<SubTexture name="MegaManX-Effect_08"	x="390"	y="18"	width="36"	height="23" />
+	<SubTexture name="MegaManX-Effect_09"	x="441"	y="20"	width="30"	height="26" />
+	<SubTexture name="MegaManX-Effect_09.5"	x="491"	y="28"	width="26"	height="10" />
+	<SubTexture name="MegaManX-Effect_10"	x="18"	y="67"	width="12"	height="50" />
+	<SubTexture name="MegaManX-Effect_11"	x="48"	y="69"	width="48"	height="44" />
+	<SubTexture name="MegaManX-Effect_12"	x="99"	y="71"	width="43"	height="40" />
+	<SubTexture name="MegaManX-Effect_13"	x="149"	y="73"	width="38"	height="36" />
+	<SubTexture name="MegaManX-Effect_14"	x="199"	y="69"	width="34"	height="44" />
+	<SubTexture name="MegaManX-Effect_15"	x="242"	y="72"	width="44"	height="39" />
+	<SubTexture name="MegaManX-Effect_16"	x="292"	y="69"	width="40"	height="44" />
+	<SubTexture name="MegaManX-Effect_17"	x="338"	y="72"	width="44"	height="39" />
+	<SubTexture name="MegaManX-Effect_18"	x="389"	y="74"	width="39"	height="34" />
+	<SubTexture name="MegaManX-Effect_19"	x="439"	y="77"	width="34"	height="28" />
+	<SubTexture name="MegaManX-Effect_20"	x="489"	y="86"	width="30"	height="10" />
+	<SubTexture name="MegaManX-Effect_21"	x="19"	y="140"	width="16"	height="15" />
+	<SubTexture name="MegaManX-Effect_22"	x="103"	y="132"	width="18"	height="24" />
+	<SubTexture name="MegaManX-Effect_23"	x="139"	y="126"	width="23"	height="30" />
+	<SubTexture name="MegaManX-Effect_24"	x="178"	y="124"	width="27"	height="32" />
+	<SubTexture name="MegaManX-Effect_25"	x="219"	y="123"	width="27"	height="33" />
+	<SubTexture name="MegaManX-Effect_26"	x="260"	y="127"	width="27"	height="29" />
+	<SubTexture name="MegaManX-Effect_27"	x="301"	y="128"	width="27"	height="28" />
+	<SubTexture name="MegaManX-Effect_28"	x="350"	y="129"	width="19"	height="27" />
+	<SubTexture name="MegaManX-Effect_29"	x="3"	y="164"	width="8"	height="28" />
+	<SubTexture name="MegaManX-Effect_31"	x="17"	y="164"	width="8"	height="28" />
+	<SubTexture name="MegaManX-Effect_32"	x="31"	y="164"	width="8"	height="28" />
+	<SubTexture name="MegaManX-Effect_33"	x="44"	y="164"	width="10"	height="28" />
+	<SubTexture name="MegaManX-Effect_34"	x="58"	y="164"	width="10"	height="28" />
+	<SubTexture name="MegaManX-Effect_35"	x="71"	y="164"	width="13"	height="28" />
+	<SubTexture name="MegaManX-Effect_36"	x="85"	y="164"	width="13"	height="28" />
+	<SubTexture name="MegaManX-Effect_37"	x="99"	y="164"	width="12"	height="28" />
+	<SubTexture name="MegaManX-Effect_38"	x="112"	y="164"	width="14"	height="28" />
+	<SubTexture name="MegaManX-Effect_39"	x="126"	y="164"	width="14"	height="28" />
+	<SubTexture name="MegaManX-Effect_40"	x="140"	y="164"	width="14"	height="28" />
+	<SubTexture name="MegaManX-Effect_40.5"	x="155"	y="164"	width="12"	height="28" />
+	<SubTexture name="MegaManX-Effect_41"	x="0"	y="201"	width="11"	height="12" />
+	<SubTexture name="MegaManX-Effect_42"	x="0"	y="228"	width="8"	height="8" />
+	<SubTexture name="MegaManX-Effect_43"	x="12"	y="227"	width="10"	height="11" />
+	<SubTexture name="MegaManX-Effect_44"	x="29"	y="226"	width="13"	height="13" />
+	<SubTexture name="MegaManX-Effect_45"	x="49"	y="226"	width="14"	height="14" />
+	<SubTexture name="MegaManX-Effect_46"	x="70"	y="226"	width="14"	height="14" />
+	<SubTexture name="MegaManX-Effect_47"	x="91"	y="232"	width="12"	height="6" />
+</TextureAtlas>

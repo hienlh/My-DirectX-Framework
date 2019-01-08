@@ -1,8 +1,9 @@
 ﻿#include "stdafx.h"
 #include "Scene.h"
-#include "GameManager.h"
 #include "Camera.h"
 #include "Rigidbody.h"
+#include "Input.h"
+#include "Graphic.h"
 
 using namespace Framework;
 
@@ -35,7 +36,7 @@ bool CScene::InitMainCamera()
 	{
 		m_pMainCamera = new CGameObject("Main Camera");
 		m_pMainCamera->AddComponent<CCamera>();
-
+		//TODO Check Init Camera
 		result = true;
 	} while (false);
 
@@ -70,6 +71,16 @@ std::set<CGameObject*> CScene::GetListDynamicGameObject() const
 	return m_dynamicObjectList;
 }
 
+std::set<CGameObject*> CScene::GetActiveDynamicGameObject() const
+{
+	std::set<CGameObject*> result = {};
+	for (auto game_object : m_dynamicObjectList)
+	{
+		if (game_object->GetIsActive()) result.insert(game_object);
+	}
+	return result;
+}
+
 std::set<CGameObject*> CScene::GetListStaticGameObject() const
 {
 	return m_staticObjectList;
@@ -78,6 +89,16 @@ std::set<CGameObject*> CScene::GetListStaticGameObject() const
 std::set<CGameObject*> CScene::GetListHalfStaticGameObject() const
 {
 	return m_halfStaticObjectList;
+}
+
+std::set<CGameObject*> CScene::GetActiveHalfStaticGameObject() const
+{
+	std::set<CGameObject*> result = {};
+	for (auto game_object : m_halfStaticObjectList)
+	{
+		if (game_object->GetIsActive()) result.insert(game_object);
+	}
+	return result;
 }
 
 std::set<CGameObject*> CScene::GetAllGameObjects() const
@@ -94,10 +115,68 @@ std::set<CGameObject*> CScene::GetAllGameObjects() const
 std::set<CGameObject*> CScene::GetRenderGameObjects() const
 {
 	std::set<CGameObject*> result = {};
-	result.insert(m_gameObjectList.begin(), m_gameObjectList.end());
-	result.insert(m_dynamicObjectList.begin(), m_dynamicObjectList.end());
-	auto quadTreeList = m_pQuadTree->query(Rect(m_pMainCamera->GetComponent<CTransform>()->Get_Position(), { 256, 256 }, { 0.5,0.5 }));
-	result.insert(quadTreeList.begin(), quadTreeList.end());
+	auto cameraBound = Rect(m_pMainCamera->GetComponent<CTransform>()->Get_Position(), { 256 + 256, 256 + 256}, { 0.5,0.5 });
+
+	for (auto game_object : m_gameObjectList)
+	{
+		if (game_object->GetIsActive())
+		{
+			result.insert(game_object);
+		}
+	}
+
+	for (auto game_object : m_dynamicObjectList)
+	{
+		if (game_object->GetIsActive() && cameraBound.isInside(game_object->GetComponent<CTransform>()->Get_Position()))
+		{
+			result.insert(game_object);
+		}
+	}
+
+	auto quadTreeList = m_pQuadTree->query(cameraBound);
+	for (auto game_object : quadTreeList)
+	{
+		if (game_object && game_object->GetIsActive())
+		{
+			result.insert(game_object);
+		}
+	}
+	return result;
+}
+
+std::set<CGameObject*> CScene::GetUpdateGameObjects() const
+{
+	std::set<CGameObject*> result = {};
+	const auto cameraBound = Rect(m_pMainCamera->GetComponent<CTransform>()->Get_Position(), { 256 + 128, 256 + 128 }, { 0.5,0.5 });
+
+	for (CGameObject* const game_object : m_gameObjectList)
+	{
+		//if(cameraBound.isInside(game_object->GetComponent<CTransform>()->Get_Position()))
+			if (game_object && game_object->GetIsActive() && game_object->IsInCurrentScene())
+				result.insert(game_object);
+	}
+
+	for (CGameObject* const game_object : m_dynamicObjectList)
+	{
+		if (game_object && game_object->GetIsActive() && game_object->IsInCurrentScene())
+			result.insert(game_object);
+	}
+
+	auto quadTreeList = m_pQuadTree->query(cameraBound); 
+	for (CGameObject* const object : quadTreeList)
+	{
+		if (!object) continue;
+		const auto rig = object->GetComponent<CRigidbody>();
+		// New
+		if (object->GetIsActive() && object->IsInCurrentScene() && rig)
+			if (rig->GetIsKinematic())
+			{
+				if (rig->GetNeedUpdate())
+					result.insert(object);
+			}
+			else result.insert(object);
+	}
+
 	return result;
 }
 
@@ -109,14 +188,15 @@ bool CScene::Destroy(CScene* scene)
 	return result;
 }
 
-void CScene::Update(DWORD dt)
+void CScene::Update(const DWORD &dt)
 {
 	CInput::GetInstance()->Update();
 
-	for (CGameObject* pGameObject : GetAllGameObjects())
+	auto updateGameObjects = GetUpdateGameObjects();
+	for (CGameObject* pGameObject : updateGameObjects)
 	{
-		if (pGameObject&&pGameObject->GetIsActive())
-				pGameObject->Update(dt);
+		//CDebug::Log(pGameObject->GetName().c_str() + "\n");
+		pGameObject->Update(dt);
 	}
 
 	if (m_pMainCamera) {
@@ -156,7 +236,8 @@ void CScene::RemoveGameObject(CGameObject* gameObject)
 
 CGameObject* CScene::FindGameObject(std::string name)
 {
-	for (CGameObject* const game_object : m_gameObjectList)
+	// New
+	for (CGameObject* const game_object : GetAllGameObjects())
 	{
 		if (game_object->GetName() == name)
 			return game_object;

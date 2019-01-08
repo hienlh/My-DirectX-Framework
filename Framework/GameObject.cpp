@@ -5,6 +5,8 @@
 #include "Animator.h"
 #include "Transform.h"
 #include "ResourceManager.h"
+#include "Renderer.h"
+#include "MonoBehavier.h"
 
 using namespace Framework;
 
@@ -19,9 +21,10 @@ CGameObject::CGameObject(const CGameObject& gameObject) : CObject(gameObject)
 	{
 		AddComponent(component.second->Clone());
 	}
+	CGameManager::GetInstance()->GetCurrentScene()->AddGameObject(this);
 }
 
-CGameObject::CGameObject(std::string name, Vector2 position, bool addIntoCurrentScene)
+CGameObject::CGameObject(const std::string& name, const Vector2& position, const bool& addIntoCurrentScene)
 {
 	if (!this->Init())
 		delete this;
@@ -38,8 +41,7 @@ CGameObject::CGameObject(std::string name, Vector2 position, bool addIntoCurrent
 
 CGameObject::~CGameObject()
 {
-	int size = m_pComponents.size();
-	for(auto i=m_pComponents.begin();i!=m_pComponents.end();i++)
+	for(auto i=m_pComponents.begin();i!=m_pComponents.end();++i)
 	{
 		SAFE_DELETE((*i).second);
 	}
@@ -102,13 +104,37 @@ void CGameObject::CheckAfterAddComponent(CComponent* component)
 	
 }
 
+CGameObject* CGameObject::GetParent()
+{
+	if (const auto tmp = dynamic_cast<CTransform*>(m_pComponents[typeid(CTransform).name()])->GetParent())
+		return tmp->m_pGameObject;
+	return nullptr;
+}
+
+Vector2 CGameObject::GetPosition()
+{
+	return  dynamic_cast<CTransform*>(m_pComponents[typeid(CTransform).name()])->Get_Position();
+}
+
+bool CGameObject::IsInCurrentScene() const
+{
+	return m_pScene == CGameManager::GetInstance()->GetCurrentScene();
+}
+
+CGameObject* CGameObject::SetParent(CGameObject* parent)
+{
+	dynamic_cast<CTransform*>(m_pComponents[typeid(CTransform).name()])->SetParent(parent);
+
+	return this;
+}
+
 void CGameObject::Destroy(CGameObject*& instance)
 {
 	instance->Release();
 	SAFE_DELETE(instance);
 }
 
-void CGameObject::Update(DWORD dt)
+void CGameObject::Update(const DWORD& dt)
 {
 	CTransform * transform = dynamic_cast<CTransform *>(m_pComponents[typeid(CTransform).name()]);
 
@@ -117,7 +143,7 @@ void CGameObject::Update(DWORD dt)
 	for (auto component : m_pComponents)
 		if (component.second->GetIsActive()) {
 			component.second->Update(dt);
-			if (!component.second->GetGameObject()) return;
+			if (!component.second->GetGameObject() || !component.second->GetGameObject()->GetIsActive()) return;
 		}
 
 	//Reset position of static gameObjects and half-static gameObjects which is moved
@@ -156,22 +182,36 @@ void CGameObject::Render()
 			component.second->Render();
 }
 
-/**
- * \brief Clone GameObject will auto add into the scene
- */
-CGameObject* CGameObject::Clone() const
+void CGameObject::CopyValue(const CGameObject& object)
 {
-	const auto result = new CGameObject(*this);
-	CGameManager::GetInstance()->GetCurrentScene()->AddGameObject(result);
-	return result;
+	for (const std::pair<const std::basic_string<char>, CComponent*> component : object.m_pComponents)
+	{
+		if (m_pComponents.count(component.first)) {
+			(*m_pComponents[component.first]) = (*component.second);
+		}
+	}
 }
 
-tinyxml2::XMLElement* CGameObject::ToXmlElement(tinyxml2::XMLDocument& doc) const
+bool CGameObject::GetIsActive()
 {
-	//TODO ToXmlElement GameObject
-	return nullptr;
+	if (const auto parent = this->GetComponent<CTransform>()->GetParent())
+			return m_isActive && parent->GetGameObject()->GetIsActive();
+	return m_isActive;
 }
 
+CGameObject& CGameObject::operator=(const CGameObject& gameObject)
+{
+	(*this).CObject::operator=(gameObject);
+
+	for (const std::pair<const std::basic_string<char>, CComponent*> component : gameObject.m_pComponents)
+	{
+		if (m_pComponents.count(component.first)) {
+			*m_pComponents[component.first] = *component.second;
+		}
+	}
+
+	return *this;
+}
 
 /**
  * \brief Clones the object original and returns the clone.
@@ -182,15 +222,21 @@ tinyxml2::XMLElement* CGameObject::ToXmlElement(tinyxml2::XMLDocument& doc) cons
  * \param instantiateInWorldSpace Pass true when assigning a parent Object to maintain the world position of the Object, instead of setting its position relative to the new parent. Pass false to set the Object's position relative to its new parent.
  * \return CGameObject The instantiated clone.
  */
-CGameObject* CGameObject::Instantiate(CGameObject* gameObject, CGameObject* parent, Vector2 position, Vector3 rotation,
-	bool instantiateInWorldSpace)
+CGameObject* CGameObject::Instantiate(CGameObject* gameObject, CGameObject* parent, const Vector2& position,
+	const Vector3& rotation, const bool& instantiateInWorldSpace)
 {
-	auto *result = gameObject->Clone();
+	auto *result = new CGameObject(*gameObject);
 
 	result->GetComponent<CTransform>()
 		->SetParent(parent)
 		->Set_Position(position, instantiateInWorldSpace)
 		->Set_Rotation(rotation);
+
+	for (auto component : result->m_pComponents)
+	{
+		if (auto mono = dynamic_cast<CMonoBehavior*>(component.second))
+			mono->Start();
+	}
 
 	return result;
 }
@@ -204,8 +250,8 @@ CGameObject* CGameObject::Instantiate(CGameObject* gameObject, CGameObject* pare
  * \param instantiateInWorldSpace Pass true when assigning a parent Object to maintain the world position of the Object, instead of setting its position relative to the new parent. Pass false to set the Object's position relative to its new parent.
  * \return CGameObject The instantiated clone.
  */
-CGameObject* CGameObject::Instantiate(std::string prefabName, CGameObject* parent, Vector2 position, Vector3 rotation,
-	bool instantiateInWorldSpace)
+ CGameObject* CGameObject::Instantiate(const std::string& prefabName, CGameObject* parent, const Vector2& position,
+	const Vector3& rotation, const bool& instantiateInWorldSpace)
 {
 	auto a = CResourceManager::GetInstance();
 	CGameObject* gameObject = a->GetPrefab(prefabName);

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Animation.h"
-#include "Audio.h"
 #include "GameObject.h"
+#include "dsutil.h"
 
 namespace Framework 
 {
@@ -21,25 +21,24 @@ namespace Framework
 		//Getter / Setter
 	public:
 		static CResourceManager* GetInstance();
-		Texture* GetTexture(std::string name) const;
-		CAnimation* GetAnimation(std::string name) const;
+		Texture* GetTexture(const std::string &name) const;
+		CAnimation* GetAnimation(const std::string &name) const;
 		CSound* GetSound(const std::string &name) const;
-		CSprite* GetSprite(std::string textureName, DWORD index = -1) const;
-		static CSprite* GetSprite(Texture* texture, DWORD index = -1);
-		CGameObject* GetPrefab(std::string name);
+		CSprite* GetSprite(const std::string &textureName, const DWORD &index = -1) const;
+		static CSprite* GetSprite(Texture* texture, const DWORD &index = -1);
+		CGameObject* GetPrefab(const std::string &name);
 
 		//Method
 	public:
-		bool AddTexture(std::string name, std::string path, Color transparentColor = COLOR_BLACK, const char* xmlPath = nullptr);
-		CGameObject* AddPrefab(std::string name, CGameObject *gameObject = nullptr);
+		bool AddTexture(const std::string &name, const std::string &path, const Color &transparentColor = COLOR_BLACK, const char* xmlPath = nullptr, const Vector2 &defaultAnchor = { 0.5,0.5 });
+		CGameObject* AddPrefab(const std::string& name, CGameObject *gameObject = nullptr);
 		CResourceManager* AddSound(const std::string &name, const char* path);
 
 	private:
-		bool AddAnimation(std::string name, CAnimation* animation);
+		bool AddAnimation(const std::string& name, CAnimation* animation);
 
 	private:
 		friend class CAnimation;
-		friend class CSprite;	
-		friend class CAudio;
+		friend class CSprite;
 	};
 }

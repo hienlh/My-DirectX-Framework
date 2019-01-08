@@ -40,6 +40,9 @@
     <Filter Include="Extends">
       <UniqueIdentifier>{1c6e2594-9ded-4608-9999-e9858d856902}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Subjects">
+      <UniqueIdentifier>{406af47c-18e3-47c2-aa53-024890103810}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -85,9 +88,6 @@
       <Filter>Framework\Game</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
-      <Filter>Framework\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Behavior.h">
       <Filter>Framework\Component</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
@@ -138,14 +138,29 @@
     <ClInclude Include="QuadTree.h">
       <Filter>Framework\Object</Filter>
     </ClInclude>
+    <ClInclude Include="GameObserver.h">
+      <Filter>Framework\Observers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSubject.h">
+      <Filter>Framework\Subjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>Framework\Subjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Framework\Observers</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicSubject.h">
+      <Filter>Framework\Subjects</Filter>
+    </ClInclude>
     <ClInclude Include="Audio.h">
       <Filter>Framework\Base</Filter>
     </ClInclude>
-    <ClInclude Include="AudioSource.h">
-      <Filter>Framework\Component</Filter>
-    </ClInclude>
     <ClInclude Include="dsutil.h">
       <Filter>Extends</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSource.h">
+      <Filter>Framework\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -188,9 +203,6 @@
     <ClCompile Include="Animator.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Behavior.cpp">
-      <Filter>Framework\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Framework\Component</Filter>
     </ClCompile>
@@ -230,14 +242,29 @@
     <ClCompile Include="QuadTree.cpp">
       <Filter>Framework\Object</Filter>
     </ClCompile>
+    <ClCompile Include="GameObserver.cpp">
+      <Filter>Framework\Observers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSubject.cpp">
+      <Filter>Framework\Subjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Subject.cpp">
+      <Filter>Framework\Subjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>Framework\Observers</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicSubject.cpp">
+      <Filter>Framework\Subjects</Filter>
+    </ClCompile>
     <ClCompile Include="Audio.cpp">
       <Filter>Framework\Base</Filter>
     </ClCompile>
-    <ClCompile Include="AudioSource.cpp">
-      <Filter>Framework\Component</Filter>
-    </ClCompile>
     <ClCompile Include="dsutil.cpp">
       <Filter>Extends</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSource.cpp">
+      <Filter>Framework\Component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -45,7 +45,7 @@ CResourceManager* CResourceManager::GetInstance()
 	return __instance;
 }
 
-Texture* CResourceManager::GetTexture(std::string name) const
+Texture* CResourceManager::GetTexture(const std::string &name) const
 {
 	const auto it = m_pTextures.find(name);
 
@@ -58,32 +58,36 @@ Texture* CResourceManager::GetTexture(std::string name) const
 	return nullptr;
 }
 
-CAnimation* CResourceManager::GetAnimation(std::string name) const
+CAnimation* CResourceManager::GetAnimation(const std::string &name) const
 {
 	const auto it = m_pAnimations.find(name);
 
 	if (it != m_pAnimations.end())
+	{
 		return it->second;
-	else
-		return nullptr;
+	}
+
+	CDebug::Log("GetAnimation: No animation name '%s'\n", name.c_str());
+	return nullptr;
 }
 
-CSound * Framework::CResourceManager::GetSound(const std::string & name) const
+CSound* CResourceManager::GetSound(const std::string& name) const
 {
 	const auto it = m_pSounds.find(name);
 
 	if (it != m_pSounds.end())
 		return it->second;
-	else
-		return nullptr;
+
+	CDebug::Log("GetSound: No sound name '%s'\n", name.c_str());
+	return nullptr;
 }
 
-CSprite* CResourceManager::GetSprite(std::string textureName, DWORD index) const
+CSprite* CResourceManager::GetSprite(const std::string &textureName, const DWORD &index) const
 {
 	return GetSprite(GetTexture(textureName), index);
 }
 
-CSprite* CResourceManager::GetSprite(Texture* texture, DWORD index)
+CSprite* CResourceManager::GetSprite(Texture* texture, const DWORD &index)
 {
 	if (index == -1)
 	{
@@ -92,7 +96,7 @@ CSprite* CResourceManager::GetSprite(Texture* texture, DWORD index)
 	return texture->m_sprites[index];
 }
 
-CGameObject* CResourceManager::GetPrefab(std::string name)
+CGameObject* CResourceManager::GetPrefab(const std::string &name)
 {
 	if (!m_pPrefabs.count(name))
 	{
@@ -103,7 +107,7 @@ CGameObject* CResourceManager::GetPrefab(std::string name)
 	return m_pPrefabs[name];
 }
 
-bool CResourceManager::AddTexture(std::string name, std::string path, Color transparentColor, const char* xmlPath)
+bool CResourceManager::AddTexture(const std::string &name, const std::string &path, const Color &transparentColor, const char* xmlPath, const Vector2 &defaultAnchor)
 {
 	if(m_pTextures.count(name))
 	{
@@ -118,7 +122,7 @@ bool CResourceManager::AddTexture(std::string name, std::string path, Color tran
 			const DWORD size = rects.size();
 			for (int i = 0; i < size; i++)
 			{
-				tmp->m_sprites.push_back(new CSprite(tmp, rects[i]));
+				tmp->m_sprites.push_back(new CSprite(tmp, rects[i], defaultAnchor));
 			}
 		}
 		else tmp->m_sprites.push_back(new CSprite(tmp)); //Add a only one sprite with size equal texture
@@ -131,13 +135,7 @@ bool CResourceManager::AddTexture(std::string name, std::string path, Color tran
 	return false;
 }
 
-//bool CResourceManager::EditTexture(std::string name, std::string path, Color transparentColor, const char* xmlPath)
-//{
-//	//TODO Edit texture in ResourceManager
-//	return false;
-//}
-
-bool CResourceManager::AddAnimation(std::string name, CAnimation* animation)
+bool CResourceManager::AddAnimation(const std::string& name, CAnimation* animation)
 {
 	if (m_pAnimations.count(name))
 	{
@@ -152,7 +150,7 @@ bool CResourceManager::AddAnimation(std::string name, CAnimation* animation)
 /**
  * \brief Add Prefab from an existed GameObject or create new gameObject
  */
-CGameObject* CResourceManager::AddPrefab(std::string name, CGameObject* gameObject)
+CGameObject* CResourceManager::AddPrefab(const std::string& name, CGameObject* gameObject)
 {
 	if (m_pPrefabs.count(name))
 	{
@@ -162,21 +160,21 @@ CGameObject* CResourceManager::AddPrefab(std::string name, CGameObject* gameObje
 
 	CGameObject* result = nullptr;
 
-	if(gameObject) result = gameObject->Clone();
+	if(gameObject) result = new CGameObject(*gameObject);
 	else result = new CGameObject(name, VECTOR2_ZERO, false);
 
 	m_pPrefabs[name] = result;
 	return result;
 }
 
-CResourceManager* CResourceManager::AddSound(const std::string &name, const char* path)
+CResourceManager* CResourceManager::AddSound(const std::string& name, const char* path)
 {
 	bool result = false;
 	do
 	{
 		if (m_pSounds.count(name))
 			break;
-		
+
 		CAudio* pAudio = CAudio::GetInstance();
 		if (!pAudio)
 			break;
@@ -189,6 +187,8 @@ CResourceManager* CResourceManager::AddSound(const std::string &name, const char
 
 		result = true;
 	} while (false);
-	
+
+	if (!result) CDebug::Log("Fail to load '%s' sound.\n", name.c_str());
+
 	return (result ? this : nullptr);
 }

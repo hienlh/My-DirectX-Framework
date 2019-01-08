@@ -18,26 +18,29 @@ namespace Framework {
 		//Cons / Des
 	public:
 		CCollider(const CCollider& collider);
-		CCollider(CGameObject* gameObject) : CComponent(gameObject){}
+		explicit CCollider(CGameObject* gameObject) : CComponent(gameObject){}
 		virtual ~CCollider() = default;
 
 		//Getter / Setter
 	public:
 		Bound GetBoundGlobal() const;
 		Rect GetBoundArea() const;
-		bool GetUsedByEffector() const;
-		bool GetAutoBoundSize() const;
-		bool GetIsTrigger() const;
+		const bool &GetUsedByEffector() const;
+		const bool& GetAutoBoundSize() const;
+		const bool& GetIsTrigger() const;
 		Vector2 GetAnchor() const;
 
-		void SetUsedByEffector(bool usedByEffector);
+		void SetUsedByEffector(const bool &usedByEffector);
 		/*void SetBoundSize(Vector2 size);*/
-		void SetOffset(Vector2 offset);
-		void SetAutoBoundSize(bool autoBoundSize);
-		void SetAnchor(Vector2 anchor);
-		void SetIsTrigger(bool isTrigger);
+		void SetOffset(const Vector2 &offset);
+		void SetAutoBoundSize(const bool &autoBoundSize);
+		void SetAnchor(const Vector2& anchor);
+		void SetIsTrigger(const bool &isTrigger);
 
 	public:
-		virtual CCollider* Clone() const override = 0;
+		void Update(const DWORD &dt) override = 0;
+		void Render() override = 0;
+		CCollider* Clone() override = 0;
+		CCollider& operator=(const CComponent& component) override;
 	};
 }

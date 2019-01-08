@@ -1,4 +1,5 @@
 ﻿#pragma once
+#pragma once
 #include "MonoBehavier.h"
 
 class MachineController : public Framework::CMonoBehavior
@@ -6,9 +7,10 @@ class MachineController : public Framework::CMonoBehavior
 public:
 	Framework::CGameObject *m_player = nullptr;
 public:
-	explicit MachineController(const CMonoBehavior& monoBehavior)
-		: CMonoBehavior(monoBehavior)
+	MachineController(const MachineController& mc)
+		: CMonoBehavior(mc)
 	{
+		m_player = mc.m_player;
 	}
 
 	explicit MachineController(Framework::CGameObject* gameObject)
@@ -19,5 +21,7 @@ public:
 	void OnCollisionEnter(Framework::CCollision* collision) override;
 
 public:
-	void Update(DWORD dt) override;
+	void Update(const DWORD &dt) override;
+
+	MachineController* Clone() override { return new MachineController(*this); }
 };

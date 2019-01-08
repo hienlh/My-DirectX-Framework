@@ -1,5 +1,6 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Audio.h"
+#include "GameManager.h"
 
 using namespace Framework;
 
@@ -7,7 +8,7 @@ CAudio* CAudio::__instance = nullptr;
 
 bool CAudio::Init()
 {
-	HWND hWnd = CGameManager::GetInstance()->GetWindow()->Get_WindowHandle();
+	const HWND hWnd = CGameManager::GetInstance()->GetWindow()->Get_WindowHandle();
 	bool result = false;
 
 	do
@@ -25,7 +26,7 @@ bool CAudio::Init()
 
 		result = true;
 	} while (false);
-	
+
 	return result;
 }
 
@@ -53,11 +54,7 @@ void CAudio::Destroy()
 	SAFE_DELETE(__instance);
 }
 
-void CAudio::Update()
-{
-}
-
-CSound* CAudio::Load(CString fileName)
+CSound* CAudio::Load(CString fileName) const
 {
 	CSound* pSound = nullptr;
 	// Convert (const char*) to (wchar_t*)

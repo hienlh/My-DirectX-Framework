@@ -12,11 +12,11 @@ namespace Framework
 
 		//Getter / Setter
 	public:
-		std::string GetName() const { return m_Name; }
-		bool GetIsActive() const { return m_isActive; }
+		const std::string &GetName() const { return m_Name; }
+		virtual bool GetIsActive();
 
-		void SetName(std::string name) { m_Name = name; }
-		void SetIsActive(bool isActive) { m_isActive = isActive; }
+		void SetName(const std::string &name) { m_Name = name; }
+		void SetIsActive(const bool &isActive) { m_isActive = isActive; }
 
 		// Cons / Des
 	public:
@@ -26,9 +26,9 @@ namespace Framework
 
 		// Abstract Classes
 	public:
-		virtual void Update(DWORD dt) = 0;
+		virtual void Update(const DWORD &dt) = 0;
 		virtual void Render() = 0;
-
-		virtual CObject* Clone() const = 0;
+		CObject& operator=(const CObject& object);
+		void CopyValue(const CObject* object);
 	};
 }
