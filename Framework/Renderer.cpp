@@ -75,7 +75,8 @@ void CRenderer::Render()
 	Vector3 position3D = Vector3(transform->Get_Position());
 	position3D.z = m_zOrder;
 
-	CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY, m_fillColor, m_alpha);
+	if (m_pSprite)
+		CGraphic::GetInstance()->Draw(m_pSprite, &position3D, transform->Get_Rotation().z, &scale, m_flipX, m_flipY, m_fillColor, m_alpha);
 }
 
 void CRenderer::Destroy(CRenderer* &instance)

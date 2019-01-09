@@ -4,6 +4,7 @@
 #include <vector>
 #include "Animator.h"
 #include "Renderer.h"
+#include "CanAttacked.h"
 using namespace std;
 using namespace Framework;
 class BlastHornetController : public CMonoBehavior
@@ -23,6 +24,7 @@ public:
 
 	Vector2 InitPos = {};
 	DWORD waitTime = 0;
+	int waitTimeWhenDie = 1000;
 	DWORD startFly = 0;
 	int targetTime = 0;
 	CGameObject* pBullet = nullptr;
@@ -65,7 +67,7 @@ public:
 	void OnTriggerEnter(CCollision* collision) override;
 	void Update(const DWORD& dt) override;
 
-	//function
+	//Function
 	void Shoot(const Vector2 &myPos, const Vector2 &targetPos);
 	void Bomb(const Vector2 &myPos, const Vector2 &targetPos) const;
 	void Attack(const Vector2 &myPos, const Vector2 &targetPos);

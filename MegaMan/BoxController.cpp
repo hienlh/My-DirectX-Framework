@@ -3,6 +3,7 @@
 #include "EffectPool.h"
 #include "Macros.h"
 #include "BuildingController.h"
+#include "CarryAimController.h"
 
 void BoxController::Update(const DWORD& dt)
 {
@@ -16,6 +17,11 @@ void BoxController::Update(const DWORD& dt)
 				if(auto building = parent->GetComponent<BuildingController>())
 				{
 					building->BoxIsDestroy(m_pGameObject);
+				}
+				
+				if(auto carry = parent->GetComponent<CarryAimController>())
+				{
+					carry->BoxIsDestroyed(m_pGameObject);
 				}
 			}
 			m_pGameObject->SetIsActive(false);

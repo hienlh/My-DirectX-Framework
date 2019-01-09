@@ -19,6 +19,19 @@ void EffectPool::AddNewEffect(const std::string& prefabName)
 		}
 }
 
+Framework::CGameObject* EffectPool::CreateMultiEffect(const std::string& prefabName, const Rect& rect,
+	const int& amount)
+{
+	for (int i = 0; i < amount; ++i)
+	{
+		const float x = rand() % static_cast<int>(rect.Size().x) + rect.left;
+		const float y = rand() % static_cast<int>(rect.Size().y) + rect.top;
+		CreateEffect(prefabName, Vector2(x, y));
+	}
+
+	return nullptr;
+}
+
 Framework::CGameObject* EffectPool::CreateEffect(const std::string& prefabName, const Vector2& position)
 {
 	if (!m_pools.count(prefabName)) return nullptr;
@@ -32,6 +45,19 @@ Framework::CGameObject* EffectPool::CreateEffect(const std::string& prefabName, 
 			m_pools[prefabName][i]->GetComponent<Framework::CTransform>()->Set_Position(position);
 			return m_pools[prefabName][i];
 		}
+	}
+
+	return nullptr;
+}
+
+Framework::CGameObject* EffectPool::CreateMultiEffect(const std::string& prefabName, const Vector2& position,
+                                                      const int& radius, const int& amount)
+{
+	for(int i = 0; i<amount; ++i)
+	{
+		const float x = rand() % (radius * 2) + (position.x - radius);
+		const float y = rand() % (radius * 2) + (position.y - radius);
+		CreateEffect(prefabName, Vector2(x,y));
 	}
 
 	return nullptr;

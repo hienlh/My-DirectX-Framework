@@ -4,7 +4,6 @@
 #include "Window.h"
 #include "Graphic.h"
 #include "Physic.h"
-#include "Time.h"
 
 using namespace Framework;
 

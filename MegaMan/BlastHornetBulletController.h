@@ -7,8 +7,8 @@ class BlastHornetBulletController : public Framework::CMonoBehavior
 private:
 	CGameObject* m_target = nullptr;
 	CGameObject* m_parent = nullptr;
-	int m_flyTime = 5000;
-	int m_targetTime = 3000;
+	int m_flyTime = 2000;
+	int m_targetTime = 1000;
 
 	CTransform* transform = nullptr;
 	CRigidbody* rigid = nullptr;

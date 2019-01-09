@@ -18,10 +18,12 @@ private:
 	Framework::CGameObject* m_pMetaCapsulePrefab = nullptr;
 
 	bool m_isTurnOn = false;
+	bool m_TurnedOn = false;
 	bool m_isTurnOff = false;
 	bool m_isSpawning = false;
 	bool m_canFire = false;
 	int m_turn = 0;
+	int m_countBoxDestroyed = 0;
 
 	int waitSpawnTime = 0;
 	int waitFireTime = TIME_WAIT_FOR_FIRE;
@@ -48,6 +50,7 @@ public:
 	void Update(const DWORD& dt) override;
 
 	void TurnOn();
+	bool CheckTurnedOn() const { return m_TurnedOn; }
 	void TurnOff();
 	void TurnOnSpawn();
 	void BoxIsDestroy(Framework::CGameObject* box);

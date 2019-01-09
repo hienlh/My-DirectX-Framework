@@ -6,7 +6,7 @@ class BlastHornetChildController : public CMonoBehavior
 {
 private:
 	int  destroyTime = 5000;
-	int aliveTime;
+	int aliveTime = 0;
 	bool isStart = false;
 	int blood = 50;
 	// Cons Des

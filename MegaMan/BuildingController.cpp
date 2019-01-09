@@ -38,15 +38,16 @@ void BuildingController::Update(const DWORD& dt)
 			auto outriggerTransform = m_pOutrigger->GetComponent<CTransform>();
 			if (outriggerTransform->Get_Position().y < transform->Get_Position().y + 88)
 			{
-				outriggerTransform->Translate(Vector2(0, 0.05)*dt);
+				outriggerTransform->Translate(Vector2(0, 0.05) * dt);
 			}
 			else { //Complete TurnOn
-				m_isTurnOn = false;
+				m_isTurnOn = false; 
+				m_TurnedOn = true;
 				TurnOnSpawn();
 			}
 		}
 	}
-	else if(m_isTurnOff)
+	else if (m_isTurnOff)
 	{
 		auto outriggerTransform = m_pOutrigger->GetComponent<CTransform>();
 		if (outriggerTransform->Get_Position().y >= transform->Get_Position().y)
@@ -61,14 +62,13 @@ void BuildingController::Update(const DWORD& dt)
 			}
 			else {
 				m_isTurnOff = false;
-				player->GetComponent<PlayerController>()->PassBuilding();
 				m_pGameObject->SetIsActive(false);
 			}
 		}
 	}
 	else if(m_isSpawning)
 	{
-		if (m_turn < 10) {
+		if (m_turn < CARRY_AIM_LIST_SIZE) {
 			waitSpawnTime -= dt;
 			if (waitSpawnTime <= 0)
 			{
@@ -91,6 +91,7 @@ void BuildingController::Update(const DWORD& dt)
 			if (waitFireTime > 0) waitFireTime -= dt;
 			else
 			{
+				m_pMetaCapsule = CGameObject::Instantiate(m_pMetaCapsulePrefab, m_pGameObject, { 96,64 });
 				m_pMetaCapsule->SetIsActive(true);
 				waitFireTime = TIME_WAIT_FOR_FIRE;
 			}
@@ -100,7 +101,9 @@ void BuildingController::Update(const DWORD& dt)
 
 void BuildingController::TurnOn()
 {
-	m_isTurnOn = true;
+	if (!m_TurnedOn) {
+		m_isTurnOn = true;
+	}
 }
 
 void BuildingController::TurnOff()
@@ -115,6 +118,7 @@ void BuildingController::TurnOnSpawn()
 
 void BuildingController::BoxIsDestroy(CGameObject* box)
 {
+	m_countBoxDestroyed++;
 	if (m_collectBoxes[0] == box)
 		m_collectBoxes[0] = nullptr;
 	else if(m_collectBoxes[1] == box)

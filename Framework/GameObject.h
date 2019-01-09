@@ -8,6 +8,7 @@
 
 namespace Framework
 {
+
 	// Game Object Class
 	class CGameObject : public CObject
 	{
@@ -21,15 +22,18 @@ namespace Framework
 		// Cons / Des
 	private:
 		CGameObject() = default;
+		CGameObject(const bool& addIntoCurrentScene, const std::string &name, const Vector2 &position); //Just ResourceManager can use this function
+
 	public:
 		CGameObject(const CGameObject& gameObject);
-		explicit CGameObject(const std::string &name, const Vector2 &position = VECTOR2_ZERO, const bool& addIntoCurrentScene = true);
+		CGameObject(const std::string &name, const Vector2 &position = VECTOR2_ZERO) : CGameObject(true, name, position) {}
 		~CGameObject();
 
 		// Friends
 	public:
 		friend class CScene;
 		friend class CPhysic;
+		friend class CResourceManager;
 
 		// Public methods
 	public:

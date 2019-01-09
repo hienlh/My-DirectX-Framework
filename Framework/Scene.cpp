@@ -36,6 +36,7 @@ bool CScene::InitMainCamera()
 	{
 		m_pMainCamera = new CGameObject("Main Camera");
 		m_pMainCamera->AddComponent<CCamera>();
+		m_pMainCamera->SetScene(this);
 		//TODO Check Init Camera
 		result = true;
 	} while (false);
@@ -167,8 +168,7 @@ std::set<CGameObject*> CScene::GetUpdateGameObjects() const
 	{
 		if (!object) continue;
 		const auto rig = object->GetComponent<CRigidbody>();
-		// New
-		if (object->GetIsActive() && object->IsInCurrentScene() && rig)
+		if(object->GetIsActive() && object->IsInCurrentScene() && rig)
 			if (rig->GetIsKinematic())
 			{
 				if (rig->GetNeedUpdate())
@@ -236,8 +236,7 @@ void CScene::RemoveGameObject(CGameObject* gameObject)
 
 CGameObject* CScene::FindGameObject(std::string name)
 {
-	// New
-	for (CGameObject* const game_object : GetAllGameObjects())
+	for (CGameObject* const game_object : m_gameObjectList)
 	{
 		if (game_object->GetName() == name)
 			return game_object;

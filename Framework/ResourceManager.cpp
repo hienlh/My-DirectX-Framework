@@ -139,7 +139,7 @@ bool CResourceManager::AddAnimation(const std::string& name, CAnimation* animati
 {
 	if (m_pAnimations.count(name))
 	{
-		CDebug::Log(L"AddAnimation: Animation \"%s\" added! If you want to edit, let use EditAnimation function!\n", name.c_str());
+		CDebug::Log(L"Resource AddAnimation: Animation \"%s\" added! If you want to edit, let use EditAnimation function!\n", name.c_str());
 		return false;
 	}
 
@@ -161,7 +161,7 @@ CGameObject* CResourceManager::AddPrefab(const std::string& name, CGameObject* g
 	CGameObject* result = nullptr;
 
 	if(gameObject) result = new CGameObject(*gameObject);
-	else result = new CGameObject(name, VECTOR2_ZERO, false);
+	else result = new CGameObject(false, name, VECTOR2_ZERO);
 
 	m_pPrefabs[name] = result;
 	return result;

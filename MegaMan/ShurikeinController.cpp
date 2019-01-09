@@ -3,12 +3,20 @@
 #include <Renderer.h>
 #include <ctime>
 #include <cstdlib>
+#include "CanBeAttacked.h"
+#include "EffectPool.h"
+#include "Macros.h"
+#include "Macros.h"
 bool isHitWall = false;
 bool isHitShot = false;
 int iran = 0;
 ShurikeinController::ShurikeinController(CGameObject * gameObject) : CMonoBehavior(gameObject)
 {
-	srand((int)time(NULL));
+}
+
+void ShurikeinController::Start()
+{
+
 }
 
 void ShurikeinController::OnTriggerEnter(CCollision * collision)
@@ -27,6 +35,12 @@ void ShurikeinController::OnTriggerEnter(CCollision * collision)
 
 void ShurikeinController::Update(const DWORD &dt)
 {
+	if(!m_pGameObject->GetComponent<CanBeAttacked>()->IsAlive())
+	{
+		m_pGameObject->SetIsActive(false);
+		EffectPool::GetInstance()->CreateMultiEffect(Prefab_Effect_Explode_Blue, m_pGameObject->GetPosition(), 20, 4);
+	}
+
 	m_startTime += dt;
 
 	if (isHitShot)

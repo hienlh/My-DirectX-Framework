@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="@@@.png">
+	<SubTexture name="0-00.png"	x="0"	y="64"	width="306"	height="32" frameX="-0" frameY="-0" frameWidth="306" frameHeight="32"/>
+	<SubTexture name="0-01.png"	x="0"	y="32"	width="306"	height="32" frameX="-0" frameY="-0" frameWidth="306" frameHeight="32"/>
+	<SubTexture name="0-02.png"	x="0"	y="0"	width="306"	height="32" frameX="-0" frameY="-0" frameWidth="306" frameHeight="32"/>
+	<SubTexture name="0-03.png"	x="0"	y="96"	width="306"	height="32" frameX="-0" frameY="-0" frameWidth="306" frameHeight="32"/>
+	<SubTexture name="1-00.png"	x="0"	y="160"	width="159"	height="32" frameX="-0" frameY="-0" frameWidth="159" frameHeight="32"/>
+	<SubTexture name="1-01.png"	x="0"	y="224"	width="159"	height="32" frameX="-0" frameY="-0" frameWidth="159" frameHeight="32"/>
+	<SubTexture name="1-02.png"	x="0"	y="192"	width="159"	height="32" frameX="-0" frameY="-0" frameWidth="159" frameHeight="32"/>
+	<SubTexture name="1-03.png"	x="0"	y="128"	width="159"	height="32" frameX="-0" frameY="-0" frameWidth="159" frameHeight="32"/>
+	<SubTexture name="ScrollingWheel2_0.png"	x="0"	y="256"	width="128"	height="32" frameX="-0" frameY="-0" frameWidth="128" frameHeight="32"/>
+	<SubTexture name="ScrollingWheel2_1.png"	x="159"	y="160"	width="128"	height="32" frameX="-0" frameY="-0" frameWidth="128" frameHeight="32"/>
+	<SubTexture name="ScrollingWheel2_2.png"	x="128"	y="256"	width="128"	height="32" frameX="-0" frameY="-0" frameWidth="128" frameHeight="32"/>
+	<SubTexture name="ScrollingWheel2_3.png"	x="159"	y="128"	width="128"	height="32" frameX="-0" frameY="-0" frameWidth="128" frameHeight="32"/>
+</TextureAtlas>

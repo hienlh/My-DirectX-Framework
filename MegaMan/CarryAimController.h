@@ -40,5 +40,6 @@ public:
 	void MoveIn(const Vector2& destination);
 	void MoveOut() { m_moveOut = true; }
 
-	bool haveBox();
+	bool haveBox() const;
+	void BoxIsDestroyed(Framework::CGameObject* gameObject);
 };

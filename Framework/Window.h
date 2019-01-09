@@ -16,8 +16,7 @@ namespace Framework
 
 		// Getters / Setters
 	public:
-		// New
-		HWND Get_WindowHandle() const { return m_hWnd; };
+		const HWND& Get_WindowHandle() const { return m_hWnd; };
 
 		// Internal methods
 	private:

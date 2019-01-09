@@ -13,6 +13,8 @@ public:
 	float m_startTime = 0;
 	float m_waitForChangeColor = 0;
 
+
+
 public:
 	ShurikeinController(const ShurikeinController& monoBehavior)
 		: CMonoBehavior(monoBehavior)
@@ -28,6 +30,7 @@ public:
 	}
 
 	//Overide
+	void Start() override;
 	void OnTriggerEnter(CCollision *collision) override;
 	void Update(const DWORD &dt) override;
 	ShurikeinController* Clone() override { return new ShurikeinController(*this); };
