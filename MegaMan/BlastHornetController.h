@@ -4,6 +4,7 @@
 #include <vector>
 #include "Animator.h"
 #include "Renderer.h"
+#include "CanAttacked.h"
 using namespace std;
 using namespace Framework;
 class BlastHornetController : public CMonoBehavior

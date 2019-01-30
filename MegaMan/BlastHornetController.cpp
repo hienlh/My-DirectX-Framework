@@ -7,6 +7,9 @@
 #include "Macros.h"
 #include "CanBeAttacked.h"
 #include "EffectPool.h"
+#include "AudioSource.h"
+#include "Macros.h"
+#include "Macros.h"
 
 BlastHornetController::BlastHornetController(const BlastHornetController& PC) : CMonoBehavior(PC)
 {
@@ -40,7 +43,10 @@ void BlastHornetController::OnTriggerEnter(CCollision* collision)
 		anim->SetBool(Bool_IsTargeted, true);
 		isCollision = true;
 	}
-
+	if(collision->GetOtherCollider()->GetComponent<CanAttacked>())
+	{
+		m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_Boss_wasHit);
+	}
 }
 
 void BlastHornetController::Update(const DWORD& dt)
@@ -48,9 +54,10 @@ void BlastHornetController::Update(const DWORD& dt)
 	if(!m_pGameObject->GetComponent<CanBeAttacked>()->IsAlive())
 	{
 		EffectPool::GetInstance()->CreateMultiEffect(Prefab_Effect_Explode_Blue, m_pGameObject->GetPosition(), 20, 6);
-
+		m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_Boss_Died);
 		waitTimeWhenDie -= dt;
 		if (waitTimeWhenDie < 0)
+
 			m_pGameObject->SetIsActive(false);
 
 		return;
@@ -133,7 +140,7 @@ void BlastHornetController::Update(const DWORD& dt)
 void BlastHornetController::Shoot(const Vector2 &myPos, const Vector2 &targetPos)
 {
 	//if (pBullet) pBullet->SetIsActive(false);
-	pBullet = CGameObject::Instantiate(Prefab_BlastHornet_Bullet, nullptr, myPos);
+	pBullet = CGameObject::Instantiate(Prefab_BlastHornet_Bullet, nullptr, myPos + Vector2(0,20));
 
 	auto pChild1 = CGameObject::Instantiate(Prefab_BlastHornet_Child2, nullptr, myPos);
 	auto pChild2 = CGameObject::Instantiate(Prefab_BlastHornet_Child2, nullptr, myPos);

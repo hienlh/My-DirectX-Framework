@@ -23,6 +23,7 @@ void Framework::CGameSubject::NotifyStart()
 		if (const auto component = dynamic_cast<CComponent*>(m_observers[i])) {
 			if (component->GetGameObject()->IsInCurrentScene() && dynamic_cast<CGameObserver*>(m_observers[i]))
 			{
+				CDebug::Log(component->GetGameObject()->GetName().c_str());
 				dynamic_cast<CGameObserver*>(m_observers[i])->Start();
 			}
 		}

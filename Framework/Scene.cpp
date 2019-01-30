@@ -182,10 +182,13 @@ std::set<CGameObject*> CScene::GetUpdateGameObjects() const
 
 bool CScene::Destroy(CScene* scene)
 {
-	const auto result = scene->Release();
-	SAFE_DELETE(scene);
+	if (scene) {
+		const auto result = scene->Release();
+		SAFE_DELETE(scene);
+		return result;
+	}
 
-	return result;
+	return true;
 }
 
 void CScene::Update(const DWORD &dt)

@@ -181,8 +181,19 @@
 #define Prefab_Effect_Explode_Blue												"Prefab_Effect_Explode_Blue"
 
 #define Audio_Sound_Track														"Audio_Sound_Track"
+
 #define Audio_MegaMan_Shoot														"Audio_MegaMan_Shoot"
 #define Audio_MegaMan_Power_Shoot												"Audio_MegaMan_Power_Shoot"
+#define Audio_Megaman_Dash														"Audio_Megaman_Dash"
+#define Audio_Megaman_Jump														"Audio_Megaman_Jump"
+#define Audio_Megaman_wasHit													"Audio_Megaman_wasHit"
+
+#define Audio_Enemy_Shot														"Audio_Enemy_Shot"
+#define Audio_Enemy_wasHit														"Audio_Enemy_wasHit"
+#define Audio_Enemy_Died														"Audio_Enemy_Died"
+
+#define Audio_Boss_wasHit														"Audio_Boss_wasHit"
+#define Audio_Boss_Died															"Audio_Boss_Died"
 
 #define DESTROY_TIME															3000
 #define RELOAD_TIME																2000
@@ -194,7 +205,7 @@
 #define CHARGELV1_TIME															200
 #define CHARGELV2_TIME															2000
 
-#define Blast_Honest_Health														20
+#define Blast_Honest_Health														200
 #define Blast_Honest_Damage														20
 #define Notor_Health															20
 #define Notor_Damage															20

@@ -16,6 +16,12 @@
 #include "NotorBangerEnemyController.h"
 #include "HeadGunnerEnemyController.h"
 #include "HelitController.h"
+#include "Macros.h"
+#include "Macros.h"
+#include "Macros.h"
+#include "Macros.h"
+#include "Macros.h"
+#include "Macros.h"
 
 const Vector2 notorPos[14] = {
 	{447 + 26, 853 + 21},
@@ -112,7 +118,10 @@ void PlayerController::OnCollisionEnter(CCollision* collision)
 	{
 		m_onMachine = true;
 	}
-
+	if (collision->GetOtherCollider()->GetComponent<CanAttacked>())
+	{
+		m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_Megaman_wasHit);
+	}
 	//m_pGameObject->GetComponent<CAnimator>()->SetBool(Bool_IsJump, false);
 }
 
@@ -120,6 +129,7 @@ void PlayerController::OnTriggerEnter(CCollision* collision)
 {
 	if (collision->GetOtherCollider()->GetComponent<CanAttacked>())
 	{
+		m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_Megaman_wasHit);
 		m_pGameObject->GetComponent<CAnimator>()->SetBool(Bool_IsWasHit, true);
 		m_canMove = false;
 	}
@@ -221,11 +231,11 @@ void PlayerController::Action(const DWORD &dt)
 		rigidBody->SetVelocity(Vector2(isLeft ? -0.3 : 0.3, MAX_VELOCITY));
 		m_DashFullEffectEffect->GetComponent<DashFullEffect>()->SetIsDashing(true)->SetIsLeft(isLeft);
 	}
-	if (input->KeyDown(DIK_SPACE)) {
+	if (input->KeyDown(DIK_F)) {
 		// anim->SetBool(Bool_IsShoot, true);
 		// Shoot();
 	}
-	if (input->KeyHold(DIK_SPACE)) {
+	if (input->KeyHold(DIK_F)) {
 		m_pressTime += dt;
 		if (m_pressTime > CHARGELV1_TIME)
 			if (m_pressTime < CHARGELV2_TIME)
@@ -237,7 +247,7 @@ void PlayerController::Action(const DWORD &dt)
 				m_Power->GetComponent<CAnimator>()->SetBool(Bool_IsChargeFull, true);
 			}
 	}
-	if (input->KeyUp(DIK_SPACE)) {
+	if (input->KeyUp(DIK_F)) {
 		m_Power->GetComponent<CAnimator>()->SetBool(Bool_IsChargeFull, false);
 		m_Power->SetIsActive(false);
 		anim->SetBool(Bool_IsShoot, true);
@@ -245,8 +255,9 @@ void PlayerController::Action(const DWORD &dt)
 		m_pressTime = 0;
 	}
 
-	if (input->KeyDown(DIK_Z)) {
+	if (input->KeyDown(DIK_H)) {
 		if (!anim->GetBool(Bool_IsDash)) {
+			m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_Megaman_Dash);
 			anim->SetBool(Bool_IsDash, true);
 			Dash(isLeft);
 		}
@@ -257,7 +268,7 @@ void PlayerController::Action(const DWORD &dt)
 		anim->SetBool(Bool_IsClinging, false);
 	}
 
-	if (input->KeyDown(DIK_F))
+	/*if (input->KeyDown(DIK_F))
 	{
 		if (!anim->GetBool(Bool_IsCut))
 		{
@@ -270,7 +281,7 @@ void PlayerController::Action(const DWORD &dt)
 		{
 			anim->SetBool(Bool_IsCut, false);
 		}
-	}
+	}*/
 
 	if (input->KeyDown(DIK_E)) {
 		if (m_Power)
@@ -291,10 +302,11 @@ void PlayerController::Move()
 	}
 	const bool isLeft = renderer->GetFlipX();
 
-	if (input->KeyDown(DIK_UPARROW)) {
+	if (input->KeyDown(DIK_G)) {
 		if (!anim->GetBool(Bool_IsJump) && !anim->GetBool(Bool_IsClinging)) {
 			anim->SetBool(Bool_IsJump, true);
 			rigidBody->AddVelocity(Vector2(0, -Jump_Velocity));
+			m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_Megaman_Jump);
 		}
 		else
 		{
@@ -306,6 +318,7 @@ void PlayerController::Move()
 				anim->SetBool(Bool_IsJump, true);
 				m_DashEffect->GetComponent<CTransform>()->Set_Position(m_pGameObject->GetComponent<CTransform>()->Get_Position() + Vector2(0, 17), false);
 				m_DashEffect->SetIsActive(true);
+				m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_Megaman_Jump);
 			}
 			else
 			{
@@ -342,7 +355,7 @@ void PlayerController::Move()
 		rigidBody->AddVelocity(Vector2(-m_speed, 0));
 	}*/
 
-	if (input->KeyHold(DIK_RIGHTARROW)) {
+	if (input->KeyHold(DIK_D)) {
 		renderer->SetFlipX(false);
 		if (!anim->GetBool(Bool_IsRun))
 		{
@@ -358,7 +371,7 @@ void PlayerController::Move()
 		}
 	}
 
-	if (input->KeyHold(DIK_LEFTARROW)) {
+	if (input->KeyHold(DIK_A)) {
 		renderer->SetFlipX(true);
 		if (!anim->GetBool(Bool_IsRun))
 		{
@@ -396,18 +409,21 @@ void PlayerController::Shoot() const
 	{
 		if (m_pressTime < CHARGELV1_TIME)
 		{
+			m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_MegaMan_Shoot);
 			auto pBullet = BulletPool::GetInstance()->CreateBullet(Prefab_BusterShot, pos); //CGameObject::Instantiate(Prefab_BusterShot, nullptr, pos);
 			pBullet->GetComponent<CRigidbody>()->SetVelocity({ static_cast<float>((isLeft ? -1 : 1) * 0.3), 0 });
 
 		}
 		else if (m_pressTime < CHARGELV2_TIME)
 		{
+			m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_MegaMan_Power_Shoot);
 			auto pBullet = BulletPool::GetInstance()->CreateBullet(Prefab_ChargeShotLV1, pos); //CGameObject::Instantiate(Prefab_BusterShot, nullptr, pos);
 			pBullet->GetComponent<CRigidbody>()->SetVelocity({ static_cast<float>((isLeft ? -1 : 1) * 0.3), 0 });
 			pBullet->GetComponent<CRenderer>()->SetFlipX(isLeft);
 		}
 		else
 		{
+			m_pGameObject->GetComponent<CAudioSource>()->Play(Audio_MegaMan_Power_Shoot);
 			auto pBullet = BulletPool::GetInstance()->CreateBullet(Prefab_ChargeShotLV2, pos); //CGameObject::Instantiate(Prefab_BusterShot, nullptr, pos);
 			pBullet->GetComponent<CRigidbody>()->SetVelocity({ static_cast<float>((isLeft ? -1 : 1) * 0.3), 0 });
 			pBullet->GetComponent<CRenderer>()->SetFlipX(isLeft);

@@ -13,6 +13,8 @@ void BuildingController::Start()
 	m_pOutrigger = new CGameObject("Outrigger");
 	m_pOutrigger->GetComponent<CTransform>()->SetParent(this->m_pGameObject)->Set_Position({ 112,0 }, false);
 	m_pOutrigger->AddComponent<CRenderer>()->SetSprite(Texture_EnemiesAndBosses, 1)->SetZOrder(1)->GetSprite()->SetAnchor({0,0});
+	m_pOutrigger->AddComponent<CBoxCollider>()->SetSize({ 2,2 })->SetOffset({ 140,85 });
+	m_pOutrigger->AddComponent<CRigidbody>()->SetGravityScale(0);
 
 	for (int i = 0; i < CARRY_AIM_LIST_SIZE; ++i)
 	{

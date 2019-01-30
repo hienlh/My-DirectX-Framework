@@ -40,11 +40,11 @@ void MetaCapsuleController::Start()
 
 void MetaCapsuleController::Update(const DWORD& dt)
 {
-	if (!m_pGameObject->GetComponent<CanBeAttacked>()->IsAlive())
+	/*if (!m_pGameObject->GetComponent<CanBeAttacked>()->IsAlive())
 	{
 		m_pGameObject->SetIsActive(false);
 		EffectPool::GetInstance()->CreateMultiEffect(Prefab_Effect_Explode, m_pGameObject->GetPosition(), 20, 2);
-	}
+	}*/
 
 	if(anim->GetCurrentAnimation()->IsLastFrame())
 	{

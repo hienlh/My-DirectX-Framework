@@ -81,7 +81,7 @@ void NotorBangerEnemyController::Update(const DWORD &dt)
 		const Vector2 currentPosition = m_pGameObject->GetComponent<CTransform>()->Get_Position();
 
 		const float gravity = 0.001*rigidbody->GetGravityScale();
-		const Vector2 velocity = CalculateVelocity(currentPosition, targetPosition, gravity, -0.3);
+		const Vector2 velocity = CalculateVelocity(currentPosition, targetPosition, gravity/2, -0.3);
 		std::string names[] = { Bool_Is0, Bool_Is30, Bool_Is45, Bool_Is60, Bool_Is90 };
 		for (size_t iAngle = 0; iAngle < _countof(names); iAngle++)
 		{

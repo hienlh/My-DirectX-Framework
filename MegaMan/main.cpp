@@ -85,8 +85,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	pResourceManager->AddTexture(Texture_BoxEnd, ".\\Resources\\Map\\BoxEnd.png", NULL, ".\\Resources\\Map\\BoxEnd.xml");
 
 	pResourceManager->AddSound(Audio_Sound_Track, ".\\Resources\\Sounds\\BlastHornetSoundTrack.wav")
-		->AddSound(Audio_MegaMan_Shoot, ".\\Resources\\Sounds\\SE_0A.wav")
-		->AddSound(Audio_MegaMan_Power_Shoot, ".\\Resources\\Sounds\\SE_3A.wav");
+		->AddSound(Audio_MegaMan_Shoot, ".\\Resources\\Sounds\\MegamanBan.wav")
+		->AddSound(Audio_MegaMan_Power_Shoot, ".\\Resources\\Sounds\\MegamanBan2.wav")
+		->AddSound(Audio_Megaman_Dash, ".\\Resources\\Sounds\\MegamanLuot.wav")
+		->AddSound(Audio_Megaman_Jump, ".\\Resources\\Sounds\\MegamanNhay.wav")
+		->AddSound(Audio_Megaman_wasHit, ".\\Resources\\Sounds\\MegamanTrungDan.wav")
+		->AddSound(Audio_Boss_Died, ".\\Resources\\Sounds\\BossChet.wav")
+		->AddSound(Audio_Boss_wasHit, ".\\Resources\\Sounds\\BossTrungDan.wav")
+		->AddSound(Audio_Enemy_Shot, ".\\Resources\\Sounds\\EnemiesBan.wav")
+		->AddSound(Audio_Enemy_Died, ".\\Resources\\Sounds\\EnemiesChet.wav");
 
 	//From file MegaManXEdited.png
 	new CAnimation(Animation_MegaManX_Init, Texture_MegaManX, 0, 2, 1000, false);
@@ -594,7 +601,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		pMetaCapsule->GetComponent<CBoxCollider>()->SetIsTrigger(true);
 		pMetaCapsule->GetComponent<CBoxCollider>()->SetIsActive(false);
 		pMetaCapsule->AddComponent<MetaCapsuleController>();
-		pMetaCapsule->AddComponent<CanBeAttacked>()->InitHealth(40);
+		//pMetaCapsule->AddComponent<CanBeAttacked>()->InitHealth(40);
 		pMetaCapsule->SetIsActive(false);
 
 		CGameObject* pMetaCapsuleBullet = pResourceManager->AddPrefab(Prefab_MetaCapsule_Bullet);
@@ -612,7 +619,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	do
 	{
 		//Player
-		CGameObject* pPlayer = new CGameObject("Player", { 1792, 458 });//2160, 1129 Suriken || 128, 875 Start || 4450, 1100 Building || 7350, 1827 Blast
+		CGameObject* pPlayer = new CGameObject("Player", { 7350, 1827 });//2160, 1129 Suriken || 128, 875 Start || 4450, 1100 Building || 7350, 1827 Blast
 		{
 			pPlayer->AddComponent<CAnimator>()
 				->AddAnimation(Animation_MegaManX_Init)
@@ -732,11 +739,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pPlayer->GetComponent<CBoxCollider>()->SetSize(Vector2(30, 34));
 			pPlayer->GetComponent<CBoxCollider>()->SetAutoBoundSize(false);
 			pPlayer->AddComponent<PlayerController>()->SetSpeed(0.1);
-			pPlayer->AddComponent<CanBeAttacked>()->InitHealth(1000); 
+			pPlayer->AddComponent<CanBeAttacked>()->InitHealth(500); 
 			pPlayer->AddComponent<CAudioSource>();
-			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_Sound_Track, true);// ->Play(AUDIO_SOUND_TRACK);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_Sound_Track, true) ->Play(Audio_Sound_Track);
 			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_MegaMan_Shoot, false);
 			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_MegaMan_Power_Shoot, false);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_Megaman_Dash, false);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_Megaman_Jump, false);
+			pPlayer->GetComponent<CAudioSource>()->AddSound(Audio_Megaman_wasHit, false);
 
 			CGameObject* pPowerEffect = new CGameObject("Power Effect");
 			pPowerEffect->SetIsActive(false);
@@ -1077,6 +1087,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				pHornet->GetComponent<BlastHornetController>()->m_target = pPlayer;
 				pHornet->AddComponent<CanAttacked>()->InitDamage(Blast_Honest_Damage)->AddTargetName(Player);
 				pHornet->AddComponent<CanBeAttacked>()->InitHealth(Blast_Honest_Health);
+				pHornet->AddComponent<CAudioSource>();
+				pHornet->GetComponent<CAudioSource>()->AddSound(Audio_Boss_wasHit,false);
+				pHornet->GetComponent<CAudioSource>()->AddSound(Audio_Boss_Died,false);
 			}
 
 			//Blast Hornet Wing
@@ -1231,7 +1244,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			pShurikein->AddComponent<CBoxCollider>()->SetIsTrigger(true);
 			pShurikein->GetComponent<CBoxCollider>()->SetSize(Vector2(40, 40));
 			pShurikein->AddComponent<CanAttacked>()->InitDamage(20)->AddTargetName(Player);
-			pShurikein->AddComponent<CanBeAttacked>()->InitHealth(20);
+			pShurikein->AddComponent<CanBeAttacked>()->InitHealth(200);
 			pShurikein->SetIsActive(false);
 		}
 
