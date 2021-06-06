@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture type="MegaManInit" name="MegaManX_00.png"	x="300"	y="248"	width="8"	height="48" frameX="-0" frameY="-0" frameWidth="8" frameHeight="48"/>
+	<SubTexture type="MegaManInit" name="MegaManX_01.png"	x="166"	y="289"	width="22"	height="29" frameX="-0" frameY="-0" frameWidth="22" frameHeight="29"/>
+	<SubTexture type="MegaManInit" name="MegaManX_02.png"	x="166"	y="246"	width="30"	height="42" frameX="-0" frameY="-0" frameWidth="30" frameHeight="42"/>
+	<SubTexture type="MegaManInit" name="MegaManX_03.png"	x="166"	y="171"	width="30"	height="39" frameX="-0" frameY="-0" frameWidth="30" frameHeight="39"/>
+	<SubTexture type="MegaManInit" name="MegaManX_04.png"	x="166"	y="0"	width="30"	height="36" frameX="-0" frameY="-0" frameWidth="30" frameHeight="36"/>
+	<SubTexture type="MegaManInit" name="MegaManX_05.png"	x="135"	y="236"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManInit" name="MegaManX_06.png"	x="105"	y="0"	width="30"	height="32" frameX="-0" frameY="-0" frameWidth="30" frameHeight="32"/>
+	<SubTexture type="MegaManInit" name="MegaManX_07.png"	x="104"	y="44"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManIdleShoot" name="MegaManX_08.png"	x="166"	y="211"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManIdleShoot" name="MegaManX_09.png"	x="105"	y="79"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManIdleShoot" name="MegaManX_10.png"	x="135"	y="33"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManIdleShoot" name="MegaManX_11.png"	x="136"	y="68"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManIdleShoot" name="MegaManX_12.png"	x="197"	y="69"	width="29"	height="34" frameX="-0" frameY="-0" frameWidth="29" frameHeight="34"/>
+	<SubTexture name="MegaManX_13.png"	x="136"	y="136"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManRun" name="MegaManX_14.png"	x="279"	y="280"	width="20"	height="34" frameX="-0" frameY="-0" frameWidth="20" frameHeight="34"/>
+	<SubTexture type="MegaManRun" name="MegaManX_15.png"	x="254"	y="119"	width="23"	height="35" frameX="-0" frameY="-0" frameWidth="23" frameHeight="35"/>
+	<SubTexture type="MegaManRun" name="MegaManX_16.png"	x="39"	y="27"	width="32"	height="34" frameX="-0" frameY="-0" frameWidth="32" frameHeight="34"/>
+	<SubTexture type="MegaManRun" name="MegaManX_17.png"	x="36"	y="187"	width="34"	height="33" frameX="-0" frameY="-0" frameWidth="34" frameHeight="33"/>
+	<SubTexture type="MegaManRun" name="MegaManX_18.png"	x="197"	y="284"	width="26"	height="33" frameX="-0" frameY="-0" frameWidth="26" frameHeight="33"/>
+	<SubTexture type="MegaManRun" name="MegaManX_19.png"	x="254"	y="155"	width="22"	height="34" frameX="-0" frameY="-0" frameWidth="22" frameHeight="34"/>
+	<SubTexture type="MegaManRun" name="MegaManX_20.png"	x="253"	y="234"	width="25"	height="35" frameX="-0" frameY="-0" frameWidth="25" frameHeight="35"/>
+	<SubTexture type="MegaManRun" name="MegaManX_21.png"	x="135"	y="201"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture type="MegaManRun" name="MegaManX_22.png"	x="36"	y="221"	width="34"	height="33" frameX="-0" frameY="-0" frameWidth="34" frameHeight="33"/>
+	<SubTexture type="MegaManRun" name="MegaManX_23.png"	x="197"	y="0"	width="29"	height="33" frameX="-0" frameY="-0" frameWidth="29" frameHeight="33"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_24.png"	x="197"	y="34"	width="29"	height="34" frameX="-0" frameY="-0" frameWidth="29" frameHeight="34"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_25.png"	x="71"	y="241"	width="32"	height="35" frameX="-0" frameY="-0" frameWidth="32" frameHeight="35"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_26.png"	x="0"	y="256"	width="35"	height="34" frameX="-0" frameY="-0" frameWidth="35" frameHeight="34"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_27.png"	x="0"	y="54"	width="38"	height="33" frameX="-0" frameY="-0" frameWidth="38" frameHeight="33"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_28.png"	x="38"	y="88"	width="34"	height="33" frameX="-0" frameY="-0" frameWidth="34" frameHeight="33"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_29.png"	x="72"	y="44"	width="31"	height="34" frameX="-0" frameY="-0" frameWidth="31" frameHeight="34"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_30.png"	x="38"	y="122"	width="33"	height="35" frameX="-0" frameY="-0" frameWidth="33" frameHeight="35"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_31.png"	x="0"	y="187"	width="35"	height="34" frameX="-0" frameY="-0" frameWidth="35" frameHeight="34"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_32.png"	x="0"	y="88"	width="37"	height="33" frameX="-0" frameY="-0" frameWidth="37" frameHeight="33"/>
+	<SubTexture type="MegaManRunShoot" name="MegaManX_33.png"	x="0"	y="222"	width="35"	height="33" frameX="-0" frameY="-0" frameWidth="35" frameHeight="33"/>
+	<SubTexture name="MegaManX_34.png"	x="254"	y="42"	width="24"	height="37" frameX="-0" frameY="-0" frameWidth="24" frameHeight="37"/>
+	<SubTexture name="MegaManX_35.png"	x="299"	y="0"	width="15"	height="41" frameX="-0" frameY="-0" frameWidth="15" frameHeight="41"/>
+	<SubTexture name="MegaManX_36.png"	x="279"	y="0"	width="19"	height="46" frameX="-0" frameY="-0" frameWidth="19" frameHeight="46"/>
+	<SubTexture name="MegaManX_37.png"	x="278"	y="119"	width="23"	height="41" frameX="-0" frameY="-0" frameWidth="23" frameHeight="41"/>
+	<SubTexture name="MegaManX_38.png"	x="226"	y="148"	width="27"	height="42" frameX="-0" frameY="-0" frameWidth="27" frameHeight="42"/>
+	<SubTexture name="MegaManX_39.png"	x="254"	y="80"	width="24"	height="38" frameX="-0" frameY="-0" frameWidth="24" frameHeight="38"/>
+	<SubTexture name="MegaManX_40.png"	x="136"	y="103"	width="30"	height="32" frameX="-0" frameY="-0" frameWidth="30" frameHeight="32"/>
+	<SubTexture name="MegaManX_41.png"	x="167"	y="37"	width="29"	height="37" frameX="-0" frameY="-0" frameWidth="29" frameHeight="37"/>
+	<SubTexture name="MegaManX_42.png"	x="254"	y="0"	width="24"	height="41" frameX="-0" frameY="-0" frameWidth="24" frameHeight="41"/>
+	<SubTexture name="MegaManX_43.png"	x="225"	y="239"	width="27"	height="46" frameX="-0" frameY="-0" frameWidth="27" frameHeight="46"/>
+	<SubTexture name="MegaManX_44.png"	x="71"	y="277"	width="31"	height="41" frameX="-0" frameY="-0" frameWidth="31" frameHeight="41"/>
+	<SubTexture name="MegaManX_45.png"	x="104"	y="119"	width="31"	height="42" frameX="-0" frameY="-0" frameWidth="31" frameHeight="42"/>
+	<SubTexture name="MegaManX_46.png"	x="104"	y="235"	width="30"	height="38" frameX="-0" frameY="-0" frameWidth="30" frameHeight="38"/>
+	<SubTexture name="MegaManX_47.png"	x="0"	y="154"	width="36"	height="32" frameX="-0" frameY="-0" frameWidth="36" frameHeight="32"/>
+	<SubTexture name="MegaManX_48.png"	x="60"	y="158"	width="9"	height="13" frameX="-0" frameY="-0" frameWidth="9" frameHeight="13"/>
+	<SubTexture name="MegaManX_49.png"	x="253"	y="191"	width="25"	height="42" frameX="-0" frameY="-0" frameWidth="25" frameHeight="42"/>
+	<SubTexture name="MegaManX_50.png"	x="226"	y="104"	width="27"	height="43" frameX="-0" frameY="-0" frameWidth="27" frameHeight="43"/>
+	<SubTexture name="MegaManX_51.png"	x="197"	y="196"	width="28"	height="42" frameX="-0" frameY="-0" frameWidth="28" frameHeight="42"/>
+	<SubTexture name="MegaManX_52.png"	x="135"	y="271"	width="30"	height="39" frameX="-0" frameY="-0" frameWidth="30" frameHeight="39"/>
+	<SubTexture name="MegaManX_53.png"	x="197"	y="239"	width="27"	height="44" frameX="-0" frameY="-0" frameWidth="27" frameHeight="44"/>
+	<SubTexture name="MegaManX_54.png"	x="73"	y="79"	width="31"	height="39" frameX="-0" frameY="-0" frameWidth="31" frameHeight="39"/>
+	<SubTexture name="MegaManX_55.png"	x="72"	y="0"	width="32"	height="43" frameX="-0" frameY="-0" frameWidth="32" frameHeight="43"/>
+	<SubTexture name="MegaManX_56.png"	x="71"	y="198"	width="32"	height="42" frameX="-0" frameY="-0" frameWidth="32" frameHeight="42"/>
+	<SubTexture name="MegaManX_57.png"	x="104"	y="162"	width="31"	height="38" frameX="-0" frameY="-0" frameWidth="31" frameHeight="38"/>
+	<SubTexture name="MegaManX_58.png"	x="71"	y="158"	width="32"	height="39" frameX="-0" frameY="-0" frameWidth="32" frameHeight="39"/>
+	<SubTexture name="MegaManX_59.png"	x="253"	y="270"	width="25"	height="42" frameX="-0" frameY="-0" frameWidth="25" frameHeight="42"/>
+	<SubTexture name="MegaManX_60.png"	x="103"	y="277"	width="31"	height="39" frameX="-0" frameY="-0" frameWidth="31" frameHeight="39"/>
+	<SubTexture name="MegaManX_61.png"	x="279"	y="161"	width="21"	height="36" frameX="-0" frameY="-0" frameWidth="21" frameHeight="36"/>
+	<SubTexture name="MegaManX_62.png"	x="298"	y="47"	width="18"	height="49" frameX="-0" frameY="-0" frameWidth="18" frameHeight="49"/>
+	<SubTexture name="MegaManX_63.png"	x="279"	y="239"	width="20"	height="40" frameX="-0" frameY="-0" frameWidth="20" frameHeight="40"/>
+	<SubTexture name="MegaManX_64.png"	x="279"	y="198"	width="20"	height="40" frameX="-0" frameY="-0" frameWidth="20" frameHeight="40"/>
+	<SubTexture name="MegaManX_65.png"	x="300"	y="198"	width="18"	height="49" frameX="-0" frameY="-0" frameWidth="18" frameHeight="49"/>
+	<SubTexture name="MegaManX_66.png"	x="227"	y="37"	width="26"	height="48" frameX="-0" frameY="-0" frameWidth="26" frameHeight="48"/>
+	<SubTexture name="MegaManX_67.png"	x="224"	y="286"	width="21"	height="32" frameX="-0" frameY="-0" frameWidth="21" frameHeight="32"/>
+	<SubTexture name="MegaManX_68.png"	x="279"	y="47"	width="18"	height="34" frameX="-0" frameY="-0" frameWidth="18" frameHeight="34"/>
+	<SubTexture name="MegaManX_69.png"	x="197"	y="150"	width="28"	height="45" frameX="-0" frameY="-0" frameWidth="28" frameHeight="45"/>
+	<SubTexture name="MegaManX_70.png"	x="167"	y="75"	width="29"	height="45" frameX="-0" frameY="-0" frameWidth="29" frameHeight="45"/>
+	<SubTexture name="MegaManX_71.png"	x="36"	y="255"	width="34"	height="48" frameX="-0" frameY="-0" frameWidth="34" frameHeight="48"/>
+	<SubTexture name="MegaManX_72.png"	x="167"	y="121"	width="29"	height="45" frameX="-0" frameY="-0" frameWidth="29" frameHeight="45"/>
+	<SubTexture name="MegaManX_73.png"	x="197"	y="104"	width="28"	height="45" frameX="-0" frameY="-0" frameWidth="28" frameHeight="45"/>
+	<SubTexture name="MegaManX_74.png"	x="0"	y="291"	width="35"	height="24" frameX="-0" frameY="-0" frameWidth="35" frameHeight="24"/>
+	<SubTexture name="MegaManX_75.png"	x="279"	y="82"	width="18"	height="18" frameX="-0" frameY="-0" frameWidth="18" frameHeight="18"/>
+	<SubTexture name="MegaManX_76.png"	x="49"	y="0"	width="20"	height="18" frameX="-0" frameY="-0" frameWidth="20" frameHeight="18"/>
+	<SubTexture name="MegaManX_77.png"	x="39"	y="62"	width="22"	height="18" frameX="-0" frameY="-0" frameWidth="22" frameHeight="18"/>
+	<SubTexture name="MegaManX_78.png"	x="298"	y="97"	width="17"	height="18" frameX="-0" frameY="-0" frameWidth="17" frameHeight="18"/>
+	<SubTexture name="MegaManX_79.png"	x="136"	y="171"	width="20"	height="18" frameX="-0" frameY="-0" frameWidth="20" frameHeight="18"/>
+	<SubTexture name="MegaManX_80.png"	x="37"	y="158"	width="22"	height="18" frameX="-0" frameY="-0" frameWidth="22" frameHeight="18"/>
+	<SubTexture name="MegaManX_81.png"	x="136"	y="0"	width="28"	height="31" frameX="-0" frameY="-0" frameWidth="28" frameHeight="31"/>
+	<SubTexture name="MegaManX_82.png"	x="0"	y="27"	width="38"	height="26" frameX="-0" frameY="-0" frameWidth="38" frameHeight="26"/>
+	<SubTexture name="MegaManX_83.png"	x="0"	y="122"	width="37"	height="31" frameX="-0" frameY="-0" frameWidth="37" frameHeight="31"/>
+	<SubTexture name="MegaManX_84.png"	x="0"	y="0"	width="48"	height="26" frameX="-0" frameY="-0" frameWidth="48" frameHeight="26"/>
+	<SubTexture name="MegaManX_85.png"	x="73"	y="119"	width="30"	height="35" frameX="-0" frameY="-0" frameWidth="30" frameHeight="35"/>
+	<SubTexture name="MegaManX_86.png"	x="104"	y="44"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture name="MegaManX_87.png"	x="104"	y="201"	width="30"	height="33" frameX="-0" frameY="-0" frameWidth="30" frameHeight="33"/>
+	<SubTexture name="MegaManX_88.png"	x="166"	y="211"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture name="MegaManX_89.png"	x="105"	y="79"	width="30"	height="34" frameX="-0" frameY="-0" frameWidth="30" frameHeight="34"/>
+	<SubTexture name="MegaManX_90.png"	x="226"	y="191"	width="26"	height="36" frameX="-0" frameY="-0" frameWidth="26" frameHeight="36"/>
+	<SubTexture name="MegaManX_91.png"	x="227"	y="0"	width="26"	height="36" frameX="-0" frameY="-0" frameWidth="26" frameHeight="36"/>
+	<SubTexture name="MegaManX_92.png"	x="39"	y="81"	width="6"	height="6" frameX="-0" frameY="-0" frameWidth="6" frameHeight="6"/>
+	<SubTexture name="MegaManX_93.png"	x="47"	y="177"	width="8"	height="8" frameX="-0" frameY="-0" frameWidth="8" frameHeight="8"/>
+	<SubTexture name="MegaManX_94.png"	x="37"	y="177"	width="9"	height="9" frameX="-0" frameY="-0" frameWidth="9" frameHeight="9"/>
+	<SubTexture name="MegaManX_95.png"	x="52"	y="304"	width="11"	height="11" frameX="-0" frameY="-0" frameWidth="11" frameHeight="11"/>
+	<SubTexture name="MegaManX_96.png"	x="36"	y="304"	width="15"	height="14" frameX="-0" frameY="-0" frameWidth="15" frameHeight="14"/>
+</TextureAtlas>
